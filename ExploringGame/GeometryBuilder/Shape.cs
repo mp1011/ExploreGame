@@ -29,8 +29,11 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, Color Color)
 
 public abstract class Shape
 {
-    public Shape? Parent { get; set; }
-    public List<Shape> Children { get; } = new();
+    public Shape? Parent { get; private set; }
+
+    private List<Shape> _children = new();
+
+    public IEnumerable<Shape> Children => _children.AsReadOnly();
 
     public abstract ViewFrom ViewFrom { get; }
     public Vector3 Position { get; set; }
@@ -61,6 +64,58 @@ public abstract class Shape
         get => Size.Z; set => Size = new Vector3(Size.X, Size.Y, value);
     }
 
+    /// <summary>
+    /// Sets the bottom Y coordinate while preserving height
+    /// </summary>
+    public float BottomAnchored
+    {
+        get => Position.Y - Size.Y / 2f;
+        set
+        {
+            var currentBottom = this.BottomAnchored;
+            var delta = value - currentBottom;
+            Y += delta;
+        }
+    }
+
+    public float GetSide(Side side)
+    {
+        return side switch
+        {
+            Side.North => Position.Z + Size.Z / 2f,
+            Side.South => Position.Z - Size.Z / 2f,
+            Side.West => Position.X - Size.X / 2f,
+            Side.East => Position.X + Size.X / 2f,
+            _ => throw new ArgumentException("Only singular sides can be used")
+        };
+    }
+
+    public void SetSide(Side side, float value)
+    {
+        switch(side)
+        {
+            case Side.North:
+                Z = value - Size.Z / 2f;
+                return;
+            case Side.South:
+                Z = value + Size.Z / 2f;
+                return;
+            case Side.West:
+                X = value + Size.X / 2f;
+                return;
+            case Side.East:
+                X = value - Size.X / 2f;
+                return;
+            default:
+                throw new ArgumentException("Only singular sides can be used");
+        }
+    }
+
+    public void AddChild(Shape child)
+    {
+        child.Parent = this;
+        _children.Add(child);
+    }
 
     public Rotation Rotation { get; set; }
 

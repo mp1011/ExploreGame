@@ -99,13 +99,20 @@ public class Game1 : Game
         simpleRoom.Y = 2;
 
         var box = new Box();
-        box.Parent = simpleRoom;
-        simpleRoom.Children.Add(box);
-
-        box.Y = 1f;
+        simpleRoom.AddChild(box);
         box.Width = 2f;
         box.Height = 2f;
         box.Depth = 2f;
+        box.Place().OnFloor();
+        box.Place().OnSide(Side.NorthEast);
+
+        var box2 = new Box();
+        simpleRoom.AddChild(box2);
+        box2.Width = 1f;
+        box2.Height = 3f;
+        box2.Depth = 2f;
+        box2.Place().OnFloor();
+        box2.Place().OnSide(Side.NorthWest);
 
         var builder = new VertexBufferBuilder();
         var buffers = builder.Build(simpleRoom, GraphicsDevice);
