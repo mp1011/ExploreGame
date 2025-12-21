@@ -5,27 +5,6 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-public enum ViewFrom
-{
-    Inside,
-    Outside
-}
-
-public record Rotation(float Pitch, float Yaw, float Roll);
-public record Triangle(Vector3 A, Vector3 B, Vector3 C, Color Color)
-{
-    public Triangle Invert() => new Triangle(C, B, A, Color);
-
-    public IEnumerable<Vector3> Vertices
-    {
-        get
-        {
-            yield return A;
-            yield return B;
-            yield return C;
-        }
-    }
-}
 
 public abstract class Shape
 {
@@ -68,6 +47,21 @@ public abstract class Shape
         get => Size.Z; set => Size = new Vector3(Size.X, Size.Y, value);
     }
 
+
+    /// <summary>
+    /// Sets the top Y coordinate while preserving height
+    /// </summary>
+    public float TopAnchored
+    {
+        get => Position.Y + Size.Y / 2f;
+        set
+        {
+            var currentTop = this.TopAnchored;
+            var delta = value - currentTop;
+            Y += delta;
+        }
+    }
+
     /// <summary>
     /// Sets the bottom Y coordinate while preserving height
     /// </summary>
@@ -79,6 +73,20 @@ public abstract class Shape
             var currentBottom = this.BottomAnchored;
             var delta = value - currentBottom;
             Y += delta;
+        }
+    }
+
+    /// <summary>
+    /// Sets the bottom Y coordinate while leaving the top as is, thereby changing the height
+    /// </summary>
+    public float BottomUnanchored
+    {
+        get => Position.Y - Size.Y / 2f;
+        set
+        {
+            var originalTop = this.TopAnchored;
+            Height = originalTop - value;
+            TopAnchored = originalTop;
         }
     }
 
@@ -123,20 +131,6 @@ public abstract class Shape
 
     public Rotation Rotation { get; set; }
 
-    public Triangle[] Build(int quality)
-    {
-        if (quality == 0)
-            return Array.Empty<Triangle>();
-        else if (quality == 1)
-            return BuildCuboid();
-        else
-        {
-            var thisTriangles = BuildInternal(quality);
-            var childrenTriangles = Children.SelectMany(p => p.Build(quality - 1)).ToArray();
-            return thisTriangles.Union(childrenTriangles).ToArray();
-        }
-    }
-
     public Color ColorForSide(Side side)
     {
         Color c;
@@ -144,6 +138,27 @@ public abstract class Shape
             return c;
         else
             return MainColor;
+    }
+
+    #region Build
+
+    public static Triangle[] BuildMany(QualityLevel quality, params Shape[] shapes)
+    {
+        return shapes.SelectMany(p => p.Build(quality)).ToArray();
+    }
+
+    public Triangle[] Build(QualityLevel quality)
+    {
+        if (quality == QualityLevel.DoNotRender)
+            return Array.Empty<Triangle>();
+        else if (quality == QualityLevel.CuboidOnly)
+            return BuildCuboid();
+        else
+        {
+            var thisTriangles = BuildInternal(quality);
+            var childrenTriangles = Children.SelectMany(p => p.Build(quality - 1)).ToArray();
+            return thisTriangles.Union(childrenTriangles).ToArray();
+        }
     }
 
     /// <summary>
@@ -203,25 +218,7 @@ public abstract class Shape
         return triangles.ToArray();
     }
 
-    protected abstract Triangle[] BuildInternal(int quality);
-}
+    protected abstract Triangle[] BuildInternal(QualityLevel quality);
 
-public class SimpleRoom : Shape
-{
-    public override ViewFrom ViewFrom => ViewFrom.Inside;
-
-    protected override Triangle[] BuildInternal(int quality)
-    {
-        return BuildCuboid();
-    }
-}
-
-public class Box : Shape
-{
-    public override ViewFrom ViewFrom => ViewFrom.Outside;
-
-    protected override Triangle[] BuildInternal(int quality)
-    {
-        return BuildCuboid();
-    }
+    #endregion
 }

@@ -8,7 +8,7 @@ namespace ExploringGame.Services;
 
 public class VertexBufferBuilder
 {
-    public (VertexBuffer, IndexBuffer, int) Build(Shape master, GraphicsDevice graphicsDevice, int qualityLevel)
+    public (VertexBuffer, IndexBuffer, int) Build(Shape master, GraphicsDevice graphicsDevice, QualityLevel qualityLevel)
     {
         var triangles = master.Build(qualityLevel);
         var vertices = new VertexList(triangles);

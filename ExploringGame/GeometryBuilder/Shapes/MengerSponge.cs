@@ -15,9 +15,9 @@ class MengerSponge : Shape
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
-    protected override Triangle[] BuildInternal(int quality)
+    protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        var cubes = MengerIteration(quality - 1);
+        var cubes = MengerIteration((int)(quality - 1));
         return cubes.SelectMany(p => p.BuildCuboid()).ToArray();
     }
 

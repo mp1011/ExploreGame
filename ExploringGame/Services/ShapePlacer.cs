@@ -2,7 +2,7 @@
 
 namespace ExploringGame.Services;
 
-public static class ShapeExtensions
+public static partial class ShapeExtensions
 {
     public static ShapePlacer Place(this Shape shape)
     {

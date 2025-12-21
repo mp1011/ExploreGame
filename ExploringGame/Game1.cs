@@ -125,14 +125,18 @@ public class Game1 : Game
         box2.Place().OnSide(Side.NorthWest);
         box2.MainColor = Color.Yellow;
 
-        var sponge = new MengerSponge(new ShapeSplitter());
-        simpleRoom.AddChild(sponge);
-        sponge.Size = new Vector3(3f, 3f, 3f);
-        sponge.Place().OnFloor();
-        sponge.MainColor = Color.Purple;
+        var fireplace = new ElectricFireplace(simpleRoom);
+        fireplace.Place().OnFloor();
+        fireplace.Place().OnSide(Side.North);
+
+        //var sponge = new MengerSponge(new ShapeSplitter());
+        //simpleRoom.AddChild(sponge);
+        //sponge.Size = new Vector3(3f, 3f, 3f);
+        //sponge.Place().OnFloor();
+        //sponge.MainColor = Color.Purple;
 
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(simpleRoom, GraphicsDevice, qualityLevel: 4);
+        var buffers = builder.Build(simpleRoom, GraphicsDevice, qualityLevel: (QualityLevel)4);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;
