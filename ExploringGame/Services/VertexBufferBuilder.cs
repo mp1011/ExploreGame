@@ -8,26 +8,26 @@ namespace ExploringGame.Services;
 
 public class VertexBufferBuilder
 {
-    public (VertexBuffer, IndexBuffer, int) Build(Shape master, GraphicsDevice graphicsDevice)
+    public (VertexBuffer, IndexBuffer, int) Build(Shape master, GraphicsDevice graphicsDevice, int qualityLevel)
     {
-        var triangles = master.Build(2);
+        var triangles = master.Build(qualityLevel);
         var vertices = new VertexList(triangles);
 
         var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColor), vertices.Length, BufferUsage.WriteOnly);
         vb.SetData(vertices.Array);
 
-        short[] indices = BuildIndices(triangles, vertices);
-        var ib = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, indices.Length, BufferUsage.WriteOnly);
+        int[] indices = BuildIndices(triangles, vertices);
+        var ib = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Length, BufferUsage.WriteOnly);
         ib.SetData(indices);
 
         return (vb, ib, triangles.Length);
     }
 
-    private short[] BuildIndices(IEnumerable<Triangle> triangles, VertexList vertices)
+    private int[] BuildIndices(IEnumerable<Triangle> triangles, VertexList vertices)
     {
         return triangles.SelectMany(t =>
         {
-            return t.Vertices.Select(v => (short)vertices.IndexOf(v, t.Color));
+            return t.Vertices.Select(v => vertices.IndexOf(v, t.Color));
         }).ToArray();       
     }
 }

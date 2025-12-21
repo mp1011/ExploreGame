@@ -1,6 +1,0 @@
-# Phase 1
-[x] - single room with basic texture
-[x] - basic collision detection
-[ ] - make it seem like player is walking
-[ ] - smooth motion
-

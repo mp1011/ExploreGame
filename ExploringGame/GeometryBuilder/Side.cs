@@ -15,7 +15,9 @@ public enum Side
     South,
     SouthEast,
     East,
-    NorthEast
+    NorthEast,
+    Bottom,
+    Top
 }
 
 public static class SideExtensions

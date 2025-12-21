@@ -1,3 +1,0 @@
-The BuildCuboid method of the Shape class should generate the triangles to build the bounding box of the shape.
-
-The winding order depends on the ViewFrom attribute, which tells us if the shape is meant to be viewed from the inside or outside.

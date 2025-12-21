@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -40,6 +41,9 @@ public class Game1 : Game
         // Set up projection
         _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
         base.Initialize();
+
+        _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
+        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
     }
 
     protected override void LoadContent()
@@ -98,6 +102,11 @@ public class Game1 : Game
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
 
+        simpleRoom.SideColors[Side.Top] = Color.White;
+        simpleRoom.SideColors[Side.Bottom] = Color.Green;
+        simpleRoom.MainColor = Color.Orange;
+
+
         var box = new Box();
         simpleRoom.AddChild(box);
         box.Width = 2f;
@@ -105,6 +114,7 @@ public class Game1 : Game
         box.Depth = 2f;
         box.Place().OnFloor();
         box.Place().OnSide(Side.NorthEast);
+        box.MainColor = Color.Blue;
 
         var box2 = new Box();
         simpleRoom.AddChild(box2);
@@ -113,9 +123,16 @@ public class Game1 : Game
         box2.Depth = 2f;
         box2.Place().OnFloor();
         box2.Place().OnSide(Side.NorthWest);
+        box2.MainColor = Color.Yellow;
+
+        var sponge = new MengerSponge(new ShapeSplitter());
+        simpleRoom.AddChild(sponge);
+        sponge.Size = new Vector3(3f, 3f, 3f);
+        sponge.Place().OnFloor();
+        sponge.MainColor = Color.Purple;
 
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(simpleRoom, GraphicsDevice);
+        var buffers = builder.Build(simpleRoom, GraphicsDevice, qualityLevel: 4);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;
@@ -183,16 +200,18 @@ public class Game1 : Game
     private bool _firstMouse = true;
 
     protected override void Draw(GameTime gameTime)
-    {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-        _effect.World = Matrix.Identity;
-        _effect.View = _view;
-        _effect.Projection = _projection;
-        //_pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
-        //_pointLightEffect.Parameters["View"].SetValue(_view);
-        //_pointLightEffect.Parameters["Projection"].SetValue(_projection);
+    {       
+        GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
+        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-        foreach (var pass in _effect.CurrentTechnique.Passes)
+        //_effect.World = Matrix.Identity;
+        //_effect.View = _view;
+       // _effect.Projection = _projection;
+        _pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
+        _pointLightEffect.Parameters["View"].SetValue(_view);
+        _pointLightEffect.Parameters["Projection"].SetValue(_projection);
+
+        foreach (var pass in _pointLightEffect.CurrentTechnique.Passes)
         {
             pass.Apply();
             GraphicsDevice.SetVertexBuffer(_roomBuffer);

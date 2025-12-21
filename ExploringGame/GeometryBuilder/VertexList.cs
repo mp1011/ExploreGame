@@ -9,6 +9,7 @@ namespace ExploringGame.GeometryBuilder
     internal class VertexList
     {
         public VertexPositionColor[] Array { get; }
+        private Dictionary<(Vector3, Color), int> _indexCache = new();
 
         public VertexList(IEnumerable<Triangle> triangles)
         {
@@ -16,6 +17,12 @@ namespace ExploringGame.GeometryBuilder
             {
                 return t.Vertices.Select(v => new VertexPositionColor(v, t.Color));
             }).ToArray();
+
+            for(int i = 0; i < Array.Length; i++)
+            {
+                var key = (Array[i].Position, Array[i].Color);
+                _indexCache[key] = i;                
+            }
         }
 
         public int Length => Array.Length;
@@ -23,13 +30,10 @@ namespace ExploringGame.GeometryBuilder
       
         public int IndexOf(Vector3 vertex, Color color)
         {
-            // this can definitely be optimized
-            for(int i = 0; i < Array.Length; i++)
+            if (_indexCache.TryGetValue((vertex, color), out int index))
             {
-                if (Array[i].Position == vertex && Array[i].Color == color)
-                    return i;
+                return index;
             }
-
             return -1;
         }
     }

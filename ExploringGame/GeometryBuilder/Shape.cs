@@ -39,6 +39,10 @@ public abstract class Shape
     public Vector3 Position { get; set; }
     public Vector3 Size { get; set; }
 
+    public Color MainColor { get; set; }
+
+    public Dictionary<Side, Color> SideColors { get; } = new Dictionary<Side, Color>();
+
     public float X
     {
         get => Position.X; set => Position = new Vector3(value, Position.Y, Position.Z);
@@ -133,6 +137,15 @@ public abstract class Shape
         }
     }
 
+    public Color ColorForSide(Side side)
+    {
+        Color c;
+        if (SideColors.TryGetValue(side, out c))
+            return c;
+        else
+            return MainColor;
+    }
+
     /// <summary>
     /// Generates the triangles of the bounding volume of this shape
     /// </summary>
@@ -145,42 +158,42 @@ public abstract class Shape
 
         Vector3[] corners = new Vector3[8];
         // Bottom face (Y = min.Y)
-        corners[0] = new Vector3(min.X, min.Y, min.Z); // 0: left, bottom, back
-        corners[1] = new Vector3(max.X, min.Y, min.Z); // 1: right, bottom, back
-        corners[2] = new Vector3(max.X, min.Y, max.Z); // 2: right, bottom, front
-        corners[3] = new Vector3(min.X, min.Y, max.Z); // 3: left, bottom, front
+        corners[0] = new Vector3(min.X, min.Y, min.Z); 
+        corners[1] = new Vector3(max.X, min.Y, min.Z);
+        corners[2] = new Vector3(max.X, min.Y, max.Z);
+        corners[3] = new Vector3(min.X, min.Y, max.Z);
         // Top face (Y = max.Y)
-        corners[4] = new Vector3(min.X, max.Y, min.Z); // 4: left, top, back
-        corners[5] = new Vector3(max.X, max.Y, min.Z); // 5: right, top, back
-        corners[6] = new Vector3(max.X, max.Y, max.Z); // 6: right, top, front
-        corners[7] = new Vector3(min.X, max.Y, max.Z); // 7: left, top, front
+        corners[4] = new Vector3(min.X, max.Y, min.Z);
+        corners[5] = new Vector3(max.X, max.Y, min.Z);
+        corners[6] = new Vector3(max.X, max.Y, max.Z);
+        corners[7] = new Vector3(min.X, max.Y, max.Z);
 
   
         List<Triangle> triangles = new();
 
         //floor
-        triangles.Add(new Triangle(corners[0], corners[1], corners[2], Color.LightGreen));
-        triangles.Add(new Triangle(corners[2], corners[3], corners[0], Color.LightGreen));
+        triangles.Add(new Triangle(corners[0], corners[1], corners[2], ColorForSide(Side.Bottom)));
+        triangles.Add(new Triangle(corners[2], corners[3], corners[0], ColorForSide(Side.Bottom)));
 
         //ceiling
-        triangles.Add(new Triangle(corners[6], corners[5], corners[4], Color.White));
-        triangles.Add(new Triangle(corners[4], corners[7], corners[6], Color.White));
+        triangles.Add(new Triangle(corners[6], corners[5], corners[4], ColorForSide(Side.Top)));
+        triangles.Add(new Triangle(corners[4], corners[7], corners[6], ColorForSide(Side.Top)));
 
         // wall(min z)
-        triangles.Add(new Triangle(corners[5], corners[1], corners[0], Color.Red));
-        triangles.Add(new Triangle(corners[0], corners[4], corners[5], Color.Red));
+        triangles.Add(new Triangle(corners[5], corners[1], corners[0], ColorForSide(Side.South)));
+        triangles.Add(new Triangle(corners[0], corners[4], corners[5], ColorForSide(Side.South)));
 
         //wall (max z)
-        triangles.Add(new Triangle(corners[6], corners[3], corners[2], Color.DarkRed));
-        triangles.Add(new Triangle(corners[6], corners[7], corners[3], Color.DarkRed));
+        triangles.Add(new Triangle(corners[6], corners[3], corners[2], ColorForSide(Side.North)));
+        triangles.Add(new Triangle(corners[6], corners[7], corners[3], ColorForSide(Side.North)));
 
         //wall (min x)
-        triangles.Add(new Triangle(corners[0], corners[3], corners[7], Color.Orange));
-        triangles.Add(new Triangle(corners[7], corners[4], corners[0], Color.Orange));
+        triangles.Add(new Triangle(corners[0], corners[3], corners[7], ColorForSide(Side.West)));
+        triangles.Add(new Triangle(corners[7], corners[4], corners[0], ColorForSide(Side.West)));
 
         //wall (max x)
-        triangles.Add(new Triangle(corners[5], corners[2], corners[1], Color.OrangeRed));
-        triangles.Add(new Triangle(corners[5], corners[6], corners[2], Color.OrangeRed));
+        triangles.Add(new Triangle(corners[5], corners[2], corners[1], ColorForSide(Side.East)));
+        triangles.Add(new Triangle(corners[5], corners[6], corners[2], ColorForSide(Side.East)));
         
         if(ViewFrom == ViewFrom.Outside)
         {
