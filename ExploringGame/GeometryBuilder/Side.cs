@@ -1,8 +1,8 @@
 ﻿namespace ExploringGame.GeometryBuilder;
 
 /// <summary>
-/// North = +Z
-/// South = -Z
+/// North = -Z
+/// South = +Z
 /// West = -X
 /// East = X
 /// </summary>
@@ -55,6 +55,8 @@ public static class SideExtensions
             Side.SouthEast => Side.NorthWest,
             Side.East => Side.West,
             Side.NorthEast => Side.SouthWest,
+            Side.Top => Side.Bottom,
+            Side.Bottom => Side.Top,
             _ => side
         };    
 }

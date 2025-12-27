@@ -1,4 +1,4 @@
-﻿namespace ExploringGame.GeometryBuilder;
+﻿namespace ExploringGame.GeometryBuilder.Shapes;
 
 public class SimpleRoom : Shape
 {

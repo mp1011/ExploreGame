@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -125,9 +126,14 @@ public class Game1 : Game
         box2.Place().OnSide(Side.NorthWest);
         box2.MainColor = Color.Yellow;
 
-        var fireplace = new ElectricFireplace(simpleRoom);
-        fireplace.Place().OnFloor();
-        fireplace.Place().OnSide(Side.North);
+        //var fireplace = new ElectricFireplace(simpleRoom);
+        //fireplace.Place().OnFloor();
+        //fireplace.Place().OnSide(Side.North);
+
+        var testShape = new FaceCutoutTest();
+        simpleRoom.AddChild(testShape);
+        testShape.Place().OnFloor();
+        testShape.Y += 1.0f;
 
         //var sponge = new MengerSponge(new ShapeSplitter());
         //simpleRoom.AddChild(sponge);
@@ -136,7 +142,7 @@ public class Game1 : Game
         //sponge.MainColor = Color.Purple;
 
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(simpleRoom, GraphicsDevice, qualityLevel: (QualityLevel)4);
+        var buffers = builder.Build(simpleRoom, GraphicsDevice, qualityLevel: (QualityLevel)8);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;

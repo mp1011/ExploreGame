@@ -1,77 +1,127 @@
 ﻿using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using System;
 
-namespace ExploringGame.GeometryBuilder.Shapes
+namespace ExploringGame.GeometryBuilder.Shapes;
+
+/// <summary>
+/// FireplaceTop
+/// FireplaceBottom
+///     FirePlaceMiddleShelf
+///     FirePlaceLower
+/// </summary>
+class ElectricFireplace : Shape
 {
-    class ElectricFireplace : Shape
+    public const float TopShelfHeight = 0.1f;
+    public const float TopShelfOverhang = 0.05f;
+    public const float MiddleShelfHeight = 0.3f;
+    
+    public const float MiddleShelfSide = 0.1f;
+    public const float MiddleShelfTop = 0.1f;
+    public const float MiddleShelfBottom = 0.1f;
+
+    public override ViewFrom ViewFrom =>  ViewFrom.Outside;
+
+    public ElectricFireplace(Shape parent)
     {
-        public const float TopShelfHeight = 0.1f;
-        public const float TopShelfOverhang = 0.05f;
+        parent.AddChild(this);
+        Width = 2.2f;
+        Depth = 0.8f;
+        Height = 1.1f;
+        MainColor = Color.SandyBrown;
+        SideColors[Side.Top] = Color.Brown;
 
-        public override ViewFrom ViewFrom =>  ViewFrom.Outside;
+        AddChild(new FireplaceTop(this));
+        AddChild(new FireplaceBottom(this));
+    }
 
-        public ElectricFireplace(Shape parent)
+    protected override Triangle[] BuildInternal(QualityLevel quality)
+    {
+        return Array.Empty<Triangle>();
+    }
+
+    /// <summary>
+    /// top shelf
+    /// </summary>
+    public class FireplaceTop : Shape
+    {
+        public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+        public FireplaceTop(ElectricFireplace firePlace)
         {
-            parent.AddChild(this);
-            Width = 2.2f;
-            Depth = 0.8f;
-            Height = 1.1f;
-            MainColor = Color.SandyBrown;
-            SideColors[Side.Top] = Color.Brown;
+            MainColor = Color.Brown;
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            return Shape.BuildMany(quality, new FireplaceTop(this), new FireplaceBottom(this));
+            this.AdjustShape().From(Parent)
+                         .SliceY(fromTop: 0.0f, height: TopShelfHeight)
+                         .AxisStretch(Axis.X | Axis.Z, TopShelfOverhang);
+            return BuildCuboid();
         }
 
-        /// <summary>
-        /// top shelf
-        /// </summary>
-        public class FireplaceTop : Shape
+    }
+
+    /// <summary>
+    /// base, drawers, fireplace, and middle shelves
+    /// </summary>
+    public class FireplaceBottom : Shape
+    {
+        public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+        public FireplaceBottom(ElectricFireplace firePlace)
         {
-            private readonly ElectricFireplace _firePlace;
-            public override ViewFrom ViewFrom => ViewFrom.Outside;
-
-            public FireplaceTop(ElectricFireplace firePlace)
-            {
-                _firePlace = firePlace;
-                firePlace.AddChild(this);
-                MainColor = Color.Brown;
-
-                this.Adjust().From(firePlace)
-                             .SliceY(fromTop: 0.0f, height: TopShelfHeight)
-                             .AxisStretch(Axis.X | Axis.Z, TopShelfOverhang);
-            }
-
-            protected override Triangle[] BuildInternal(QualityLevel quality)
-            {
-                return BuildCuboid();
-            }
-
+            MainColor = Color.SandyBrown;
+          
+            AddChild(new FirePlaceMiddleShelf(this));
+            AddChild(new FireplaceLower(this));
         }
-
-        /// <summary>
-        /// base, drawers, fireplace, and middle shelves
-        /// </summary>
-        public class FireplaceBottom : Shape
+        protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            private readonly ElectricFireplace _firePlace;
-            public override ViewFrom ViewFrom => ViewFrom.Outside;
+            this.AdjustShape().From(Parent)
+                         .SliceY(fromTop: TopShelfHeight, height: Parent.Height - TopShelfHeight);
 
-            public FireplaceBottom(ElectricFireplace firePlace)
-            {
-                _firePlace = firePlace;
-                firePlace.AddChild(this);
-                MainColor = Color.SandyBrown;
-
-                this.Adjust().From(firePlace)
-                             .SliceY(fromTop: TopShelfHeight, height: firePlace.Height - TopShelfHeight);
-            }
-            protected override Triangle[] BuildInternal(QualityLevel quality)
-            {
-                return BuildCuboid();
-            }
+            return Array.Empty<Triangle>();
         }
     }
+
+
+    public class FirePlaceMiddleShelf : Shape
+    {
+        public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+        public FirePlaceMiddleShelf(FireplaceBottom firePlace)
+        {
+            MainColor = Color.HotPink;
+        }
+
+        protected override Triangle[] BuildInternal(QualityLevel quality)
+        {
+            this.AdjustShape().From(Parent)
+                         .SliceY(fromTop: 0, height: MiddleShelfHeight);
+
+            // thought, maybe shape building should be its own service?
+            var cuboid = BuildCuboid();
+            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, new Placement2D(Left: MiddleShelfSide, Right: MiddleShelfSide,
+                Bottom: MiddleShelfBottom, Top: MiddleShelfTop));
+        }
+    }
+
+    public class FireplaceLower : Shape
+    {
+        public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+        public FireplaceLower(FireplaceBottom firePlace)
+        {
+            MainColor = Color.Brown;
+        }
+
+        protected override Triangle[] BuildInternal(QualityLevel quality)
+        {
+            this.AdjustShape().From(Parent)
+                         .SliceY(fromTop: MiddleShelfHeight, height: Parent.Height - MiddleShelfHeight);
+            return BuildCuboid();
+        }
+    }
+
 }

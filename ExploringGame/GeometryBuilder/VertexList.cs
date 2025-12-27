@@ -8,14 +8,16 @@ namespace ExploringGame.GeometryBuilder
 {
     internal class VertexList
     {
-        public VertexPositionColor[] Array { get; }
+        public VertexPositionColorTexture[] Array { get; }
         private Dictionary<(Vector3, Color), int> _indexCache = new();
 
         public VertexList(IEnumerable<Triangle> triangles)
         {
+            var rng = new Random();
             Array = triangles.SelectMany(t =>
             {
-                return t.Vertices.Select(v => new VertexPositionColor(v, t.Color));
+                var tx = new Vector2((float)rng.NextDouble(), (float)rng.NextDouble());
+                return t.Vertices.Select(v => new VertexPositionColorTexture(v, t.Color, tx));
             }).ToArray();
 
             for(int i = 0; i < Array.Length; i++)

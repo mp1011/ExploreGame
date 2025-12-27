@@ -13,7 +13,7 @@ public class VertexBufferBuilder
         var triangles = master.Build(qualityLevel);
         var vertices = new VertexList(triangles);
 
-        var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColor), vertices.Length, BufferUsage.WriteOnly);
+        var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), vertices.Length, BufferUsage.WriteOnly);
         vb.SetData(vertices.Array);
 
         int[] indices = BuildIndices(triangles, vertices);

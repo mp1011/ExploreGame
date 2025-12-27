@@ -94,10 +94,12 @@ public abstract class Shape
     {
         return side switch
         {
-            Side.North => Position.Z + Size.Z / 2f,
-            Side.South => Position.Z - Size.Z / 2f,
+            Side.North => Position.Z - Size.Z / 2f,
+            Side.South => Position.Z + Size.Z / 2f,
             Side.West => Position.X - Size.X / 2f,
             Side.East => Position.X + Size.X / 2f,
+            Side.Top => Position.Y + Size.Y / 2f,
+            Side.Bottom => Position.Y - Size.Y / 2f,
             _ => throw new ArgumentException("Only singular sides can be used")
         };
     }
@@ -107,10 +109,10 @@ public abstract class Shape
         switch(side)
         {
             case Side.North:
-                Z = value - Size.Z / 2f;
+                Z = value + Size.Z / 2f;
                 return;
             case Side.South:
-                Z = value + Size.Z / 2f;
+                Z = value - Size.Z / 2f;
                 return;
             case Side.West:
                 X = value + Size.X / 2f;
@@ -118,13 +120,56 @@ public abstract class Shape
             case Side.East:
                 X = value - Size.X / 2f;
                 return;
+            case Side.Top:
+                Y = value - Size.Y / 2f;
+                return;
+            case Side.Bottom:
+                Y = value + Size.Y / 2f;
+                return;
             default:
                 throw new ArgumentException("Only singular sides can be used");
         }
     }
 
+    public void SetSideUnanchored(Side side, float value)
+    {       
+        var currentOpposite = GetSide(side.Opposite());
+        SetSide(side, value);
+
+        var oppDelta = GetSide(side.Opposite()) - currentOpposite;
+
+        switch(side)
+        {
+            case Side.North:
+                Depth -= oppDelta;
+                break;
+            case Side.South:
+                Depth += oppDelta;
+                break;
+            case Side.West:
+                Width -= oppDelta;
+                break;
+            case Side.East:
+                Width += oppDelta;
+                break;
+            case Side.Top:
+                Height += oppDelta;
+                break;
+            case Side.Bottom:
+                Height -= oppDelta;
+                break;
+            default:
+                throw new System.ArgumentException("invalid side");
+        }
+
+        SetSide(side, value);
+    }
+
     public void AddChild(Shape child)
     {
+        if (child.Parent == this)
+            return;
+
         child.Parent = this;
         _children.Add(child);
     }
@@ -142,13 +187,15 @@ public abstract class Shape
 
     #region Build
 
-    public static Triangle[] BuildMany(QualityLevel quality, params Shape[] shapes)
+    protected virtual void BeforeBuild()
     {
-        return shapes.SelectMany(p => p.Build(quality)).ToArray();
+
     }
 
     public Triangle[] Build(QualityLevel quality)
     {
+        BeforeBuild();
+
         if (quality == QualityLevel.DoNotRender)
             return Array.Empty<Triangle>();
         else if (quality == QualityLevel.CuboidOnly)
@@ -187,28 +234,28 @@ public abstract class Shape
         List<Triangle> triangles = new();
 
         //floor
-        triangles.Add(new Triangle(corners[0], corners[1], corners[2], ColorForSide(Side.Bottom)));
-        triangles.Add(new Triangle(corners[2], corners[3], corners[0], ColorForSide(Side.Bottom)));
+        triangles.Add(new Triangle(corners[0], corners[1], corners[2], ColorForSide(Side.Bottom), Side.Bottom));
+        triangles.Add(new Triangle(corners[2], corners[3], corners[0], ColorForSide(Side.Bottom), Side.Bottom));
 
         //ceiling
-        triangles.Add(new Triangle(corners[6], corners[5], corners[4], ColorForSide(Side.Top)));
-        triangles.Add(new Triangle(corners[4], corners[7], corners[6], ColorForSide(Side.Top)));
+        triangles.Add(new Triangle(corners[6], corners[5], corners[4], ColorForSide(Side.Top), Side.Top));
+        triangles.Add(new Triangle(corners[4], corners[7], corners[6], ColorForSide(Side.Top), Side.Top));
 
         // wall(min z)
-        triangles.Add(new Triangle(corners[5], corners[1], corners[0], ColorForSide(Side.South)));
-        triangles.Add(new Triangle(corners[0], corners[4], corners[5], ColorForSide(Side.South)));
+        triangles.Add(new Triangle(corners[5], corners[1], corners[0], ColorForSide(Side.North), Side.North));
+        triangles.Add(new Triangle(corners[0], corners[4], corners[5], ColorForSide(Side.North), Side.North));
 
         //wall (max z)
-        triangles.Add(new Triangle(corners[6], corners[3], corners[2], ColorForSide(Side.North)));
-        triangles.Add(new Triangle(corners[6], corners[7], corners[3], ColorForSide(Side.North)));
+        triangles.Add(new Triangle(corners[6], corners[3], corners[2], ColorForSide(Side.South), Side.South));
+        triangles.Add(new Triangle(corners[6], corners[7], corners[3], ColorForSide(Side.South), Side.South));
 
         //wall (min x)
-        triangles.Add(new Triangle(corners[0], corners[3], corners[7], ColorForSide(Side.West)));
-        triangles.Add(new Triangle(corners[7], corners[4], corners[0], ColorForSide(Side.West)));
+        triangles.Add(new Triangle(corners[0], corners[3], corners[7], ColorForSide(Side.West), Side.West));
+        triangles.Add(new Triangle(corners[7], corners[4], corners[0], ColorForSide(Side.West), Side.West));
 
         //wall (max x)
-        triangles.Add(new Triangle(corners[5], corners[2], corners[1], ColorForSide(Side.East)));
-        triangles.Add(new Triangle(corners[5], corners[6], corners[2], ColorForSide(Side.East)));
+        triangles.Add(new Triangle(corners[5], corners[2], corners[1], ColorForSide(Side.East), Side.East));
+        triangles.Add(new Triangle(corners[5], corners[6], corners[2], ColorForSide(Side.East), Side.East));
         
         if(ViewFrom == ViewFrom.Outside)
         {
