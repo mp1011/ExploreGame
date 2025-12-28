@@ -23,6 +23,20 @@ public static class VectorExtensions
         return sum / points.Count();
     }
 
+    public static Vector2 As2D(this Vector3 vector, Side side)
+    {
+        return side switch
+        {
+            Side.South => new Vector2(vector.X, vector.Y),
+            Side.North => new Vector2(vector.X, vector.Y),
+            Side.West => new Vector2(vector.Z, vector.Y),
+            Side.East => new Vector2(vector.Z, vector.Y),
+            Side.Top => new Vector2(vector.X, vector.Z),
+            Side.Bottom => new Vector2(vector.X, vector.Z),
+            _ => throw new System.ArgumentException("invalid side")
+        };
+    }
+
     public static Vector2 Project(this Vector3 p, Vector3 O, Vector3 U, Vector3 V)
     {
         Vector3 d = p - O;
@@ -101,5 +115,88 @@ public static class VectorExtensions
             (float)(point.X + delta * Math.Cos(angle)),
             (float)(point.Y + delta * Math.Sin(angle))
         );
+    }
+
+    public static float SquaredDistance(this Vector3 a, Vector3 b)
+    {
+        Vector3 delta = a - b;
+        return delta.X * delta.X + delta.Y * delta.Y + delta.Z * delta.Z;
+    }
+
+    public static Vector2 RelativeUnitPosition(this Vector2 C, Vector2 A, Vector2 B)
+    {
+        var width = B.X - A.X;
+        var height = B.Y - A.Y;
+
+        return new Vector2((C.X - A.X) / width, (C.Y - A.Y) / height);
+    }
+
+    public static (Vector3, Vector3) GetBoundingBoxCorners(this Vector3[] verts, Side side)
+    {
+        if (!verts.Any())
+            return (Vector3.Zero, Vector3.Zero);
+
+        Vector3 boundingTopLeft, boundingBottomRight;
+        switch (side)
+        {
+            case Side.South:
+                boundingTopLeft = new Vector3(verts.Min(p => p.X),
+                                              verts.Max(p => p.Y),
+                                              verts.Average(p => p.Z));
+
+                boundingBottomRight = new Vector3(verts.Max(p => p.X),
+                                                  verts.Min(p => p.Y),
+                                                  verts.Average(p => p.Z));
+                break;
+            case Side.North:
+                boundingTopLeft = new Vector3(verts.Max(p => p.X),
+                                              verts.Max(p => p.Y),
+                                              verts.Average(p => p.Z));
+
+                boundingBottomRight = new Vector3(verts.Min(p => p.X),
+                                                  verts.Min(p => p.Y),
+                                                  verts.Average(p => p.Z));
+                break;
+            case Side.West:
+                boundingTopLeft = new Vector3(verts.Average(p => p.X),
+                                              verts.Max(p => p.Y),
+                                              verts.Min(p => p.Z));
+
+                boundingBottomRight = new Vector3(verts.Average(p => p.X),
+                                                  verts.Min(p => p.Y),
+                                                  verts.Max(p => p.Z));
+                break;
+            case Side.East:
+                boundingTopLeft = new Vector3(verts.Average(p => p.X),
+                                              verts.Max(p => p.Y),
+                                              verts.Max(p => p.Z));
+
+                boundingBottomRight = new Vector3(verts.Average(p => p.X),
+                                                  verts.Min(p => p.Y),
+                                                  verts.Min(p => p.Z));
+                break;
+            case Side.Top:
+                boundingTopLeft = new Vector3(verts.Min(p => p.X),
+                                              verts.Average(p => p.Y),
+                                              verts.Min(p => p.Z));
+
+                boundingBottomRight = new Vector3(verts.Max(p => p.X),
+                                                  verts.Average(p => p.Y),
+                                                  verts.Max(p => p.Z));
+                break;
+            case Side.Bottom:
+                boundingTopLeft = new Vector3(verts.Max(p => p.X),
+                                              verts.Average(p => p.Y),
+                                              verts.Min(p => p.Z));
+
+                boundingBottomRight = new Vector3(verts.Min(p => p.X),
+                                                  verts.Average(p => p.Y),
+                                                  verts.Max(p => p.Z));
+                break;
+            default:
+                throw new ArgumentException("invalid side");
+        }
+
+        return (boundingTopLeft, boundingBottomRight);
     }
 }

@@ -126,6 +126,13 @@ public class ShapeAdjuster
         return this;
     }
 
+    public ShapeAdjuster SliceX(float fromWest, float width)
+    {
+        _shape.SetSide(Side.West, _shape.GetSide(Side.West) + fromWest);
+        _shape.SetSideUnanchored(Side.East, _shape.GetSide(Side.West) + width);
+        return this;
+    }
+
     /// <summary>
     /// Adds an amount to each side, preserving the center
     /// </summary>
@@ -136,19 +143,16 @@ public class ShapeAdjuster
     {
         if(axis.HasFlag(Axis.X))
         {
-            _shape.X -= add / 2f;
             _shape.Width += add;
         }
 
         if (axis.HasFlag(Axis.Y))
         {
-            _shape.Y -= add / 2f;
             _shape.Height += add;
         }
 
         if (axis.HasFlag(Axis.Z))
         {
-            _shape.Z -= add / 2f;
             _shape.Depth += add;
         }
 

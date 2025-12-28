@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExploringGame.Extensions;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -14,17 +15,64 @@ namespace ExploringGame.GeometryBuilder
         public VertexList(IEnumerable<Triangle> triangles)
         {
             var rng = new Random();
-            Array = triangles.SelectMany(t =>
-            {
-                var tx = new Vector2((float)rng.NextDouble(), (float)rng.NextDouble());
-                return t.Vertices.Select(v => new VertexPositionColorTexture(v, t.Color, tx));
-            }).ToArray();
+
+            List<VertexPositionColorTexture> vertices = new();
+            vertices.AddRange(CreateVertices(Side.West, triangles));
+            vertices.AddRange(CreateVertices(Side.North, triangles));
+            vertices.AddRange(CreateVertices(Side.East, triangles));
+            vertices.AddRange(CreateVertices(Side.South, triangles));
+            vertices.AddRange(CreateVertices(Side.Top, triangles));
+            vertices.AddRange(CreateVertices(Side.Bottom, triangles));
+
+            Array = vertices.ToArray();
 
             for(int i = 0; i < Array.Length; i++)
             {
                 var key = (Array[i].Position, Array[i].Color);
                 _indexCache[key] = i;                
             }
+        }
+
+        private IEnumerable<VertexPositionColorTexture> CreateVertices(Side side, IEnumerable<Triangle> triangles)
+        {
+            var sideTriangles = triangles.Where(p => p.Side == side).ToArray();
+
+            var cornerVertices = GetCornerVertices(side, sideTriangles);
+
+            return triangles.Where(p => p.Side == side).SelectMany(t =>
+            {
+                return t.Vertices.Select(v => new VertexPositionColorTexture(v, t.Color, 
+                    CalcTextureCoordinates(side, v, cornerVertices.Item1, cornerVertices.Item2)));
+            }).ToArray();
+
+        }
+
+        /// <summary>
+        /// Returns the two vertices which should have 0,0 and 1,1 texture coordinates
+        /// </summary>
+        /// <param name="side"></param>
+        /// <param name="sideTriangles"></param>
+        /// <returns></returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        private (Vector3, Vector3) GetCornerVertices(Side side, IEnumerable<Triangle> sideTriangles)
+        {
+            if(!sideTriangles.Any())
+                return (Vector3.Zero, Vector3.Zero);
+
+            var verts = sideTriangles.SelectMany(p => p.Vertices).ToArray();
+            var boundingBoxCorners = verts.GetBoundingBoxCorners(side);
+
+            return (verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item1)).First(),
+                    verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
+        }
+
+        public Vector2 CalcTextureCoordinates(Side side, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+        {
+            var position2d = position.As2D(side);
+            var topLeftCorner2d = topLeftCorner.As2D(side);
+            var bottomRightCorner2d = bottomRightCorner.As2D(side);
+
+            return position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);        
         }
 
         public int Length => Array.Length;

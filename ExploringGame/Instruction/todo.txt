@@ -1,10 +1,1 @@
-FaceCutoutTest
-[ ] cutout on N,S,E,W side
-
-
-make anchored/unanchored properties for NSEW
-
-SetSideUnanchored?
-
-use shape adjuster?+
-
+[ ] proper texture coordinates

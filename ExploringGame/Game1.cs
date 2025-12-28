@@ -25,7 +25,7 @@ public class Game1 : Game
     private Vector3 _cameraPosition = new Vector3(0, 1.5f, 0);
     private float _yaw = 0f, _pitch = 0.1f;
     private MouseState _prevMouse;
-    private Texture2D _roughGrayTexture;
+    private Texture2D _woodTexture;
     private Effect _pointLightEffect;
     private HeadBob _headBob = new HeadBob();
     private SpriteFont _debugFont;
@@ -51,20 +51,7 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // Generate a random rough gray texture
-        int texSize = 64;
-        Color[] texData = new Color[texSize * texSize];
-        Random rand = new Random();
-        for (int y = 0; y < texSize; y++)
-        {
-            for (int x = 0; x < texSize; x++)
-            {
-                int gray = 100 + rand.Next(80); // 100-179
-                texData[y * texSize + x] = new Color(gray, gray, gray);
-            }
-        }
-        _roughGrayTexture = new Texture2D(GraphicsDevice, texSize, texSize);
-        _roughGrayTexture.SetData(texData);
+        _woodTexture = Content.Load<Texture2D>("wood");
 
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
@@ -92,10 +79,23 @@ public class Game1 : Game
         _pointLightEffect.Parameters["LightColor"].SetValue(new Vector3(1f, 1f, 1f)); // White light
         _pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness
         _pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
-        _pointLightEffect.Parameters["Texture"].SetValue(_roughGrayTexture);
+        _pointLightEffect.Parameters["Texture"].SetValue(_woodTexture);
     }
 
-    private void SetBuffers()
+    private Shape CreateMainShape()
+    {
+        return RoomWithFireplace();       
+    }
+
+    private Shape SingleFaceTest()
+    {
+        var faceTest = new SingleFaceTest(Side.South);
+        faceTest.Y = 2.0f;
+        faceTest.Z = -1.0f;
+        return faceTest;
+    }
+
+    private Shape RoomWithFireplace()
     {
         var simpleRoom = new SimpleRoom();
         simpleRoom.Width = 16f;
@@ -106,7 +106,6 @@ public class Game1 : Game
         simpleRoom.SideColors[Side.Top] = Color.White;
         simpleRoom.SideColors[Side.Bottom] = Color.Green;
         simpleRoom.MainColor = Color.Orange;
-
 
         var box = new Box();
         simpleRoom.AddChild(box);
@@ -126,23 +125,58 @@ public class Game1 : Game
         box2.Place().OnSide(Side.NorthWest);
         box2.MainColor = Color.Yellow;
 
-        //var fireplace = new ElectricFireplace(simpleRoom);
-        //fireplace.Place().OnFloor();
-        //fireplace.Place().OnSide(Side.North);
+        var fireplace = new ElectricFireplace(simpleRoom);
+        fireplace.Place().OnFloor();
+        fireplace.Place().OnSide(Side.North);
+
+        return simpleRoom;
+    }
+
+    private Shape FaceCutoutTestRoom()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideColors[Side.Top] = Color.White;
+        simpleRoom.SideColors[Side.Bottom] = Color.Green;
+        simpleRoom.MainColor = Color.Orange;
 
         var testShape = new FaceCutoutTest();
         simpleRoom.AddChild(testShape);
         testShape.Place().OnFloor();
         testShape.Y += 1.0f;
+        return simpleRoom;
+    }
 
-        //var sponge = new MengerSponge(new ShapeSplitter());
-        //simpleRoom.AddChild(sponge);
-        //sponge.Size = new Vector3(3f, 3f, 3f);
-        //sponge.Place().OnFloor();
-        //sponge.MainColor = Color.Purple;
+    private Shape MengerSpongeRoom()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideColors[Side.Top] = Color.White;
+        simpleRoom.SideColors[Side.Bottom] = Color.Green;
+        simpleRoom.MainColor = Color.Orange;
+
+        var sponge = new MengerSponge(new ShapeSplitter());
+        simpleRoom.AddChild(sponge);
+        sponge.Size = new Vector3(3f, 3f, 3f);
+        sponge.Place().OnFloor();
+        sponge.MainColor = Color.Purple;
+        return simpleRoom;
+    }
+
+    private void SetBuffers()
+    {
+        var shape = CreateMainShape();
 
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(simpleRoom, GraphicsDevice, qualityLevel: (QualityLevel)8);
+        var buffers = builder.Build(shape, GraphicsDevice, qualityLevel: (QualityLevel)8);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;
