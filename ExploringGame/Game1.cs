@@ -17,6 +17,9 @@ public class Game1 : Game
     private Player _player;
     private PlayerMotion _playerMotion;
     private HeadBob _headBob;
+    private EntityCollider _playerCollider;
+
+    private Shape _mainShape;
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -43,14 +46,17 @@ public class Game1 : Game
     {
         // Set up projection
         _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
-        base.Initialize();
-
-        _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
-        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
         _headBob = new HeadBob();
         _player = new Player();
         _playerMotion = new PlayerMotion(_player, _headBob);
+        _mainShape = CreateMainShape();
+        _playerCollider = new EntityCollider { Entity = _player, CurrentRoom = _mainShape };
+
+        base.Initialize();
+
+        _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
+        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
     }
 
     protected override void LoadContent()
@@ -198,11 +204,9 @@ public class Game1 : Game
     }
 
     private void SetBuffers()
-    {
-        var shape = CreateMainShape();
-
+    {        
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(shape, _basementTextures, GraphicsDevice, qualityLevel: (QualityLevel)8);
+        var buffers = builder.Build(_mainShape, _basementTextures, GraphicsDevice, qualityLevel: (QualityLevel)8);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;
@@ -218,6 +222,8 @@ public class Game1 : Game
             return;
 
         _playerMotion.Update(gameTime, Window);
+        _playerCollider.Update();
+
         _view = _player.CreateViewMatrix();
 
         base.Update(gameTime);

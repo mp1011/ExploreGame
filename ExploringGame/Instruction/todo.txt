@@ -1,4 +1,4 @@
-[ ] refactor movement out of Game1
+[x] refactor movement out of Game1
 [ ] basic collision with walls
 [ ] basic collision with obstacles
 [ ] floor height differences (player aware of current room)
