@@ -67,20 +67,20 @@ public class Game1 : Game
         // Use BasicEffect with texture
         _effect = new BasicEffect(GraphicsDevice)
         {
-            TextureEnabled = false,
+            TextureEnabled = true,
             VertexColorEnabled = true,
             LightingEnabled = true,
             PreferPerPixelLighting = true
         };
-        //  _effect.AmbientLightColor = new Vector3(0.08f, 0.08f, 0.08f); // Very low ambient
         _effect.AmbientLightColor = new Vector3(0.38f, 0.38f, 0.38f); // Very low ambient
         _effect.DirectionalLight0.Enabled = false;
+        _effect.Texture = _basementTextures.Texture;
 
 
         _pointLightEffect = Content.Load<Effect>("PointLightEffect");
 
         // Set up point light parameters
-        Vector3 lightPos = new Vector3(0, 4, 0); // Center of ceiling
+        Vector3 lightPos = new Vector3(0, 3, 0); // Center of ceiling
         _pointLightEffect.Parameters["LightPosition"].SetValue(lightPos);
         _pointLightEffect.Parameters["LightColor"].SetValue(new Vector3(1f, 1f, 1f)); // White light
         _pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness
@@ -101,6 +101,21 @@ public class Game1 : Game
         return faceTest;
     }
 
+    private Shape EmptyRoom()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        return simpleRoom;
+    }
+
+
     private Shape RoomWithFireplace()
     {
         var simpleRoom = new SimpleRoom();
@@ -111,7 +126,7 @@ public class Game1 : Game
 
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
         var box = new Box();
         simpleRoom.AddChild(box);
@@ -256,7 +271,15 @@ public class Game1 : Game
 
         //_effect.World = Matrix.Identity;
         //_effect.View = _view;
-       // _effect.Projection = _projection;
+        //_effect.Projection = _projection;
+        //foreach (var pass in _effect.CurrentTechnique.Passes)
+        //{
+        //    pass.Apply();
+        //    GraphicsDevice.SetVertexBuffer(_roomBuffer);
+        //    GraphicsDevice.Indices = _roomIndices;
+        //    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _triangleCount);
+        //}
+
         _pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
         _pointLightEffect.Parameters["View"].SetValue(_view);
         _pointLightEffect.Parameters["Projection"].SetValue(_projection);
