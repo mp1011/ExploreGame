@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
@@ -13,6 +14,10 @@ namespace ExploringGame;
 
 public class Game1 : Game
 {
+    private Player _player;
+    private PlayerMotion _playerMotion;
+    private HeadBob _headBob;
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -23,12 +28,8 @@ public class Game1 : Game
     private int _triangleCount;
     private Matrix _view;
     private Matrix _projection;
-    private Vector3 _cameraPosition = new Vector3(0, 1.5f, 0);
-    private float _yaw = 0f, _pitch = 0.1f;
-    private MouseState _prevMouse;
     private TextureSheet _basementTextures;
     private Effect _pointLightEffect;
-    private HeadBob _headBob = new HeadBob();
     private SpriteFont _debugFont;
 
     public Game1()
@@ -46,6 +47,10 @@ public class Game1 : Game
 
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+        _headBob = new HeadBob();
+        _player = new Player();
+        _playerMotion = new PlayerMotion(_player, _headBob);
     }
 
     protected override void LoadContent()
@@ -209,60 +214,14 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        // Camera movement
-        var k = Keyboard.GetState();
-        float speed = 0.1f;
-        Vector3 forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(_yaw, 0, 0));
-        Vector3 right = Vector3.Transform(Vector3.Right, Matrix.CreateFromYawPitchRoll(_yaw, 0, 0));
-        Vector3 nextPosition = _cameraPosition;
-        if (k.IsKeyDown(Keys.W)) nextPosition += forward * speed;
-        if (k.IsKeyDown(Keys.S)) nextPosition -= forward * speed;
-        if (k.IsKeyDown(Keys.A)) nextPosition -= right * speed;
-        if (k.IsKeyDown(Keys.D)) nextPosition += right * speed;
+        if (!IsActive)
+            return;
 
-        // should have a "current speed" of player and not check keys directly
-        bool isMoving = k.IsKeyDown(Keys.W) || k.IsKeyDown(Keys.A) || k.IsKeyDown(Keys.S) || k.IsKeyDown(Keys.D);
-
-        nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
-
-       
-
-        //// Clamp camera position to stay inside the room (with margin)
-        //float margin = 0.2f; // Prevents camera from touching walls
-        //var width = 16f; var height = 4f; var depth = 8f;
-        //var hw = width / 2 - margin;
-        //var hd = depth / 2 - margin;
-        //// Clamp X and Z
-        //nextPosition.X = MathHelper.Clamp(nextPosition.X, -hw, hw);
-        //nextPosition.Z = MathHelper.Clamp(nextPosition.Z, -hd, hd);
-        //// Clamp Y (optional, but keep camera above floor and below ceiling)
-        //nextPosition.Y = MathHelper.Clamp(nextPosition.Y, 0.2f, height - 0.2f);
-        _cameraPosition = nextPosition;
-
-        // Mouse look
-        var mouse = Mouse.GetState();
-        if (!_firstMouse && IsActive)
-        {
-            var delta = mouse.Position - _prevMouse.Position;
-            _yaw -= delta.X * 0.01f;
-            _pitch -= delta.Y * 0.01f;
-            _pitch = MathHelper.Clamp(_pitch, -MathHelper.PiOver2 + 0.1f, MathHelper.PiOver2 - 0.1f);
-            Mouse.SetPosition(Window.ClientBounds.Width / 2, Window.ClientBounds.Height / 2);
-            _prevMouse = Mouse.GetState();
-        }
-        else
-        {
-            _firstMouse = false;
-            _prevMouse = mouse;
-        }
-
-        // Update view matrix
-        var lookDir = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(_yaw, _pitch, 0));
-        _view = Matrix.CreateLookAt(_cameraPosition, _cameraPosition + lookDir, Vector3.Up);
+        _playerMotion.Update(gameTime, Window);
+        _view = _player.CreateViewMatrix();
 
         base.Update(gameTime);
     }
-    private bool _firstMouse = true;
 
     protected override void Draw(GameTime gameTime)
     {       
@@ -294,9 +253,9 @@ public class Game1 : Game
 
         // Draw debug information
         _spriteBatch.Begin();
-        _spriteBatch.DrawString(_debugFont, "Position: " + _cameraPosition.ToString(), new Vector2(10, 10), Color.White);
-        _spriteBatch.DrawString(_debugFont, "Yaw: " + _yaw.ToString(), new Vector2(10, 30), Color.White);
-        _spriteBatch.DrawString(_debugFont, "Pitch: " + _pitch.ToString(), new Vector2(10, 50), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Position: " + _player.Position.ToString(), new Vector2(10, 10), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString(), new Vector2(10, 30), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString(), new Vector2(10, 50), Color.White);
         _spriteBatch.End();
 
         base.Draw(gameTime);

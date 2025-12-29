@@ -17,7 +17,7 @@ public enum QualityLevel
     Basic = 2
 }
 
-public record Rotation(float Pitch, float Yaw, float Roll);
+public record Rotation(float Yaw, float Pitch, float Roll);
 
 public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)
 {
