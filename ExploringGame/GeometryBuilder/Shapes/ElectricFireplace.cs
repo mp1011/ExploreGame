@@ -43,7 +43,7 @@ class ElectricFireplace : Shape
 
     public const float FooterHeight = 0.1f;
 
-
+    public override bool CollisionEnabled => true;
     public override ViewFrom ViewFrom =>  ViewFrom.Outside;
 
     public ElectricFireplace(Shape parent)

@@ -1,5 +1,5 @@
 [x] refactor movement out of Game1
-[ ] basic collision with walls
+[x] basic collision with walls
 [ ] basic collision with obstacles
 [ ] floor height differences (player aware of current room)
 [ ] connecting rooms (remove face on overlap)

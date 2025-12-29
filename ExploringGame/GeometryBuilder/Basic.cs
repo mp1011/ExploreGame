@@ -40,3 +40,15 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
 }
 
 public record Placement2D(float Left, float Top, float Right, float Bottom);
+
+public record RectangleF(float Left, float Top, float Width, float Height)
+{
+    public float Right => Left + Width;
+    public float Bottom => Top + Height;
+
+    public bool Contains(Vector2 point)
+    {
+        return point.X >= Left && point.X <= Right &&
+               point.Y >= Top && point.Y <= Bottom;
+    }
+}

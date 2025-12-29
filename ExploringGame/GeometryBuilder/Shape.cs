@@ -9,6 +9,8 @@ namespace ExploringGame.GeometryBuilder;
 
 public abstract class Shape
 {
+    public virtual bool CollisionEnabled => false;
+
     public Shape? Parent { get; private set; }
 
     private List<Shape> _children = new();
@@ -185,6 +187,20 @@ public abstract class Shape
             return c;
         else
             return MainTexture;
+    }
+
+    public Shape[] TraverseAllChildren()
+    {
+        List<Shape> shapes = new List<Shape>();
+        TraverseAllChildren(shapes);
+        return shapes.ToArray();
+    }
+
+    private void TraverseAllChildren(List<Shape> shapes)
+    {
+        shapes.Add(this);
+        foreach (var child in Children)
+            child.TraverseAllChildren(shapes);
     }
 
     #region Build
