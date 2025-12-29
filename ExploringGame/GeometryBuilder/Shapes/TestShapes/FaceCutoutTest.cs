@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -18,10 +19,10 @@ class FaceCutoutTest : Shape
         Height = 1.0f;
         Depth = 1.0f;
 
-        SideColors[Side.North] = Color.Gray;
-        SideColors[Side.South] = Color.Pink;
-        SideColors[Side.West] = Color.Red;
-        SideColors[Side.East] = Color.Green;
+        SideTextures[Side.North] = new TextureInfo(Color.Gray);
+        SideTextures[Side.South] = new TextureInfo(Color.Pink);
+        SideTextures[Side.West] = new TextureInfo(Color.Red);
+        SideTextures[Side.East] = new TextureInfo(Color.Green);
 
         _cutoutPlacement = new Placement2D(Left: 0.3f, Right: 0.1f, Bottom: 0.1f, Top: 0.1f);
 

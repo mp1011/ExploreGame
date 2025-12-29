@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.TestShapes;
@@ -9,8 +10,8 @@ public class SingleFaceTest : Shape
 
     public SingleFaceTest(Side side)
     {
-        MainColor = Color.Transparent;
-        SideColors[side] = Color.White;
+        MainTexture = new TextureInfo(Color.Transparent);
+        SideTextures[side] = new TextureInfo(TextureKey.Wood);
 
         Width = 1.0f;
         Height = 1.0f;
@@ -21,6 +22,6 @@ public class SingleFaceTest : Shape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return BuildCuboid().Where(p => p.Color != Color.Transparent).ToArray();
+        return BuildCuboid().Where(p => p.TextureInfo.Color != Color.Transparent).ToArray();
     }
 }

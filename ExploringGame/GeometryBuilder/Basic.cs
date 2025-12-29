@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace ExploringGame.GeometryBuilder;
@@ -18,9 +19,9 @@ public enum QualityLevel
 
 public record Rotation(float Pitch, float Yaw, float Roll);
 
-public record Triangle(Vector3 A, Vector3 B, Vector3 C, Color Color, Side Side)
+public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)
 {
-    public Triangle Invert() => new Triangle(C, B, A, Color, Side);
+    public Triangle Invert() => new Triangle(C, B, A, TextureInfo, Side);
 
     public IEnumerable<Vector3> Vertices
     {

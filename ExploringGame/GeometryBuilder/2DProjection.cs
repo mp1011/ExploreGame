@@ -79,7 +79,7 @@ public class Triangle2D
             A: A.Unproject(faceOrigin, faceBasis.U, faceBasis.V),
             B: B.Unproject(faceOrigin, faceBasis.U, faceBasis.V),
             C: C.Unproject(faceOrigin, faceBasis.U, faceBasis.V),
-            Color: Original.Color,
+            TextureInfo: Original.TextureInfo,
             Side: Original.Side);
     }
 

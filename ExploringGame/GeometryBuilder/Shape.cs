@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,9 @@ public abstract class Shape
     public Vector3 Position { get; set; }
     public Vector3 Size { get; set; }
 
-    public Color MainColor { get; set; }
+    public TextureInfo MainTexture { get; set; }
 
-    public Dictionary<Side, Color> SideColors { get; } = new Dictionary<Side, Color>();
+    public Dictionary<Side, TextureInfo> SideTextures { get; } = new Dictionary<Side, TextureInfo>();
 
     public float X
     {
@@ -177,13 +178,13 @@ public abstract class Shape
 
     public Rotation Rotation { get; set; }
 
-    public Color ColorForSide(Side side)
+    public TextureInfo TextureInfoForSide(Side side)
     {
-        Color c;
-        if (SideColors.TryGetValue(side, out c))
+        TextureInfo c;
+        if (SideTextures.TryGetValue(side, out c))
             return c;
         else
-            return MainColor;
+            return MainTexture;
     }
 
     #region Build
@@ -242,28 +243,28 @@ public abstract class Shape
         List<Triangle> triangles = new();
 
         //floor
-        triangles.Add(new Triangle(corners[0], corners[1], corners[2], ColorForSide(Side.Bottom), Side.Bottom));
-        triangles.Add(new Triangle(corners[2], corners[3], corners[0], ColorForSide(Side.Bottom), Side.Bottom));
+        triangles.Add(new Triangle(corners[0], corners[1], corners[2], TextureInfoForSide(Side.Bottom), Side.Bottom));
+        triangles.Add(new Triangle(corners[2], corners[3], corners[0], TextureInfoForSide(Side.Bottom), Side.Bottom));
 
         //ceiling
-        triangles.Add(new Triangle(corners[6], corners[5], corners[4], ColorForSide(Side.Top), Side.Top));
-        triangles.Add(new Triangle(corners[4], corners[7], corners[6], ColorForSide(Side.Top), Side.Top));
+        triangles.Add(new Triangle(corners[6], corners[5], corners[4], TextureInfoForSide(Side.Top), Side.Top));
+        triangles.Add(new Triangle(corners[4], corners[7], corners[6], TextureInfoForSide(Side.Top), Side.Top));
 
         // wall(min z)
-        triangles.Add(new Triangle(corners[5], corners[1], corners[0], ColorForSide(Side.North), Side.North));
-        triangles.Add(new Triangle(corners[0], corners[4], corners[5], ColorForSide(Side.North), Side.North));
+        triangles.Add(new Triangle(corners[5], corners[1], corners[0], TextureInfoForSide(Side.North), Side.North));
+        triangles.Add(new Triangle(corners[0], corners[4], corners[5], TextureInfoForSide(Side.North), Side.North));
 
         //wall (max z)
-        triangles.Add(new Triangle(corners[6], corners[3], corners[2], ColorForSide(Side.South), Side.South));
-        triangles.Add(new Triangle(corners[6], corners[7], corners[3], ColorForSide(Side.South), Side.South));
+        triangles.Add(new Triangle(corners[6], corners[3], corners[2], TextureInfoForSide(Side.South), Side.South));
+        triangles.Add(new Triangle(corners[6], corners[7], corners[3], TextureInfoForSide(Side.South), Side.South));
 
         //wall (min x)
-        triangles.Add(new Triangle(corners[0], corners[3], corners[7], ColorForSide(Side.West), Side.West));
-        triangles.Add(new Triangle(corners[7], corners[4], corners[0], ColorForSide(Side.West), Side.West));
+        triangles.Add(new Triangle(corners[0], corners[3], corners[7], TextureInfoForSide(Side.West), Side.West));
+        triangles.Add(new Triangle(corners[7], corners[4], corners[0], TextureInfoForSide(Side.West), Side.West));
 
         //wall (max x)
-        triangles.Add(new Triangle(corners[5], corners[2], corners[1], ColorForSide(Side.East), Side.East));
-        triangles.Add(new Triangle(corners[5], corners[6], corners[2], ColorForSide(Side.East), Side.East));
+        triangles.Add(new Triangle(corners[5], corners[2], corners[1], TextureInfoForSide(Side.East), Side.East));
+        triangles.Add(new Triangle(corners[5], corners[6], corners[2], TextureInfoForSide(Side.East), Side.East));
         
         if(ViewFrom == ViewFrom.Outside)
         {

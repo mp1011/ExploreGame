@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
 using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -25,7 +26,7 @@ public class Game1 : Game
     private Vector3 _cameraPosition = new Vector3(0, 1.5f, 0);
     private float _yaw = 0f, _pitch = 0.1f;
     private MouseState _prevMouse;
-    private Texture2D _woodTexture;
+    private TextureSheet _basementTextures;
     private Effect _pointLightEffect;
     private HeadBob _headBob = new HeadBob();
     private SpriteFont _debugFont;
@@ -51,7 +52,12 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _woodTexture = Content.Load<Texture2D>("wood");
+        _basementTextures = new TextureSheet(Content.Load<Texture2D>("basement"))
+            .Add(TextureKey.Floor, left: 1753, top: 886, right: 2866, bottom: 1640)
+            .Add(TextureKey.Wall, left: 2975, top: 808, right: 4483, bottom: 2806)
+            .Add(TextureKey.Ceiling, left: 214, top: 24, right: 1523, bottom: 2008)
+            .Add(TextureKey.Wood, left: 1995, top: 80, right: 3625, bottom: 669)
+            .Add(TextureKey.None, left: 912, top: 2221, right: 922, bottom: 2231);
 
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
@@ -79,7 +85,7 @@ public class Game1 : Game
         _pointLightEffect.Parameters["LightColor"].SetValue(new Vector3(1f, 1f, 1f)); // White light
         _pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness
         _pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
-        _pointLightEffect.Parameters["Texture"].SetValue(_woodTexture);
+        _pointLightEffect.Parameters["Texture"].SetValue(_basementTextures.Texture);
     }
 
     private Shape CreateMainShape()
@@ -89,7 +95,7 @@ public class Game1 : Game
 
     private Shape SingleFaceTest()
     {
-        var faceTest = new SingleFaceTest(Side.South);
+        var faceTest = new SingleFaceTest(Side.North);
         faceTest.Y = 2.0f;
         faceTest.Z = -1.0f;
         return faceTest;
@@ -103,9 +109,9 @@ public class Game1 : Game
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
 
-        simpleRoom.SideColors[Side.Top] = Color.White;
-        simpleRoom.SideColors[Side.Bottom] = Color.Green;
-        simpleRoom.MainColor = Color.Orange;
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
 
         var box = new Box();
         simpleRoom.AddChild(box);
@@ -114,7 +120,7 @@ public class Game1 : Game
         box.Depth = 2f;
         box.Place().OnFloor();
         box.Place().OnSideInner(Side.NorthEast);
-        box.MainColor = Color.Blue;
+        box.MainTexture = new TextureInfo(Color.Blue);
 
         var box2 = new Box();
         simpleRoom.AddChild(box2);
@@ -123,7 +129,7 @@ public class Game1 : Game
         box2.Depth = 2f;
         box2.Place().OnFloor();
         box2.Place().OnSideInner(Side.NorthWest);
-        box2.MainColor = Color.Yellow;
+        box2.MainTexture = new TextureInfo(Color.Yellow);
 
         var fireplace = new ElectricFireplace(simpleRoom);
         fireplace.Place().OnFloor();
@@ -140,9 +146,9 @@ public class Game1 : Game
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
 
-        simpleRoom.SideColors[Side.Top] = Color.White;
-        simpleRoom.SideColors[Side.Bottom] = Color.Green;
-        simpleRoom.MainColor = Color.Orange;
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
 
         var testShape = new FaceCutoutTest();
         simpleRoom.AddChild(testShape);
@@ -159,15 +165,15 @@ public class Game1 : Game
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
 
-        simpleRoom.SideColors[Side.Top] = Color.White;
-        simpleRoom.SideColors[Side.Bottom] = Color.Green;
-        simpleRoom.MainColor = Color.Orange;
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
 
         var sponge = new MengerSponge(new ShapeSplitter());
         simpleRoom.AddChild(sponge);
         sponge.Size = new Vector3(3f, 3f, 3f);
         sponge.Place().OnFloor();
-        sponge.MainColor = Color.Purple;
+        sponge.MainTexture = new TextureInfo(Color.Purple);
         return simpleRoom;
     }
 
@@ -176,7 +182,7 @@ public class Game1 : Game
         var shape = CreateMainShape();
 
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(shape, GraphicsDevice, qualityLevel: (QualityLevel)8);
+        var buffers = builder.Build(shape, _basementTextures, GraphicsDevice, qualityLevel: (QualityLevel)8);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;

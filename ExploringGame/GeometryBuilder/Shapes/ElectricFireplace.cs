@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -51,8 +52,7 @@ class ElectricFireplace : Shape
         Width = MainWidth;
         Depth = MainDepth;
         Height = MainHeight;
-        MainColor = Color.SandyBrown;
-        SideColors[Side.Top] = Color.Brown;
+        MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
         AddChild(new FireplaceTop(this));
         AddChild(new FireplaceBottom(this));
@@ -72,7 +72,7 @@ class ElectricFireplace : Shape
 
         public FireplaceTop(ElectricFireplace firePlace)
         {
-            MainColor = Color.Brown;
+            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -94,8 +94,8 @@ class ElectricFireplace : Shape
 
         public FireplaceBottom(ElectricFireplace firePlace)
         {
-            MainColor = Color.SandyBrown;
-          
+            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+
             AddChild(new FirePlaceMiddleShelf(this));
             AddChild(new FireplaceLower(this));
         }
@@ -117,7 +117,7 @@ class ElectricFireplace : Shape
 
         public FirePlaceMiddleShelf(FireplaceBottom firePlace)
         {
-            MainColor = Color.HotPink;
+            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
             AddChild(new SurfaceIndent(this, Side.South, _innerShelfPlacement, MainDepth - 0.1f));
         }
@@ -147,7 +147,7 @@ class ElectricFireplace : Shape
 
         public FireplaceLower(FireplaceBottom firePlace)
         {
-            MainColor = Color.Brown;
+            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
             AddChild(new FireplaceLowerDrawer(Side.West));
             AddChild(new FireplaceLowerDrawer(Side.East));
@@ -175,7 +175,7 @@ class ElectricFireplace : Shape
         public FireplaceLowerDrawer(Side side)
         {
             Side = side;
-            MainColor = Color.Orange;
+            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
             _innerSpacePlacement = new Placement2D(LowerDrawerSideThickness, LowerDrawerSideThickness, LowerDrawerSideThickness, LowerDrawerSideThickness);
 
@@ -210,7 +210,7 @@ class ElectricFireplace : Shape
         public FireplaceDrawerDoor(Side side)
         {
             Side = side;
-            MainColor = Color.Orange;
+            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
             AddChild(new FireplaceDrawerDoorWindow(0, 0));
             AddChild(new FireplaceDrawerDoorWindow(1, 0));
@@ -218,9 +218,9 @@ class ElectricFireplace : Shape
             AddChild(new FireplaceDrawerDoorWindow(1, 1));
             AddChild(new FireplaceDrawerDoorWindow(0, 2));
             AddChild(new FireplaceDrawerDoorWindow(1, 2));
-            _xStrip = AddChild(new Box { MainColor = Color.Brown });
-            _yStrip1 = AddChild(new Box { MainColor = Color.Brown });
-            _yStrip2 = AddChild(new Box { MainColor = Color.Brown });
+            _xStrip = AddChild(new Box { MainTexture = new TextureInfo(Texture.TextureKey.Wood) });
+            _yStrip1 = AddChild(new Box { MainTexture = new TextureInfo(Texture.TextureKey.Wood) });
+            _yStrip2 = AddChild(new Box { MainTexture = new TextureInfo(Texture.TextureKey.Wood) });
 
         }
 
@@ -284,8 +284,8 @@ class ElectricFireplace : Shape
             _x = x;
             _y = y;
 
-            MainColor = Color.White;
-            SideColors[Side.North] = new Color(255, 255, 255, 100);
+            MainTexture = new TextureInfo(Color.White);
+            SideTextures[Side.North] = new TextureInfo(Color.White);
             Depth = LowerDoorWindowIndent;
         }
 
@@ -333,7 +333,7 @@ class ElectricFireplace : Shape
 
         public FireplaceHeatingUnitBorder()
         {
-            MainColor = Color.DarkGray;
+            MainTexture = new TextureInfo(TextureKey.Wood);
 
             _heatingUnitPlacement = new Placement2D(HeatingUnitBorderSide, HeatingUnitBorderTop, HeatingUnitBorderSide, 0);
             AddChild(new SurfaceIndent(this, Side.South, _heatingUnitPlacement, HeatingUnitInset));
@@ -359,7 +359,7 @@ class ElectricFireplace : Shape
         {
             Height = FooterHeight;
             Width = MainWidth;
-            MainColor = Color.Red;
+            MainTexture = new TextureInfo(TextureKey.Wood);
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)

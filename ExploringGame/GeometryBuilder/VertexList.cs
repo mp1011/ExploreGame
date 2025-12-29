@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Extensions;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,10 +12,11 @@ namespace ExploringGame.GeometryBuilder
     {
         public VertexPositionColorTexture[] Array { get; }
         private Dictionary<(Vector3, Color), int> _indexCache = new();
+        private TextureSheet _textureSheet;
 
-        public VertexList(Dictionary<Shape, Triangle[]> shapeTriangles)
+        public VertexList(Dictionary<Shape, Triangle[]> shapeTriangles, TextureSheet textureSheet)
         {
-            
+            _textureSheet = textureSheet;
             List<VertexPositionColorTexture> vertices = new();
 
             foreach (Shape shape in shapeTriangles.Keys)
@@ -45,8 +47,8 @@ namespace ExploringGame.GeometryBuilder
 
             return triangles.Where(p => p.Side == side).SelectMany(t =>
             {
-                return t.Vertices.Select(v => new VertexPositionColorTexture(v, t.Color, 
-                    CalcTextureCoordinates(side, v, cornerVertices.Item1, cornerVertices.Item2)));
+                return t.Vertices.Select(v => new VertexPositionColorTexture(v, t.TextureInfo.Color, 
+                    CalcTextureCoordinates(side, t.TextureInfo.Key, v, cornerVertices.Item1, cornerVertices.Item2)));
             }).ToArray();
 
         }
@@ -70,13 +72,14 @@ namespace ExploringGame.GeometryBuilder
                     verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
         }
 
-        public Vector2 CalcTextureCoordinates(Side side, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+        public Vector2 CalcTextureCoordinates(Side side, TextureKey textureKey, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
         {
             var position2d = position.As2D(side);
             var topLeftCorner2d = topLeftCorner.As2D(side);
             var bottomRightCorner2d = bottomRightCorner.As2D(side);
 
-            return position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);        
+            var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
+            return _textureSheet.TexturePosition(textureKey, coordinates);
         }
 
         public int Length => Array.Length;

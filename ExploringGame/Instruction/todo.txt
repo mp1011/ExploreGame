@@ -1,1 +1,1 @@
-[ ] proper texture coordinates
+[ ] multiple textures

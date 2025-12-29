@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
@@ -53,7 +54,7 @@ class MengerSponge : Shape
         int i = 0;
         foreach (var cube in cubesToKeep)
         {
-            cube.MainColor = new Color((float)i++ / cubesToKeep.Length, 0, 0);
+            cube.MainTexture = new TextureInfo(new Color((float)i++ / cubesToKeep.Length, 0, 0));
         }
 
         return cubesToKeep.ToArray();

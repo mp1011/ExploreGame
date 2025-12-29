@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -8,28 +9,28 @@ namespace ExploringGame.Services;
 
 public class VertexBufferBuilder
 {
-    public (VertexBuffer, IndexBuffer, int) Build(Shape master, GraphicsDevice graphicsDevice, QualityLevel qualityLevel)
+    public (VertexBuffer, IndexBuffer, int) Build(Shape master, TextureSheet textureSheet, GraphicsDevice graphicsDevice, QualityLevel qualityLevel)
     {
         var triangles = master.Build(qualityLevel);
-        var vertices = new VertexList(triangles);
+        var vertices = new VertexList(triangles, textureSheet);
 
         var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), vertices.Length, BufferUsage.WriteOnly);
         vb.SetData(vertices.Array);
 
-        var allTrianglse = triangles.SelectMany(p => p.Value).ToArray();
+        var allTriangles = triangles.SelectMany(p => p.Value).ToArray();
 
-        int[] indices = BuildIndices(allTrianglse, vertices);
+        int[] indices = BuildIndices(allTriangles, vertices);
         var ib = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Length, BufferUsage.WriteOnly);
         ib.SetData(indices);
 
-        return (vb, ib, allTrianglse.Length);
+        return (vb, ib, allTriangles.Length);
     }
 
     private int[] BuildIndices(IEnumerable<Triangle> triangles, VertexList vertices)
     {
         return triangles.SelectMany(t =>
         {
-            return t.Vertices.Select(v => vertices.IndexOf(v, t.Color));
+            return t.Vertices.Select(v => vertices.IndexOf(v, t.TextureInfo.Color));
         }).ToArray();       
     }
 }

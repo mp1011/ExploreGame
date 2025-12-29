@@ -1,2 +1,0 @@
-[ ] - when taking a 2D view from the south, "right" and "left" should be opposite 
-[ ] - cutout triangles need to be flipped, why?

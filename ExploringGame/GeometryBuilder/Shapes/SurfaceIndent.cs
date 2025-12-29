@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
@@ -13,13 +14,7 @@ class SurfaceIndent : Shape
 
     public SurfaceIndent(Shape parent, Side face, Placement2D placement, float depth)
     {
-        MainColor = Color.Azure;
-
-        SideColors[Side.North] = Color.Yellow;
-        SideColors[Side.South] = Color.Green;
-        SideColors[Side.East] = Color.Blue;
-        SideColors[Side.West] = Color.Purple;
-
+        MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
         _face = face;
         _placement = placement;
