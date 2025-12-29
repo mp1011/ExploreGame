@@ -12,17 +12,21 @@ namespace ExploringGame.GeometryBuilder
         public VertexPositionColorTexture[] Array { get; }
         private Dictionary<(Vector3, Color), int> _indexCache = new();
 
-        public VertexList(IEnumerable<Triangle> triangles)
+        public VertexList(Dictionary<Shape, Triangle[]> shapeTriangles)
         {
-            var rng = new Random();
-
+            
             List<VertexPositionColorTexture> vertices = new();
-            vertices.AddRange(CreateVertices(Side.West, triangles));
-            vertices.AddRange(CreateVertices(Side.North, triangles));
-            vertices.AddRange(CreateVertices(Side.East, triangles));
-            vertices.AddRange(CreateVertices(Side.South, triangles));
-            vertices.AddRange(CreateVertices(Side.Top, triangles));
-            vertices.AddRange(CreateVertices(Side.Bottom, triangles));
+
+            foreach (Shape shape in shapeTriangles.Keys)
+            {
+                var triangles = shapeTriangles[shape]; 
+                vertices.AddRange(CreateVertices(Side.West, triangles));
+                vertices.AddRange(CreateVertices(Side.North, triangles));
+                vertices.AddRange(CreateVertices(Side.East, triangles));
+                vertices.AddRange(CreateVertices(Side.South, triangles));
+                vertices.AddRange(CreateVertices(Side.Top, triangles));
+                vertices.AddRange(CreateVertices(Side.Bottom, triangles));
+            }
 
             Array = vertices.ToArray();
 

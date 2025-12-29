@@ -36,7 +36,7 @@ class SurfaceIndent : Shape
         else 
             Width = _depth;
      
-        this.Place().OnSide(_face);
+        this.Place().OnSideInner(_face);
         
         this.AdjustShape().WithInnerOffset(_placement, _face);
     }

@@ -133,6 +133,13 @@ public class ShapeAdjuster
         return this;
     }
 
+    public ShapeAdjuster SliceZ(float fromSouth, float depth)
+    {
+        _shape.SetSide(Side.South, _shape.GetSide(Side.South) - fromSouth);
+        _shape.SetSideUnanchored(Side.North, _shape.GetSide(Side.South) - depth);
+        return this;
+    }
+
     /// <summary>
     /// Adds an amount to each side, preserving the center
     /// </summary>

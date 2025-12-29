@@ -165,13 +165,14 @@ public abstract class Shape
         SetSide(side, value);
     }
 
-    public void AddChild(Shape child)
+    public T AddChild<T>(T child) where T:Shape
     {
         if (child.Parent == this)
-            return;
+            return child;
 
         child.Parent = this;
         _children.Add(child);
+        return child;
     }
 
     public Rotation Rotation { get; set; }
@@ -192,19 +193,26 @@ public abstract class Shape
 
     }
 
-    public Triangle[] Build(QualityLevel quality)
+    public Dictionary<Shape, Triangle[]> Build(QualityLevel quality)
+    {
+        var output = new Dictionary<Shape, Triangle[]>();
+        Build(quality, output);
+        return output;
+    }
+
+    private void Build(QualityLevel quality, Dictionary<Shape, Triangle[]> output)
     {
         BeforeBuild();
 
         if (quality == QualityLevel.DoNotRender)
-            return Array.Empty<Triangle>();
+            output[this] = Array.Empty<Triangle>();
         else if (quality == QualityLevel.CuboidOnly)
-            return BuildCuboid();
+            output[this] = BuildCuboid();
         else
         {
-            var thisTriangles = BuildInternal(quality);
-            var childrenTriangles = Children.SelectMany(p => p.Build(quality - 1)).ToArray();
-            return thisTriangles.Union(childrenTriangles).ToArray();
+            output[this] = BuildInternal(quality);
+            foreach(var child in Children)
+                child.Build(quality - 1, output);
         }
     }
 

@@ -113,7 +113,7 @@ public class Game1 : Game
         box.Height = 2f;
         box.Depth = 2f;
         box.Place().OnFloor();
-        box.Place().OnSide(Side.NorthEast);
+        box.Place().OnSideInner(Side.NorthEast);
         box.MainColor = Color.Blue;
 
         var box2 = new Box();
@@ -122,12 +122,12 @@ public class Game1 : Game
         box2.Height = 3f;
         box2.Depth = 2f;
         box2.Place().OnFloor();
-        box2.Place().OnSide(Side.NorthWest);
+        box2.Place().OnSideInner(Side.NorthWest);
         box2.MainColor = Color.Yellow;
 
         var fireplace = new ElectricFireplace(simpleRoom);
         fireplace.Place().OnFloor();
-        fireplace.Place().OnSide(Side.North);
+        fireplace.Place().OnSideInner(Side.North);
 
         return simpleRoom;
     }

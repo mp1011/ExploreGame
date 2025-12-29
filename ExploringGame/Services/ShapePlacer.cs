@@ -17,17 +17,27 @@ public class ShapePlacer
         _shape = shape;
     }
 
-    public void OnFloor()
+    public ShapePlacer OnFloor()
     {
         _shape.BottomAnchored = _shape.Parent.BottomAnchored;
+        return this;
     }
 
-    public void OnSide(Side side)
+    public ShapePlacer OnSideInner(Side side)
     {
         foreach(var s in side.Decompose())
         {
             _shape.SetSide(s, _shape.Parent.GetSide(s));
         }
-            
+        return this;
+    }
+
+    public ShapePlacer OnSideOuter(Side side)
+    {
+        foreach (var s in side.Decompose())
+        {
+            _shape.SetSide(s.Opposite(), _shape.Parent.GetSide(s));
+        }
+        return this;
     }
 }

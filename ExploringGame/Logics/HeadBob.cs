@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -26,7 +27,13 @@ class HeadBob
         else
             _bobPhase = 0f; // Reset when not moving
         float bobOffset = (float)Math.Sin(_bobPhase) * _bobAmount;
-        cameraPosition.Y = _defaultY + bobOffset;
+
+        // temp, not the right place for this
+        var k = Keyboard.GetState();
+        if(k.IsKeyDown(Keys.LeftControl))
+            cameraPosition.Y = _defaultY + bobOffset - 1.0f;
+        else
+            cameraPosition.Y = _defaultY + bobOffset;
 
         return cameraPosition;
     }

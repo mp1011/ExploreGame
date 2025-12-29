@@ -16,11 +16,13 @@ public class VertexBufferBuilder
         var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), vertices.Length, BufferUsage.WriteOnly);
         vb.SetData(vertices.Array);
 
-        int[] indices = BuildIndices(triangles, vertices);
+        var allTrianglse = triangles.SelectMany(p => p.Value).ToArray();
+
+        int[] indices = BuildIndices(allTrianglse, vertices);
         var ib = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Length, BufferUsage.WriteOnly);
         ib.SetData(indices);
 
-        return (vb, ib, triangles.Length);
+        return (vb, ib, allTrianglse.Length);
     }
 
     private int[] BuildIndices(IEnumerable<Triangle> triangles, VertexList vertices)
