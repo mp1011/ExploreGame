@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime;
 
 namespace ExploringGame.GeometryBuilder;
 
@@ -51,6 +52,31 @@ public abstract class Shape
         get => Size.Z; set => Size = new Vector3(Size.X, Size.Y, value);
     }
 
+    public float GetAxisPosition(Axis axis) => axis switch
+    {
+        Axis.X => Position.X,
+        Axis.Y => Position.Y,
+        Axis.Z => Position.Z,
+        _ => throw new ArgumentException("invalid axis")
+    };
+
+    public float GetAxisSize(Axis axis) => axis switch
+    {
+        Axis.X => Size.X,
+        Axis.Y => Size.Y,
+        Axis.Z => Size.Z,
+        _ => throw new ArgumentException("invalid axis")
+    };
+
+    public void SetAxisPosition(Axis axis, float value) 
+    {
+        switch(axis)
+        {
+            case Axis.X: X = value; return;
+            case Axis.Y: Y = value; return;
+            case Axis.Z: Z = value; return;
+        }
+    }
 
     /// <summary>
     /// Sets the top Y coordinate while preserving height
@@ -133,6 +159,23 @@ public abstract class Shape
             default:
                 throw new ArgumentException("Only singular sides can be used");
         }
+    }
+
+    /// <summary>
+    /// 0.0 = left
+    /// 1.0 = right
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public float RelativeAxisPoint(Axis axis, float value)
+    {
+        var center = GetAxisPosition(axis);
+        var size = GetAxisSize(axis);
+        var left = center - size / 2.0f;
+        var right = center + size / 2.0f;
+
+        return left + (right - left) * value;
     }
 
     public void SetSideUnanchored(Side side, float value)

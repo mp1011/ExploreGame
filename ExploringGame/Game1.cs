@@ -147,7 +147,7 @@ public class Game1 : Game
         southRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         southRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         southRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(southRoom, Side.South);
+        room.AddConnectingRoom(new RoomConnection(southRoom, Side.South, 0.2f));
 
         var northRoom = new Room();
         northRoom.Width = 4f;
@@ -156,7 +156,7 @@ public class Game1 : Game
         northRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         northRoom.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Floor);
         northRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(northRoom, Side.North);
+        room.AddConnectingRoom(new RoomConnection(northRoom, Side.North, 0.2f));
 
         var westRoom = new Room();
         westRoom.Width = 10f;
@@ -165,7 +165,7 @@ public class Game1 : Game
         westRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         westRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         westRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(westRoom, Side.West);
+        room.AddConnectingRoom(new RoomConnection(westRoom, Side.West, 0.2f));
 
         var eastRoom = new Room();
         eastRoom.Width = 10f;
@@ -174,7 +174,7 @@ public class Game1 : Game
         eastRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         eastRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         eastRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(eastRoom, Side.East);
+        room.AddConnectingRoom(new RoomConnection(eastRoom, Side.East, 0.2f));
 
         var world = new WorldSegment();
         world.AddChild(room);

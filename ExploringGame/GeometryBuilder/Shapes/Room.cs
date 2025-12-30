@@ -10,17 +10,26 @@ public class Room : Shape
     public override bool CollisionEnabled => true;
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
-    public void AddConnectingRoom(Room other, Side side)
+    public void AddConnectingRoom(RoomConnection connection)
     {
-        var connection = new RoomConnection(other, side);
         _roomConnections.Add(connection);
-        other._roomConnections.Add(new RoomConnection(this, side.Opposite()));
+        connection.Other._roomConnections.Add(connection.Reverse(this));
 
-        other.Place().OnSideOuter(side, this)
-                     .OnSideInner(Side.Bottom, this);
+        connection.Other.Position = Position;
+        connection.Other.Place().OnSideOuter(connection.Side, this)
+                                .OnSideInner(Side.Bottom, this);
 
-        AddChild(new RoomJoiner(this, other, connection));
-        other.AddChild(new RoomJoiner(this, other, connection));
+        var pos = connection.Position;
+
+        // todo, don't like this
+        if (connection.Side == Side.West || connection.Side == Side.South)
+            pos = 1.0f - pos;
+
+        var connectionPoint = RelativeAxisPoint(connection.Side.GetAxis().Orthogonal(), pos);
+        connection.Other.SetAxisPosition(connection.Side.GetAxis().Orthogonal(), connectionPoint);
+
+        AddChild(new RoomJoiner(this, connection.Other, connection));
+        connection.Other.AddChild(new RoomJoiner(this, connection.Other, connection));
     }
 
 
@@ -37,8 +46,10 @@ public class Room : Shape
 
 }
 
-public record RoomConnection(Room Other, Side Side)
+public record RoomConnection(Room Other, Side Side, float Position)
 {
+    public RoomConnection Reverse(Room room) => new RoomConnection(room, Side.Opposite(), 1.0f - Position);
+
     public Placement2D CalcCutoutPlacement(Room room)
     {
         float left, top, right, bottom;

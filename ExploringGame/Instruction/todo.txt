@@ -7,8 +7,8 @@
 	[x] connecting room test has single "world" shape, connecting rooms are not children of eachother but of it
 	[x] collision aware of current room
 	[x] allow player to pass through (forced side)
-	[ ] allow player to pass through (any side)
-	[ ] connecting room at any position
+	[x] allow player to pass through (any side)
+	[x] connecting room at any position
 	[ ] works regardless of relative size
 
 [ ] floor height differences (player aware of current room)

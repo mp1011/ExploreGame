@@ -20,16 +20,20 @@ public enum Side
     Top
 }
 
-public enum Axis
-{
-    None = 0,
-    X = 1,
-    Y = 2,
-    Z = 4,
-}
-
 public static class SideExtensions
 {
+    public static Axis GetAxis(this Side side) =>
+        side switch
+        {
+            Side.North => Axis.Z,
+            Side.South => Axis.Z,
+            Side.West => Axis.X,
+            Side.East => Axis.X,
+            Side.Bottom => Axis.Y,
+            Side.Top => Axis.Y,
+            _ => throw new System.ArgumentException("invalid side")
+        };
+
     public static Side[] Decompose(this Side side) =>
         side switch
         {
