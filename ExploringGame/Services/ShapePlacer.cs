@@ -23,20 +23,22 @@ public class ShapePlacer
         return this;
     }
 
-    public ShapePlacer OnSideInner(Side side)
+    public ShapePlacer OnSideInner(Side side, Shape other = null)
     {
+        other = other ?? _shape.Parent;
         foreach(var s in side.Decompose())
         {
-            _shape.SetSide(s, _shape.Parent.GetSide(s));
+            _shape.SetSide(s, other.GetSide(s));
         }
         return this;
     }
 
-    public ShapePlacer OnSideOuter(Side side)
+    public ShapePlacer OnSideOuter(Side side, Shape other = null)
     {
+        other = other ?? _shape.Parent;
         foreach (var s in side.Decompose())
         {
-            _shape.SetSide(s.Opposite(), _shape.Parent.GetSide(s));
+            _shape.SetSide(s.Opposite(), other.GetSide(s));
         }
         return this;
     }

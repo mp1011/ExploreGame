@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
@@ -189,6 +190,16 @@ public abstract class Shape
             return MainTexture;
     }
 
+    public bool ContainsPoint(Vector3 point)
+    {
+        var min = Position - Size / 2f;
+        var max = Position + Size / 2f;
+
+        return point.X >= min.X && point.X <= max.X &&
+           point.Y >= min.Y && point.Y <= max.Y &&
+           point.Z >= min.Z && point.Z <= max.Z;
+    }
+
     public Shape[] TraverseAllChildren()
     {
         List<Shape> shapes = new List<Shape>();
@@ -207,7 +218,6 @@ public abstract class Shape
 
     protected virtual void BeforeBuild()
     {
-
     }
 
     public Dictionary<Shape, Triangle[]> Build(QualityLevel quality)
@@ -219,15 +229,16 @@ public abstract class Shape
 
     private void Build(QualityLevel quality, Dictionary<Shape, Triangle[]> output)
     {
-        BeforeBuild();
+        BeforeBuild();    
 
         if (quality == QualityLevel.DoNotRender)
             output[this] = Array.Empty<Triangle>();
         else if (quality == QualityLevel.CuboidOnly)
-            output[this] = BuildCuboid();
+            output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() : BuildCuboid();
         else
         {
-            output[this] = CorrectWinding(BuildInternal(quality));
+            output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() :
+                                                       CorrectWinding(BuildInternal(quality));
             foreach(var child in Children)
                 child.Build(quality - 1, output);
         }

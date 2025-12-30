@@ -6,6 +6,7 @@ namespace ExploringGame.GeometryBuilder;
 
 public enum ViewFrom
 {
+    None,
     Inside,
     Outside
 }

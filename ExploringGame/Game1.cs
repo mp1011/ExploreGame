@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -19,7 +20,7 @@ public class Game1 : Game
     private HeadBob _headBob;
     private EntityCollider _playerCollider;
 
-    private Shape _mainShape;
+    private WorldSegment _mainShape;
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -52,7 +53,7 @@ public class Game1 : Game
         _player = new Player();
         _playerMotion = new PlayerMotion(_player, _headBob);
         _mainShape = CreateMainShape();
-        _playerCollider = new EntityCollider { Entity = _player, CurrentRoom = _mainShape };
+        _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
 
         base.Initialize();
 
@@ -100,7 +101,7 @@ public class Game1 : Game
         _pointLightEffect.Parameters["Texture"].SetValue(_basementTextures.Texture);
     }
 
-    private Shape CreateMainShape()
+    private WorldSegment CreateMainShape()
     {
         return ConnectingRoomsTest();       
     }
@@ -127,7 +128,7 @@ public class Game1 : Game
         return simpleRoom;
     }
 
-    private Shape ConnectingRoomsTest()
+    private WorldSegment ConnectingRoomsTest()
     {
         var room = new Room();
         room.Width = 16f;
@@ -139,16 +140,50 @@ public class Game1 : Game
         room.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         room.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
-        var secondRoom = new Room();
-        secondRoom.Width = 4f;
-        secondRoom.Height = 4f;
-        secondRoom.Depth = 10f;
-        secondRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        secondRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        secondRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        var southRoom = new Room();
+        southRoom.Width = 4f;
+        southRoom.Height = 4f;
+        southRoom.Depth = 10f;
+        southRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        southRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        southRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(southRoom, Side.South);
 
-        room.AddConnectingRoom(secondRoom, Side.South);
-        return room;
+        var northRoom = new Room();
+        northRoom.Width = 4f;
+        northRoom.Height = 4f;
+        northRoom.Depth = 10f;
+        northRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        northRoom.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Floor);
+        northRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(northRoom, Side.North);
+
+        var westRoom = new Room();
+        westRoom.Width = 10f;
+        westRoom.Height = 4f;
+        westRoom.Depth = 4f;
+        westRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        westRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        westRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(westRoom, Side.West);
+
+        var eastRoom = new Room();
+        eastRoom.Width = 10f;
+        eastRoom.Height = 4f;
+        eastRoom.Depth = 4f;
+        eastRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        eastRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        eastRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(eastRoom, Side.East);
+
+        var world = new WorldSegment();
+        world.AddChild(room);
+        world.AddChild(southRoom);
+        world.AddChild(northRoom);
+        world.AddChild(eastRoom);
+        world.AddChild(westRoom);
+
+        return world;
     }
 
     private Shape RoomWithFireplace()

@@ -12,13 +12,15 @@ public class Room : Shape
 
     public void AddConnectingRoom(Room other, Side side)
     {
-        _roomConnections.Add(new RoomConnection(other, side));
+        var connection = new RoomConnection(other, side);
+        _roomConnections.Add(connection);
         other._roomConnections.Add(new RoomConnection(this, side.Opposite()));
 
-        AddChild(other);
+        other.Place().OnSideOuter(side, this)
+                     .OnSideInner(Side.Bottom, this);
 
-        other.Place().OnSideOuter(side)
-                     .OnSideInner(Side.Bottom);
+        AddChild(new RoomJoiner(this, other, connection));
+        other.AddChild(new RoomJoiner(this, other, connection));
     }
 
 
@@ -53,6 +55,14 @@ public record RoomConnection(Room Other, Side Side)
             case Side.North:
                 right = Other.GetSide(Side.West) - room.GetSide(Side.West);
                 left = room.GetSide(Side.East) - Other.GetSide(Side.East);
+                break;
+            case Side.West:
+                left = Other.GetSide(Side.North) - room.GetSide(Side.North);
+                right = room.GetSide(Side.South) - Other.GetSide(Side.South);
+                break;
+            case Side.East:
+                right = Other.GetSide(Side.North) - room.GetSide(Side.North);
+                left = room.GetSide(Side.South) - Other.GetSide(Side.South);
                 break;
             default:
                 throw new System.NotImplementedException("fix me");

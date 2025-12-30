@@ -27,6 +27,10 @@ internal class PlayerMotion
         // Camera movement
         var k = Keyboard.GetState();
         float speed = 0.1f;
+
+        if (k.IsKeyDown(Keys.LeftShift))
+            speed = 0.2f;
+
         Vector3 forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
         Vector3 right = Vector3.Transform(Vector3.Right, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
         Vector3 nextPosition = cameraPosition;
