@@ -17,6 +17,12 @@ public enum QualityLevel
     Basic = 2
 }
 
+public enum Winding
+{
+    Clockwise,
+    CounterClockwise,
+}
+
 public record Rotation(float Yaw, float Pitch, float Roll);
 
 public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)
@@ -31,6 +37,15 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
             yield return B;
             yield return C;
         }
+    }
+
+    public Winding CalcWinding(Vector3 observationPoint)
+    {
+        Vector3 normal = Vector3.Cross(B - A, C - A); 
+        Vector3 toCamera = observationPoint - A;
+
+        var ccw = Vector3.Dot(normal, toCamera) > 0f;
+        return ccw ? Winding.CounterClockwise : Winding.Clockwise;
     }
 
     public Triangle2D As2D(Vector3 faceOrigin)

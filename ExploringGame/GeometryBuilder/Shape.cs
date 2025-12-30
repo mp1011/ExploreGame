@@ -227,10 +227,27 @@ public abstract class Shape
             output[this] = BuildCuboid();
         else
         {
-            output[this] = BuildInternal(quality);
+            output[this] = CorrectWinding(BuildInternal(quality));
             foreach(var child in Children)
                 child.Build(quality - 1, output);
         }
+    }
+
+    private Triangle[] CorrectWinding(IEnumerable<Triangle> triangles)
+    {
+        return triangles.Select(CorrectWinding).ToArray();
+    }
+
+    private Triangle CorrectWinding(Triangle triangle)
+    {
+        var winding = triangle.CalcWinding(Position);
+        if (winding == Winding.CounterClockwise && ViewFrom == ViewFrom.Inside)
+            return triangle.Invert();
+        else if (winding == Winding.Clockwise && ViewFrom == ViewFrom.Outside)
+            return triangle.Invert();
+        else
+            return triangle;
+
     }
 
     /// <summary>
@@ -281,13 +298,8 @@ public abstract class Shape
         //wall (max x)
         triangles.Add(new Triangle(corners[5], corners[2], corners[1], TextureInfoForSide(Side.East), Side.East));
         triangles.Add(new Triangle(corners[5], corners[6], corners[2], TextureInfoForSide(Side.East), Side.East));
-        
-        if(ViewFrom == ViewFrom.Outside)
-        {
-            triangles = triangles.Select(p => p.Invert()).ToList();
-        }
-            
-        return triangles.ToArray();
+
+        return CorrectWinding(triangles);
     }
 
     protected abstract Triangle[] BuildInternal(QualityLevel quality);

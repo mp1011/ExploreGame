@@ -34,6 +34,7 @@ public class Game1 : Game
     private TextureSheet _basementTextures;
     private Effect _pointLightEffect;
     private SpriteFont _debugFont;
+    private KeyboardState _lastKeyState;
 
     public Game1()
     {
@@ -101,7 +102,7 @@ public class Game1 : Game
 
     private Shape CreateMainShape()
     {
-        return RoomWithFireplace();       
+        return ConnectingRoomsTest();       
     }
 
     private Shape SingleFaceTest()
@@ -126,6 +127,29 @@ public class Game1 : Game
         return simpleRoom;
     }
 
+    private Shape ConnectingRoomsTest()
+    {
+        var room = new Room();
+        room.Width = 16f;
+        room.Height = 4f;
+        room.Depth = 8f;
+        room.Y = 2;
+
+        room.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        room.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        room.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        var secondRoom = new Room();
+        secondRoom.Width = 4f;
+        secondRoom.Height = 4f;
+        secondRoom.Depth = 10f;
+        secondRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        secondRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        secondRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        room.AddConnectingRoom(secondRoom, Side.South);
+        return room;
+    }
 
     private Shape RoomWithFireplace()
     {
@@ -138,7 +162,7 @@ public class Game1 : Game
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
+              
         var box = new Box();
         simpleRoom.AddChild(box);
         box.Width = 2f;
@@ -177,6 +201,7 @@ public class Game1 : Game
         simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
 
         var testShape = new FaceCutoutTest();
+        testShape.MainTexture = new TextureInfo(TextureKey.Wall);
         simpleRoom.AddChild(testShape);
         testShape.Place().OnFloor();
         testShape.Y += 1.0f;
@@ -213,6 +238,7 @@ public class Game1 : Game
         _triangleCount = buffers.Item3;
     }
 
+    private bool _collisionEnabled = true;
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -222,10 +248,16 @@ public class Game1 : Game
             return;
 
         _playerMotion.Update(gameTime, Window);
-        _playerCollider.Update();
+
+        var ks = Keyboard.GetState();
+        if (ks.IsKeyDown(Keys.C) && !_lastKeyState.IsKeyDown(Keys.C))
+            _collisionEnabled = !_collisionEnabled;
+            
+        if(_collisionEnabled)
+            _playerCollider.Update();
 
         _view = _player.CreateViewMatrix();
-
+        _lastKeyState = Keyboard.GetState();
         base.Update(gameTime);
     }
 

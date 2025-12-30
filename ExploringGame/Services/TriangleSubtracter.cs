@@ -20,6 +20,7 @@ internal class TriangleSubtracter
                  new Point64(triangle.A.X * mult, triangle.A.Y * mult),
                  new Point64(triangle.B.X * mult, triangle.B.Y * mult),
                  new Point64(triangle.C.X * mult, triangle.C.Y * mult),
+                 new Point64(triangle.A.X * mult, triangle.A.Y * mult),
             }
         };
 
@@ -30,19 +31,24 @@ internal class TriangleSubtracter
                 new Point64(cutout.Left * mult, cutout.Top * mult),
                 new Point64(cutout.Right * mult, cutout.Top * mult),
                 new Point64(cutout.Right * mult, cutout.Bottom * mult),
-                new Point64(cutout.Left * mult, cutout.Bottom * mult),                                
+                new Point64(cutout.Left * mult, cutout.Bottom * mult),
+                new Point64(cutout.Left * mult, cutout.Top * mult),
             }
         };
 
-
         var result = Clipper.Difference(trianglePath, cutoutPath, FillRule.NonZero);
+        return result.SelectMany(p=> PolygonToTriangles(p, triangle)).ToArray();
+       
+    }
 
-        var pts = result.SelectMany(p=>p.Select(q=> new Vector2(q.X / (float)mult, q.Y / (float)mult))).ToArray();
+    private Triangle2D[] PolygonToTriangles(Path64 path, Triangle2D triangle)
+    {
+        var pts = path.Select(q => new Vector2(q.X / (float)mult, q.Y / (float)mult)).ToArray();
 
         var tess = new Tess();
 
         // Outer contour (CCW)
-        tess.AddContour(pts.Select(p=> new ContourVertex(new Vec3(p.X,p.Y,0))).ToArray(), ContourOrientation.CounterClockwise);
+        tess.AddContour(pts.Select(p => new ContourVertex(new Vec3(p.X, p.Y, 0))).ToArray(), ContourOrientation.CounterClockwise);
         tess.Tessellate(WindingRule.NonZero, ElementType.Polygons, polySize: 3);
 
         List<Triangle2D> triangles = new();

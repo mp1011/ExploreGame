@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,8 +9,13 @@ namespace ExploringGame.Services;
 
 class RemoveSurfaceRegion
 {
+    public static bool DebugShowCutout = false;
+
     public Triangle[] Execute(Triangle[] triangles, Side surface, Placement2D placement)
     {
+        if(placement.Left == 0 && placement.Right == 0 && placement.Top == 0 && placement.Bottom == 0)
+            return triangles.Where(p => p.Side != surface).ToArray();
+
         var sideTriangles = triangles.Where(p=>p.Side == surface).ToArray();
         var sideCenter = sideTriangles.SelectMany(p => p.Vertices).Center();
 
@@ -19,7 +25,8 @@ class RemoveSurfaceRegion
           face.Top -= placement.Top;
           face.Bottom += placement.Bottom;
 
-      //  return triangles.Where(p=>p.Side != surface).Union(face.Triangles.Select(p => p.To3D(sideCenter))).ToArray();
+        if(DebugShowCutout)
+            return triangles.Where(p=>p.Side != surface).Union(face.Triangles.Select(p => p.To3D(sideCenter))).ToArray();
 
         return triangles.SelectMany(p=> RemoveFace(p, surface, face, sideCenter)).ToArray();
     }
@@ -30,11 +37,7 @@ class RemoveSurfaceRegion
             return new Triangle[] { triangle };
 
         var triangles2D = RemoveFace(triangle.As2D(sideCenter), face).ToArray();
-        var result = triangles2D.Select(p => p.To3D(sideCenter));
-
-        // todo - why is this?
-      //  if (surface == Side.North || surface == Side.East)
-        //    result = result.Select(p => p.Invert());
+        var result = triangles2D.Select(p => p.To3D(sideCenter)).ToArray();
 
         return result;
     }

@@ -58,6 +58,68 @@ public class Triangle2D
     public Vector2 B { get; set; }
     public Vector2 C { get; set; }
 
+    public Vector2 Center => (A + B + C) / 3f;
+
+    public Winding Winding
+    {
+        get
+        {
+            var p = Center;
+            var a = A;
+            var b = B;
+            var c = C;
+            int windingNumber = 0;
+
+            // Edge AB
+            if (a.Y <= p.Y)
+            {
+                if (b.Y > p.Y && IsLeft(a, b, p) > 0)
+                    windingNumber++;
+            }
+            else
+            {
+                if (b.Y <= p.Y && IsLeft(a, b, p) < 0)
+                    windingNumber--;
+            }
+
+            // Edge BC
+            if (b.Y <= p.Y)
+            {
+                if (c.Y > p.Y && IsLeft(b, c, p) > 0)
+                    windingNumber++;
+            }
+            else
+            {
+                if (c.Y <= p.Y && IsLeft(b, c, p) < 0)
+                    windingNumber--;
+            }
+
+            // Edge CA
+            if (c.Y <= p.Y)
+            {
+                if (a.Y > p.Y && IsLeft(c, a, p) > 0)
+                    windingNumber++;
+            }
+            else
+            {
+                if (a.Y <= p.Y && IsLeft(c, a, p) < 0)
+                    windingNumber--;
+            }
+
+            if (windingNumber < 0)
+                return Winding.Clockwise;
+            else
+                return Winding.CounterClockwise;
+        }
+    }
+
+    private static float IsLeft(Vector2 a, Vector2 b, Vector2 p)
+    {
+        // Cross product (b - a) x (p - a)
+        return (b.X - a.X) * (p.Y - a.Y)
+             - (p.X - a.X) * (b.Y - a.Y);
+    }
+
     public double AngleA { get => A.AngleBetween(B, C); }
     public double AngleB { get => B.AngleBetween(A, C); }
     public double AngleC { get => C.AngleBetween(A, B); }
