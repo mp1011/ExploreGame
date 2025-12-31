@@ -22,5 +22,7 @@
 	[x] make repeatable in gimp
 
 
+[ ] easier way of defining structures?
+
 [ ] irregular room shapes (display)
 	[ ] collision

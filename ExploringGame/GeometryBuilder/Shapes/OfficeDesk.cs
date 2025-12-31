@@ -8,7 +8,7 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 
 class OfficeDesk : Shape
 {
-    public const float DeskWidth = 4.0f;
+    public const float DeskWidth = 3.0f;
     public const float DeskHeight = 2.2f;
     public const float DeskDepth = 1.0f;
 
@@ -39,8 +39,33 @@ class OfficeDesk : Shape
         MainTexture = new TextureInfo(Key: TextureKey.Wood);
         SideTextures[Side.West] = new TextureInfo(Color: new Color(0.8f, 0.8f, 0.8f), Key: TextureKey.Wood);
 
-        AddChild(new DeskTop());
-        AddChild(new DeskBottom());
+        var middleHeight = DeskHeight - DeskSurfaceHeight - UpperHeight;
+
+        var builder = new ShapeBuilder();
+        var top = builder.AddChild(this, new DeskTopPart(adj => adj.SliceY(0, Height - DeskSurfaceHeight)
+                                                   .SliceZ(DeskTopIndent, DeskDepth - DeskTopIndent)));
+
+        var upper = builder.AddChild(top, adj => adj.SliceY(0, UpperHeight));
+
+        // middle left
+        builder.AddChild(top, adj => adj.SliceY(UpperHeight, middleHeight)
+                                        .SliceX(0, MiddleSideThickness));
+        // middle right
+        builder.AddChild(top, adj => adj.SliceY(UpperHeight, middleHeight)
+                                        .SliceX(DeskWidth - MiddleSideThickness, MiddleSideThickness));
+
+        var bottom = builder.AddChild(this, adj => adj.SliceY(Height - DeskSurfaceHeight, DeskSurfaceHeight));
+
+        // lower left drawers 
+        builder.AddChild(bottom, adj => adj.SliceX(0, BottomLeftDrawerWidth)
+                                           .SliceY(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness));
+            
+        // bottom right 
+        builder.AddChild(bottom, adj => adj.SliceX(DeskWidth - BottomRightWidth, BottomRightWidth)
+                                           .SliceY(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness));
+
+        // surface
+        builder.AddChild(bottom, adj => adj.SliceY(0, DeskSurfaceThickness));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -48,140 +73,15 @@ class OfficeDesk : Shape
         return Array.Empty<Triangle>();
     }
 
-    abstract class DeskShape : Shape
+    class DeskTopPart : ComplexShapePart
     {
-        public DeskShape(ViewFrom viewFrom)
+        public DeskTopPart(Action<ShapeAdjuster> adjust) : base(ViewFrom.Inside, adjust)
         {
-            ViewFrom = viewFrom;
-
-            MainTexture = new TextureInfo(Key: TextureKey.Wood);
-            SideTextures[Side.West] = new TextureInfo(Color: new Color(0.8f, 0.8f, 0.8f), Key: TextureKey.Wood);
-        }
-
-        public override ViewFrom ViewFrom { get; }
-        protected override Triangle[] BuildInternal(QualityLevel quality)
-        {
-            if (Children.Any())
-                return Array.Empty<Triangle>();
-            else
-                return BuildCuboid();
-        }
-    }
-
-    class DeskTop : DeskShape
-    {
-        public DeskTop() : base(ViewFrom.Inside)
-        {
-            AddChild(new DeskUpper());
-            AddChild(new DeskMiddleLeft());
-            AddChild(new DeskMiddleRight());
-        }
-
-        protected override void BeforeBuild()
-        {
-            this.AdjustShape().From(Parent)
-                              .SliceY(0, Height - DeskSurfaceHeight)
-                              .SliceZ(DeskTopIndent, DeskDepth - DeskTopIndent);
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            var cuboid = BuildCuboid();
-            return cuboid.Where(p => p.Side == Side.North).ToArray();
-        }
-    }
-
-    class DeskBottom : DeskShape
-    {
-        public DeskBottom() : base(ViewFrom.Outside)
-        {
-            AddChild(new DeskBottomLeftDrawers());
-            //   AddChild(new DeskBottomMiddleSpace());
-            AddChild(new DeskBottomRight());
-            AddChild(new DeskSurface());
-        }
-
-        protected override void BeforeBuild()
-        {
-            this.AdjustShape().From(Parent)
-                              .SliceY(Height - DeskSurfaceHeight, DeskSurfaceHeight);
-        }
-    }
-
-    class DeskBottomLeftDrawers : DeskShape
-    {
-        public DeskBottomLeftDrawers() : base(ViewFrom.Outside) { }
-
-        protected override void BeforeBuild()
-        {
-            this.AdjustShape().From(Parent)
-                              .SliceX(0, BottomLeftDrawerWidth)
-                              .SliceY(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness);
-        }
-    }
-
-    class DeskBottomRight : DeskShape
-    {
-        public DeskBottomRight() : base(ViewFrom.Outside) { }
-
-        protected override void BeforeBuild()
-        {
-            this.AdjustShape().From(Parent)
-                              .SliceX(DeskWidth - BottomRightWidth, BottomRightWidth)
-                              .SliceY(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness);
-        }
-    }
-
-    class DeskSurface : DeskShape
-    {
-        public DeskSurface() : base(ViewFrom.Outside) { }
-
-        protected override void BeforeBuild()
-        {
-            this.AdjustShape().From(Parent)
-                              .SliceY(0, DeskSurfaceThickness);
-
-        }
-    }
-
-    /// <summary>
-    /// upper drawers and cubbies
-    /// </summary>
-    class DeskUpper : DeskShape
-    {
-        public DeskUpper() : base(ViewFrom.Outside) { }
-
-        protected override void BeforeBuild()
-        {
-            this.AdjustShape().From(Parent)
-                              .SliceY(0, UpperHeight);
-
-        }
-    }
-
-    class DeskMiddleLeft : DeskShape
-    {
-        public DeskMiddleLeft() : base(ViewFrom.Outside) { }
-
-        protected override void BeforeBuild()
-        {
-            var middleHeight = DeskHeight - DeskSurfaceHeight - UpperHeight;
-            this.AdjustShape().From(Parent)
-                              .SliceY(UpperHeight, middleHeight)
-                              .SliceX(0, MiddleSideThickness);
-        }
-    }
-
-    class DeskMiddleRight : DeskShape
-    {
-        public DeskMiddleRight() : base(ViewFrom.Outside) { }
-
-        protected override void BeforeBuild()
-        {
-            var middleHeight = DeskHeight - DeskSurfaceHeight - UpperHeight;
-            this.AdjustShape().From(Parent)
-                              .SliceY(UpperHeight, middleHeight)
-                              .SliceX(DeskWidth - MiddleSideThickness, MiddleSideThickness);
+            return BuildCuboid().Where(p=>p.Side == Side.North).ToArray();
         }
     }
 }
