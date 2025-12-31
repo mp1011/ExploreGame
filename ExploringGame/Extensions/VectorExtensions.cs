@@ -212,4 +212,19 @@ public static class VectorExtensions
 
         return current + delta / distance * magnitudeStep;
     }
+
+    public static Vector3 Rotate(this Vector3 point, Vector3 origin, Rotation rotation)
+    {
+        // Translate point to origin
+        Vector3 translated = point - origin;
+
+        // Create rotation matrix (Yaw = Y, Pitch = X, Roll = Z)
+        Matrix rotationMatrix = rotation.AsMatrix();
+
+        // Rotate
+        Vector3 rotated = Vector3.Transform(translated, rotationMatrix);
+
+        // Translate back
+        return rotated + origin;
+    }
 }

@@ -258,6 +258,16 @@ public abstract class Shape
             child.TraverseAllChildren(shapes);
     }
 
+    public bool SelfOrDescendantOf(Shape shape)
+    {
+        if (shape == this)
+            return true;
+        else if (Parent == null)
+            return false;
+        else
+            return Parent.SelfOrDescendantOf(shape);
+    }
+
     #region Build
 
     protected virtual void BeforeBuild()
@@ -285,6 +295,18 @@ public abstract class Shape
                                                        AdjustTrianglesForDisplay(BuildInternal(quality));
             foreach(var child in Children)
                 child.Build(quality - 1, output);
+        }
+
+        if (Rotation != null)
+            ApplyRotation(output);
+    }
+
+    private void ApplyRotation(Dictionary<Shape, Triangle[]> output)
+    {
+        foreach(var key in output.Keys)
+        {
+            if(key.SelfOrDescendantOf(this))
+                output[key] = output[key].Select(p => p.Rotate(Position, Rotation)).ToArray();
         }
     }
 

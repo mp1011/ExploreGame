@@ -1,3 +1,3 @@
-texture tiling still needs work
-
+- texture tiling still needs work
+- after rotation, texture placement is wrong
 fix/re-enable head bob

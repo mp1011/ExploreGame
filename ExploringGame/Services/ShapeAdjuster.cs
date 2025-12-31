@@ -22,7 +22,6 @@ public class ShapeAdjuster
     {
         _shape.Size = other.Size;
         _shape.Position = other.Position;
-        _shape.Rotation = other.Rotation;
         return this;
     }
 

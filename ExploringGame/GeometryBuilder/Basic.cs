@@ -1,6 +1,8 @@
-﻿using ExploringGame.Texture;
+﻿using ExploringGame.Extensions;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Runtime;
 
 namespace ExploringGame.GeometryBuilder;
 
@@ -24,7 +26,17 @@ public enum Winding
     CounterClockwise,
 }
 
-public record Rotation(float Yaw, float Pitch, float Roll);
+/// <summary>
+/// Yaw = side to side
+/// Pitch = up and down
+/// </summary>
+/// <param name="Yaw"></param>
+/// <param name="Pitch"></param>
+/// <param name="Roll"></param>
+public record Rotation(float Yaw, float Pitch, float Roll)
+{
+    public Matrix AsMatrix() => Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+}
 
 public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)
 {
@@ -52,6 +64,15 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
     public Triangle2D As2D(Vector3 faceOrigin)
     {
        return new Triangle2D(this, faceOrigin);
+    }
+
+    public Triangle Rotate(Vector3 pivot, Rotation rotation)
+    {
+        return new Triangle(A.Rotate(pivot, rotation),
+                            B.Rotate(pivot, rotation),
+                            C.Rotate(pivot, rotation),
+                            TextureInfo,
+                            Side); // note: side will still refer to the original, unrotated side
     }
 }
 

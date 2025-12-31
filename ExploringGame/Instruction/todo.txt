@@ -21,8 +21,9 @@
 [x] option to repeat textures
 	[x] make repeatable in gimp
 
+[x] easier way of defining structures?
+[ ] ability to rotate shapes after creation
 
-[ ] easier way of defining structures?
 
 [ ] irregular room shapes (display)
 	[ ] collision

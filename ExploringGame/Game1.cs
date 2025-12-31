@@ -113,7 +113,36 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return RoomWithDesk();
+        return FurnitureRotateTest();
+    }
+
+    private WorldSegment FurnitureRotateTest()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        var officeDesk = new OfficeDesk(simpleRoom);
+        officeDesk.Place().OnFloor();
+        officeDesk.Place().OnSideInner(Side.North);
+        officeDesk.Z += 0.1f;
+
+        var officeDesk2 = new OfficeDesk(simpleRoom);
+        officeDesk2.Position = simpleRoom.Position;
+        officeDesk2.Place().OnFloor();
+        officeDesk2.X += 3.0f;
+
+        officeDesk2.Rotation = new Rotation(0.5f, 0.2f, 0f);
+
+        var ws = new WorldSegment();
+        ws.AddChild(simpleRoom);
+        return ws;
     }
 
     private Shape SingleFaceTest()
