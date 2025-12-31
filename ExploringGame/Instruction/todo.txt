@@ -16,7 +16,11 @@
 [x] floor height differences
 	[x] render side
 
-[ ] texture improvements ()
+[ ] fix textures bleeding around corners
+[ ] find ways to make textures continuous across surfaces
+[ ] option to repeat textures
+	[ ] get better pictures
+	[ ] make repeatable in gimp
 
 
 

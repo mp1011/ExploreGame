@@ -1,4 +1,5 @@
-﻿using ExploringGame.Texture;
+﻿using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -277,14 +278,26 @@ public abstract class Shape
         if (quality == QualityLevel.DoNotRender)
             output[this] = Array.Empty<Triangle>();
         else if (quality == QualityLevel.CuboidOnly)
-            output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() : BuildCuboid();
+            output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() : AdjustTrianglesForDisplay(BuildCuboid());
         else
         {
             output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() :
-                                                       CorrectWinding(BuildInternal(quality));
+                                                       AdjustTrianglesForDisplay(BuildInternal(quality));
             foreach(var child in Children)
                 child.Build(quality - 1, output);
         }
+    }
+
+    /// <summary>
+    /// fixes the winding order and breaks up large triangles for tiled textures
+    /// </summary>
+    /// <param name="triangles"></param>
+    /// <returns></returns>
+    private Triangle[] AdjustTrianglesForDisplay(IEnumerable<Triangle> triangles)
+    {
+        var adjusted = CorrectWinding(triangles);
+        adjusted = new SplitTrianglesForTiling().Execute(this, adjusted);
+        return adjusted;
     }
 
     private Triangle[] CorrectWinding(IEnumerable<Triangle> triangles)
@@ -353,7 +366,7 @@ public abstract class Shape
         triangles.Add(new Triangle(corners[5], corners[2], corners[1], TextureInfoForSide(Side.East), Side.East));
         triangles.Add(new Triangle(corners[5], corners[6], corners[2], TextureInfoForSide(Side.East), Side.East));
 
-        return CorrectWinding(triangles);
+        return triangles.ToArray();
     }
 
     protected abstract Triangle[] BuildInternal(QualityLevel quality);

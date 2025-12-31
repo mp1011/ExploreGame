@@ -15,6 +15,17 @@ public static class NumberExtensions
         return value % modulus;
     }
 
+    public static float NMod(this float value, float modulus)
+    {
+        if (modulus <= 0)
+            throw new ArgumentOutOfRangeException(nameof(modulus), "Modulus must be greater than zero.");
+
+        while (value < 0)
+            value += modulus;
+
+        return value % modulus;
+    }
+
     public static double NMod(this double value, double modulus)
     {
         if (modulus <= 0)

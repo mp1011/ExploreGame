@@ -61,7 +61,7 @@ public class VertexBufferBuilder
         {
             foreach (var vertex in triangle.Vertices)
             {
-                var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle.TextureInfo.Key, vertex, cornerVertices.Item1, cornerVertices.Item2);
+                var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle.TextureInfo, vertex, cornerVertices.Item1, cornerVertices.Item2);
                 int index;
                 if(!indexCache.TryGetValue((vertex, triangle.TextureInfo.Color, textureCoords), out index))
                 {
@@ -96,13 +96,26 @@ public class VertexBufferBuilder
                 verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
     }
 
-    public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, TextureKey textureKey, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
     {
-        var position2d = position.As2D(side);
-        var topLeftCorner2d = topLeftCorner.As2D(side);
-        var bottomRightCorner2d = bottomRightCorner.As2D(side);
+        switch(texture.Style)
+        {
+            case TextureStyle.FillSide:
+                var position2d = position.As2D(side);
+                var topLeftCorner2d = topLeftCorner.As2D(side);
+                var bottomRightCorner2d = bottomRightCorner.As2D(side);
 
-        var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
-        return textureSheet.TexturePosition(textureKey, coordinates);
+                var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
+                return textureSheet.TexturePosition(texture.Key, coordinates);
+            case TextureStyle.XZTile:
+                var tileSize = texture.TileSize.Value;
+                var tx = position.X.NMod(tileSize) / tileSize;
+                var ty = position.Z.NMod(tileSize) / tileSize;
+                return textureSheet.TexturePosition(texture.Key, new Vector2(tx, ty));
+
+            default:
+                throw new System.ArgumentException("invalid style");
+        }
+        
     }
 }

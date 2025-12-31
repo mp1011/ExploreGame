@@ -2,9 +2,16 @@
 
 namespace ExploringGame.Texture;
 
-public record TextureInfo(Color Color, TextureKey Key)
+public enum TextureStyle
 {
-    public TextureInfo(TextureKey Key) : this(Color.White, Key) { }
+    FillSide,
+    XZTile,
+}
+
+public record TextureInfo(Color Color, TextureKey Key, TextureStyle Style = TextureStyle.FillSide, float? TileSize = null)
+{
+    public TextureInfo(TextureKey Key, TextureStyle Style = TextureStyle.FillSide, float? TileSize = null) 
+        : this(Color.White, Key, Style, TileSize) { }
 
     public TextureInfo(Color Color) : this(Color, TextureKey.None) { }
 
