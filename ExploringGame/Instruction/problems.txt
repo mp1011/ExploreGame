@@ -1,2 +1,1 @@
-need to know triangle winding order, and ensure cutout is opposite
-this may also help with facing direction
+fix/renable head bob

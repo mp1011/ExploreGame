@@ -10,8 +10,8 @@
 	[x] allow player to pass through (any side)
 	[x] connecting room at any position
 	[x] works regardless of relative size
-[ ] proper input
-[ ] accelerated motion
+[x] proper input
+[x] accelerated motion
 [ ] gravity / jumping
 [ ] floor height differences (player aware of current room)
 [ ] irregular room shapes (display)

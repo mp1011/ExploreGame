@@ -18,6 +18,8 @@ class HeadBob
 
     public Vector3 Update(bool isMoving, GameTime gameTime, Vector3 cameraPosition)
     {
+        return cameraPosition;
+
         // need to redo to be based on room player is in
         if(_defaultY == 0f)
             _defaultY = cameraPosition.Y;

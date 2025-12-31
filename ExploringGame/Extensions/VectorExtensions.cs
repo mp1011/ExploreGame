@@ -9,6 +9,7 @@ namespace ExploringGame.Extensions;
 
 public static class VectorExtensions
 {
+    public static Vector3 SetY(this Vector3 vector, float y) => new Vector3(vector.X, y, vector.Z);
 
     public static Vector3 Center(this IEnumerable<Vector3> points)
     {
@@ -203,51 +204,12 @@ public static class VectorExtensions
 
     public static Vector3 MoveToward(this Vector3 current, Vector3 target, float magnitudeStep)
     {
-        float directionEpsilon = 1e-5f;
-        float currentMag = current.Length();
-        float targetMag = target.Length();
+        Vector3 delta = target - current;
+        float distance = delta.Length();
 
-        if (targetMag != 0)
-        {
-            Vector3 targetDir = Vector3.Normalize(target);
-            if (currentMag != 0)
-            {
-                Vector3 currentDir = Vector3.Normalize(current);
-                float dot = Vector3.Dot(currentDir, targetDir);
-                if (dot < 1f - directionEpsilon)
-                    return targetDir * currentMag;
-            }
-            else if (currentMag == 0)
-            {
-                return targetDir * magnitudeStep;
-            }
-        }
+        if (distance <= magnitudeStep || distance == 0f)
+            return target;
 
-        // Directions are the same — adjust magnitude
-        float newMag;
-
-        if (currentMag < targetMag)
-        {
-            newMag = currentMag + magnitudeStep;
-            if (newMag >= targetMag)
-                return target;
-        }
-        else
-        {
-            newMag = currentMag - magnitudeStep;
-            if (newMag <= targetMag)
-                return target;
-        }
-
-        if (targetMag == 0)
-        {
-            Vector3 currentDir = Vector3.Normalize(current);
-            return currentDir * newMag;
-        }
-        else
-        {
-            Vector3 targetDir = Vector3.Normalize(target);
-            return targetDir * newMag;
-        }
+        return current + delta / distance * magnitudeStep;
     }
 }

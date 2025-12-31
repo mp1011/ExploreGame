@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
+using ExploringGame.Motion;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -17,9 +18,11 @@ public class Game1 : Game
 {
     private Player _player;
     private PlayerMotion _playerMotion;
+    private EntityMover _playerGroundMover, _playerGravityMover;
     private HeadBob _headBob;
     private EntityCollider _playerCollider;
     private PlayerInput _playerInput;
+    private GravityController _gravityController;
 
     private WorldSegment _mainShape;
 
@@ -52,9 +55,15 @@ public class Game1 : Game
         _playerInput = new PlayerInput();
         _headBob = new HeadBob();
         _player = new Player();
-        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput);
+
+        _playerGroundMover = new EntityMover(new AcceleratedMotion(), _player);
+        _playerGravityMover = new EntityMover(new AcceleratedMotion(), _player);
+
         _mainShape = CreateMainShape();
         _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
+        _gravityController = new GravityController(_player, _playerCollider, _playerGravityMover);
+
+        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerGroundMover, _gravityController);
 
         base.Initialize();
 
@@ -294,6 +303,9 @@ public class Game1 : Game
             return;
 
         _playerInput.Update();
+        _playerGroundMover.Update();
+        _playerGravityMover.Update();
+        _gravityController.Update();
         _playerMotion.Update(gameTime, Window);
 
         if(_playerInput.IsKeyPressed(GameKey.DebugToggleCollision))

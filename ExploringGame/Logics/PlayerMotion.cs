@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -9,18 +10,23 @@ internal class PlayerMotion
 {
     public const float WalkAccel = 0.006f;
     public const float StopAccel = 0.009f;
+    public const float JumpSpeed = 0.05f;
 
     private PlayerInput _playerInput;
     private Player _player;
     private HeadBob _headBob;
+    private EntityMover _groundMotion;
+    private GravityController _gravityController;
     private MouseState _prevMouse;
     private bool _firstMouse = true;
 
-    public PlayerMotion(Player player, HeadBob headBob, PlayerInput playerInput)
+    public PlayerMotion(Player player, HeadBob headBob, PlayerInput playerInput, EntityMover groundMotion, GravityController gravityController)
     {
         _playerInput = playerInput;
         _player = player;
         _headBob = headBob;
+        _groundMotion = groundMotion;
+        _gravityController = gravityController;
     }
 
     public void Update(GameTime gameTime, GameWindow window)
@@ -29,22 +35,19 @@ internal class PlayerMotion
         var yaw = _player.Rotation.Yaw;
         var pitch = _player.Rotation.Pitch;
 
-        _player.Motion.TargetMotion = GetMotionTarget(yaw);
+        _groundMotion.Motion.TargetMotion = GetMotionTarget(yaw);
 
-        if (_player.Motion.TargetMotion.LengthSquared() > 0)
-            _player.Motion.Acceleration = WalkAccel;
+        if (_groundMotion.Motion.TargetMotion.LengthSquared() > 0)
+            _groundMotion.Motion.Acceleration = WalkAccel;
         else
-            _player.Motion.Acceleration = StopAccel;
+            _groundMotion.Motion.Acceleration = StopAccel;
 
-            _player.Motion.Update();
+        // bool isMoving = _player.Motion.CurrentMotion.LengthSquared() > 0;
+        // fix me
+       // nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
 
-        Vector3 nextPosition = cameraPosition + _player.Motion.CurrentMotion;
-
-        bool isMoving = _player.Motion.CurrentMotion.LengthSquared() > 0;
-
-        nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
-
-        _player.Position = nextPosition;
+        if (_playerInput.IsKeyPressed(GameKey.Jump) && _gravityController.CanJump())
+            _gravityController.Motion.CurrentY = JumpSpeed;
 
         // Mouse look
         var mouse = Mouse.GetState();

@@ -1,13 +1,12 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
-using ExploringGame.GeometryBuilder.Shapes;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 
 namespace ExploringGame.Logics.Collision;
 
-internal class EntityCollider
+public class EntityCollider
 {
     private Shape[] _collidableShapes = Array.Empty<Shape>();
     private Vector3 _lastValidPosition;
