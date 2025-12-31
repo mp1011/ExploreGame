@@ -25,5 +25,29 @@ public static class NumberExtensions
 
         return value % modulus;
     }
+
+    public static float MoveToward(this float number, float target, float step)
+    {
+        step = Math.Abs(step);
+
+        if(number == target)
+            return number;
+        else if(number < target)
+        {
+            number += step;
+            if (number > target)
+                return target;
+            else
+                return number;
+        }
+        else
+        {
+            number -= step;
+            if (number < target)
+                return target;
+            else
+                return number;
+        }
+    }
 }
 

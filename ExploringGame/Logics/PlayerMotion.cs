@@ -7,13 +7,18 @@ namespace ExploringGame.Logics;
 
 internal class PlayerMotion
 {
+    public const float WalkAccel = 0.006f;
+    public const float StopAccel = 0.009f;
+
+    private PlayerInput _playerInput;
     private Player _player;
     private HeadBob _headBob;
     private MouseState _prevMouse;
     private bool _firstMouse = true;
 
-    public PlayerMotion(Player player, HeadBob headBob)
+    public PlayerMotion(Player player, HeadBob headBob, PlayerInput playerInput)
     {
+        _playerInput = playerInput;
         _player = player;
         _headBob = headBob;
     }
@@ -24,23 +29,18 @@ internal class PlayerMotion
         var yaw = _player.Rotation.Yaw;
         var pitch = _player.Rotation.Pitch;
 
-        // Camera movement
-        var k = Keyboard.GetState();
-        float speed = 0.1f;
+        _player.Motion.TargetMotion = GetMotionTarget(yaw);
 
-        if (k.IsKeyDown(Keys.LeftShift))
-            speed = 0.2f;
+        if (_player.Motion.TargetMotion.LengthSquared() > 0)
+            _player.Motion.Acceleration = WalkAccel;
+        else
+            _player.Motion.Acceleration = StopAccel;
 
-        Vector3 forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
-        Vector3 right = Vector3.Transform(Vector3.Right, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
-        Vector3 nextPosition = cameraPosition;
-        if (k.IsKeyDown(Keys.W)) nextPosition += forward * speed;
-        if (k.IsKeyDown(Keys.S)) nextPosition -= forward * speed;
-        if (k.IsKeyDown(Keys.A)) nextPosition -= right * speed;
-        if (k.IsKeyDown(Keys.D)) nextPosition += right * speed;
+            _player.Motion.Update();
 
-        // should have a "current speed" of player and not check keys directly
-        bool isMoving = k.IsKeyDown(Keys.W) || k.IsKeyDown(Keys.A) || k.IsKeyDown(Keys.S) || k.IsKeyDown(Keys.D);
+        Vector3 nextPosition = cameraPosition + _player.Motion.CurrentMotion;
+
+        bool isMoving = _player.Motion.CurrentMotion.LengthSquared() > 0;
 
         nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
 
@@ -66,4 +66,18 @@ internal class PlayerMotion
         _player.Rotation = new Rotation(yaw, pitch, _player.Rotation.Roll);
     }
 
+    public Vector3 GetMotionTarget(float yaw)
+    {
+        float speed = _playerInput.IsKeyDown(GameKey.Run) ? 0.2f : 0.1f;
+        Vector3 forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+        Vector3 right = Vector3.Transform(Vector3.Right, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
+        Vector3 target = Vector3.Zero;
+
+        if (_playerInput.IsKeyDown(GameKey.Forward)) target += forward * speed;
+        if (_playerInput.IsKeyDown(GameKey.Backward)) target -= forward * speed;
+        if (_playerInput.IsKeyDown(GameKey.StrafeLeft)) target -= right * speed;
+        if (_playerInput.IsKeyDown(GameKey.StrafeRight)) target += right * speed;
+
+        return target;
+    }
 }

@@ -19,6 +19,7 @@ public class Game1 : Game
     private PlayerMotion _playerMotion;
     private HeadBob _headBob;
     private EntityCollider _playerCollider;
+    private PlayerInput _playerInput;
 
     private WorldSegment _mainShape;
 
@@ -35,7 +36,6 @@ public class Game1 : Game
     private TextureSheet _basementTextures;
     private Effect _pointLightEffect;
     private SpriteFont _debugFont;
-    private KeyboardState _lastKeyState;
 
     public Game1()
     {
@@ -49,9 +49,10 @@ public class Game1 : Game
         // Set up projection
         _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
 
+        _playerInput = new PlayerInput();
         _headBob = new HeadBob();
         _player = new Player();
-        _playerMotion = new PlayerMotion(_player, _headBob);
+        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput);
         _mainShape = CreateMainShape();
         _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
 
@@ -158,6 +159,15 @@ public class Game1 : Game
         northRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(northRoom, Side.North, 0.2f));
 
+        var northRoom2 = new Room();
+        northRoom2.Width = 40f;
+        northRoom2.Height = 4f;
+        northRoom2.Depth = 40f;
+        northRoom2.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        northRoom2.SideTextures[Side.Bottom] = new TextureInfo(Color.Green, TextureKey.Floor);
+        northRoom2.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        northRoom.AddConnectingRoom(new RoomConnection(northRoom2, Side.North, 0.5f));
+
         var westRoom = new Room();
         westRoom.Width = 10f;
         westRoom.Height = 4f;
@@ -180,6 +190,7 @@ public class Game1 : Game
         world.AddChild(room);
         world.AddChild(southRoom);
         world.AddChild(northRoom);
+        world.AddChild(northRoom2);
         world.AddChild(eastRoom);
         world.AddChild(westRoom);
 
@@ -282,17 +293,16 @@ public class Game1 : Game
         if (!IsActive)
             return;
 
+        _playerInput.Update();
         _playerMotion.Update(gameTime, Window);
 
-        var ks = Keyboard.GetState();
-        if (ks.IsKeyDown(Keys.C) && !_lastKeyState.IsKeyDown(Keys.C))
+        if(_playerInput.IsKeyPressed(GameKey.DebugToggleCollision))
             _collisionEnabled = !_collisionEnabled;
             
         if(_collisionEnabled)
             _playerCollider.Update();
 
         _view = _player.CreateViewMatrix();
-        _lastKeyState = Keyboard.GetState();
         base.Update(gameTime);
     }
 

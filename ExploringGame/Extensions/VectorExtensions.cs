@@ -199,4 +199,55 @@ public static class VectorExtensions
 
         return (boundingTopLeft, boundingBottomRight);
     }
+
+
+    public static Vector3 MoveToward(this Vector3 current, Vector3 target, float magnitudeStep)
+    {
+        float directionEpsilon = 1e-5f;
+        float currentMag = current.Length();
+        float targetMag = target.Length();
+
+        if (targetMag != 0)
+        {
+            Vector3 targetDir = Vector3.Normalize(target);
+            if (currentMag != 0)
+            {
+                Vector3 currentDir = Vector3.Normalize(current);
+                float dot = Vector3.Dot(currentDir, targetDir);
+                if (dot < 1f - directionEpsilon)
+                    return targetDir * currentMag;
+            }
+            else if (currentMag == 0)
+            {
+                return targetDir * magnitudeStep;
+            }
+        }
+
+        // Directions are the same — adjust magnitude
+        float newMag;
+
+        if (currentMag < targetMag)
+        {
+            newMag = currentMag + magnitudeStep;
+            if (newMag >= targetMag)
+                return target;
+        }
+        else
+        {
+            newMag = currentMag - magnitudeStep;
+            if (newMag <= targetMag)
+                return target;
+        }
+
+        if (targetMag == 0)
+        {
+            Vector3 currentDir = Vector3.Normalize(current);
+            return currentDir * newMag;
+        }
+        else
+        {
+            Vector3 targetDir = Vector3.Normalize(target);
+            return targetDir * newMag;
+        }
+    }
 }
