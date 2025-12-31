@@ -54,8 +54,16 @@ public record RoomConnection(Room Other, Side Side, float Position)
     {
         float left, top, right, bottom;
 
-        top = 0;
-        bottom = 0; // fix this when we add varying floor/ceiling heights
+        var thisFloor = room.GetSide(Side.Bottom);
+        var otherFloor = Other.GetSide(Side.Bottom);
+
+        var thisCeiling = room.GetSide(Side.Top);
+        var otherCeiling = Other.GetSide(Side.Top);
+
+        top = thisCeiling - otherCeiling;
+        bottom = otherFloor - thisFloor;
+        if (bottom < 0)
+            bottom = 0;
 
         switch(Side)
         {

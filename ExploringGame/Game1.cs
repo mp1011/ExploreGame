@@ -114,6 +114,7 @@ public class Game1 : Game
     private WorldSegment CreateMainShape()
     {
         return ConnectingRoomsTest();       
+        // return EmptyRoom();
     }
 
     private Shape SingleFaceTest()
@@ -124,7 +125,7 @@ public class Game1 : Game
         return faceTest;
     }
 
-    private Shape EmptyRoom()
+    private WorldSegment EmptyRoom()
     {
         var simpleRoom = new SimpleRoom();
         simpleRoom.Width = 16f;
@@ -135,7 +136,11 @@ public class Game1 : Game
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        return simpleRoom;
+
+        var world = new WorldSegment();
+        world.AddChild(simpleRoom);
+
+        return world;
     }
 
     private WorldSegment ConnectingRoomsTest()
@@ -166,7 +171,9 @@ public class Game1 : Game
         northRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         northRoom.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Floor);
         northRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
         room.AddConnectingRoom(new RoomConnection(northRoom, Side.North, 0.2f));
+        northRoom.SetSideUnanchored(Side.Bottom, northRoom.GetSide(Side.Bottom) + 0.4f);
 
         var northRoom2 = new Room();
         northRoom2.Width = 40f;
@@ -185,6 +192,7 @@ public class Game1 : Game
         westRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         westRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(westRoom, Side.West, 0.2f));
+        westRoom.SetSideUnanchored(Side.Top, northRoom.GetSide(Side.Top) - 0.4f);
 
         var eastRoom = new Room();
         eastRoom.Width = 10f;
@@ -286,7 +294,9 @@ public class Game1 : Game
     private void SetBuffers()
     {        
         var builder = new VertexBufferBuilder();
-        var buffers = builder.Build(_mainShape, _basementTextures, GraphicsDevice, qualityLevel: (QualityLevel)8);
+
+        var triangles = _mainShape.Build((QualityLevel)8);
+        var buffers = builder.Build(triangles, _basementTextures, GraphicsDevice);
 
         _roomBuffer = buffers.Item1;
         _roomIndices = buffers.Item2;
@@ -323,28 +333,28 @@ public class Game1 : Game
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-        //_effect.World = Matrix.Identity;
-        //_effect.View = _view;
-        //_effect.Projection = _projection;
-        //foreach (var pass in _effect.CurrentTechnique.Passes)
-        //{
-        //    pass.Apply();
-        //    GraphicsDevice.SetVertexBuffer(_roomBuffer);
-        //    GraphicsDevice.Indices = _roomIndices;
-        //    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _triangleCount);
-        //}
-
-        _pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
-        _pointLightEffect.Parameters["View"].SetValue(_view);
-        _pointLightEffect.Parameters["Projection"].SetValue(_projection);
-
-        foreach (var pass in _pointLightEffect.CurrentTechnique.Passes)
+        _effect.World = Matrix.Identity;
+        _effect.View = _view;
+        _effect.Projection = _projection;
+        foreach (var pass in _effect.CurrentTechnique.Passes)
         {
             pass.Apply();
             GraphicsDevice.SetVertexBuffer(_roomBuffer);
             GraphicsDevice.Indices = _roomIndices;
             GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _triangleCount);
         }
+
+        //_pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
+        //_pointLightEffect.Parameters["View"].SetValue(_view);
+        //_pointLightEffect.Parameters["Projection"].SetValue(_projection);
+
+        //foreach (var pass in _pointLightEffect.CurrentTechnique.Passes)
+        //{
+        //    pass.Apply();
+        //    GraphicsDevice.SetVertexBuffer(_roomBuffer);
+        //    GraphicsDevice.Indices = _roomIndices;
+        //    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _triangleCount);
+        //}
 
         // Draw debug information
         _spriteBatch.Begin();

@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,28 +10,99 @@ namespace ExploringGame.Services;
 
 public class VertexBufferBuilder
 {
-    public (VertexBuffer, IndexBuffer, int) Build(Shape master, TextureSheet textureSheet, GraphicsDevice graphicsDevice, QualityLevel qualityLevel)
-    {
-        var triangles = master.Build(qualityLevel);
-        var vertices = new VertexList(triangles, textureSheet);
+    public (VertexBuffer, IndexBuffer, int) Build(Dictionary<Shape, Triangle[]> triangles, TextureSheet textureSheet, GraphicsDevice graphicsDevice)
+    {     
+        List<VertexPositionColorTexture> vertices = new();
+        List<int> indices = new();
+        Dictionary<(Vector3, Color, Vector2), int> indexCache = new();
 
-        var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), vertices.Length, BufferUsage.WriteOnly);
-        vb.SetData(vertices.Array);
+        BuildBuffers(triangles, vertices, indices, indexCache, textureSheet);
 
-        var allTriangles = triangles.SelectMany(p => p.Value).ToArray();
+        var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
+        vb.SetData(vertices.ToArray());
 
-        int[] indices = BuildIndices(allTriangles, vertices);
-        var ib = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Length, BufferUsage.WriteOnly);
-        ib.SetData(indices);
+        var ib = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Count, BufferUsage.WriteOnly);
+        ib.SetData(indices.ToArray());
 
-        return (vb, ib, allTriangles.Length);
+        return (vb, ib, triangles.SelectMany(p => p.Value).Count());
     }
 
-    private int[] BuildIndices(IEnumerable<Triangle> triangles, VertexList vertices)
+    private void BuildBuffers(Dictionary<Shape, Triangle[]> shapeTriangles, 
+                             List<VertexPositionColorTexture> vertices, 
+                             List<int> indices,
+                             Dictionary<(Vector3, Color, Vector2), int> indexCache,
+                             TextureSheet textureSheet)
     {
-        return triangles.SelectMany(t =>
+        foreach (Shape shape in shapeTriangles.Keys)
         {
-            return t.Vertices.Select(v => vertices.IndexOf(v, t.TextureInfo.Color));
-        }).ToArray();       
+            var triangles = shapeTriangles[shape];
+            CreateVertices(Side.West, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(Side.North, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(Side.East, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(Side.South, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(Side.Top, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(Side.Bottom, textureSheet, triangles, vertices, indices, indexCache);
+        }
+    }
+    
+
+    private void CreateVertices(Side side,
+                                TextureSheet textureSheet,
+                                IEnumerable<Triangle> triangles,
+                                List<VertexPositionColorTexture> vertices,
+                                List<int> indices,
+                                Dictionary<(Vector3, Color, Vector2), int> indexCache)
+    {
+        var sideTriangles = triangles.Where(p => p.Side == side).ToArray();
+
+        var cornerVertices = GetCornerVertices(side, sideTriangles);
+
+        foreach(var triangle in sideTriangles)
+        {
+            foreach (var vertex in triangle.Vertices)
+            {
+                var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle.TextureInfo.Key, vertex, cornerVertices.Item1, cornerVertices.Item2);
+                int index;
+                if(!indexCache.TryGetValue((vertex, triangle.TextureInfo.Color, textureCoords), out index))
+                {
+                    indexCache.Add((vertex, triangle.TextureInfo.Color, textureCoords), vertices.Count);
+                    indices.Add(vertices.Count);
+                    vertices.Add(new VertexPositionColorTexture(vertex, triangle.TextureInfo.Color, textureCoords));                    
+                }
+                else
+                {
+                    indices.Add(index);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns the two vertices which should have 0,0 and 1,1 texture coordinates
+    /// </summary>
+    /// <param name="side"></param>
+    /// <param name="sideTriangles"></param>
+    /// <returns></returns>
+    /// <exception cref="System.NotImplementedException"></exception>
+    private (Vector3, Vector3) GetCornerVertices(Side side, IEnumerable<Triangle> sideTriangles)
+    {
+        if (!sideTriangles.Any())
+            return (Vector3.Zero, Vector3.Zero);
+
+        var verts = sideTriangles.SelectMany(p => p.Vertices).ToArray();
+        var boundingBoxCorners = verts.GetBoundingBoxCorners(side);
+
+        return (verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item1)).First(),
+                verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
+    }
+
+    public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, TextureKey textureKey, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    {
+        var position2d = position.As2D(side);
+        var topLeftCorner2d = topLeftCorner.As2D(side);
+        var bottomRightCorner2d = bottomRightCorner.As2D(side);
+
+        var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
+        return textureSheet.TexturePosition(textureKey, coordinates);
     }
 }

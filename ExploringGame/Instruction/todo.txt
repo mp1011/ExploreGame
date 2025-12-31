@@ -12,7 +12,13 @@
 	[x] works regardless of relative size
 [x] proper input
 [x] accelerated motion
-[ ] gravity / jumping
-[ ] floor height differences (player aware of current room)
+[x] gravity / jumping
+[x] floor height differences
+	[x] render side
+
+[ ] texture improvements ()
+
+
+
 [ ] irregular room shapes (display)
 	[ ] collision
