@@ -1,6 +1,3 @@
-create struct to hold vertex pos/color/txt and its triangle
-use that to look up index
-this should fix textures bleeding across corners
-
+texture tiling still needs work
 
 fix/re-enable head bob

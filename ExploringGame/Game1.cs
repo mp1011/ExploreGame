@@ -113,8 +113,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return ConnectingRoomsTest();       
-        // return EmptyRoom();
+        return RoomWithDesk();
     }
 
     private Shape SingleFaceTest()
@@ -216,7 +215,7 @@ public class Game1 : Game
         return world;
     }
 
-    private Shape RoomWithFireplace()
+    private WorldSegment RoomWithFireplace()
     {
         var simpleRoom = new SimpleRoom();
         simpleRoom.Width = 16f;
@@ -227,30 +226,40 @@ public class Game1 : Game
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-              
-        var box = new Box();
-        simpleRoom.AddChild(box);
-        box.Width = 2f;
-        box.Height = 2f;
-        box.Depth = 2f;
-        box.Place().OnFloor();
-        box.Place().OnSideInner(Side.NorthEast);
-        box.MainTexture = new TextureInfo(Color.Blue);
 
-        var box2 = new Box();
-        simpleRoom.AddChild(box2);
-        box2.Width = 1f;
-        box2.Height = 3f;
-        box2.Depth = 2f;
-        box2.Place().OnFloor();
-        box2.Place().OnSideInner(Side.NorthWest);
-        box2.MainTexture = new TextureInfo(Color.Yellow);
+        var officeDesk = new OfficeDesk(simpleRoom);
+        officeDesk.Place().OnFloor();
+        officeDesk.Place().OnSideInner(Side.West);
 
         var fireplace = new ElectricFireplace(simpleRoom);
         fireplace.Place().OnFloor();
         fireplace.Place().OnSideInner(Side.North);
 
-        return simpleRoom;
+        var ws = new WorldSegment();
+        ws.AddChild(simpleRoom);
+        return ws;
+    }
+
+    private WorldSegment RoomWithDesk()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        var officeDesk = new OfficeDesk(simpleRoom);
+        officeDesk.Place().OnFloor();
+        officeDesk.Place().OnSideInner(Side.North);
+        officeDesk.Z += 0.1f;
+
+        var ws = new WorldSegment();
+        ws.AddChild(simpleRoom);
+        return ws;
     }
 
     private Shape FaceCutoutTestRoom()
