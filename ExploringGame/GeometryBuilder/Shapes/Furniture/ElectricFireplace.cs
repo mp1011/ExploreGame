@@ -3,7 +3,7 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace ExploringGame.GeometryBuilder.Shapes;
+namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
 /// <summary>
 /// FireplaceTop
@@ -21,9 +21,9 @@ class ElectricFireplace : Shape
     public const float MiddleShelfTop = 0.1f;
     public const float MiddleShelfBottom = 0.1f;
 
-    public const float MainWidth = 2.2f;
-    public const float MainHeight = 1.1f;
-    public const float MainDepth = 0.8f;
+    public static readonly float MainWidth = Measure.Inches(60);
+    public static readonly float MainHeight = Measure.Inches(34);
+    public static readonly float MainDepth = Measure.Inches(16);
 
     public const float LowerDoorWidth = 0.6f;
     public const float LowerDrawerSideThickness = 0.1f;
@@ -52,7 +52,7 @@ class ElectricFireplace : Shape
         Width = MainWidth;
         Depth = MainDepth;
         Height = MainHeight;
-        MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+        MainTexture = new TextureInfo(TextureKey.Wood);
 
         AddChild(new FireplaceTop(this));
         AddChild(new FireplaceBottom(this));
@@ -72,7 +72,7 @@ class ElectricFireplace : Shape
 
         public FireplaceTop(ElectricFireplace firePlace)
         {
-            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+            MainTexture = new TextureInfo(TextureKey.Wood);
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -94,7 +94,7 @@ class ElectricFireplace : Shape
 
         public FireplaceBottom(ElectricFireplace firePlace)
         {
-            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+            MainTexture = new TextureInfo(TextureKey.Wood);
 
             AddChild(new FirePlaceMiddleShelf(this));
             AddChild(new FireplaceLower(this));
@@ -117,7 +117,7 @@ class ElectricFireplace : Shape
 
         public FirePlaceMiddleShelf(FireplaceBottom firePlace)
         {
-            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+            MainTexture = new TextureInfo(TextureKey.Wood);
 
             AddChild(new SurfaceIndent(this, Side.South, _innerShelfPlacement, MainDepth - 0.1f));
         }
@@ -147,7 +147,7 @@ class ElectricFireplace : Shape
 
         public FireplaceLower(FireplaceBottom firePlace)
         {
-            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+            MainTexture = new TextureInfo(TextureKey.Wood);
 
             AddChild(new FireplaceLowerDrawer(Side.West));
             AddChild(new FireplaceLowerDrawer(Side.East));
@@ -175,7 +175,7 @@ class ElectricFireplace : Shape
         public FireplaceLowerDrawer(Side side)
         {
             Side = side;
-            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+            MainTexture = new TextureInfo(TextureKey.Wood);
 
             _innerSpacePlacement = new Placement2D(LowerDrawerSideThickness, LowerDrawerSideThickness, LowerDrawerSideThickness, LowerDrawerSideThickness);
 
@@ -210,7 +210,7 @@ class ElectricFireplace : Shape
         public FireplaceDrawerDoor(Side side)
         {
             Side = side;
-            MainTexture = new TextureInfo(Texture.TextureKey.Wood);
+            MainTexture = new TextureInfo(TextureKey.Wood);
 
             AddChild(new FireplaceDrawerDoorWindow(0, 0));
             AddChild(new FireplaceDrawerDoorWindow(1, 0));
@@ -218,9 +218,9 @@ class ElectricFireplace : Shape
             AddChild(new FireplaceDrawerDoorWindow(1, 1));
             AddChild(new FireplaceDrawerDoorWindow(0, 2));
             AddChild(new FireplaceDrawerDoorWindow(1, 2));
-            _xStrip = AddChild(new Box { MainTexture = new TextureInfo(Texture.TextureKey.Wood) });
-            _yStrip1 = AddChild(new Box { MainTexture = new TextureInfo(Texture.TextureKey.Wood) });
-            _yStrip2 = AddChild(new Box { MainTexture = new TextureInfo(Texture.TextureKey.Wood) });
+            _xStrip = AddChild(new Box { MainTexture = new TextureInfo(TextureKey.Wood) });
+            _yStrip1 = AddChild(new Box { MainTexture = new TextureInfo(TextureKey.Wood) });
+            _yStrip2 = AddChild(new Box { MainTexture = new TextureInfo(TextureKey.Wood) });
 
         }
 
@@ -239,7 +239,7 @@ class ElectricFireplace : Shape
             var cuboid = BuildCuboid();
             var windowPlacement = CalcWindowPlacement();
 
-            var windowTotalHeight = (LowerDoorWindowHeight * 3) + (LowerDoorWindowYSpacing * 2);
+            var windowTotalHeight = LowerDoorWindowHeight * 3 + LowerDoorWindowYSpacing * 2;
             _xStrip.Position = Position;
             _xStrip.Height = windowTotalHeight;
             _xStrip.Width = LowerDoorWindowXSpacing;
@@ -248,14 +248,14 @@ class ElectricFireplace : Shape
 
             _yStrip1.Position = Position;
             _yStrip1.Height = LowerDoorWindowYSpacing;
-            _yStrip1.Width = (LowerDoorWindowWidth * 2) + LowerDoorWindowXSpacing;
+            _yStrip1.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip1.Depth = LowerDoorWindowIndent;
             _yStrip1.Place().OnSideInner(Side.South);
             _yStrip1.Y = GetSide(Side.Top) - windowPlacement.Top - LowerDoorWindowHeight;
 
             _yStrip2.Position = Position;
             _yStrip2.Height = LowerDoorWindowYSpacing;
-            _yStrip2.Width = (LowerDoorWindowWidth * 2) + LowerDoorWindowXSpacing;
+            _yStrip2.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip2.Depth = LowerDoorWindowIndent;
             _yStrip2.Place().OnSideInner(Side.South);
             _yStrip2.Y = GetSide(Side.Top) - windowPlacement.Top - (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * 2;
@@ -265,8 +265,8 @@ class ElectricFireplace : Shape
 
         private Placement2D CalcWindowPlacement()
         {
-            var windowTotalWidth = (LowerDoorWindowWidth * 2) + LowerDoorWindowXSpacing;
-            var windowTotalHeight = (LowerDoorWindowHeight * 3) + (LowerDoorWindowYSpacing * 2);
+            var windowTotalWidth = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
+            var windowTotalHeight = LowerDoorWindowHeight * 3 + LowerDoorWindowYSpacing * 2;
 
             var side = (Width - windowTotalWidth) / 2.0f;
             var top = (Height - windowTotalHeight) / 2.0f;
@@ -307,15 +307,15 @@ class ElectricFireplace : Shape
 
         private Placement2D CalcPlacement()
         {
-            var windowTotalWidth = (LowerDoorWindowWidth * 2) + LowerDoorWindowXSpacing;
-            var windowTotalHeight = (LowerDoorWindowHeight * 3) + (LowerDoorWindowYSpacing * 2);
+            var windowTotalWidth = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
+            var windowTotalHeight = LowerDoorWindowHeight * 3 + LowerDoorWindowYSpacing * 2;
 
             float left, top;
 
             if (_x == 0)
                 left = (Parent.Width - windowTotalWidth) / 2.0f;
             else
-                left = (Parent.Width / 2.0f) + LowerDoorWindowXSpacing / 2.0f;
+                left = Parent.Width / 2.0f + LowerDoorWindowXSpacing / 2.0f;
 
             top = (Parent.Height - windowTotalHeight) / 2.0f;
             top += (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * _y;
@@ -342,7 +342,7 @@ class ElectricFireplace : Shape
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             this.AdjustShape().From(Parent)
-                              .SliceX(LowerDoorWidth, MainWidth - (LowerDoorWidth * 2))
+                              .SliceX(LowerDoorWidth, MainWidth - LowerDoorWidth * 2)
                               .SliceZ(LowerDoorThickness, MainDepth - LowerDoorThickness)
                               .SliceY(0, Parent.Height - FooterHeight);
 

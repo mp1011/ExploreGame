@@ -22,8 +22,6 @@
 	[x] make repeatable in gimp
 
 [x] easier way of defining structures?
-[ ] ability to rotate shapes after creation
+[x] ability to rotate shapes after creation
 
-
-[ ] irregular room shapes (display)
-	[ ] collision
+[ ] easier way to place rooms (by specifying either the left or right edge)

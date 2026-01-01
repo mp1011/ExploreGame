@@ -33,9 +33,11 @@ public enum Winding
 /// <param name="Yaw"></param>
 /// <param name="Pitch"></param>
 /// <param name="Roll"></param>
-public record Rotation(float Yaw, float Pitch, float Roll)
+public record Rotation(float Yaw = 0f, float Pitch = 0f, float Roll = 0f)
 {
     public Matrix AsMatrix() => Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+
+    public static Rotation YawFromDegrees(float degrees) => new Rotation(Yaw: (degrees * MathHelper.Pi) / 180.0f);
 }
 
 public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)

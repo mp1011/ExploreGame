@@ -1,6 +1,8 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
@@ -50,7 +52,10 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // Set up projection
-        _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
+        _projection = Matrix.CreatePerspectiveFieldOfView(
+            MathHelper.ToRadians(70f), //MathHelper.PiOver4, 
+            GraphicsDevice.Viewport.AspectRatio, 
+            0.1f, 100f);
 
         _playerInput = new PlayerInput();
         _headBob = new HeadBob();
@@ -113,7 +118,15 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return FurnitureRotateTest();
+        return BasementOffice();
+    }
+
+    private WorldSegment BasementOffice()
+    {
+        var ws = new WorldSegment();
+        var office = new BasementOffice(ws);
+
+        return ws;
     }
 
     private WorldSegment FurnitureRotateTest()

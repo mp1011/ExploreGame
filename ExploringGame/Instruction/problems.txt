@@ -1,3 +1,4 @@
 - texture tiling still needs work
 - after rotation, texture placement is wrong
+- will need proper collision detection for rotated objects
 fix/re-enable head bob

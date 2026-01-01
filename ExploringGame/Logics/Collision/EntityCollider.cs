@@ -95,6 +95,8 @@ public class EntityCollider
 
     private Shape[] GetCollidableShapes()
     {
+        if(CurrentRoom == null)
+            return Array.Empty<Shape>();
         var shapes = CurrentRoom.TraverseAllChildren().Where(p => p.CollisionEnabled).ToArray();
 
         // collision responders to the front the list

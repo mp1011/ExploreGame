@@ -4,26 +4,26 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 
-namespace ExploringGame.GeometryBuilder.Shapes;
+namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
 class OfficeDesk : Shape
 {
-    public const float DeskWidth = 3.0f;
-    public const float DeskHeight = 2.2f;
-    public const float DeskDepth = 1.0f;
+    public static readonly float DeskWidth = Measure.Inches(71);
+    public static readonly float DeskHeight = Measure.Inches(65);
+    public static readonly float DeskDepth = Measure.Inches(24);
 
-    public const float DeskSurfaceHeight = 1.0f;
-    public const float DeskSurfaceThickness = 0.1f;
+    public static readonly float DeskSurfaceHeight = 1.0f;
+    public static readonly float DeskSurfaceThickness = 0.1f;
 
-    public const float DeskTopIndent = 0.5f;
+    public static readonly float DeskTopIndent = 0.5f;
 
-    public const float BottomLeftDrawerWidth = 1.0f;
-    public const float BottomRightWidth = 0.1f;
+    public static readonly float BottomLeftDrawerWidth = 1.0f;
+    public static readonly float BottomRightWidth = 0.1f;
 
-    public const float MiddleSideThickness = 0.1f;
-    public const float UpperHeight = 0.6f;
+    public static readonly float MiddleSideThickness = 0.1f;
+    public static readonly float UpperHeight = 0.6f;
 
-    public override bool CollisionEnabled => true;
+    public override bool CollisionEnabled => false; // until we have proper collision
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
