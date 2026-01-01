@@ -24,4 +24,22 @@
 [x] easier way of defining structures?
 [x] ability to rotate shapes after creation
 
+[ ] moving objects
+	[ ] rotating cube
+	[ ] moving object
+	[ ] hinged door
+		[ ] open via interaction
+
+
+- sample room with cube in front of player
+- ensure cube is in last position in buffer
+- draw cube with a second pass to DrawIndexedPrimitives (hard-coded)
+- use matrices to move cube within scene
+- code properly (no hard-coding)
+
+- remove code which rotates object itself as we can use matrices instead
+- multiple copies of same object can share the same vertex list
+
+
 [ ] easier way to place rooms (by specifying either the left or right edge)
+[ ] see if we can adjust n,s,e,w as long as rotation is multiple of 90

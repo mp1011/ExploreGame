@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace ExploringGame.GeometryBuilder;
 
@@ -268,6 +269,14 @@ public abstract class Shape
             return Parent.SelfOrDescendantOf(shape);
     }
 
+    public Matrix GetWorldMatrix()
+    {
+        var scaleMatrix = Matrix.Identity; // todo, see about this
+        var rotationMatrix = Rotation?.AsMatrix() ?? Matrix.Identity;
+
+        return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(Position);
+    }
+
     #region Build
 
     protected virtual void BeforeBuild()
@@ -283,8 +292,8 @@ public abstract class Shape
 
     private void Build(QualityLevel quality, Dictionary<Shape, Triangle[]> output)
     {
-        BeforeBuild();    
-
+        BeforeBuild();
+       
         if (quality == QualityLevel.DoNotRender)
             output[this] = Array.Empty<Triangle>();
         else if (quality == QualityLevel.CuboidOnly)

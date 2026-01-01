@@ -7,6 +7,7 @@ using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Motion;
+using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -33,9 +34,8 @@ public class Game1 : Game
 
     // 3D room and camera fields
     private BasicEffect _effect;
-    private VertexBuffer _roomBuffer;
-    private IndexBuffer _roomIndices;
-    private int _triangleCount;
+
+    private ShapeBuffer[] _shapeBuffers;
     private Matrix _view;
     private Matrix _projection;
     private TextureSheet _basementTextures;
@@ -54,7 +54,7 @@ public class Game1 : Game
         // Set up projection
         _projection = Matrix.CreatePerspectiveFieldOfView(
             MathHelper.ToRadians(70f), //MathHelper.PiOver4, 
-            GraphicsDevice.Viewport.AspectRatio, 
+            GraphicsDevice.Viewport.AspectRatio,
             0.1f, 100f);
 
         _playerInput = new PlayerInput();
@@ -118,7 +118,29 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return BasementOffice();
+        return MotionTest();
+    }
+
+    private WorldSegment MotionTest()
+    {
+       
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        var box = new Box();
+        box.Width = 1.0f;
+        box.Height = 1.0f;
+        box.Depth = 1.0f;
+        box.MainTexture = new TextureInfo(Key: TextureKey.Floor, Color: Color.LightBlue);
+        simpleRoom.AddChild(box);
+       
+        return new WorldSegment(simpleRoom);
     }
 
     private WorldSegment BasementOffice()
@@ -345,18 +367,13 @@ public class Game1 : Game
     }
 
     private void SetBuffers()
-    {        
-        var builder = new VertexBufferBuilder();
-
+    {               
         var triangles = _mainShape.Build((QualityLevel)8);
-        var buffers = builder.Build(triangles, _basementTextures, GraphicsDevice);
-
-        _roomBuffer = buffers.Item1;
-        _roomIndices = buffers.Item2;
-        _triangleCount = buffers.Item3;
+        _shapeBuffers = new ShapeBufferCreator().Execute(triangles, _basementTextures, GraphicsDevice);
     }
 
     private bool _collisionEnabled = true;
+    private float _boxYaw = 0f;
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -364,6 +381,15 @@ public class Game1 : Game
 
         if (!IsActive)
             return;
+
+        //temp hard-coding
+        var room = _shapeBuffers[0].Shape;
+        room.Y = 2;
+
+        var movingObject = _shapeBuffers[1].Shape;
+        movingObject.Y += 0.01f;
+        movingObject.Z = -2.0f;
+        movingObject.Rotation = new Rotation(_boxYaw += 0.1f, 0, 0);
 
         _playerInput.Update();
         _playerGroundMover.Update();
@@ -386,15 +412,18 @@ public class Game1 : Game
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-        _effect.World = Matrix.Identity;
-        _effect.View = _view;
-        _effect.Projection = _projection;
-        foreach (var pass in _effect.CurrentTechnique.Passes)
+        foreach (var shapeBuffer in _shapeBuffers)
         {
-            pass.Apply();
-            GraphicsDevice.SetVertexBuffer(_roomBuffer);
-            GraphicsDevice.Indices = _roomIndices;
-            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _triangleCount);
+            _effect.World = shapeBuffer.Shape.GetWorldMatrix();
+            _effect.View = _view;
+            _effect.Projection = _projection;
+            foreach (var pass in _effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                GraphicsDevice.SetVertexBuffer(shapeBuffer.VertexBuffer);
+                GraphicsDevice.Indices = shapeBuffer.IndexBuffer;
+                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, shapeBuffer.TriangleCount);
+            }
         }
 
         //_pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
