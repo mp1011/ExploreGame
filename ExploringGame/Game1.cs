@@ -6,6 +6,7 @@ using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
+using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Motion;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
@@ -14,12 +15,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Linq; // For random texture generation
 
 namespace ExploringGame;
 
 public class Game1 : Game
 {
+    private ServiceContainer _serviceContainer;
     private Player _player;
     private PlayerMotion _playerMotion;
     private EntityMover _playerGroundMover, _playerGravityMover;
@@ -30,8 +33,7 @@ public class Game1 : Game
 
     private WorldSegment _mainShape;
 
-    private IActiveObject[] _activeObjects = Array.Empty<IActiveObject>();
-
+    private List<IActiveObject> _activeObjects = new();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -54,6 +56,8 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        _serviceContainer = new ServiceContainer();
+
         // Set up projection
         _projection = Matrix.CreatePerspectiveFieldOfView(
             MathHelper.ToRadians(70f), //MathHelper.PiOver4, 
@@ -67,13 +71,17 @@ public class Game1 : Game
         _playerGroundMover = new EntityMover(new AcceleratedMotion(), _player);
         _playerGravityMover = new EntityMover(new AcceleratedMotion(), _player);
 
-        _mainShape = CreateMainShape();
-        _activeObjects = _mainShape.TraverseAllChildren().OfType<IActiveObject>().ToArray();
+        _serviceContainer.Bind(_playerInput);
+        _serviceContainer.Bind(_player);
+        _serviceContainer.BindTransient<DoorController>();
 
+        _mainShape = CreateMainShape();                   
         _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
         _gravityController = new GravityController(_player, _playerCollider, _playerGravityMover);
 
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerGroundMover, _gravityController);
+
+        _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
 
         base.Initialize();
 

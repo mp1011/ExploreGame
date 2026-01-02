@@ -8,6 +8,7 @@ public enum GameKey
     Crouch,
     Run,
     Jump,
+    Use,
     StrafeLeft,
     StrafeRight,
     Forward,
@@ -27,6 +28,7 @@ public class PlayerInput
         _keyMap[GameKey.Run] = Keys.LeftShift;
         _keyMap[GameKey.Crouch] = Keys.LeftControl;
         _keyMap[GameKey.Jump] = Keys.Space;
+        _keyMap[GameKey.Use] = Keys.E;
 
         _keyMap[GameKey.Forward] = Keys.W;
         _keyMap[GameKey.Backward] = Keys.S;

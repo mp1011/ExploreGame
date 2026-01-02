@@ -27,8 +27,15 @@
 [ ] moving objects
 	[x] rotating cube
 	[x] moving object
-	[ ] hinged door
+	[x] hinged doo
 		[ ] open via interaction
+
+
+
+perhaps leave controllers as separate and use ctor binding? (probably yes)
+
+
+need a way to get player input, or other dependencies, into the door class
 
 [ ] easier way to place rooms (by specifying either the left or right edge)
 [ ] see if we can adjust n,s,e,w as long as rotation is multiple of 90

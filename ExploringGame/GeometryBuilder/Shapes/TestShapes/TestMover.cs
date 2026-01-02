@@ -4,10 +4,9 @@ using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.TestShapes;
 
-public class TestMover : Box, IActiveObject
+public class TestMover : Box, IPlaceableObject
 {
-    private float _yaw = 0;
-
+  
     public TestMover()
     {
         Width = 1.0f;
@@ -20,11 +19,20 @@ public class TestMover : Box, IActiveObject
 
     Shape[] IPlaceableObject.Children => TraverseAllChildren();
 
+    
+}
+
+public class TestMoverController : IShapeController<TestMover>
+{
+    private float _yaw = 0;
+
+    public TestMover Shape { get; set; }
+
     public void Update(GameTime gameTime)
     {
-        if(Y < 3.0f)
-            Y += 0.01f;
-        Z = -2.0f;
-        Rotation = new Rotation(_yaw += 0.1f, 0, 0);
+        if (Shape.Y < 3.0f)
+            Shape.Y += 0.01f;
+        Shape.Z = -2.0f;
+        Shape.Rotation = new Rotation(_yaw += 0.1f, 0, 0);
     }
 }
