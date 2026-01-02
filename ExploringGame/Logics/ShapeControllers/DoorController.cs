@@ -52,4 +52,7 @@ public class DoorController : IShapeController<Door>
         Shape.Position = Shape.Hinge - d;
     }
 
+    public void Initialize()
+    {
+    }
 }

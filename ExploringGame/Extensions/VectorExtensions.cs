@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -227,4 +228,8 @@ public static class VectorExtensions
         // Translate back
         return rotated + origin;
     }
+
+    public static Vector3 ToVector3(this JVector v) => new Vector3(v.X, v.Y, v.Z);
+    public static JVector ToJVector(this Vector3 v) => new JVector(v.X, v.Y, v.Z);
+
 }

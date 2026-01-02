@@ -47,6 +47,8 @@ public class Game1 : Game
     private Effect _pointLightEffect;
     private SpriteFont _debugFont;
 
+    private Physics _physics;
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -70,6 +72,9 @@ public class Game1 : Game
 
         _playerGroundMover = new EntityMover(new AcceleratedMotion(), _player);
         _playerGravityMover = new EntityMover(new AcceleratedMotion(), _player);
+
+        _physics = new Physics();
+        _serviceContainer.Bind(_physics);
 
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.Bind(_player);
@@ -131,7 +136,33 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return BasementOffice();
+        return PhysicsTest();
+    }
+
+
+    private WorldSegment PhysicsTest()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 10f;
+        simpleRoom.Height = 8f;
+        simpleRoom.Depth = 10f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+
+        var test = new PhysicsTestShape();
+        test.Y = 0.0f;
+        test.Z = -1.0f;
+
+        simpleRoom.AddChild(test);
+
+        var world = new WorldSegment();
+        world.AddChild(simpleRoom);
+
+        return world;
     }
 
     private WorldSegment MotionTest()
@@ -201,9 +232,9 @@ public class Game1 : Game
     private WorldSegment EmptyRoom()
     {
         var simpleRoom = new SimpleRoom();
-        simpleRoom.Width = 40f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 40f;
+        simpleRoom.Width = 10f;
+        simpleRoom.Height = 8f;
+        simpleRoom.Depth = 10f;
         simpleRoom.Y = 2;
 
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
@@ -383,7 +414,8 @@ public class Game1 : Game
     }
 
     private bool _collisionEnabled = true;
-    private float _boxYaw = 0f;
+    private bool _initialized = false;
+
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -391,6 +423,22 @@ public class Game1 : Game
 
         if (!IsActive)
             return;
+
+        if (!_initialized)
+        {
+            //temp
+            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.West);
+            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.East);
+            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.North);
+            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.South);
+
+            foreach (var obj in _activeObjects)
+                obj.Initialize();
+
+            _initialized = true;
+        }
+
+        _physics.Update(gameTime);
 
         foreach (var obj in _activeObjects)
             obj.Update(gameTime);
