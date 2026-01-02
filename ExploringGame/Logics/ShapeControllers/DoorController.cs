@@ -37,12 +37,12 @@ public class DoorController : IShapeController<Door>
     }
 
 
-    private void AdjustAngle(float targetDegrees)
+    private void AdjustAngle(Angle target)
     {
-        if (Shape.Angle.Degrees == targetDegrees)
+        if (Shape.Angle.Degrees == target.Degrees)
             return;
 
-        Shape.Angle = Shape.Angle.RotateTowards(targetDegrees, Shape.OpenSpeed);
+        Shape.Angle = Shape.Angle.RotateTowards(target.Degrees, Shape.OpenSpeed);
     }
 
     private void PlaceDoor()

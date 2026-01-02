@@ -57,8 +57,8 @@ public class BasementOffice : Room
         var closet1 = new BasementCloset(this, Side.East);
         closet1.Place().OnFloor().OnSideInner(Side.SouthWest);
 
-      //  var closet2 = new BasementCloset(eastPart, Side.West);
-      //  closet2.Place().OnFloor().OnSideInner(Side.SouthEast);
+        var closet2 = new BasementCloset(eastPart, Side.West);
+        closet2.Place().OnFloor().OnSideInner(Side.SouthEast);
 
         var desk1 = new OfficeDesk(this);
         desk1.Place().OnFloor().OnSideInner(Side.West);

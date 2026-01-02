@@ -1,4 +1,6 @@
-﻿namespace ExploringGame.GeometryBuilder;
+﻿using System;
+
+namespace ExploringGame.GeometryBuilder;
 
 /// <summary>
 /// North = -Z
@@ -6,18 +8,20 @@
 /// West = -X
 /// East = X
 /// </summary>
+[Flags]
 public enum Side
 {
-    North,
-    NorthWest,
-    West,
-    SouthWest,
-    South,
-    SouthEast,
-    East,
-    NorthEast,
-    Bottom,
-    Top
+    North = 1,
+    West = 2,
+    South = 4,
+    East = 8,
+    Bottom = 16,
+    Top = 32,
+    NorthWest = North | West,
+    SouthWest = South | West,
+    SouthEast = South | East,
+    NorthEast = North | East,
+    All = North | South | East | West | Top | Bottom
 }
 
 public static class SideExtensions

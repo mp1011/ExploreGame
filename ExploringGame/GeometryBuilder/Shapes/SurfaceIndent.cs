@@ -1,24 +1,28 @@
 ﻿using ExploringGame.Services;
 using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
 class SurfaceIndent : Shape
 {
     private Side _face;
+    private Side _displayFaces;
     private Placement2D _placement;
     private float _depth;
 
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
-    public SurfaceIndent(Shape parent, Side face, Placement2D placement, float depth)
+     
+
+    public SurfaceIndent(Shape parent, Side face, Placement2D placement, float depth, Side displayFaces = Side.All)
     {
         MainTexture = new TextureInfo(Texture.TextureKey.Wood);
 
         _face = face;
         _placement = placement;
         _depth = depth;
+        _displayFaces = displayFaces;
         parent.AddChild(this);
     }
 
@@ -38,6 +42,6 @@ class SurfaceIndent : Shape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return BuildCuboid();
+        return BuildCuboid().Where(p => _displayFaces.HasFlag(p.Side)).ToArray();
     }
 }

@@ -22,19 +22,22 @@ public class BasementCloset : Shape
         Depth = Measure.Inches(39);
         MainTexture = new TextureInfo(TextureKey.Wall);
 
-        var interior = AddChild(new SurfaceIndent(this, doorSide, _doorPlacement, Measure.Inches(35)));
+        var interior = AddChild(new SurfaceIndent(this, doorSide, _doorPlacement, Measure.Inches(35), 
+            displayFaces: (Side.North | Side.South | Side.East | Side.West) & ~doorSide));
         interior.MainTexture = new TextureInfo(TextureKey.Ceiling);
 
-        _door = AddChild(new Door(this, 270f, 190f));
+        var openAngle = new Angle(doorSide);
+        var closedAngle = doorSide == Side.East ? openAngle.RotateCounterClockwise(90) : openAngle.RotateClockwise(90);
+
+        _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle));
     }
 
     protected override void BeforeBuild()
     {
-        _door.Position = Position;
-        //temp
-        _door.X += 1.0f;
-
-        _door.Hinge = new Vector3(GetSide(Side.East), this.Y, GetSide(Side.South));
+        if (_doorSide == Side.East)
+            _door.Hinge = new Vector3(GetSide(Side.East), this.Y, GetSide(Side.South) - _doorPlacement.Left);
+        else
+            _door.Hinge = new Vector3(GetSide(Side.West), this.Y, GetSide(Side.South) - _doorPlacement.Right);
     }
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;

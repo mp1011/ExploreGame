@@ -9,8 +9,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable
 {
     private float _yGap = Measure.Inches(0.2f);
 
-    public float ClosedDegrees { get; }
-    public float OpenDegrees { get; }
+    public Angle ClosedDegrees { get; }
+    public Angle OpenDegrees { get; }
     public float OpenSpeed { get; } = 2.0f;
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
@@ -25,7 +25,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable
     
     public bool Open { get; set; }
 
-    public Door(Shape parent, float closedDegrees, float openDegrees)
+    public Door(Shape parent, Angle closedDegrees, Angle openDegrees)
     {
         OpenDegrees = openDegrees;
         ClosedDegrees = closedDegrees;
