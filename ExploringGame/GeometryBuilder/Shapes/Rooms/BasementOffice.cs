@@ -54,19 +54,11 @@ public class BasementOffice : Room
         ceilingBar.AdjustShape().From(this).SliceY(0.1f, 0.4f).SliceZ(4.0f, 0.4f);
         ceilingBar.SetSideUnanchored(Side.East, eastPart.GetSide(Side.East));
 
-        var closet1 = AddChild(new Box());
-        closet1.Height = Height;
-        closet1.Width = Measure.Inches(36);
-        closet1.Depth = Measure.Inches(39);
+        var closet1 = new BasementCloset(this, Side.East);
         closet1.Place().OnFloor().OnSideInner(Side.SouthWest);
-        closet1.MainTexture = new TextureInfo(TextureKey.Wall);
 
-        var closet2 = eastPart.AddChild(new Box());
-        closet2.Height = Height;
-        closet2.Width = Measure.Inches(36);
-        closet2.Depth = Measure.Inches(39);
-        closet2.Place().OnFloor().OnSideInner(Side.SouthEast);
-        closet2.MainTexture = new TextureInfo(TextureKey.Wall);
+      //  var closet2 = new BasementCloset(eastPart, Side.West);
+      //  closet2.Place().OnFloor().OnSideInner(Side.SouthEast);
 
         var desk1 = new OfficeDesk(this);
         desk1.Place().OnFloor().OnSideInner(Side.West);

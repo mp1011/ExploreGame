@@ -13,7 +13,8 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System; // For random texture generation
+using System;
+using System.Linq; // For random texture generation
 
 namespace ExploringGame;
 
@@ -67,6 +68,8 @@ public class Game1 : Game
         _playerGravityMover = new EntityMover(new AcceleratedMotion(), _player);
 
         _mainShape = CreateMainShape();
+        _activeObjects = _mainShape.TraverseAllChildren().OfType<IActiveObject>().ToArray();
+
         _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
         _gravityController = new GravityController(_player, _playerCollider, _playerGravityMover);
 
@@ -138,8 +141,6 @@ public class Game1 : Game
 
         var box = new TestMover();        
         simpleRoom.AddChild(box);
-
-        _activeObjects = new IActiveObject[] { box };
        
         return new WorldSegment(simpleRoom);
     }
