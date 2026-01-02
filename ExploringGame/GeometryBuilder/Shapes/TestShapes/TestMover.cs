@@ -18,7 +18,7 @@ public class TestMover : Box, IActiveObject
 
     public Shape Self => this;
 
-    Shape[] IActiveObject.Children => TraverseAllChildren();
+    Shape[] IPlaceableObject.Children => TraverseAllChildren();
 
     public void Update(GameTime gameTime)
     {

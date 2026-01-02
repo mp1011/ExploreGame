@@ -120,7 +120,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return MotionTest();
+        return BasementOffice();
     }
 
     private WorldSegment MotionTest()

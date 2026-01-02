@@ -35,7 +35,7 @@ internal class ShapeBufferCreator
 
     private IEnumerable<ShapeBuffer> CreateShapeBuffers(WorldSegment worldSegment)
     {
-        var activeObjects = worldSegment.TraverseAllChildren().OfType<IActiveObject>().ToArray();
+        var activeObjects = worldSegment.TraverseAllChildren().OfType<IPlaceableObject>().ToArray();
         var activeObjectShapes = activeObjects.SelectMany(p => p.Children).ToArray();
         var staticShapes = worldSegment.TraverseAllChildren().Except(activeObjectShapes).ToArray();
 

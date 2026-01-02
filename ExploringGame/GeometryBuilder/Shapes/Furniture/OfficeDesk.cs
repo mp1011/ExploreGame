@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
-class OfficeDesk : Shape
+class OfficeDesk : PlaceableShape
 {
     public static readonly float DeskWidth = Measure.Inches(71);
     public static readonly float DeskHeight = Measure.Inches(65);

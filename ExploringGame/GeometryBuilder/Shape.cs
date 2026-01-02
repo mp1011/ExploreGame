@@ -282,6 +282,10 @@ public abstract class Shape
     protected virtual void BeforeBuild()
     {
     }
+    protected virtual void AfterBuild()
+    {
+    }
+
 
     public Dictionary<Shape, Triangle[]> Build(QualityLevel quality)
     {
@@ -308,6 +312,8 @@ public abstract class Shape
 
         if (Rotation != null)
             ApplyRotation(output);
+
+        AfterBuild();
     }
 
     private void ApplyRotation(Dictionary<Shape, Triangle[]> output)

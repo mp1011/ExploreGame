@@ -11,7 +11,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 ///     FirePlaceMiddleShelf
 ///     FirePlaceLower
 /// </summary>
-class ElectricFireplace : Shape
+class ElectricFireplace : PlaceableShape
 {
     public const float TopShelfHeight = 0.1f;
     public const float TopShelfOverhang = 0.05f;
