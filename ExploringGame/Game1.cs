@@ -25,11 +25,8 @@ public class Game1 : Game
     private ServiceContainer _serviceContainer;
     private Player _player;
     private PlayerMotion _playerMotion;
-    private EntityMover _playerGroundMover, _playerGravityMover;
     private HeadBob _headBob;
-    private EntityCollider _playerCollider;
     private PlayerInput _playerInput;
-    private GravityController _gravityController;
 
     private WorldSegment _mainShape;
 
@@ -66,26 +63,25 @@ public class Game1 : Game
             GraphicsDevice.Viewport.AspectRatio,
             0.1f, 100f);
 
-        _playerInput = new PlayerInput();
-        _headBob = new HeadBob();
-        _player = new Player();
-
-        _playerGroundMover = new EntityMover(new AcceleratedMotion(), _player);
-        _playerGravityMover = new EntityMover(new AcceleratedMotion(), _player);
-
+        _serviceContainer.BindSingleton<Player>();
         _physics = new Physics();
         _serviceContainer.Bind(_physics);
+
+        _playerInput = new PlayerInput();
+        _headBob = new HeadBob();
+        _player = _serviceContainer.Get<Player>();
+
+        var playerMover = new EntityMover(_player, _physics);
+        _activeObjects.Add(playerMover);
 
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.Bind(_player);
         _serviceContainer.BindTransient<DoorController>();
 
         _mainShape = CreateMainShape();                   
-        _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
-        _gravityController = new GravityController(_player, _playerCollider, _playerGravityMover);
-
-        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerGroundMover, _gravityController);
-
+       // _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
+     
+        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, playerMover);
         _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
 
         base.Initialize();
@@ -431,6 +427,8 @@ public class Game1 : Game
             _physics.CreateStaticSurface(_mainShape.Children.First(), Side.East);
             _physics.CreateStaticSurface(_mainShape.Children.First(), Side.North);
             _physics.CreateStaticSurface(_mainShape.Children.First(), Side.South);
+            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.Bottom);
+            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.Top);
 
             foreach (var obj in _activeObjects)
                 obj.Initialize();
@@ -444,16 +442,13 @@ public class Game1 : Game
             obj.Update(gameTime);
        
         _playerInput.Update();
-        _playerGroundMover.Update();
-        _playerGravityMover.Update();
-        _gravityController.Update();
         _playerMotion.Update(gameTime, Window);
 
         if(_playerInput.IsKeyPressed(GameKey.DebugToggleCollision))
             _collisionEnabled = !_collisionEnabled;
             
-        if(_collisionEnabled)
-            _playerCollider.Update();
+      //  if(_collisionEnabled)
+       //     _playerCollider.Update();
 
         _view = _player.CreateViewMatrix();
         base.Update(gameTime);

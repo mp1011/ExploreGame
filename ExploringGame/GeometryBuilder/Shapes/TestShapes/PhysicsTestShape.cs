@@ -53,7 +53,8 @@ public class PhysicsTestShapeController : IShapeController<PhysicsTestShape>
         _body.Velocity = new Jitter2.LinearMath.JVector(1.0f, 0.0f, 0.0f);
         _body.Friction = 0.0f;
         _body.Damping = (0f, 0f);
-        _body.AffectedByGravity = false;
+        _body.SetMassInertia(100.0f);
+        _body.AffectedByGravity = true;
     }
 
     public void Update(GameTime gameTime)

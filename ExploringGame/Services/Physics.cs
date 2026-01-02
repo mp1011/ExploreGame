@@ -1,4 +1,5 @@
-﻿using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using Jitter2;
 using Jitter2.Collision.Shapes;
@@ -29,6 +30,10 @@ public class Physics
 
         switch(side)
         {
+            case Side.Bottom:
+            case Side.Top:
+                body.AddShape(new BoxShape(shape.Width, thickness, shape.Depth));
+                break;
             case Side.North:
             case Side.South:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, thickness));
@@ -45,6 +50,9 @@ public class Physics
             Side.South => new JVector(shape.X, shape.Y, shape.GetSide(Side.South) + (thickness / 2.0f)),
             Side.West => new JVector(shape.GetSide(Side.West) - (thickness / 2.0f), shape.Y, shape.Z),
             Side.East => new JVector(shape.GetSide(Side.East) + (thickness / 2.0f), shape.Y, shape.Z),
+            Side.Bottom => new JVector(shape.X, shape.GetSide(Side.Bottom) - (thickness / 2.0f), shape.Z),
+            Side.Top => new JVector(shape.X, shape.GetSide(Side.Top) + (thickness / 2.0f), shape.Z),
+
             _ => throw new ArgumentException("invalid side")
         };
 
@@ -57,6 +65,15 @@ public class Physics
         var body = _world.CreateRigidBody();
         body.AddShape(new BoxShape(shape.Width, shape.Height, shape.Depth));
         body.Position = shape.Position.ToJVector();
+        body.MotionType = MotionType.Dynamic;
+        return body;
+    }
+
+    public RigidBody CreateSphere(IWithPosition entity)
+    {
+        var body = _world.CreateRigidBody();
+        body.AddShape(new SphereShape(1.0f));
+        body.Position = entity.Position.ToJVector();
         body.MotionType = MotionType.Dynamic;
         return body;
     }

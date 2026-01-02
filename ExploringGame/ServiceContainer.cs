@@ -23,6 +23,11 @@ public class ServiceContainer
         _kernel.Bind<T>().To<T>();
     }
 
+    public void BindSingleton<T>()
+    {
+        _kernel.Bind<T>().To<T>().InSingletonScope();
+    }
+
     public IActiveObject[] CreateControllers<T>(IEnumerable<T> objects)
     {
         return objects.OfType<IControllable>().Select(p => p.CreateController(this)).ToArray();          

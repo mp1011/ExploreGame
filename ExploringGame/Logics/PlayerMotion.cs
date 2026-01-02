@@ -8,25 +8,25 @@ namespace ExploringGame.Logics;
 
 internal class PlayerMotion
 {
-    public const float WalkAccel = 0.006f;
-    public const float StopAccel = 0.009f;
-    public const float JumpSpeed = 0.05f;
+    public const float RunSpeed = 20.0f;
+    public const float WalkSpeed = 10.0f;
+    public const float WalkAccel = 0.1f;
+    public const float StopAccel = 0.5f;
+    public const float JumpSpeed = -5.00f;
 
     private PlayerInput _playerInput;
     private Player _player;
     private HeadBob _headBob;
     private EntityMover _groundMotion;
-    private GravityController _gravityController;
     private MouseState _prevMouse;
     private bool _firstMouse = true;
 
-    public PlayerMotion(Player player, HeadBob headBob, PlayerInput playerInput, EntityMover groundMotion, GravityController gravityController)
+    public PlayerMotion(Player player, HeadBob headBob, PlayerInput playerInput, EntityMover groundMotion)
     {
         _playerInput = playerInput;
         _player = player;
         _headBob = headBob;
         _groundMotion = groundMotion;
-        _gravityController = gravityController;
     }
 
     public void Update(GameTime gameTime, GameWindow window)
@@ -44,10 +44,11 @@ internal class PlayerMotion
 
         // bool isMoving = _player.Motion.CurrentMotion.LengthSquared() > 0;
         // fix me
-       // nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
+        // nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
 
-        if (_playerInput.IsKeyPressed(GameKey.Jump) && _gravityController.CanJump())
-            _gravityController.Motion.CurrentY = JumpSpeed;
+        //todo, check if on floor
+        if (_playerInput.IsKeyPressed(GameKey.Jump))
+            _groundMotion.ApplyForce(new Vector3(0, JumpSpeed, 0));
 
         // Mouse look
         var mouse = Mouse.GetState();
@@ -71,7 +72,7 @@ internal class PlayerMotion
 
     public Vector3 GetMotionTarget(float yaw)
     {
-        float speed = _playerInput.IsKeyDown(GameKey.Run) ? 0.2f : 0.1f;
+        float speed = _playerInput.IsKeyDown(GameKey.Run) ? RunSpeed : WalkSpeed;
         Vector3 forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
         Vector3 right = Vector3.Transform(Vector3.Right, Matrix.CreateFromYawPitchRoll(yaw, 0, 0));
         Vector3 target = Vector3.Zero;
