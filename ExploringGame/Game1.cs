@@ -29,6 +29,8 @@ public class Game1 : Game
 
     private WorldSegment _mainShape;
 
+    private IActiveObject[] _activeObjects = Array.Empty<IActiveObject>();
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -128,17 +130,16 @@ public class Game1 : Game
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2.0f;
         
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
-        var box = new Box();
-        box.Width = 1.0f;
-        box.Height = 1.0f;
-        box.Depth = 1.0f;
-        box.MainTexture = new TextureInfo(Key: TextureKey.Floor, Color: Color.LightBlue);
+        var box = new TestMover();        
         simpleRoom.AddChild(box);
+
+        _activeObjects = new IActiveObject[] { box };
        
         return new WorldSegment(simpleRoom);
     }
@@ -369,7 +370,7 @@ public class Game1 : Game
     private void SetBuffers()
     {               
         var triangles = _mainShape.Build((QualityLevel)8);
-        _shapeBuffers = new ShapeBufferCreator().Execute(triangles, _basementTextures, GraphicsDevice);
+        _shapeBuffers = new ShapeBufferCreator(triangles, _basementTextures, GraphicsDevice).Execute();
     }
 
     private bool _collisionEnabled = true;
@@ -382,15 +383,9 @@ public class Game1 : Game
         if (!IsActive)
             return;
 
-        //temp hard-coding
-        var room = _shapeBuffers[0].Shape;
-        room.Y = 2;
-
-        var movingObject = _shapeBuffers[1].Shape;
-        movingObject.Y += 0.01f;
-        movingObject.Z = -2.0f;
-        movingObject.Rotation = new Rotation(_boxYaw += 0.1f, 0, 0);
-
+        foreach (var obj in _activeObjects)
+            obj.Update(gameTime);
+       
         _playerInput.Update();
         _playerGroundMover.Update();
         _playerGravityMover.Update();
