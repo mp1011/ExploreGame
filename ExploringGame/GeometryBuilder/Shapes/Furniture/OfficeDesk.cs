@@ -1,4 +1,5 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.Logics.Collision;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
@@ -23,7 +24,7 @@ class OfficeDesk : PlaceableShape
     public static readonly float MiddleSideThickness = 0.1f;
     public static readonly float UpperHeight = 0.6f;
 
-    public override bool CollisionEnabled => false; // until we have proper collision
+    public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 

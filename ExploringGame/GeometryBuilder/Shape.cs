@@ -1,19 +1,17 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.Logics.Collision;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Runtime;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace ExploringGame.GeometryBuilder;
 
 
 public abstract class Shape
 {
-    public virtual bool CollisionEnabled => false;
+    public virtual IColliderMaker ColliderMaker => null;
 
     public Shape? Parent { get; private set; }
 
@@ -60,6 +58,15 @@ public abstract class Shape
         Axis.Y => Position.Y,
         Axis.Z => Position.Z,
         _ => throw new ArgumentException("invalid axis")
+    };
+
+    public float SideLength(Side side) => side switch
+    {
+        Side.West => GetAxisSize(Axis.Z),
+        Side.East => GetAxisSize(Axis.Z),
+        Side.North => GetAxisSize(Axis.X),
+        Side.South => GetAxisSize(Axis.X),
+        _ => GetAxisSize(Axis.Y)
     };
 
     public float GetAxisSize(Axis axis) => axis switch

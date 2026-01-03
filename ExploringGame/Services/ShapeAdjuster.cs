@@ -120,7 +120,7 @@ public class ShapeAdjuster
 
     public ShapeAdjuster SliceY(float fromTop, float height)
     {
-        _shape.TopAnchored = _shape.Parent.TopAnchored - fromTop;
+        _shape.TopAnchored = _shape.TopAnchored - fromTop;
         _shape.BottomUnanchored = _shape.TopAnchored - height;
         return this;
     }
@@ -132,10 +132,10 @@ public class ShapeAdjuster
         return this;
     }
 
-    public ShapeAdjuster SliceZ(float fromSouth, float depth)
+    public ShapeAdjuster SliceZ(float fromNorth, float depth)
     {
-        _shape.SetSide(Side.South, _shape.GetSide(Side.South) - fromSouth);
-        _shape.SetSideUnanchored(Side.North, _shape.GetSide(Side.South) - depth);
+        _shape.SetSide(Side.North, _shape.GetSide(Side.North) + fromNorth);
+        _shape.SetSideUnanchored(Side.South, _shape.GetSide(Side.North) + depth);
         return this;
     }
 

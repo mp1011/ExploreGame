@@ -35,7 +35,7 @@ public enum Winding
 /// <param name="Roll"></param>
 public record Rotation(float Yaw = 0f, float Pitch = 0f, float Roll = 0f)
 {
-    public float YawDegrees => Yaw * 180.0f / MathHelper.Pi;
+    public float YawDegrees => (Yaw * 180.0f / MathHelper.Pi).NMod(360f);
 
     public Matrix AsMatrix() => Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
 

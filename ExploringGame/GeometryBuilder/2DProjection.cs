@@ -7,6 +7,7 @@ namespace ExploringGame.GeometryBuilder;
 
 
 /// <summary>
+/// From inside perspective
 /// U = 2d X
 /// N = Normal
 /// V = 2d Y
@@ -20,10 +21,10 @@ public record FaceBasis(Vector3 U, Vector3 N, Vector3 V)
     {
         return side switch
         {
-            Side.South => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitY, N: Vector3.UnitZ),
-            Side.North => new FaceBasis(U: -Vector3.UnitX, V: Vector3.UnitY, N: -Vector3.UnitZ),
-            Side.West => new FaceBasis(U: Vector3.UnitZ, V: Vector3.UnitY, N: -Vector3.UnitX),
-            Side.East => new FaceBasis(U: -Vector3.UnitZ, V: Vector3.UnitY, N: Vector3.UnitX),
+            Side.South => new FaceBasis(U: -Vector3.UnitX, V: Vector3.UnitY, N: Vector3.UnitZ),
+            Side.North => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitY, N: -Vector3.UnitZ),
+            Side.West => new FaceBasis(U: -Vector3.UnitZ, V: Vector3.UnitY, N: -Vector3.UnitX),
+            Side.East => new FaceBasis(U: Vector3.UnitZ, V: Vector3.UnitY, N: Vector3.UnitX),
             Side.Top => new FaceBasis(U: Vector3.UnitX, V: -Vector3.UnitZ, N: Vector3.UnitY),
             Side.Bottom => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitZ, N: -Vector3.UnitY),
             _ => throw new ArgumentOutOfRangeException("Invalid side")

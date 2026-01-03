@@ -1,8 +1,10 @@
-﻿namespace ExploringGame.GeometryBuilder.Shapes;
+﻿using ExploringGame.Logics.Collision;
+
+namespace ExploringGame.GeometryBuilder.Shapes;
 
 public class SimpleRoom : Shape
 {
-    public override bool CollisionEnabled =>  true;
+    public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

@@ -1,4 +1,5 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.Logics.Collision;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
@@ -43,7 +44,7 @@ class ElectricFireplace : PlaceableShape
 
     public const float FooterHeight = 0.1f;
 
-    public override bool CollisionEnabled => true;
+    public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
     public override ViewFrom ViewFrom =>  ViewFrom.Outside;
 
     public ElectricFireplace(Shape parent)

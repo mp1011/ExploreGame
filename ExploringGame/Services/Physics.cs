@@ -15,6 +15,8 @@ namespace ExploringGame.Services;
 
 public class Physics
 {
+    public const float WallColliderThickness = 0.5f;
+
     private World _world;
     public Physics()
     {
@@ -26,36 +28,49 @@ public class Physics
     {
         var body = _world.CreateRigidBody();
 
-        float thickness = 0.5f;
+        if (shape.Width == 0 || shape.Height == 0 || shape.Depth == 0)
+            return null;
 
+        // probably is a much cleaner way to do this
         switch(side)
         {
             case Side.Bottom:
+                body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
+                body.Position = new JVector(shape.X, shape.GetSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.Z); 
+                break;
             case Side.Top:
-                body.AddShape(new BoxShape(shape.Width, thickness, shape.Depth));
+                body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
+                body.Position = new JVector(shape.X, shape.GetSide(Side.Top) + (WallColliderThickness / 2.0f), shape.Z);
                 break;
             case Side.North:
+                body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
+                body.Position = new JVector(shape.X, shape.Y, shape.GetSide(Side.North) - (WallColliderThickness / 2.0f));
+                break;
             case Side.South:
-                body.AddShape(new BoxShape(shape.Width, shape.Height, thickness));
+                body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
+                body.Position = new JVector(shape.X, shape.Y, shape.GetSide(Side.South) + (WallColliderThickness / 2.0f));
                 break;
             case Side.West:
+                body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
+                body.Position = new JVector(shape.GetSide(Side.West) - (WallColliderThickness / 2.0f), shape.Y, shape.Z);
+                break;
             case Side.East:
-                body.AddShape(new BoxShape(thickness, shape.Height, shape.Depth));
+                body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
+                body.Position = new JVector(shape.GetSide(Side.East) + (WallColliderThickness / 2.0f), shape.Y, shape.Z);
                 break;
         }
 
-        body.Position = side switch
-        {
-            Side.North => new JVector(shape.X, shape.Y, shape.GetSide(Side.North) - (thickness / 2.0f)),
-            Side.South => new JVector(shape.X, shape.Y, shape.GetSide(Side.South) + (thickness / 2.0f)),
-            Side.West => new JVector(shape.GetSide(Side.West) - (thickness / 2.0f), shape.Y, shape.Z),
-            Side.East => new JVector(shape.GetSide(Side.East) + (thickness / 2.0f), shape.Y, shape.Z),
-            Side.Bottom => new JVector(shape.X, shape.GetSide(Side.Bottom) - (thickness / 2.0f), shape.Z),
-            Side.Top => new JVector(shape.X, shape.GetSide(Side.Top) + (thickness / 2.0f), shape.Z),
+        body.MotionType = MotionType.Static;
+        return body;
+    }
+    public RigidBody CreateStaticBody(GShape shape)
+    {
+        if (shape.Width == 0 || shape.Height == 0 || shape.Depth == 0)
+            return null;
 
-            _ => throw new ArgumentException("invalid side")
-        };
-
+        var body = _world.CreateRigidBody();
+        body.AddShape(new BoxShape(shape.Width, shape.Height, shape.Depth));
+        body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
         return body;
     }

@@ -44,6 +44,7 @@ public class Game1 : Game
     private Effect _pointLightEffect;
     private SpriteFont _debugFont;
 
+    private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
 
     public Game1()
@@ -64,6 +65,7 @@ public class Game1 : Game
             0.1f, 100f);
 
         _serviceContainer.BindSingleton<Player>();
+        _serviceContainer.BindTransient<SetupColliderBodies>();
         _physics = new Physics();
         _serviceContainer.Bind(_physics);
 
@@ -84,6 +86,9 @@ public class Game1 : Game
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, playerMover);
         _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
 
+
+        _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
+        _setupColliderBodies.Execute(_mainShape);
         base.Initialize();
 
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
@@ -132,7 +137,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return PhysicsTest();
+        return ConnectingRoomsTest();
     }
 
 
@@ -228,9 +233,9 @@ public class Game1 : Game
     private WorldSegment EmptyRoom()
     {
         var simpleRoom = new SimpleRoom();
-        simpleRoom.Width = 10f;
-        simpleRoom.Height = 8f;
-        simpleRoom.Depth = 10f;
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
 
         simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
@@ -247,10 +252,12 @@ public class Game1 : Game
     {
         var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
 
+        var pos = 0.3f;
+
         var room = new Room();
         room.Width = 16f;
         room.Height = 4f;
-        room.Depth = 8f;
+        room.Depth = 12f;
         room.Y = 2;
 
         room.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
@@ -264,7 +271,7 @@ public class Game1 : Game
         southRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         southRoom.SideTextures[Side.Bottom] = floorTexture;
         southRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(southRoom, Side.South, 0.2f));
+        room.AddConnectingRoom(new RoomConnection(southRoom, Side.South, pos));
 
         var northRoom = new Room();
         northRoom.Width = 4f;
@@ -273,8 +280,7 @@ public class Game1 : Game
         northRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         northRoom.SideTextures[Side.Bottom] = floorTexture;
         northRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
-        room.AddConnectingRoom(new RoomConnection(northRoom, Side.North, 0.2f));
+        room.AddConnectingRoom(new RoomConnection(northRoom, Side.North, pos));
         northRoom.SetSideUnanchored(Side.Bottom, northRoom.GetSide(Side.Bottom) + 0.4f);
 
         var northRoom2 = new Room();
@@ -284,7 +290,7 @@ public class Game1 : Game
         northRoom2.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         northRoom2.SideTextures[Side.Bottom] = floorTexture;
         northRoom2.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        northRoom.AddConnectingRoom(new RoomConnection(northRoom2, Side.North, 0.5f));
+        northRoom.AddConnectingRoom(new RoomConnection(northRoom2, Side.North, pos));
 
         var westRoom = new Room();
         westRoom.Width = 10f;
@@ -293,7 +299,7 @@ public class Game1 : Game
         westRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         westRoom.SideTextures[Side.Bottom] = floorTexture;
         westRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(westRoom, Side.West, 0.2f));
+        room.AddConnectingRoom(new RoomConnection(westRoom, Side.West, pos));
         westRoom.SetSideUnanchored(Side.Top, northRoom.GetSide(Side.Top) - 0.4f);
 
         var eastRoom = new Room();
@@ -303,7 +309,7 @@ public class Game1 : Game
         eastRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         eastRoom.SideTextures[Side.Bottom] = floorTexture;
         eastRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(eastRoom, Side.East, 0.2f));
+        room.AddConnectingRoom(new RoomConnection(eastRoom, Side.East, pos));
 
         var world = new WorldSegment();
         world.AddChild(room);
@@ -363,7 +369,7 @@ public class Game1 : Game
         return ws;
     }
 
-    private Shape FaceCutoutTestRoom()
+    private WorldSegment FaceCutoutTestRoom()
     {
         var simpleRoom = new SimpleRoom();
         simpleRoom.Width = 16f;
@@ -380,7 +386,8 @@ public class Game1 : Game
         simpleRoom.AddChild(testShape);
         testShape.Place().OnFloor();
         testShape.Y += 1.0f;
-        return simpleRoom;
+
+        return new WorldSegment(simpleRoom);
     }
 
     private Shape MengerSpongeRoom()
@@ -422,14 +429,6 @@ public class Game1 : Game
 
         if (!_initialized)
         {
-            //temp
-            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.West);
-            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.East);
-            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.North);
-            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.South);
-            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.Bottom);
-            _physics.CreateStaticSurface(_mainShape.Children.First(), Side.Top);
-
             foreach (var obj in _activeObjects)
                 obj.Initialize();
 
@@ -490,6 +489,9 @@ public class Game1 : Game
         _spriteBatch.DrawString(_debugFont, "Position: " + _player.Position.ToString(), new Vector2(10, 10), Color.White);
         _spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString(), new Vector2(10, 30), Color.White);
         _spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString(), new Vector2(10, 50), Color.White);
+
+        _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString(), new Vector2(10, 80), Color.White);
+
         _spriteBatch.End();
 
         base.Draw(gameTime);
