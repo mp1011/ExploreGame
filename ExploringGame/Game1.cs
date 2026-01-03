@@ -76,6 +76,8 @@ public class Game1 : Game
         var playerMover = new EntityMover(_player, _physics);
         _activeObjects.Add(playerMover);
 
+        playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(playerMover));
+
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.Bind(_player);
         _serviceContainer.BindTransient<DoorController>();
@@ -85,7 +87,6 @@ public class Game1 : Game
      
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, playerMover);
         _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
-
 
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
         _setupColliderBodies.Execute(_mainShape);

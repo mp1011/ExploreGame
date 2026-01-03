@@ -27,7 +27,6 @@ public class Physics
     public RigidBody CreateStaticSurface(GShape shape, Side side)
     {
         var body = _world.CreateRigidBody();
-
         if (shape.Width == 0 || shape.Height == 0 || shape.Depth == 0)
             return null;
 

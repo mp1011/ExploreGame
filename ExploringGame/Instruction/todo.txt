@@ -30,8 +30,19 @@
 	[x] hinged doo
 		[x] open via interaction
 
-[ ] proper collision detection
-	[ ] create correct collider walls for joined rooms
+[x] proper collision detection
+	[x] create correct collider walls for joined rooms
+
+
+[ ] fix player motion
+	[x] disregarding gravity
+	[x] implement gravity separately
+	[x] implement jump
+	[ ] jump aware of when player on floor
+	[ ] player y speed should be 0 when floor hit
+
+
+
 
 [ ] easier way to place rooms (by specifying either the left or right edge)
 [ ] see if we can adjust n,s,e,w as long as rotation is multiple of 90

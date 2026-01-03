@@ -8,25 +8,20 @@ public class AcceleratedMotion
     public Vector3 CurrentMotion { get; set; }
     public Vector3 TargetMotion { get; set; }
 
-    public float CurrentY
-    {
-        get => CurrentMotion.Y;
-        set => CurrentMotion = new Vector3(CurrentMotion.X, value, CurrentMotion.Z);        
-    }
-
-    public float TargetY
-    {
-        get => TargetMotion.Y;
-        set => TargetMotion = new Vector3(TargetMotion.X, value, TargetMotion.Z);
-    }
+    // gravity easier to handle separately
+    public float TargetY { get; set; }
+    public float CurrentY { get; set; }
 
     public float Acceleration { get; set; }
 
+    public float Gravity { get; set; }
+
     public void Update()
     {
-        if(CurrentMotion == TargetMotion) 
-            return;
+        if(CurrentMotion != TargetMotion) 
+            CurrentMotion = CurrentMotion.MoveToward(TargetMotion, Acceleration);
 
-        CurrentMotion = CurrentMotion.MoveToward(TargetMotion, Acceleration);
+        if(CurrentY != TargetY)
+            CurrentY = CurrentY.MoveToward(TargetY, Gravity);
     }
 }
