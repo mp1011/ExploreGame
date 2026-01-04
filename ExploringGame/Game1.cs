@@ -79,7 +79,6 @@ public class Game1 : Game
         playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(playerMover));
 
         _serviceContainer.Bind(_playerInput);
-        _serviceContainer.Bind(_player);
         _serviceContainer.BindTransient<DoorController>();
 
         _mainShape = CreateMainShape();                   
@@ -138,7 +137,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return ConnectingRoomsTest();
+        return BasementOffice();
     }
 
 

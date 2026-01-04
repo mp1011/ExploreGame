@@ -34,14 +34,17 @@
 	[x] create correct collider walls for joined rooms
 
 
-[ ] fix player motion
+[x] fix player motion
 	[x] disregarding gravity
 	[x] implement gravity separately
 	[x] implement jump
-	[ ] jump aware of when player on floor
-	[ ] player y speed should be 0 when floor hit
+	[x] jump aware of when player on floor (kind of)
+	[x] player y speed should be 0 when floor hit
 
-
+[ ] resume basement office map
+	[ ] desks rotated correctly
+	[ ] collision bodies also rotated
+	[ ] player able to fit through hall             
 
 
 [ ] easier way to place rooms (by specifying either the left or right edge)

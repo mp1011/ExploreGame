@@ -82,7 +82,7 @@ class OfficeDesk : PlaceableShape
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            return BuildCuboid().Where(p=>p.Side == Side.North).ToArray();
+            return BuildCuboid().Where(p=>p.Side == Side.South).ToArray();
         }
     }
 }

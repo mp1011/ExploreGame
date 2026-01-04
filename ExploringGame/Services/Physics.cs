@@ -4,11 +4,13 @@ using ExploringGame.GeometryBuilder;
 using Jitter2;
 using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
+using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 
 namespace ExploringGame.Services;
@@ -69,6 +71,12 @@ public class Physics
 
         var body = _world.CreateRigidBody();
         body.AddShape(new BoxShape(shape.Width, shape.Height, shape.Depth));
+
+        if (shape.Rotation != null)
+        {
+            var rotationQ = shape.Rotation.AsQuaternion();
+            body.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
+        }
         body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
         return body;
@@ -83,12 +91,17 @@ public class Physics
         return body;
     }
 
-    public RigidBody CreateSphere(IWithPosition entity)
+    public RigidBody CreateCapsule(IWithPosition entity)
     {
         var body = _world.CreateRigidBody();
-        body.AddShape(new SphereShape(1.0f));
+        body.AddShape(new CapsuleShape(0.4f, 2.0f)); //todo
         body.Position = entity.Position.ToJVector();
         body.MotionType = MotionType.Dynamic;
+
+
+        var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
+        upright.Initialize(JVector.UnitY, AngularLimit.Full);
+
         return body;
     }
 

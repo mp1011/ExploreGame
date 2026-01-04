@@ -39,6 +39,8 @@ public record Rotation(float Yaw = 0f, float Pitch = 0f, float Roll = 0f)
 
     public Matrix AsMatrix() => Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
 
+    public Quaternion AsQuaternion() => Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+
     public static Rotation YawFromDegrees(float degrees, float pitch = 0f, float roll = 0f) => 
         new Rotation(Yaw: (degrees * MathHelper.Pi) / 180.0f, Pitch: pitch, Roll: roll);
 }

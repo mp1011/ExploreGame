@@ -30,7 +30,7 @@ public record Angle
         Side.North => 0.0f,
         Side.East => 270.0f,
         Side.South => 180.0f,
-        Side.West => 90/0f,
+        Side.West => 90.0f,
         Side.NorthEast => 270.0f + 45.0f,
         Side.SouthEast => 270.0f - 45.0f,
         Side.SouthWest => 180 - 45.0f,

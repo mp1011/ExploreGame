@@ -62,7 +62,7 @@ public class BasementOffice : Room
 
         var desk1 = new OfficeDesk(this);
         desk1.Place().OnFloor().OnSideInner(Side.West);
-        desk1.Rotation = Rotation.YawFromDegrees(90.0f);
+        desk1.Rotation = Rotation.YawFromDegrees(-90);
         desk1.X -= 0.9f;
         desk1.Z += 0.65f;
         AddChild(desk1);
@@ -71,7 +71,7 @@ public class BasementOffice : Room
         desk2.Place().OnFloor().OnSideInner(Side.East);
         desk2.X += 0.9f;
         desk2.Z += 0.65f;
-        desk2.Rotation = Rotation.YawFromDegrees(-90.0f);
+        desk2.Rotation = Rotation.YawFromDegrees(90);
 
       
         var fireplace = new ElectricFireplace(this);
