@@ -153,10 +153,19 @@ public class Game1 : Game
         simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
 
-        var door = simpleRoom.AddChild(new Door(simpleRoom, new Angle(0f), new Angle(90f)));
+        var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HingePosition.Left));
+        door1.Place().OnFloor();
+        door1.Z -= 3.0f;
+        door1.X -= 2.0f;
+        door1.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Red);
 
-        door.Place().OnFloor();
-        door.Z -= 3.0f;
+        var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HingePosition.Right));
+        door2.Place().OnFloor();
+        door2.Z -= 3.0f;
+        door2.X += 2.0f;
+        door2.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Blue);
+
+
 
         return new WorldSegment(simpleRoom);
     }
@@ -507,11 +516,15 @@ public class Game1 : Game
 
         // Draw debug information
         _spriteBatch.Begin();
-        _spriteBatch.DrawString(_debugFont, "Position: " + _player.Position.ToString(), new Vector2(10, 10), Color.White);
-        _spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString(), new Vector2(10, 30), Color.White);
-        _spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString(), new Vector2(10, 50), Color.White);
+        _spriteBatch.DrawString(_debugFont,
+            $"Position: X={_player.Position.X.ToString("0.00")} Y={_player.Position.Y.ToString("0.00")} Z={_player.Position.Z.ToString("0.00")}",
+            new Vector2(10, 10), Color.White);
 
-        _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString(), new Vector2(10, 80), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString("0.00"), new Vector2(10, 30), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString("0.00"), new Vector2(10, 50), Color.White);
+
+        _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString("0.00"), new Vector2(10, 80), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Watch1: " + Debug.Watch1 ?? "", new Vector2(10, 100), Color.White);
 
         _spriteBatch.End();
 

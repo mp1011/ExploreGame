@@ -36,29 +36,29 @@ public class DoorController : IShapeController<Door>
 
     public void Update(GameTime gameTime)
     {
-        // _rigidBody.Torque = new JVector(15f, 15.0f, 15.0f);
-        _rigidBody.AngularVelocity = new JVector(0, 2f, 0f);
+        var targetDegrees = Shape.Open ? Shape.OpenAngle : Shape.ClosedAngle;
+
+        // door translate door angle to world angle
+        if (Shape.HingePosition == HingePosition.Left)                 
+            targetDegrees = targetDegrees.RotateCounterClockwise(90);
+        else
+            targetDegrees = targetDegrees.RotateClockwise(90);
+
+
+        var delta = new Angle(Shape.Rotation.YawDegrees).Delta(targetDegrees);
+
+
+        _rigidBody.AngularVelocity = new JVector(0, delta * .05f, 0f);
+
         Shape.Position = _rigidBody.Position.ToVector3();
         Shape.Rotation = Rotation.FromJQuaternion(_rigidBody.Orientation);
-        //if (_player.Position.SquaredDistance(Shape.Position) < ActivationRange * ActivationRange)
-        //{
-        //    if (_playerInput.IsKeyPressed(GameKey.Use))
-        //        Shape.Open = !Shape.Open;
-        //}
+        if (_player.Position.SquaredDistance(Shape.Position) < ActivationRange * ActivationRange)
+        {
+            if (_playerInput.IsKeyPressed(GameKey.Use))
+                Shape.Open = !Shape.Open;
+        }
 
-        //var targetDegrees = Shape.Open ? Shape.OpenDegrees : Shape.ClosedDegrees;
-        //AdjustAngle(targetDegrees);
-
-        //PlaceDoor();
-    }
-
-
-    private void AdjustAngle(Angle target)
-    {
-        if (Shape.Angle.Degrees == target.Degrees)
-            return;
-
-        Shape.Angle = Shape.Angle.RotateTowards(target.Degrees, Shape.OpenSpeed);
+        Debug.Watch1 = Shape.Rotation.YawDegrees.ToString("00");
     }
 
     private void PlaceDoor()

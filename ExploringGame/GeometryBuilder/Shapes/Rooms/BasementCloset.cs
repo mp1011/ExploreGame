@@ -29,8 +29,9 @@ public class BasementCloset : Shape
         var openAngle = new Angle(doorSide);
         var closedAngle = doorSide == Side.East ? openAngle.RotateCounterClockwise(90) : openAngle.RotateClockwise(90);
 
-        _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle));
-        _door.Open = true;
+        throw new Exception("fix me");
+       // _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle));
+      //  _door.Open = true;
     }
 
     protected override void BeforeBuild()

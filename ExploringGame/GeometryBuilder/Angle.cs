@@ -22,6 +22,18 @@ public record Angle
         return new Angle(Degrees + MathF.Sign(delta) * amount);
     }
 
+    public float Delta(Angle other)
+    {
+        float diff = (other.Degrees - Degrees) % 360f;
+
+        if (diff > 180f)
+            diff -= 360f;
+        else if (diff < -180f)
+            diff += 360f;
+
+        return diff;
+    }
+
     public Angle RotateCounterClockwise(float degrees) => new Angle(Degrees + degrees);
     public Angle RotateClockwise(float degrees) => new Angle(Degrees - degrees);
 

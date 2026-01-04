@@ -10,11 +10,14 @@ using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using GShape = ExploringGame.GeometryBuilder.Shape;
+using MathHelper = Microsoft.Xna.Framework.MathHelper;
 
 namespace ExploringGame.Services;
 
 public class Physics
 {
+    public static bool DebugDrawHinge = true;
+
     public const float WallColliderThickness = 0.5f;
 
     private World _world;
@@ -118,36 +121,56 @@ public class Physics
     public RigidBody CreateHingedDoor(Door door)
     {
         var hinge = new Box();
-        hinge.Height = 0.1f;
-        hinge.Width = 0.1f;
-        hinge.Depth = 0.1f;
+        hinge.Height = 1.00f;
+        hinge.Width = 0.01f;
+        hinge.Depth = 0.01f;
         hinge.Position = door.Position;
-        hinge.Place().OnSideOuter(Side.West, door);
-        hinge.X -= 0.1f;
 
-        hinge.MainTexture = new Texture.TextureInfo(Color.Blue);
-        door.Parent.AddChild(hinge);
+        if (door.HingePosition == HingePosition.Left)
+        {
+            hinge.Place().OnSideOuter(Side.West, door);
+            hinge.X -= 0.01f;
+        }
+        else
+        {
+            hinge.Place().OnSideOuter(Side.East, door);
+            hinge.X += 0.01f;
+        }
 
+        if (DebugDrawHinge)
+        {
+            hinge.MainTexture = new Texture.TextureInfo(Color.Pink);
+            door.Parent.AddChild(hinge);
+        }
         
         var doorBody = CreateDynamicBody(door);
         var hingeBody = CreateStaticBody(hinge);
         InitPhysics(doorBody);
         doorBody.SetMassInertia(10.0f);
 
+        var minAngle = MathHelper.Min(door.OpenAngle.Degrees, door.ClosedAngle.Degrees);
+        var maxAngle = MathHelper.Max(door.OpenAngle.Degrees, door.ClosedAngle.Degrees);
 
-        var h = new HingeJoint(_world, hingeBody, doorBody, hinge.Position.ToJVector(), JVector.UnitY, AngularLimit.Full,
+        // note, seems to work better if we limit the angle ourselves
+        var h = new HingeJoint(_world, hingeBody, doorBody, hinge.Position.ToJVector(), JVector.UnitY, 
+            AngularLimit.Full,
+           // AngularLimit.FromDegree(minAngle, maxAngle),
             hasMotor: false);
-        
-      //  h.Motor.IsEnabled = true;
-     //   h.Motor.TargetVelocity = 20.0f;
-      //  h.Motor.MaximumForce = 20.0f;
 
-       // doorBody.Torque = new JVector(1.0f,0.0f, 0.0f); 
-       // hingeBody.SetActivationState(false);
+        var rotationQ = door.Rotation.AsQuaternion();
+        doorBody.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
+        
+
+        //  h.Motor.IsEnabled = true;
+        //   h.Motor.TargetVelocity = 20.0f;
+        //  h.Motor.MaximumForce = 20.0f;
+
+        // doorBody.Torque = new JVector(1.0f,0.0f, 0.0f); 
+        // hingeBody.SetActivationState(false);
 
         //var hingeAngle = _world.CreateConstraint<HingeAngle>(hingeBody, doorBody);
         //hingeAngle.Initialize(JVector.UnitY, AngularLimit.FromDegree(0f,90f));
-       
+
         //var ballSocket = _world.CreateConstraint<BallSocket>(hingeBody, doorBody);
         //ballSocket.Initialize(hinge.Position.ToJVector());
 
