@@ -1,4 +1,4 @@
-﻿using ExploringGame.Logics.Collision;
+﻿using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using System.Collections.Generic;
 using System.Linq;

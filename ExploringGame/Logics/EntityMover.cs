@@ -29,11 +29,7 @@ public class EntityMover : IActiveObject
 
     public void Initialize()
     {
-        _body = _physics.CreateCapsule(_entity);
-        _body.AffectedByGravity = false;
-        _body.Friction = 0;
-        _body.Damping = new(0f, 0f);
-        _body.SetMassInertia(1.0f);
+        _body = _physics.CreateCapsule(_entity);        
         CollisionResponder.Subscribe(_body);
     }
 

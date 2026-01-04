@@ -2,8 +2,11 @@
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using Jitter2.Dynamics;
+using Jitter2.Dynamics.Constraints;
+using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
@@ -15,6 +18,8 @@ public class DoorController : IShapeController<Door>
 
     private readonly PlayerInput _playerInput;
     private readonly Player _player;
+    private RigidBody _rigidBody;
+    private AngularMotor _motor;
 
     public DoorController(PlayerInput playerInput, Player player)
     {
@@ -22,18 +27,29 @@ public class DoorController : IShapeController<Door>
         _player = player;
     }
 
+
+    public void Initialize()
+    {
+        _rigidBody = Shape.ColliderBodies.First();
+        //_motor = _rigidBody.Constraints.OfType<AngularMotor>().First();
+    }
+
     public void Update(GameTime gameTime)
     {
-        if (_player.Position.SquaredDistance(Shape.Position) < ActivationRange * ActivationRange)
-        {
-            if (_playerInput.IsKeyPressed(GameKey.Use))
-                Shape.Open = !Shape.Open;
-        }
+        // _rigidBody.Torque = new JVector(15f, 15.0f, 15.0f);
+        _rigidBody.AngularVelocity = new JVector(0, 2f, 0f);
+        Shape.Position = _rigidBody.Position.ToVector3();
+        Shape.Rotation = Rotation.FromJQuaternion(_rigidBody.Orientation);
+        //if (_player.Position.SquaredDistance(Shape.Position) < ActivationRange * ActivationRange)
+        //{
+        //    if (_playerInput.IsKeyPressed(GameKey.Use))
+        //        Shape.Open = !Shape.Open;
+        //}
 
-        var targetDegrees = Shape.Open ? Shape.OpenDegrees : Shape.ClosedDegrees;
-        AdjustAngle(targetDegrees);
+        //var targetDegrees = Shape.Open ? Shape.OpenDegrees : Shape.ClosedDegrees;
+        //AdjustAngle(targetDegrees);
 
-        PlaceDoor();
+        //PlaceDoor();
     }
 
 
@@ -52,7 +68,4 @@ public class DoorController : IShapeController<Door>
         Shape.Position = Shape.Hinge - d;
     }
 
-    public void Initialize()
-    {
-    }
 }

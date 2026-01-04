@@ -1,8 +1,11 @@
 ﻿using ExploringGame.Extensions;
 using ExploringGame.Texture;
+using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Runtime;
+using MathHelper = Microsoft.Xna.Framework.MathHelper;
 
 namespace ExploringGame.GeometryBuilder;
 
@@ -40,6 +43,35 @@ public record Rotation(float Yaw = 0f, float Pitch = 0f, float Roll = 0f)
     public Matrix AsMatrix() => Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
 
     public Quaternion AsQuaternion() => Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+
+
+    public static Rotation FromJQuaternion(JQuaternion q)
+    {
+        // Normalize to avoid drift
+        q = JQuaternion.Normalize(q);
+
+        // Pitch (X axis)
+        float sinp = 2f * (q.W * q.X - q.Z * q.Y);
+        float pitch;
+        if (MathF.Abs(sinp) >= 1f)
+            pitch = MathF.CopySign(MathF.PI / 2f, sinp); // gimbal lock
+        else
+            pitch = MathF.Asin(sinp);
+
+        // Yaw (Y axis)
+        var yaw = MathF.Atan2(
+            2f * (q.W * q.Y + q.X * q.Z),
+            1f - 2f * (q.X * q.X + q.Y * q.Y)
+        );
+
+        // Roll (Z axis)
+        var roll = MathF.Atan2(
+            2f * (q.W * q.Z + q.X * q.Y),
+            1f - 2f * (q.X * q.X + q.Z * q.Z)
+        );
+
+        return new Rotation(yaw, pitch, roll);
+    }
 
     public static Rotation YawFromDegrees(float degrees, float pitch = 0f, float roll = 0f) => 
         new Rotation(Yaw: (degrees * MathHelper.Pi) / 180.0f, Pitch: pitch, Roll: roll);

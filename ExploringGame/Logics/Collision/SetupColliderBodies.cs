@@ -15,12 +15,12 @@ public class SetupColliderBodies
 
     public void Execute(WorldSegment worldSegment)
     {
-        var colliderMakers = worldSegment.TraverseAllChildren()
-            .Select(p => p.ColliderMaker)
-            .Where(p => p != null)
-            .ToArray();
+        foreach(var shape in worldSegment.TraverseAllChildren())
+        {
+            if (shape.ColliderMaker == null)
+                continue;
 
-        foreach (var maker in colliderMakers)
-            maker.CreateColliders(_physics);
+            shape.ColliderBodies = shape.ColliderMaker.CreateColliders(_physics).ToArray();
+        }
     }
 }

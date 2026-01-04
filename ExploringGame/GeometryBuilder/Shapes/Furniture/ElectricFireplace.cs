@@ -1,4 +1,4 @@
-﻿using ExploringGame.Logics.Collision;
+﻿using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;

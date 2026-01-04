@@ -1,4 +1,4 @@
-﻿using ExploringGame.Logics.Collision;
+﻿using ExploringGame.Logics.Collision.ColliderMakers;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 

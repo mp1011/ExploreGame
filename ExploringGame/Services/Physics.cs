@@ -1,16 +1,14 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using Jitter2;
 using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
-using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 
 namespace ExploringGame.Services;
@@ -82,11 +80,22 @@ public class Physics
         return body;
     }
 
+    private void InitPhysics(RigidBody body)
+    {
+        body.AffectedByGravity = false;
+        body.Friction = 0;
+        body.Damping = new(0f, 0f);
+        body.SetMassInertia(1.0f);
+    }
+
     public RigidBody CreateDynamicBody(GShape shape)
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new BoxShape(shape.Width, shape.Height, shape.Depth));
         body.Position = shape.Position.ToJVector();
+
+        InitPhysics(body);
+
         body.MotionType = MotionType.Dynamic;
         return body;
     }
@@ -98,11 +107,51 @@ public class Physics
         body.Position = entity.Position.ToJVector();
         body.MotionType = MotionType.Dynamic;
 
+        InitPhysics(body);
 
         var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
         upright.Initialize(JVector.UnitY, AngularLimit.Full);
 
         return body;
+    }
+
+    public RigidBody CreateHingedDoor(Door door)
+    {
+        var hinge = new Box();
+        hinge.Height = 0.1f;
+        hinge.Width = 0.1f;
+        hinge.Depth = 0.1f;
+        hinge.Position = door.Position;
+        hinge.Place().OnSideOuter(Side.West, door);
+        hinge.X -= 0.1f;
+
+        hinge.MainTexture = new Texture.TextureInfo(Color.Blue);
+        door.Parent.AddChild(hinge);
+
+        
+        var doorBody = CreateDynamicBody(door);
+        var hingeBody = CreateStaticBody(hinge);
+        InitPhysics(doorBody);
+        doorBody.SetMassInertia(10.0f);
+
+
+        var h = new HingeJoint(_world, hingeBody, doorBody, hinge.Position.ToJVector(), JVector.UnitY, AngularLimit.Full,
+            hasMotor: false);
+        
+      //  h.Motor.IsEnabled = true;
+     //   h.Motor.TargetVelocity = 20.0f;
+      //  h.Motor.MaximumForce = 20.0f;
+
+       // doorBody.Torque = new JVector(1.0f,0.0f, 0.0f); 
+       // hingeBody.SetActivationState(false);
+
+        //var hingeAngle = _world.CreateConstraint<HingeAngle>(hingeBody, doorBody);
+        //hingeAngle.Initialize(JVector.UnitY, AngularLimit.FromDegree(0f,90f));
+       
+        //var ballSocket = _world.CreateConstraint<BallSocket>(hingeBody, doorBody);
+        //ballSocket.Initialize(hinge.Position.ToJVector());
+
+        return doorBody;
     }
 
     public void Update(GameTime gameTime)

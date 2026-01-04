@@ -137,7 +137,28 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return BasementOffice();
+        return DoorTest();
+    }
+
+    private WorldSegment DoorTest()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 10f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 10f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+
+        var door = simpleRoom.AddChild(new Door(simpleRoom, new Angle(0f), new Angle(90f)));
+
+        door.Place().OnFloor();
+        door.Z -= 3.0f;
+
+        return new WorldSegment(simpleRoom);
     }
 
 

@@ -42,9 +42,10 @@
 	[x] player y speed should be 0 when floor hit
 
 [ ] resume basement office map
-	[ ] desks rotated correctly
-	[ ] collision bodies also rotated
-	[ ] player able to fit through hall             
+	[x] desks rotated correctly
+	[x] collision bodies also rotated
+	[x] player able to fit through hall
+	[ ] physics engine for door
 
 
 [ ] easier way to place rooms (by specifying either the left or right edge)

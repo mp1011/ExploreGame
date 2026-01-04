@@ -1,6 +1,8 @@
 ﻿using ExploringGame.Logics;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Texture;
+using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
@@ -16,6 +18,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public Vector3 Hinge { get; set; }
+
+    public override IColliderMaker ColliderMaker => new DoorColliderMaker(this);
 
     public Angle Angle
     {

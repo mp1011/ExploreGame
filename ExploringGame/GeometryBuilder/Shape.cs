@@ -1,6 +1,7 @@
-﻿using ExploringGame.Logics.Collision;
+﻿using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace ExploringGame.GeometryBuilder;
 public abstract class Shape
 {
     public virtual IColliderMaker ColliderMaker => null;
+
+    public RigidBody[] ColliderBodies { get; set; }
 
     public Shape? Parent { get; private set; }
 
