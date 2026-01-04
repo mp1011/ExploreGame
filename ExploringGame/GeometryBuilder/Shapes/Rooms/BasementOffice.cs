@@ -19,7 +19,6 @@ public class BasementOffice : Room
         SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
-
         #region room sections
         var exit = new Room();
         exit.Depth = Measure.Inches(39);

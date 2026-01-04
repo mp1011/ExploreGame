@@ -9,6 +9,7 @@ using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
+using System;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 using MathHelper = Microsoft.Xna.Framework.MathHelper;
 
@@ -16,7 +17,7 @@ namespace ExploringGame.Services;
 
 public class Physics
 {
-    public static bool DebugDrawHinge = true;
+    public static bool DebugDrawHinge = false;
 
     public const float WallColliderThickness = 0.5f;
 
@@ -139,6 +140,7 @@ public class Physics
 
         if (DebugDrawHinge)
         {
+            throw new Exception("this needs to be redone");
             hinge.MainTexture = new Texture.TextureInfo(Color.Pink);
             door.Parent.AddChild(hinge);
         }

@@ -135,7 +135,7 @@ class ElectricFireplace : PlaceableShape
 
             // thought, maybe shape building should be its own service?
             var cuboid = BuildCuboid();
-            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _innerShelfPlacement);
+            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _innerShelfPlacement, ViewFrom);
         }
     }
 
@@ -197,7 +197,7 @@ class ElectricFireplace : PlaceableShape
                               .SliceZ(LowerDoorThickness, MainDepth - LowerDoorThickness);
 
             var cuboid = BuildCuboid();
-            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _innerSpacePlacement);
+            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _innerSpacePlacement, ViewFrom);
         }
     }
 
@@ -261,7 +261,7 @@ class ElectricFireplace : PlaceableShape
             _yStrip2.Place().OnSideInner(Side.South);
             _yStrip2.Y = GetSide(Side.Top) - windowPlacement.Top - (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * 2;
 
-            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, windowPlacement);
+            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, windowPlacement, ViewFrom);
         }
 
         private Placement2D CalcWindowPlacement()
@@ -348,7 +348,7 @@ class ElectricFireplace : PlaceableShape
                               .SliceY(0, Parent.Height - FooterHeight);
 
             var cuboid = BuildCuboid();
-            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _heatingUnitPlacement);
+            return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _heatingUnitPlacement, ViewFrom);
         }
     }
 

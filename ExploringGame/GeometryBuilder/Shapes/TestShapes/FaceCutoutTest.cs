@@ -37,10 +37,10 @@ class FaceCutoutTest : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         var shape = BuildCuboid();
-        shape = new RemoveSurfaceRegion().Execute(shape, Side.South, _cutoutPlacement);
-        shape = new RemoveSurfaceRegion().Execute(shape, Side.North, _cutoutPlacement);
-        shape = new RemoveSurfaceRegion().Execute(shape, Side.West, _cutoutPlacement);
-        shape = new RemoveSurfaceRegion().Execute(shape, Side.East, _cutoutPlacement);
+        shape = new RemoveSurfaceRegion().Execute(shape, Side.South, _cutoutPlacement, ViewFrom);
+        shape = new RemoveSurfaceRegion().Execute(shape, Side.North, _cutoutPlacement, ViewFrom);
+        shape = new RemoveSurfaceRegion().Execute(shape, Side.West, _cutoutPlacement, ViewFrom);
+        shape = new RemoveSurfaceRegion().Execute(shape, Side.East, _cutoutPlacement, ViewFrom);
 
         return shape;
     }

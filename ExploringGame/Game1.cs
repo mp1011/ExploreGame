@@ -47,6 +47,8 @@ public class Game1 : Game
     private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
 
+    private Dictionary<Shape, Triangle[]> _triangles;
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -88,11 +90,15 @@ public class Game1 : Game
         _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
 
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
-        _setupColliderBodies.Execute(_mainShape);
-        base.Initialize();
-
+        
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+        _triangles = _mainShape.Build((QualityLevel)8);
+        _setupColliderBodies.Execute(_mainShape);
+       
+        base.Initialize();
+
     }
 
     protected override void LoadContent()
@@ -106,11 +112,12 @@ public class Game1 : Game
             .Add(TextureKey.Wood, left: 1995, top: 80, right: 3625, bottom: 669)
             .Add(TextureKey.None, left: 912, top: 2221, right: 922, bottom: 2231);
 
+        _shapeBuffers = new ShapeBufferCreator(_triangles, _basementTextures, GraphicsDevice).Execute();
+        _triangles.Clear();
+
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        SetBuffers();
-        
         // Use BasicEffect with texture
         _effect = new BasicEffect(GraphicsDevice)
         {
@@ -137,7 +144,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return DoorTest();
+        return BasementOffice();
     }
 
     private WorldSegment DoorTest()
@@ -165,7 +172,30 @@ public class Game1 : Game
         door2.X += 2.0f;
         door2.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Blue);
 
+        return new WorldSegment(simpleRoom);
+    }
 
+    private WorldSegment DoorTest2()
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 10f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 10f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        var closet = new BasementCloset(simpleRoom, Side.East);
+        closet.Position = simpleRoom.Position;
+        closet.Place().OnFloor();
+        closet.Z -= 3.0f;
+
+        var closet2 = new BasementCloset(simpleRoom, Side.West);
+        closet2.Position = simpleRoom.Position;
+        closet2.Place().OnFloor();
+        closet2.Z += 3.0f;
 
         return new WorldSegment(simpleRoom);
     }
@@ -438,12 +468,6 @@ public class Game1 : Game
         sponge.Place().OnFloor();
         sponge.MainTexture = new TextureInfo(Color.Purple);
         return simpleRoom;
-    }
-
-    private void SetBuffers()
-    {               
-        var triangles = _mainShape.Build((QualityLevel)8);
-        _shapeBuffers = new ShapeBufferCreator(triangles, _basementTextures, GraphicsDevice).Execute();
     }
 
     private bool _collisionEnabled = true;

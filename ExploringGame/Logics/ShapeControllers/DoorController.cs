@@ -60,12 +60,4 @@ public class DoorController : IShapeController<Door>
 
         Debug.Watch1 = Shape.Rotation.YawDegrees.ToString("00");
     }
-
-    private void PlaceDoor()
-    {
-        Vector3 d = new Vector3(Shape.Width / 2.0f, 0, 0);
-        d = Vector3.Transform(d, Shape.Rotation.AsMatrix());
-        Shape.Position = Shape.Hinge - d;
-    }
-
 }

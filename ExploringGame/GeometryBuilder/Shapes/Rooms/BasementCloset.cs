@@ -22,24 +22,41 @@ public class BasementCloset : Shape
         Depth = Measure.Inches(39);
         MainTexture = new TextureInfo(TextureKey.Wall);
 
-        var interior = AddChild(new SurfaceIndent(this, doorSide, _doorPlacement, Measure.Inches(35), 
+        var interior = AddChild(new SurfaceIndent(this, doorSide, _doorPlacement, Measure.Inches(35),
             displayFaces: (Side.North | Side.South | Side.East | Side.West) & ~doorSide));
         interior.MainTexture = new TextureInfo(TextureKey.Ceiling);
 
-        var openAngle = new Angle(doorSide);
-        var closedAngle = doorSide == Side.East ? openAngle.RotateCounterClockwise(90) : openAngle.RotateClockwise(90);
-
-        throw new Exception("fix me");
-       // _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle));
-      //  _door.Open = true;
+        if (doorSide == Side.East)
+        {
+            var closedAngle = new Angle(Side.North);
+            var openAngle = new Angle(Side.East);
+            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HingePosition.Left));
+        }
+        else if (doorSide == Side.West)
+        {
+            var closedAngle = new Angle(Side.North);
+            var openAngle = new Angle(Side.West);
+            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HingePosition.Right));
+        }
+        else
+            throw new ArgumentException();
     }
 
     protected override void BeforeBuild()
     {
+        _door.Position = Position;
+
+        // todo, door placement is tricky         
         if (_doorSide == Side.East)
-            _door.Hinge = new Vector3(GetSide(Side.East), this.Y, GetSide(Side.South) - _doorPlacement.Left);
+        {
+            _door.X = GetSide(Side.East) + _door.Width / 2f;
+            _door.Z += (_door.Width / 2f) + 0.1f;
+        }
         else
-            _door.Hinge = new Vector3(GetSide(Side.West), this.Y, GetSide(Side.South) - _doorPlacement.Right);
+        {
+            _door.X = GetSide(Side.West) - _door.Width / 2f;
+            _door.Z += (_door.Width / 2f) - 0.1f;
+        }
     }
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
@@ -47,6 +64,6 @@ public class BasementCloset : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         var cuboid = BuildCuboid();
-        return new RemoveSurfaceRegion().Execute(cuboid, _doorSide, _doorPlacement);
+        return new RemoveSurfaceRegion().Execute(cuboid, _doorSide, _doorPlacement, ViewFrom);
     }
 }

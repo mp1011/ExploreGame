@@ -7,7 +7,6 @@ namespace ExploringGame.GeometryBuilder;
 
 
 /// <summary>
-/// From inside perspective
 /// U = 2d X
 /// N = Normal
 /// V = 2d Y
@@ -17,18 +16,34 @@ namespace ExploringGame.GeometryBuilder;
 /// <param name="V"></param>
 public record FaceBasis(Vector3 U, Vector3 N, Vector3 V)
 {
-    public static FaceBasis FromSide(Side side)
+    public static FaceBasis FromSide(Side side, ViewFrom viewFrom)
     {
-        return side switch
+        if (viewFrom == ViewFrom.Inside)
         {
-            Side.South => new FaceBasis(U: -Vector3.UnitX, V: Vector3.UnitY, N: Vector3.UnitZ),
-            Side.North => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitY, N: -Vector3.UnitZ),
-            Side.West => new FaceBasis(U: -Vector3.UnitZ, V: Vector3.UnitY, N: -Vector3.UnitX),
-            Side.East => new FaceBasis(U: Vector3.UnitZ, V: Vector3.UnitY, N: Vector3.UnitX),
-            Side.Top => new FaceBasis(U: Vector3.UnitX, V: -Vector3.UnitZ, N: Vector3.UnitY),
-            Side.Bottom => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitZ, N: -Vector3.UnitY),
-            _ => throw new ArgumentOutOfRangeException("Invalid side")
-        };
+            return side switch
+            {
+                Side.South => new FaceBasis(U: -Vector3.UnitX, V: Vector3.UnitY, N: Vector3.UnitZ),
+                Side.North => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitY, N: -Vector3.UnitZ),
+                Side.West => new FaceBasis(U: -Vector3.UnitZ, V: Vector3.UnitY, N: -Vector3.UnitX),
+                Side.East => new FaceBasis(U: Vector3.UnitZ, V: Vector3.UnitY, N: Vector3.UnitX),
+                Side.Top => new FaceBasis(U: Vector3.UnitX, V: -Vector3.UnitZ, N: Vector3.UnitY),
+                Side.Bottom => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitZ, N: -Vector3.UnitY),
+                _ => throw new ArgumentOutOfRangeException("Invalid side")
+            };
+        }
+        else
+        {
+            return side switch
+            {
+                Side.South => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitY, N: Vector3.UnitZ),
+                Side.North => new FaceBasis(U: -Vector3.UnitX, V: Vector3.UnitY, N: -Vector3.UnitZ),
+                Side.West => new FaceBasis(U: Vector3.UnitZ, V: Vector3.UnitY, N: -Vector3.UnitX),
+                Side.East => new FaceBasis(U: -Vector3.UnitZ, V: Vector3.UnitY, N: Vector3.UnitX),
+                Side.Top => new FaceBasis(U: Vector3.UnitX, V: -Vector3.UnitZ, N: Vector3.UnitY),
+                Side.Bottom => new FaceBasis(U: Vector3.UnitX, V: Vector3.UnitZ, N: -Vector3.UnitY),
+                _ => throw new ArgumentOutOfRangeException("Invalid side")
+            };
+        }
     }
 }
 
@@ -39,10 +54,10 @@ public class Triangle2D
 {
     public Triangle Original { get; }
 
-    public Triangle2D(Triangle original, Vector3 faceOrigin)
+    public Triangle2D(Triangle original, Vector3 faceOrigin, ViewFrom viewFrom)
     {
         Original = original;
-        var faceBasis = FaceBasis.FromSide(original.Side);
+        var faceBasis = FaceBasis.FromSide(original.Side, viewFrom);
         A = original.A.Project(faceOrigin, faceBasis.U, faceBasis.V);
         B = original.B.Project(faceOrigin, faceBasis.U, faceBasis.V);
         C = original.C.Project(faceOrigin, faceBasis.U, faceBasis.V);
@@ -135,9 +150,9 @@ public class Triangle2D
         }
     }
 
-    public Triangle To3D(Vector3 faceOrigin)
+    public Triangle To3D(Vector3 faceOrigin, ViewFrom viewFrom)
     {
-        var faceBasis = FaceBasis.FromSide(Original.Side);
+        var faceBasis = FaceBasis.FromSide(Original.Side, viewFrom);
         return new Triangle(
             A: A.Unproject(faceOrigin, faceBasis.U, faceBasis.V),
             B: B.Unproject(faceOrigin, faceBasis.U, faceBasis.V),

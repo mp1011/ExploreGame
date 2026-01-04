@@ -40,7 +40,7 @@ public class Room : Shape
 
         foreach(var connection in _roomConnections)
             shape = new RemoveSurfaceRegion().Execute(shape, connection.Side, 
-                connection.CalcCutoutPlacement(this));
+                connection.CalcCutoutPlacement(this), ViewFrom);
                 
         return shape;
     }

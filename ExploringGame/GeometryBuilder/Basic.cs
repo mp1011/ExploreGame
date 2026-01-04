@@ -100,9 +100,9 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
         return ccw ? Winding.CounterClockwise : Winding.Clockwise;
     }
 
-    public Triangle2D As2D(Vector3 faceOrigin)
+    public Triangle2D As2D(Vector3 faceOrigin, ViewFrom viewFrom)
     {
-       return new Triangle2D(this, faceOrigin);
+       return new Triangle2D(this, faceOrigin, viewFrom);
     }
 
     public Triangle Rotate(Vector3 pivot, Rotation rotation)
