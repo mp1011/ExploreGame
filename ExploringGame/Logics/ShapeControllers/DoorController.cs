@@ -2,6 +2,7 @@
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.Services;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
@@ -18,11 +19,14 @@ public class DoorController : IShapeController<Door>
 
     private readonly PlayerInput _playerInput;
     private readonly Player _player;
+    private readonly AudioService _audioService;
     private RigidBody _rigidBody;
     private AngularMotor _motor;
+    private bool _closeSoundPlayed = false;
 
-    public DoorController(PlayerInput playerInput, Player player)
+    public DoorController(PlayerInput playerInput, Player player, AudioService audioService)
     {
+        _audioService = audioService;
         _playerInput = playerInput;
         _player = player;
     }
@@ -47,17 +51,29 @@ public class DoorController : IShapeController<Door>
 
         var delta = new Angle(Shape.Rotation.YawDegrees).Delta(targetDegrees);
 
+        if (delta.IsAlmost(0f, tolerance: 2.0f) && !Shape.Open && !_closeSoundPlayed)
+        {
+            _audioService.Play(SoundEffectKey.DoorClose);
+            _closeSoundPlayed = true;
+        }
 
         _rigidBody.AngularVelocity = new JVector(0, delta * .05f, 0f);
 
         Shape.Position = _rigidBody.Position.ToVector3();
         Shape.Rotation = Rotation.FromJQuaternion(_rigidBody.Orientation);
-        if (_player.Position.SquaredDistance(Shape.Position) < ActivationRange * ActivationRange)
-        {
-            if (_playerInput.IsKeyPressed(GameKey.Use))
-                Shape.Open = !Shape.Open;
-        }
 
-        Debug.Watch1 = Shape.Rotation.YawDegrees.ToString("00");
+        if (_player.Position.SquaredDistance(Shape.Position) > ActivationRange * ActivationRange)
+            return;
+
+        if (_playerInput.IsKeyPressed(GameKey.Use))
+        {
+            Shape.Open = !Shape.Open;
+            if(Shape.Open)
+            {
+                _audioService.Play(SoundEffectKey.DoorOpen);
+                _closeSoundPlayed = false;
+            }
+        }
+       
     }
 }

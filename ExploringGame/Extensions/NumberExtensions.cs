@@ -4,6 +4,13 @@ namespace ExploringGame.Extensions;
 
 public static class NumberExtensions
 {
+    const float Epsilon = 1e-6f;
+
+    public static bool IsAlmost(this float number, float compare, float tolerance)
+    {
+        return MathF.Abs(number - compare) < tolerance;
+        
+    }
     public static int NMod(this int value, int modulus)
     {
         if (modulus <= 0)

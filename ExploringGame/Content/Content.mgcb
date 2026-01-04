@@ -38,3 +38,15 @@
 /processorParam:DebugMode=Auto
 /build:PointLightEffect.fx
 
+#begin Sound/DoorClose.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/DoorClose.wav
+
+#begin Sound/DoorOpen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/DoorOpen.wav
+

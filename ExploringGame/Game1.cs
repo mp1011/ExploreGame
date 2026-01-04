@@ -68,6 +68,8 @@ public class Game1 : Game
 
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
+        _serviceContainer.BindSingleton<AudioService>();
+
         _physics = new Physics();
         _serviceContainer.Bind(_physics);
 
@@ -140,6 +142,8 @@ public class Game1 : Game
         _pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness
         _pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
         _pointLightEffect.Parameters["Texture"].SetValue(_basementTextures.Texture);
+
+        _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
     private WorldSegment CreateMainShape()
