@@ -33,7 +33,6 @@
 [x] proper collision detection
 	[x] create correct collider walls for joined rooms
 
-
 [x] fix player motion
 	[x] disregarding gravity
 	[x] implement gravity separately
@@ -41,12 +40,20 @@
 	[x] jump aware of when player on floor (kind of)
 	[x] player y speed should be 0 when floor hit
 
-[ ] resume basement office map
+[x] resume basement office map
 	[x] desks rotated correctly
 	[x] collision bodies also rotated
 	[x] player able to fit through hall
-	[ ] physics engine for door
+	[x] physics engine for door
 
+[x] boiler room
+	[ ] door
+	[x] curved shape for boiler
+
+[ ] controllable lights
+	[ ] control via switch
+	[ ] multiple lights
+	
 
 [ ] easier way to place rooms (by specifying either the left or right edge)
 [ ] see if we can adjust n,s,e,w as long as rotation is multiple of 90

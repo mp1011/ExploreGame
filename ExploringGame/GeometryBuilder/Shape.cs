@@ -368,53 +368,7 @@ public abstract class Shape
     /// Generates the triangles of the bounding volume of this shape
     /// </summary>
     /// <returns></returns>
-    protected Triangle[] BuildCuboid()
-    {
-        // Calculate the 8 corners of the cuboid
-        var min = Position - Size / 2f;
-        var max = Position + Size / 2f;
-
-        Vector3[] corners = new Vector3[8];
-        // Bottom face (Y = min.Y)
-        corners[0] = new Vector3(min.X, min.Y, min.Z); 
-        corners[1] = new Vector3(max.X, min.Y, min.Z);
-        corners[2] = new Vector3(max.X, min.Y, max.Z);
-        corners[3] = new Vector3(min.X, min.Y, max.Z);
-        // Top face (Y = max.Y)
-        corners[4] = new Vector3(min.X, max.Y, min.Z);
-        corners[5] = new Vector3(max.X, max.Y, min.Z);
-        corners[6] = new Vector3(max.X, max.Y, max.Z);
-        corners[7] = new Vector3(min.X, max.Y, max.Z);
-
-  
-        List<Triangle> triangles = new();
-
-        //floor
-        triangles.Add(new Triangle(corners[0], corners[1], corners[2], TextureInfoForSide(Side.Bottom), Side.Bottom));
-        triangles.Add(new Triangle(corners[2], corners[3], corners[0], TextureInfoForSide(Side.Bottom), Side.Bottom));
-
-        //ceiling
-        triangles.Add(new Triangle(corners[6], corners[5], corners[4], TextureInfoForSide(Side.Top), Side.Top));
-        triangles.Add(new Triangle(corners[4], corners[7], corners[6], TextureInfoForSide(Side.Top), Side.Top));
-
-        // wall(min z)
-        triangles.Add(new Triangle(corners[5], corners[1], corners[0], TextureInfoForSide(Side.North), Side.North));
-        triangles.Add(new Triangle(corners[0], corners[4], corners[5], TextureInfoForSide(Side.North), Side.North));
-
-        //wall (max z)
-        triangles.Add(new Triangle(corners[6], corners[3], corners[2], TextureInfoForSide(Side.South), Side.South));
-        triangles.Add(new Triangle(corners[6], corners[7], corners[3], TextureInfoForSide(Side.South), Side.South));
-
-        //wall (min x)
-        triangles.Add(new Triangle(corners[0], corners[3], corners[7], TextureInfoForSide(Side.West), Side.West));
-        triangles.Add(new Triangle(corners[7], corners[4], corners[0], TextureInfoForSide(Side.West), Side.West));
-
-        //wall (max x)
-        triangles.Add(new Triangle(corners[5], corners[2], corners[1], TextureInfoForSide(Side.East), Side.East));
-        triangles.Add(new Triangle(corners[5], corners[6], corners[2], TextureInfoForSide(Side.East), Side.East));
-
-        return triangles.ToArray();
-    }
+    protected Triangle[] BuildCuboid() => TriangleMaker.BuildCuboid(this);
 
     protected abstract Triangle[] BuildInternal(QualityLevel quality);
 

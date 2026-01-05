@@ -45,6 +45,16 @@ public class Room : Shape
         return shape;
     }
 
+    public Room Copy()
+    {
+        var room = new Room();
+        room.Position = Position;
+        room.Size = Size;
+        foreach (var kvp in SideTextures)
+            room.SideTextures[kvp.Key] = kvp.Value;
+        room.MainTexture = MainTexture;
+        return room;
+    }
 }
 
 public record RoomConnection(Room Other, Side Side, float Position)

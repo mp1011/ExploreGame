@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
@@ -100,7 +101,6 @@ public class Game1 : Game
         _setupColliderBodies.Execute(_mainShape);
        
         base.Initialize();
-
     }
 
     protected override void LoadContent()
@@ -149,6 +149,28 @@ public class Game1 : Game
     private WorldSegment CreateMainShape()
     {
         return BasementOffice();
+    }
+
+    public WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
+
+    private WorldSegment ComplexShapeTest(Func<Shape, Shape> createShape)
+    {
+        var simpleRoom = new SimpleRoom();
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
+        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+
+        var shape = simpleRoom.AddChild(createShape(simpleRoom));
+        shape.Position = simpleRoom.Position;
+        shape.Place().OnFloor();
+        shape.Z += 2.0f;
+
+        return new WorldSegment(simpleRoom);
     }
 
     private WorldSegment DoorTest()

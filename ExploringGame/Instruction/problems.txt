@@ -1,4 +1,4 @@
 - texture tiling still needs work
-- will need proper collision detection for rotated objects
+- texture on oil tanker doesn't look right
 - fix/re-enable head bob
 - multiple instances of same shape type can share same vertices

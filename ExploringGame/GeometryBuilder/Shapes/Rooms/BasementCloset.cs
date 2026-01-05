@@ -1,7 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.Services;
 using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
 using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
