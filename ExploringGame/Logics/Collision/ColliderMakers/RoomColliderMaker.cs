@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Services;
 using Jitter2.Dynamics;
@@ -109,8 +110,11 @@ public class RoomColliderMaker : IColliderMaker
             _room.AddChild(shapeCopyR);
         }
 
-        physics.CreateStaticBody(shapeCopyL);
-        physics.CreateStaticBody(shapeCopyR);
+        if(shapeCopyL.Size.IsValidPositive())
+            physics.CreateStaticBody(shapeCopyL);
+
+        if (shapeCopyR.Size.IsValidPositive())
+            physics.CreateStaticBody(shapeCopyR);
     }
 
 }

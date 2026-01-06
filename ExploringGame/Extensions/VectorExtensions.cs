@@ -12,6 +12,12 @@ public static class VectorExtensions
 {
     public static Vector3 SetY(this Vector3 vector, float y) => new Vector3(vector.X, y, vector.Z);
 
+    public static bool IsValidPositive(this Vector3 vector)
+    {
+        return vector.X.IsValidPositive() &&
+               vector.Y.IsValidPositive() &&
+               vector.Z.IsValidPositive();
+    }
     public static Vector3 Center(this IEnumerable<Vector3> points)
     {
         if (points == null || !points.Any())

@@ -2,7 +2,6 @@
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 

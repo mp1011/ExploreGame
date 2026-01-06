@@ -46,15 +46,28 @@ public class BasementOffice : Room
 
         var oilTankRoom = new OilTankRoom();
         oilTankRoom.Height = Height;
-        oilTankRoom.Width = Width - 2.0f;
+        oilTankRoom.Width = Width - 1.9f;
         oilTankRoom.Depth = 1.9f;
-        eastPart2.AddConnectingRoom(new RoomConnection(oilTankRoom, Side.West, 0.5f));
+
+        // todo this needs to be cleaner
+        var junction = new DoorJunction(
+            doorClose: new Angle(Side.North), 
+            doorOpen: new Angle(Side.East), 
+            hingePosition: HingePosition.Left,
+            height: Height);
+
+        junction.Depth = Measure.Inches(30.5f);
+        junction.Width = 0.1f;
+
+        eastPart2.AddConnectingRoom(new RoomConnection(junction, Side.West, 0.5f));
+        junction.AddConnectingRoom(new RoomConnection(oilTankRoom, Side.West, 0.5f));
 
         worldSegment.AddChild(this);
         worldSegment.AddChild(exit);
         worldSegment.AddChild(eastPart);
         worldSegment.AddChild(eastPart2);
         worldSegment.AddChild(oilTankRoom);
+        worldSegment.AddChild(junction);
 
         #endregion
 

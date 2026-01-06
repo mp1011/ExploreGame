@@ -47,7 +47,8 @@
 	[x] physics engine for door
 
 [x] boiler room
-	[ ] door
+	[x] door
+		[ ] quicker way to define this in code
 	[x] curved shape for boiler
 
 [ ] controllable lights

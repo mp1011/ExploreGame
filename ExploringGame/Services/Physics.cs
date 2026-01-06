@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using Jitter2;
+using Jitter2.Collision;
 using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
@@ -15,6 +16,13 @@ using MathHelper = Microsoft.Xna.Framework.MathHelper;
 
 namespace ExploringGame.Services;
 
+public enum CollisionGroup
+{
+    Player = 1,
+    Environment = 2,
+    Doors = 4
+}
+
 public class Physics
 {
     public static bool DebugDrawHinge = false;
@@ -25,7 +33,7 @@ public class Physics
     public Physics()
     {
         _world = new World();
-        
+        _world.BroadPhaseFilter = new CollisionGroupFilter();
     }
 
     public RigidBody CreateStaticSurface(GShape shape, Side side)
@@ -64,6 +72,7 @@ public class Physics
         }
 
         body.MotionType = MotionType.Static;
+        body.Tag = CollisionGroup.Environment;
         return body;
     }
     public RigidBody CreateStaticBody(GShape shape)
@@ -81,6 +90,7 @@ public class Physics
         }
         body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
+        body.Tag = CollisionGroup.Environment;
         return body;
     }
 
@@ -101,6 +111,7 @@ public class Physics
         InitPhysics(body);
 
         body.MotionType = MotionType.Dynamic;
+        body.Tag = CollisionGroup.Environment;
         return body;
     }
 
@@ -116,6 +127,7 @@ public class Physics
         var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
         upright.Initialize(JVector.UnitY, AngularLimit.Full);
 
+        body.Tag = CollisionGroup.Player;
         return body;
     }
 
@@ -161,7 +173,7 @@ public class Physics
 
         var rotationQ = door.Rotation.AsQuaternion();
         doorBody.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
-        
+        doorBody.Tag = CollisionGroup.Doors;
 
         //  h.Motor.IsEnabled = true;
         //   h.Motor.TargetVelocity = 20.0f;
@@ -185,4 +197,32 @@ public class Physics
             _world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
     }
 
+
+    class CollisionGroupFilter : IBroadPhaseFilter
+    {
+        public bool Filter(IDynamicTreeProxy proxyA, IDynamicTreeProxy proxyB)
+        {
+            if(proxyA is RigidBodyShape bodyA && proxyB is RigidBodyShape bodyB)
+            {
+               return IsCollisionAllowed((CollisionGroup)bodyA.RigidBody.Tag,
+                                         (CollisionGroup)bodyB.RigidBody.Tag);
+            }
+
+            return false;
+        }
+
+        private bool IsCollisionAllowed(CollisionGroup groupA, CollisionGroup groupB)
+        {
+            // Define collision rules here
+            if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Environment)
+                return true;
+            if (groupA == CollisionGroup.Environment && groupB == CollisionGroup.Player)
+                return true;
+            if (groupA == CollisionGroup.Doors && groupB == CollisionGroup.Player)
+                return true;
+            if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Doors)
+                return true;
+            return false;
+        }
+    }
 }

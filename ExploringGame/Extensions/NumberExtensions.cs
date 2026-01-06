@@ -6,6 +6,15 @@ public static class NumberExtensions
 {
     const float Epsilon = 1e-6f;
 
+
+    public static bool IsValidPositive(this float number)
+    {
+        if (number <= 0 || number == float.NaN)
+            return false;
+
+        return number > Epsilon;
+    }
+
     public static bool IsAlmost(this float number, float compare, float tolerance)
     {
         return MathF.Abs(number - compare) < tolerance;
