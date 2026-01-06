@@ -22,8 +22,8 @@ public class SplitTrianglesForTiling
 
     private bool ShapeHasTiling(Shape shape)
     {
-        return shape.MainTexture.Style == TextureStyle.XZTile ||
-               shape.SideTextures.Values.Any(p => p.Style == TextureStyle.XZTile);
+        return shape.Theme.MainTexture.Style == TextureStyle.XZTile ||
+               shape.Theme.SideTextures.Values.Any(p => p.Style == TextureStyle.XZTile);
     }
 
     private IEnumerable<Triangle> SplitTrianglesIfNeeded(Shape shape, Triangle[] triangles, Side side)

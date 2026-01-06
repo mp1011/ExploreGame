@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
+using ExploringGame.Texture;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +8,10 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 
 public class Room : Shape
 {
+
+    private Theme _theme = Theme.Missing;
+    public override Theme Theme => _theme;
+
     private List<RoomConnection> _roomConnections = new List<RoomConnection>();
 
     public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
@@ -16,7 +21,7 @@ public class Room : Shape
     public void AddConnectingRoom(RoomConnection connection)
     {
         _roomConnections.Add(connection);
-        connection.Other._roomConnections.Add(connection.Reverse(this));
+        connection.Other._roomConnections.Add(connection.Reverse());
 
         connection.Other.Position = Position;
         connection.Other.Place().OnSideOuter(connection.Side, this)
@@ -40,35 +45,50 @@ public class Room : Shape
 
         foreach(var connection in _roomConnections)
             shape = new RemoveSurfaceRegion().Execute(shape, connection.Side, 
-                connection.CalcCutoutPlacement(this), ViewFrom);
+                connection.CalcCutoutPlacement(), ViewFrom);
                 
         return shape;
     }
 
-    public Room Copy()
+    public Room Copy(float? height = null, float? width = null, float? depth = null)
     {
         var room = new Room();
+        room._theme = Theme;
         room.Position = Position;
         room.Size = Size;
-        foreach (var kvp in SideTextures)
-            room.SideTextures[kvp.Key] = kvp.Value;
-        room.MainTexture = MainTexture;
+
+        if(height.HasValue)
+            room.Height = height.Value;
+
+        if (width.HasValue)
+            room.Width = width.Value;
+
+        if (depth.HasValue)
+            room.Depth = depth.Value;
+
         return room;
     }
 }
 
-public record RoomConnection(Room Other, Side Side, float Position)
+public record RoomConnection(Room Room, Room Other, Side Side, float Position = 0.5f)
 {
-    public RoomConnection Reverse(Room room) => new RoomConnection(room, Side.Opposite(), 1.0f - Position);
+    public RoomConnection(Room Room, Room Other, Side Side, Side Align) 
+        : this(Room, Other, Side, CalcPosition(Room, Other, Align)) { }
+    public RoomConnection Reverse() => new RoomConnection(Other, Room, Side.Opposite(), 1.0f - Position);
 
-    public Placement2D CalcCutoutPlacement(Room room)
+    private static float CalcPosition(Room room, Room other, Side align)
+    {
+        throw new System.NotImplementedException();
+    }
+    
+    public Placement2D CalcCutoutPlacement()
     {
         float left, top, right, bottom;
 
-        var thisFloor = room.GetSide(Side.Bottom);
+        var thisFloor = Room.GetSide(Side.Bottom);
         var otherFloor = Other.GetSide(Side.Bottom);
 
-        var thisCeiling = room.GetSide(Side.Top);
+        var thisCeiling = Room.GetSide(Side.Top);
         var otherCeiling = Other.GetSide(Side.Top);
 
         top = thisCeiling - otherCeiling;
@@ -79,20 +99,20 @@ public record RoomConnection(Room Other, Side Side, float Position)
         switch(Side)
         {
             case Side.South:
-                left = room.GetSide(Side.East) - Other.GetSide(Side.East);
-                right = Other.GetSide(Side.West) - room.GetSide(Side.West);
+                left = Room.GetSide(Side.East) - Other.GetSide(Side.East);
+                right = Other.GetSide(Side.West) - Room.GetSide(Side.West);
                 break;
             case Side.North:
-                left = Other.GetSide(Side.West) - room.GetSide(Side.West);
-                right = room.GetSide(Side.East) - Other.GetSide(Side.East);
+                left = Other.GetSide(Side.West) - Room.GetSide(Side.West);
+                right = Room.GetSide(Side.East) - Other.GetSide(Side.East);
                 break;
             case Side.West:
-                left = room.GetSide(Side.South) - Other.GetSide(Side.South);
-                right = Other.GetSide(Side.North) - room.GetSide(Side.North);
+                left = Room.GetSide(Side.South) - Other.GetSide(Side.South);
+                right = Other.GetSide(Side.North) - Room.GetSide(Side.North);
                 break;
             case Side.East:
-                left = Other.GetSide(Side.North) - room.GetSide(Side.North);
-                right = room.GetSide(Side.South) - Other.GetSide(Side.South);
+                left = Other.GetSide(Side.North) - Room.GetSide(Side.North);
+                right = Room.GetSide(Side.South) - Other.GetSide(Side.South);
                 break;
             default:
                 throw new System.NotImplementedException("fix me");

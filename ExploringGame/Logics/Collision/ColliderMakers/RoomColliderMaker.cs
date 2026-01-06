@@ -47,7 +47,7 @@ public class RoomColliderMaker : IColliderMaker
         if (roomConnections.Length > 1)
             throw new System.NotImplementedException("not yet working for multiple connections on same side");
 
-        var placement = roomConnections[0].CalcCutoutPlacement(_room);
+        var placement = roomConnections[0].CalcCutoutPlacement();
 
         var sideLength = _room.SideLength(side);
 

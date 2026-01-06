@@ -1,0 +1,38 @@
+# Goal
+- Provide an easy means to define geometry using code, rather than any kind of text file or editor. 
+- Geometry definitions should read naturally, even to a non-developer, as if someone was describing the layout of furniture in a room.
+
+# Information
+- World geometry is made up of shapes, which are defined as axis-aligned boxes, but may be rotated into any configuration after creation.
+- For purposes of planning, we will not concern ourselves with the creation of the shapes themselves, only with their relation to one-another.
+- a code example that we wish to improve upon, is in the constructor of the class BasementOffice which describes the furniture layout of an office room.
+
+# FAQ
+1.	What are the most common relationships you want to express?
+	- we can define most relations in terms of cardinal direction, plus some offset
+2.	How important is code brevity vs. explicitness?
+	- brevity is more important, we can rely on conventions rather than specifying all details inline
+3.	Do you want to support relative placement?
+	- yes, relative placement can be important, and can also be defined via cardinal directions ("next to" is too ambiguous)
+4.	Should the API support chaining/fluency?
+	- optional but not required
+5.	How much flexibility do you need for complex arrangements?
+	- I need the ability to express complex arrangements, but the code should be optimized for simple arrangements.
+6.	Do you want to validate or visualize relationships in code?
+	- no, this will be done manually
+7.	Are there any non-room shapes or features that need special handling?
+	- not at this time
+8.	How do you want to handle rotation and orientation?
+	- this can be done by defining a "front" angle for each shape. Then we can rotate the shape such that its "front" faces the desired direction
+	- rotation should be explicit
+9.	Do you want to support templates or reusable layouts?
+	- not at this time
+10.	Is there a need for grouping or tagging objects for later reference?
+	- no need, the types of each shape can be used if we need grouping
+
+# Implementation Steps
+1. Separate theming out of Shape definition.
+	- Currently each shape has properties to define its textures, which takes up a lot of real estate
+	- Instead, we will create a Theme class to define textures, as a virtual property
+	- by default, there will be a "Missing" theme that paints the walls a bright color, to make it easy to see
+	

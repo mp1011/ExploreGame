@@ -14,10 +14,7 @@ public class ShapeBuilder
 
     public ComplexShapePart AddChild(Shape parent, ComplexShapePart part)
     {
-        part.MainTexture = parent.MainTexture;
-        foreach (var sideTexture in parent.SideTextures)
-            part.SideTextures[sideTexture.Key] = sideTexture.Value;
-
+        part.Theme.CopyFrom(parent.Theme);
         parent.AddChild(part);
         return part;
     }

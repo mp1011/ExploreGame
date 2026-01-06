@@ -26,9 +26,17 @@ public abstract class Shape
     public Vector3 Position { get; set; }
     public Vector3 Size { get; set; }
 
-    public TextureInfo MainTexture { get; set; }
+    #region Theme
+    public virtual Theme Theme { get; } = Theme.Missing;
 
-    public Dictionary<Side, TextureInfo> SideTextures { get; } = new Dictionary<Side, TextureInfo>();
+    public TextureInfo MainTexture
+    {
+        get => Theme.MainTexture; 
+        set => Theme.MainTexture = value;
+    }
+    public TextureInfo TextureInfoForSide(Side side) => Theme.TextureInfoForSide(side);
+    public Dictionary<Side, TextureInfo> SideTextures => Theme.SideTextures;
+    #endregion
 
     public float X
     {
@@ -235,15 +243,6 @@ public abstract class Shape
     }
 
     public Rotation Rotation { get; set; }
-
-    public TextureInfo TextureInfoForSide(Side side)
-    {
-        TextureInfo c;
-        if (SideTextures.TryGetValue(side, out c))
-            return c;
-        else
-            return MainTexture;
-    }
 
     public bool ContainsPoint(Vector3 point)
     {

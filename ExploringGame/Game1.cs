@@ -155,15 +155,11 @@ public class Game1 : Game
 
     private WorldSegment ComplexShapeTest(Func<Shape, Shape> createShape)
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
         var shape = simpleRoom.AddChild(createShape(simpleRoom));
         shape.Position = simpleRoom.Position;
@@ -175,44 +171,35 @@ public class Game1 : Game
 
     private WorldSegment DoorTest()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 10f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 10f;
         simpleRoom.Y = 2;
 
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
-
         var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HingePosition.Left));
         door1.Place().OnFloor();
         door1.Z -= 3.0f;
         door1.X -= 2.0f;
-        door1.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Red);
+        door1.Theme.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Red);
 
         var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HingePosition.Right));
         door2.Place().OnFloor();
         door2.Z -= 3.0f;
         door2.X += 2.0f;
-        door2.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Blue);
+        door2.Theme.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Blue);
 
         return new WorldSegment(simpleRoom);
     }
 
     private WorldSegment DoorTest2()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 10f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 10f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
+        
         var closet = new BasementCloset(simpleRoom, Side.East);
         closet.Position = simpleRoom.Position;
         closet.Place().OnFloor();
@@ -229,17 +216,12 @@ public class Game1 : Game
 
     private WorldSegment PhysicsTest()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 10f;
         simpleRoom.Height = 8f;
         simpleRoom.Depth = 10f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
-
+    
         var test = new PhysicsTestShape();
         test.Y = 0.0f;
         test.Z = -1.0f;
@@ -255,16 +237,12 @@ public class Game1 : Game
     private WorldSegment MotionTest()
     {
        
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2.0f;
         
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
         var box = new TestMover();        
         simpleRoom.AddChild(box);
        
@@ -281,15 +259,11 @@ public class Game1 : Game
 
     private WorldSegment FurnitureRotateTest()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
         var officeDesk = new OfficeDesk(simpleRoom);
         officeDesk.Place().OnFloor();
@@ -318,16 +292,12 @@ public class Game1 : Game
 
     private WorldSegment EmptyRoom()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-
+   
         var world = new WorldSegment();
         world.AddChild(simpleRoom);
 
@@ -346,56 +316,56 @@ public class Game1 : Game
         room.Depth = 12f;
         room.Y = 2;
 
-        room.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        room.SideTextures[Side.Bottom] = floorTexture;
-        room.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        room.Theme.SideTextures[Side.Bottom] = floorTexture;
+        room.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
         var southRoom = new Room();
         southRoom.Width = 4f;
         southRoom.Height = 4f;
         southRoom.Depth = 10f;
-        southRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        southRoom.SideTextures[Side.Bottom] = floorTexture;
-        southRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(southRoom, Side.South, pos));
+        southRoom.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        southRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
+        southRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(new RoomConnection(room, southRoom, Side.South, pos));
 
         var northRoom = new Room();
         northRoom.Width = 4f;
         northRoom.Height = 4f;
         northRoom.Depth = 10f;
-        northRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        northRoom.SideTextures[Side.Bottom] = floorTexture;
-        northRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(northRoom, Side.North, pos));
+        northRoom.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        northRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
+        northRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(new RoomConnection(room, northRoom, Side.North, pos));
         northRoom.SetSideUnanchored(Side.Bottom, northRoom.GetSide(Side.Bottom) + 0.4f);
 
         var northRoom2 = new Room();
         northRoom2.Width = 40f;
         northRoom2.Height = 4f;
         northRoom2.Depth = 40f;
-        northRoom2.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        northRoom2.SideTextures[Side.Bottom] = floorTexture;
-        northRoom2.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        northRoom.AddConnectingRoom(new RoomConnection(northRoom2, Side.North, pos));
+        northRoom2.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        northRoom2.Theme.SideTextures[Side.Bottom] = floorTexture;
+        northRoom2.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        northRoom.AddConnectingRoom(new RoomConnection(northRoom, northRoom2, Side.North, pos));
 
         var westRoom = new Room();
         westRoom.Width = 10f;
         westRoom.Height = 4f;
         westRoom.Depth = 4f;
-        westRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        westRoom.SideTextures[Side.Bottom] = floorTexture;
-        westRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(westRoom, Side.West, pos));
+        westRoom.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        westRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
+        westRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(new RoomConnection(room,westRoom, Side.West, pos));
         westRoom.SetSideUnanchored(Side.Top, northRoom.GetSide(Side.Top) - 0.4f);
 
         var eastRoom = new Room();
         eastRoom.Width = 10f;
         eastRoom.Height = 4f;
         eastRoom.Depth = 4f;
-        eastRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        eastRoom.SideTextures[Side.Bottom] = floorTexture;
-        eastRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-        room.AddConnectingRoom(new RoomConnection(eastRoom, Side.East, pos));
+        eastRoom.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
+        eastRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
+        eastRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+        room.AddConnectingRoom(new RoomConnection(room, eastRoom, Side.East, pos));
 
         var world = new WorldSegment();
         world.AddChild(room);
@@ -410,15 +380,11 @@ public class Game1 : Game
 
     private WorldSegment RoomWithFireplace()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
         var officeDesk = new OfficeDesk(simpleRoom);
         officeDesk.Place().OnFloor();
@@ -435,15 +401,11 @@ public class Game1 : Game
 
     private WorldSegment RoomWithDesk()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
         var officeDesk = new OfficeDesk(simpleRoom);
         officeDesk.Place().OnFloor();
@@ -457,18 +419,14 @@ public class Game1 : Game
 
     private WorldSegment FaceCutoutTestRoom()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
 
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
-
         var testShape = new FaceCutoutTest();
-        testShape.MainTexture = new TextureInfo(TextureKey.Wall);
+        testShape.Theme.MainTexture = new TextureInfo(TextureKey.Wall);
         simpleRoom.AddChild(testShape);
         testShape.Place().OnFloor();
         testShape.Y += 1.0f;
@@ -478,15 +436,11 @@ public class Game1 : Game
 
     private Shape MengerSpongeRoom()
     {
-        var simpleRoom = new SimpleRoom();
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
         simpleRoom.Height = 4f;
         simpleRoom.Depth = 8f;
         simpleRoom.Y = 2;
-
-        simpleRoom.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        simpleRoom.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        simpleRoom.MainTexture = new TextureInfo(TextureKey.Wall);
 
         var sponge = new MengerSponge(new ShapeSplitter());
         simpleRoom.AddChild(sponge);

@@ -48,8 +48,11 @@
 
 [x] boiler room
 	[x] door
-		[ ] quicker way to define this in code
 	[x] curved shape for boiler
+
+[ ] improve ability to define layout in code
+	[x] separate theme into its own class
+	[ ] easier way to define alignments of adjacent rooms
 
 [ ] controllable lights
 	[ ] control via switch
