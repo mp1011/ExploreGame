@@ -35,8 +35,7 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    // 3D room and camera fields
-    private BasicEffect _effect;
+    private IRenderEffect _renderEffect;
 
     private ShapeBuffer[] _shapeBuffers;
     private Matrix _view;
@@ -86,9 +85,7 @@ public class Game1 : Game
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.BindTransient<DoorController>();
 
-        _mainShape = CreateMainShape();                   
-       // _playerCollider = new EntityCollider { Entity = _player, CurrentWorldSegment = _mainShape };
-     
+        _mainShape = CreateMainShape();                        
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, playerMover);
         _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
 
@@ -120,28 +117,8 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        // Use BasicEffect with texture
-        _effect = new BasicEffect(GraphicsDevice)
-        {
-            TextureEnabled = true,
-            VertexColorEnabled = true,
-            LightingEnabled = true,
-            PreferPerPixelLighting = true
-        };
-        _effect.AmbientLightColor = new Vector3(0.38f, 0.38f, 0.38f); // Very low ambient
-        _effect.DirectionalLight0.Enabled = false;
-        _effect.Texture = _basementTextures.Texture;
-
-
-        _pointLightEffect = Content.Load<Effect>("PointLightEffect");
-
-        // Set up point light parameters
-        Vector3 lightPos = new Vector3(0, 3, 0); // Center of ceiling
-        _pointLightEffect.Parameters["LightPosition"].SetValue(lightPos);
-        _pointLightEffect.Parameters["LightColor"].SetValue(new Vector3(1f, 1f, 1f)); // White light
-        _pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness
-        _pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
-        _pointLightEffect.Parameters["Texture"].SetValue(_basementTextures.Texture);
+        // _renderEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        _renderEffect = new PointLightRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
 
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
@@ -484,33 +461,8 @@ public class Game1 : Game
     {       
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-        foreach (var shapeBuffer in _shapeBuffers)
-        {
-            _effect.World = shapeBuffer.Shape.GetWorldMatrix();
-            _effect.View = _view;
-            _effect.Projection = _projection;
-            foreach (var pass in _effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.SetVertexBuffer(shapeBuffer.VertexBuffer);
-                GraphicsDevice.Indices = shapeBuffer.IndexBuffer;
-                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, shapeBuffer.TriangleCount);
-            }
-        }
-
-        //_pointLightEffect.Parameters["World"].SetValue(Matrix.Identity);
-        //_pointLightEffect.Parameters["View"].SetValue(_view);
-        //_pointLightEffect.Parameters["Projection"].SetValue(_projection);
-
-        //foreach (var pass in _pointLightEffect.CurrentTechnique.Passes)
-        //{
-        //    pass.Apply();
-        //    GraphicsDevice.SetVertexBuffer(_roomBuffer);
-        //    GraphicsDevice.Indices = _roomIndices;
-        //    GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _triangleCount);
-        //}
-
+        _renderEffect.Draw(GraphicsDevice, _shapeBuffers, _view, _projection);
+        
         // Draw debug information
         _spriteBatch.Begin();
         _spriteBatch.DrawString(_debugFont,
