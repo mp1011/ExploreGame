@@ -117,18 +117,37 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        // _renderEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
-        _renderEffect = new PointLightRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        _renderEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        //_renderEffect = new PointLightRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
 
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
     private WorldSegment CreateMainShape()
     {
-        return BasementOffice();
+        return CircleCutoutTest();
     }
 
     public WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
+
+    private WorldSegment CircleCutoutTest()
+    {
+        var worldSegment = new WorldSegment();
+        var room = new Room(worldSegment, new BasementRoomTheme());
+        room.Width = 8;
+        room.Height = 3f;
+        room.Depth = 8f;
+        room.Y = 2;
+
+        var light = new HighHatLight(room);
+        light.Width = 2.0f;
+        light.Depth = 2.0f;
+        light.Height = 1.0f;
+        light.Place().OnSideOuter(Side.Top, room);
+
+
+        return worldSegment;
+    }
 
     private WorldSegment ComplexShapeTest(Func<Shape, Shape> createShape)
     {

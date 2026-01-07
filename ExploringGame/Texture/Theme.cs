@@ -9,6 +9,13 @@ public class Theme
     public TextureInfo MainTexture { get; set; } = new TextureInfo(Color.Magenta);
     public Dictionary<Side, TextureInfo> SideTextures { get; set; } = new();
 
+    public Theme() { }
+
+    public Theme(TextureKey key)
+    {
+        MainTexture = new TextureInfo(Key: key);
+    }
+
     public void CopyFrom(Theme other)
     {
         MainTexture = other.MainTexture;

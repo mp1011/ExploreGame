@@ -1,15 +1,17 @@
 ﻿using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
+using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace ExploringGame.Services;
 
 class RemoveSurfaceRegion
 {
     public static bool DebugShowCutout = false;
+
 
     public Triangle[] Execute(Triangle[] triangles, Side surface, Placement2D placement, ViewFrom viewFrom)
     {
@@ -31,6 +33,22 @@ class RemoveSurfaceRegion
         return triangles.SelectMany(p=> RemoveFace(p, surface, face, sideCenter, viewFrom)).ToArray();
     }
 
+    public Triangle[] RemoveCutouts(Shape shape, Triangle[] triangles)
+    {
+        foreach(var cutoutShape in shape.Children.OfType<ICutoutShape>())
+        {
+            var cutoutSurface = cutoutShape.Build().Where(p => p.Side == cutoutShape.ParentCutoutSide.Opposite()).ToArray();
+            if (cutoutSurface.Length == 0)
+                continue;
+
+            var cutoutCenter = cutoutSurface.SelectMany(p => p.Vertices).Center();
+            var cutout2D = new Triangle2DGroup(cutoutSurface.Select(p => p.As2D(cutoutCenter, shape.ViewFrom)).ToArray());                       
+            triangles = triangles.SelectMany(p => RemoveFace(p, cutoutShape.ParentCutoutSide, cutout2D, cutoutCenter, shape.ViewFrom)).ToArray();
+        }
+
+        return triangles;
+    }
+    
     private IEnumerable<Triangle> RemoveFace(Triangle triangle, Side surface, Triangle2DGroup face, Vector3 sideCenter, ViewFrom viewFrom)
     {
         if (triangle.Side != surface)

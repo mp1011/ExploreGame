@@ -19,8 +19,10 @@ public class Room : Shape
 
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
-    public Room(WorldSegment worldSegment)
+    public Room(WorldSegment worldSegment, Theme theme = null)
     {
+        if (theme != null)
+            _theme = theme;
         _worldSegment = worldSegment;
         worldSegment.AddChild(this);
     }
@@ -65,7 +67,9 @@ public class Room : Shape
         foreach(var connection in _roomConnections)
             shape = new RemoveSurfaceRegion().Execute(shape, connection.Side, 
                 connection.CalcCutoutPlacement(), ViewFrom);
-                
+
+        shape = new RemoveSurfaceRegion().RemoveCutouts(this, shape);
+
         return shape;
     }
 

@@ -83,7 +83,7 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         var pointLightEffect = contentManager.Load<Effect>("PointLightEffect");
 
         // Set up point light parameters
-        Vector3 lightPos = new Vector3(0, 3, 0); // Center of ceiling
+        Vector3 lightPos = new Vector3(0, 4, 0); // Center of ceiling
         pointLightEffect.Parameters["LightPosition"].SetValue(lightPos);
         pointLightEffect.Parameters["LightColor"].SetValue(new Vector3(1f, 1f, 1f)); // White light
         pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness

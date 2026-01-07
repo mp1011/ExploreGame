@@ -74,8 +74,21 @@ public static class TriangleMaker
         Vector3 max = center + size / 2f;
 
         //todo, figure these out 
-        Side ovalSide = Side.East;
-        Side barrelSide = Side.South;
+        Side ovalSide = axis switch
+        {
+            Axis.X => Side.West,
+            Axis.Y => Side.Bottom,
+            Axis.Z => Side.North,
+            _ => throw new ArgumentException("invalid axis")
+        };
+
+        Side barrelSide = axis switch
+        {
+            Axis.X => Side.North,
+            Axis.Y => Side.West,
+            Axis.Z => Side.West,
+            _ => throw new ArgumentException("invalid axis")
+        };
 
         float length;
         float radiusA, radiusB;

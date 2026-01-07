@@ -2,8 +2,6 @@
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.Services;
 using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
-using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
 
@@ -68,5 +66,7 @@ public class BasementOffice : Room
       
         var fireplace = new ElectricFireplace(this);
         fireplace.Place().OnFloor().OnSideInner(Side.North);
+
+        var light = new HighHatLight(this);        
     }
 }

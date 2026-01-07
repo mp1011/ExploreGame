@@ -13,6 +13,8 @@ internal class TriangleSubtracter
 
     public Triangle2D[] Subtract(Triangle2D triangle, Triangle2DGroup cutout)
     {
+        throw new System.Exception("need to find the bounding shape of the cutout");
+
         var trianglePath = new Paths64
         {
             new Path64

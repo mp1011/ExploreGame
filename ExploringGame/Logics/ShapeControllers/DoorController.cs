@@ -22,7 +22,7 @@ public class DoorController : IShapeController<Door>
     private readonly AudioService _audioService;
     private RigidBody _rigidBody;
     private AngularMotor _motor;
-    private bool _closeSoundPlayed = false;
+    private bool _closeSoundPlayed = true;
 
     public DoorController(PlayerInput playerInput, Player player, AudioService audioService)
     {
