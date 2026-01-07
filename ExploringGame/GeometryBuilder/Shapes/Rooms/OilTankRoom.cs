@@ -1,17 +1,16 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.Services;
 using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
 
 public class OilTankRoom : Room
 {
+    public override Theme Theme => new Theme { MainTexture = new TextureInfo(TextureKey.Ceiling) };
     private OilTank _oilTank;
 
-    public OilTankRoom()
+    public OilTankRoom(WorldSegment worldSegment) : base(worldSegment)
     {
-        MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.DarkGray);
         _oilTank = new OilTank(this);
     }
 

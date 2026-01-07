@@ -43,7 +43,7 @@ public class DoorController : IShapeController<Door>
         var targetDegrees = Shape.Open ? Shape.OpenAngle : Shape.ClosedAngle;
 
         // door translate door angle to world angle
-        if (Shape.HingePosition == HingePosition.Left)                 
+        if (Shape.HingePosition == HAlign.Left)                 
             targetDegrees = targetDegrees.RotateCounterClockwise(90);
         else
             targetDegrees = targetDegrees.RotateClockwise(90);

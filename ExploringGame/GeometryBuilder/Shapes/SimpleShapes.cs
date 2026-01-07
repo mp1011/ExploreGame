@@ -24,6 +24,12 @@ public class Box : Shape
 {
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
+    public Box() { }
+
+    public Box(TextureKey textureKey)
+    {
+        MainTexture = new TextureInfo(Key: textureKey);
+    }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {

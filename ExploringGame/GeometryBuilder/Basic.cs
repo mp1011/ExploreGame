@@ -29,6 +29,13 @@ public enum Winding
     CounterClockwise,
 }
 
+public enum HAlign
+{
+    Left,
+    Center,
+    Right
+};
+
 /// <summary>
 /// Yaw = side to side
 /// Pitch = up and down

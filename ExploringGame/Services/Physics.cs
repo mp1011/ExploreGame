@@ -139,7 +139,7 @@ public class Physics
         hinge.Depth = 0.01f;
         hinge.Position = door.Position;
 
-        if (door.HingePosition == HingePosition.Left)
+        if (door.HingePosition == HAlign.Left)
         {
             hinge.Place().OnSideOuter(Side.West, door);
             hinge.X -= 0.01f;

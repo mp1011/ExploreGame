@@ -29,13 +29,13 @@ public class BasementCloset : Shape
         {
             var closedAngle = new Angle(Side.North);
             var openAngle = new Angle(Side.East);
-            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HingePosition.Left));
+            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HAlign.Left));
         }
         else if (doorSide == Side.West)
         {
             var closedAngle = new Angle(Side.North);
             var openAngle = new Angle(Side.West);
-            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HingePosition.Right));
+            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HAlign.Right));
         }
         else
             throw new ArgumentException();

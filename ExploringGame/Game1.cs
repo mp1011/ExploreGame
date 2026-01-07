@@ -177,13 +177,13 @@ public class Game1 : Game
         simpleRoom.Depth = 10f;
         simpleRoom.Y = 2;
 
-        var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HingePosition.Left));
+        var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HAlign.Left));
         door1.Place().OnFloor();
         door1.Z -= 3.0f;
         door1.X -= 2.0f;
         door1.Theme.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Red);
 
-        var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HingePosition.Right));
+        var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HAlign.Right));
         door2.Place().OnFloor();
         door2.Z -= 3.0f;
         door2.X += 2.0f;
@@ -306,11 +306,12 @@ public class Game1 : Game
 
     private WorldSegment ConnectingRoomsTest()
     {
+        var world = new WorldSegment();
         var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
 
         var pos = 0.3f;
 
-        var room = new Room();
+        var room = new Room(world);
         room.Width = 16f;
         room.Height = 4f;
         room.Depth = 12f;
@@ -320,7 +321,7 @@ public class Game1 : Game
         room.Theme.SideTextures[Side.Bottom] = floorTexture;
         room.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
-        var southRoom = new Room();
+        var southRoom = new Room(world);
         southRoom.Width = 4f;
         southRoom.Height = 4f;
         southRoom.Depth = 10f;
@@ -329,7 +330,7 @@ public class Game1 : Game
         southRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(room, southRoom, Side.South, pos));
 
-        var northRoom = new Room();
+        var northRoom = new Room(world);
         northRoom.Width = 4f;
         northRoom.Height = 4f;
         northRoom.Depth = 10f;
@@ -339,7 +340,7 @@ public class Game1 : Game
         room.AddConnectingRoom(new RoomConnection(room, northRoom, Side.North, pos));
         northRoom.SetSideUnanchored(Side.Bottom, northRoom.GetSide(Side.Bottom) + 0.4f);
 
-        var northRoom2 = new Room();
+        var northRoom2 = new Room(world);
         northRoom2.Width = 40f;
         northRoom2.Height = 4f;
         northRoom2.Depth = 40f;
@@ -348,7 +349,7 @@ public class Game1 : Game
         northRoom2.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         northRoom.AddConnectingRoom(new RoomConnection(northRoom, northRoom2, Side.North, pos));
 
-        var westRoom = new Room();
+        var westRoom = new Room(world);
         westRoom.Width = 10f;
         westRoom.Height = 4f;
         westRoom.Depth = 4f;
@@ -358,7 +359,7 @@ public class Game1 : Game
         room.AddConnectingRoom(new RoomConnection(room,westRoom, Side.West, pos));
         westRoom.SetSideUnanchored(Side.Top, northRoom.GetSide(Side.Top) - 0.4f);
 
-        var eastRoom = new Room();
+        var eastRoom = new Room(world);
         eastRoom.Width = 10f;
         eastRoom.Height = 4f;
         eastRoom.Depth = 4f;
@@ -366,14 +367,6 @@ public class Game1 : Game
         eastRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
         eastRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(room, eastRoom, Side.East, pos));
-
-        var world = new WorldSegment();
-        world.AddChild(room);
-        world.AddChild(southRoom);
-        world.AddChild(northRoom);
-        world.AddChild(northRoom2);
-        world.AddChild(eastRoom);
-        world.AddChild(westRoom);
 
         return world;
     }

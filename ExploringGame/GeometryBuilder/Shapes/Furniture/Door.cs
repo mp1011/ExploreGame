@@ -5,11 +5,6 @@ using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
-public enum HingePosition
-{
-    Left,
-    Right
-};
 
 public class Door : PlaceableShape, IPlaceableObject, IControllable
 {
@@ -17,7 +12,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable
 
     public Angle ClosedAngle { get; }
     public Angle OpenAngle { get; }
-    public HingePosition HingePosition { get; }
+    public HAlign HingePosition { get; }
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
@@ -25,7 +20,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable
     
     public bool Open { get; set; }
 
-    public Door(Shape parent, Angle closedDegrees, Angle openDegrees, HingePosition hingeSide)
+    public Door(Shape parent, Angle closedDegrees, Angle openDegrees, HAlign hingeSide)
     {
         HingePosition = hingeSide;
         OpenAngle = openDegrees;

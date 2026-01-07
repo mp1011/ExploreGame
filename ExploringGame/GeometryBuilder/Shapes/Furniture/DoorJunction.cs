@@ -10,9 +10,12 @@ public class DoorJunction : Room
 {
     private Door _door;
 
-    public DoorJunction(Angle doorClose, Angle doorOpen, HingePosition hingePosition, float height)
+    public DoorJunction(WorldSegment worldSegment, Angle doorClose, Angle doorOpen, HAlign hingePosition, float width, float height, float depth)
+        : base(worldSegment)
     {
+        Width = width;
         Height = height;
+        Depth = depth;
         _door = new Door(this, doorClose, doorOpen, hingePosition);
 
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);

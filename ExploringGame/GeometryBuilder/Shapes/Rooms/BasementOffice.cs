@@ -10,61 +10,40 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
 public class BasementOffice : Room
 {
     public override Theme Theme => new BasementRoomTheme();
-    public BasementOffice(WorldSegment worldSegment)
+    public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
     {        
         Width =  8f;
         Height = OfficeDesk.DeskHeight + Measure.Inches(19);
         Depth = OfficeDesk.DeskWidth + Measure.Inches(39 + 39 + 36);
         SetSide(Side.Bottom, 0f);
 
-
-        #region room sections
         var exit = Copy(depth: Measure.Inches(39), width: Measure.Inches(50));
-        AddConnectingRoom(new RoomConnection(this, exit, Side.West, Align: Side.North));
+        AddConnectingRoom(new RoomConnection(this, exit, Side.West, Align: HAlign.Right));
 
-        var eastPart = Copy();
-        eastPart.Height = Height;
-        eastPart.Depth = Depth;
-        eastPart.Width = 2.0f;
-        eastPart.SetSide(Side.Bottom, 0f);
+        var eastPart = Copy(width: 2.0f);
         AddConnectingRoom(new RoomConnection(this, eastPart, Side.East, 0.5f));
 
-        var eastPart2 = Copy();
-        eastPart2.Height = Height;
-        eastPart2.Depth = 2.0f;
-        eastPart2.Width = 2.0f;
-        eastPart2.SetSide(Side.Bottom, 0f);
-        eastPart.AddConnectingRoom(new RoomConnection(this, eastPart2, Side.North, 0.5f));
+        var eastPart2 = Copy(depth: 2.0f, width: 2.0f);
+        eastPart.AddConnectingRoom(new RoomConnection(eastPart, eastPart2, Side.North, 0.5f));
 
-        var oilTankRoom = new OilTankRoom();
+        var oilTankRoom = new OilTankRoom(worldSegment);
         oilTankRoom.Height = Height;
         oilTankRoom.Width = Width - 1.9f;
         oilTankRoom.Depth = 1.9f;
 
-        // todo this needs to be cleaner
-        var junction = new DoorJunction(
-            doorClose: new Angle(Side.North), 
-            doorOpen: new Angle(Side.East), 
-            hingePosition: HingePosition.Left,
-            height: Height);
+        eastPart2.AddConnectingRoomWithJunction(
+            new DoorJunction(
+                worldSegment: worldSegment,
+                doorClose: new Angle(Side.North),
+                doorOpen: new Angle(Side.East),
+                hingePosition: HAlign.Left,
+                height: Height,
+                depth: Measure.Inches(30.5f),
+                width: 0.2f),
+            oilTankRoom,
+            Side.West);
 
-        junction.Depth = Measure.Inches(30.5f);
-        junction.Width = 0.1f;
-
-        eastPart2.AddConnectingRoom(new RoomConnection(eastPart2, junction, Side.West, 0.5f));
-        junction.AddConnectingRoom(new RoomConnection(junction, oilTankRoom, Side.West, 0.5f));
-
-        worldSegment.AddChild(this);
-        worldSegment.AddChild(exit);
-        worldSegment.AddChild(eastPart);
-        worldSegment.AddChild(eastPart2);
-        worldSegment.AddChild(oilTankRoom);
-        worldSegment.AddChild(junction);
-
-        #endregion
-
-        var ceilingBar = AddChild(new Box());
-        ceilingBar.Theme.MainTexture = new TextureInfo(TextureKey.Ceiling);
+        var ceilingBar = AddChild(new Box(TextureKey.Ceiling));
         ceilingBar.AdjustShape().From(this).SliceY(0.1f, 0.4f).SliceZ(4.0f, 0.4f);
         ceilingBar.SetSideUnanchored(Side.East, eastPart.GetSide(Side.East));
 

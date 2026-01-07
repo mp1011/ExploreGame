@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics.Collision.ColliderMakers;
+﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 
 public class Room : Shape
 {
-
+    private WorldSegment _worldSegment;
     private Theme _theme = Theme.Missing;
     public override Theme Theme => _theme;
 
@@ -18,8 +19,20 @@ public class Room : Shape
 
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
+    public Room(WorldSegment worldSegment)
+    {
+        _worldSegment = worldSegment;
+        worldSegment.AddChild(this);
+    }
+
     public void AddConnectingRoom(RoomConnection connection)
     {
+        if (_roomConnections.Any(p => p.Side == connection.Side))
+            throw new System.NotSupportedException("multiple connections on the same side are not yet supported");
+        
+        if(connection.Room != this)
+            throw new System.ArgumentException("connection.Room must be this room");
+
         _roomConnections.Add(connection);
         connection.Other._roomConnections.Add(connection.Reverse());
 
@@ -37,6 +50,12 @@ public class Room : Shape
         connection.Other.SetAxisPosition(connection.Side.GetAxis().Orthogonal(), connectionPoint);
     }
 
+    public void AddConnectingRoomWithJunction(DoorJunction doorJunction, Room other, Side side)
+    {
+        AddConnectingRoom(new RoomConnection(this, doorJunction, side));
+        doorJunction.AddConnectingRoom(new RoomConnection(doorJunction, other, side));
+    }
+
     public RoomConnection[] GetRoomConnections(Side side) => _roomConnections.Where(p => p.Side == side).ToArray();
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -52,7 +71,7 @@ public class Room : Shape
 
     public Room Copy(float? height = null, float? width = null, float? depth = null)
     {
-        var room = new Room();
+        var room = new Room(_worldSegment);
         room._theme = Theme;
         room.Position = Position;
         room.Size = Size;
@@ -72,13 +91,23 @@ public class Room : Shape
 
 public record RoomConnection(Room Room, Room Other, Side Side, float Position = 0.5f)
 {
-    public RoomConnection(Room Room, Room Other, Side Side, Side Align) 
-        : this(Room, Other, Side, CalcPosition(Room, Other, Align)) { }
+    public RoomConnection(Room Room, Room Other, Side Side, HAlign Align) 
+        : this(Room, Other, Side, CalcPosition(Room, Other, Side, Align)) { }
     public RoomConnection Reverse() => new RoomConnection(Other, Room, Side.Opposite(), 1.0f - Position);
 
-    private static float CalcPosition(Room room, Room other, Side align)
+    private static float CalcPosition(Room room, Room other, Side side, HAlign align)
     {
-        throw new System.NotImplementedException();
+        switch(align)
+        {
+            case HAlign.Center:
+                return 0.5f;
+            case HAlign.Left:
+                return (other.SideLength(side) / 2f) / room.SideLength(side);
+            case HAlign.Right:
+                return (room.SideLength(side) - (other.SideLength(side) / 2f)) / room.SideLength(side);
+            default:
+                throw new System.ArgumentException("Invalid side");
+        }
     }
     
     public Placement2D CalcCutoutPlacement()
