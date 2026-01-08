@@ -98,6 +98,8 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
         }
     }
 
+    public Vector3 Normal => Vector3.Normalize(Vector3.Cross(C - A, B - A));
+
     public Winding CalcWinding(Vector3 observationPoint)
     {
         Vector3 normal = Vector3.Cross(B - A, C - A); 

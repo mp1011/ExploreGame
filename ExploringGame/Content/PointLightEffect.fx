@@ -17,6 +17,7 @@ struct VSInput
 {
     float4 Position : POSITION0;
     float4 Color : COLOR0;
+    float3 Normal : NORMAL0;
     float2 TexCoord : TEXCOORD0;
 };
 
@@ -26,6 +27,7 @@ struct PSInput
     float4 Color : COLOR0;
     float2 TexCoord : TEXCOORD0;
     float3 WorldPos : TEXCOORD1;
+    float3 Normal : TEXCOORD2;
 };
 
 PSInput VSMain(VSInput input)
@@ -37,20 +39,24 @@ PSInput VSMain(VSInput input)
     output.Position = mul(output.Position, Projection);
     output.Color = input.Color;
     output.TexCoord = input.TexCoord;
+    // Transform normal to world space (if needed)
+    output.Normal = mul(float4(input.Normal, 0), World).xyz;
     return output;
 }
 
 float4 PSMain(PSInput input) : SV_Target
 {
-    float3 normal = float3(0, 1, 0); // Approximate normal (upwards)
+    float3 normal = normalize(input.Normal);
     float3 texColor = tex2D(TextureSampler, input.TexCoord).rgb;
     float3 baseColor = texColor * input.Color.rgb;
+
+    float minDiffuse = 0.15; // Minimum diffuse light
 
     float3 diffuse = float3(0,0,0);
     for (int i = 0; i < LightCount; ++i)
     {
         float3 toLight = normalize(LightPositions[i] - input.WorldPos);
-        float NdotL = max(dot(normal, toLight), 0);
+        float NdotL = max(dot(normal, toLight), minDiffuse); // Clamp to minimum
         diffuse += baseColor * LightColors[i] * NdotL * LightIntensities[i];
     }
     float3 ambient = baseColor * AmbientColor;

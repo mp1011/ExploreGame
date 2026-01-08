@@ -1,10 +1,8 @@
 ﻿using ExploringGame.GeometryBuilder;
-using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics;
 using ExploringGame.Rendering;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
 

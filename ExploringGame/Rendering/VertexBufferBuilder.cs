@@ -6,19 +6,19 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExploringGame.Services;
+namespace ExploringGame.Rendering;
 
 public class VertexBufferBuilder
 {
     public (VertexBuffer, IndexBuffer, int) Build(Dictionary<Shape, Triangle[]> triangles, TextureSheet textureSheet, GraphicsDevice graphicsDevice)
     {     
-        List<VertexPositionColorTexture> vertices = new();
+        List<VertexPositionColorNormalTexture> vertices = new();
         List<int> indices = new();
         Dictionary<(Vector3, Color, Vector2), int> indexCache = new();
 
         BuildBuffers(triangles, vertices, indices, indexCache, textureSheet);
 
-        var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
+        var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorNormalTexture), vertices.Count, BufferUsage.WriteOnly);
         vb.SetData(vertices.ToArray());
 
         var ib = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Count, BufferUsage.WriteOnly);
@@ -28,7 +28,7 @@ public class VertexBufferBuilder
     }
 
     private void BuildBuffers(Dictionary<Shape, Triangle[]> shapeTriangles, 
-                             List<VertexPositionColorTexture> vertices, 
+                             List<VertexPositionColorNormalTexture> vertices, 
                              List<int> indices,
                              Dictionary<(Vector3, Color, Vector2), int> indexCache,
                              TextureSheet textureSheet)
@@ -49,7 +49,7 @@ public class VertexBufferBuilder
     private void CreateVertices(Side side,
                                 TextureSheet textureSheet,
                                 IEnumerable<Triangle> triangles,
-                                List<VertexPositionColorTexture> vertices,
+                                List<VertexPositionColorNormalTexture> vertices,
                                 List<int> indices,
                                 Dictionary<(Vector3, Color, Vector2), int> indexCache)
     {
@@ -67,7 +67,7 @@ public class VertexBufferBuilder
                 {
                     indexCache.Add((vertex, triangle.TextureInfo.Color, textureCoords), vertices.Count);
                     indices.Add(vertices.Count);
-                    vertices.Add(new VertexPositionColorTexture(vertex, triangle.TextureInfo.Color, textureCoords));                    
+                    vertices.Add(new VertexPositionColorNormalTexture(vertex, triangle.TextureInfo.Color, triangle.Normal, textureCoords));                    
                 }
                 else
                 {
