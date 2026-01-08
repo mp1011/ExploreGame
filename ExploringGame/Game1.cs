@@ -66,6 +66,7 @@ public class Game1 : Game
             GraphicsDevice.Viewport.AspectRatio,
             0.1f, 100f);
 
+        _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
@@ -117,15 +118,16 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        _renderEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
-        //_renderEffect = new PointLightRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        //_renderEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        _renderEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
+            GraphicsDevice, Content, _basementTextures.Texture);
 
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
     private WorldSegment CreateMainShape()
     {
-        return CircleCutoutTest();
+        return BasementOffice();
     }
 
     public WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));

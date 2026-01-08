@@ -6,7 +6,7 @@ using ExploringGame.Texture;
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
 
-public class Door : PlaceableShape, IPlaceableObject, IControllable
+public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorController>
 {
     private float _yGap = Measure.Inches(0.2f);
 
@@ -44,10 +44,12 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable
         return BuildCuboid();
     }
 
+    public DoorController Controller { get; private set; }
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
         var controller = serviceContainer.Get<DoorController>();
         controller.Shape = this;
+        Controller = controller;
         return controller;
     }
 }

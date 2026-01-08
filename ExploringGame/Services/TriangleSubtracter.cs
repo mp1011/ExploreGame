@@ -12,9 +12,7 @@ internal class TriangleSubtracter
     private const int mult = 100000;
 
     public Triangle2D[] Subtract(Triangle2D triangle, Triangle2DGroup cutout)
-    {
-        throw new System.Exception("need to find the bounding shape of the cutout");
-
+    {        
         var trianglePath = new Paths64
         {
             new Path64
@@ -26,16 +24,10 @@ internal class TriangleSubtracter
             }
         };
 
+
         var cutoutPath = new Paths64
         {
-            new Path64
-            {
-                new Point64(cutout.Left * mult, cutout.Top * mult),
-                new Point64(cutout.Right * mult, cutout.Top * mult),
-                new Point64(cutout.Right * mult, cutout.Bottom * mult),
-                new Point64(cutout.Left * mult, cutout.Bottom * mult),
-                new Point64(cutout.Left * mult, cutout.Top * mult),
-            }
+            new Path64(cutout.ConvexHull().Select(p=> new Point64(p.X * mult, p.Y * mult))),
         };
 
         var result = Clipper.Difference(trianglePath, cutoutPath, FillRule.NonZero);

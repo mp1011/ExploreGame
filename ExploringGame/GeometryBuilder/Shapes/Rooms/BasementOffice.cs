@@ -17,7 +17,7 @@ public class BasementOffice : Room
 
         var exit = Copy(depth: Measure.Inches(39), width: Measure.Inches(50));
         AddConnectingRoom(new RoomConnection(this, exit, Side.West, Align: HAlign.Right));
-
+        
         var eastPart = Copy(width: 2.0f);
         AddConnectingRoom(new RoomConnection(this, eastPart, Side.East, 0.5f));
 
@@ -67,6 +67,8 @@ public class BasementOffice : Room
         var fireplace = new ElectricFireplace(this);
         fireplace.Place().OnFloor().OnSideInner(Side.North);
 
-        var light = new HighHatLight(this);        
+        var lightSwitch = new LightSwitch(exit);
+        var light = new HighHatLight(this);
+        lightSwitch.ControlledObjects.Add(light);
     }
 }

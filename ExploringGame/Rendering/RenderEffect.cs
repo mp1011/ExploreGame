@@ -73,20 +73,17 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
 
 public class PointLightRenderEffect : RenderEffect<Effect>
 {
-    public PointLightRenderEffect(GraphicsDevice graphicsDevice, ContentManager content, Texture2D texture) 
+    private PointLights _pointLights;
+
+    public PointLightRenderEffect(PointLights pointLights, GraphicsDevice graphicsDevice, ContentManager content, Texture2D texture) 
         : base(graphicsDevice, content, texture)
     {
+        _pointLights = pointLights;
     }
 
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
     {
         var pointLightEffect = contentManager.Load<Effect>("PointLightEffect");
-
-        // Set up point light parameters
-        Vector3 lightPos = new Vector3(0, 4, 0); // Center of ceiling
-        pointLightEffect.Parameters["LightPosition"].SetValue(lightPos);
-        pointLightEffect.Parameters["LightColor"].SetValue(new Vector3(1f, 1f, 1f)); // White light
-        pointLightEffect.Parameters["LightIntensity"].SetValue(1.0f); // Adjust for brightness
         pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
         pointLightEffect.Parameters["Texture"].SetValue(texture);
         return pointLightEffect;
@@ -94,6 +91,13 @@ public class PointLightRenderEffect : RenderEffect<Effect>
 
     public override void SetParameters(Effect effect, Matrix world, Matrix view, Matrix projection)
     {
+        Vector3 lightPos = new Vector3(0, 4, 0); // Center of ceiling
+        effect.Parameters["LightPositions"].SetValue(_pointLights.Positions);
+        effect.Parameters["LightColors"].SetValue(_pointLights.Colors);
+        effect.Parameters["LightIntensities"].SetValue(_pointLights.Intensities);
+        effect.Parameters["LightCount"].SetValue(_pointLights.Intensities.Length);
+
+
         effect.Parameters["World"].SetValue(world);
         effect.Parameters["View"].SetValue(view);
         effect.Parameters["Projection"].SetValue(projection);

@@ -16,6 +16,11 @@ public class Theme
         MainTexture = new TextureInfo(Key: key);
     }
 
+    public Theme(Color color)
+    {
+        MainTexture = new TextureInfo(Color: color);
+    }
+
     public void CopyFrom(Theme other)
     {
         MainTexture = other.MainTexture;

@@ -14,6 +14,12 @@ public interface IControllable
     IActiveObject CreateController(ServiceContainer serviceContainer);
 }
 
+public interface IControllable<TController> : IControllable
+    where TController : IActiveObject
+{
+    TController Controller { get; }
+}
+
 public interface IActiveObject
 {
     void Initialize();

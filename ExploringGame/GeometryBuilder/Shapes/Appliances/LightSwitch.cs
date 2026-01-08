@@ -1,0 +1,40 @@
+﻿using ExploringGame.Logics;
+using ExploringGame.Logics.ShapeControllers;
+using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+
+namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
+
+public class LightSwitch : Shape, IControllable<LightSwitchController>
+{
+    public override Theme Theme => new Theme(Color.Red);
+    public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+    public List<IOnOff> ControlledObjects { get; } = new List<IOnOff>();
+    public LightSwitch(Room room)
+    {
+        room.AddChild(this);
+
+        Height = 1.0f;
+        Width = 1.0f;
+        Depth = 1.0f;
+
+        Position = room.Position;
+    }
+
+    protected override Triangle[] BuildInternal(QualityLevel quality)
+    {
+        return BuildCuboid();
+    }
+
+    public LightSwitchController Controller { get; private set; }
+
+    public IActiveObject CreateController(ServiceContainer serviceContainer)
+    {
+        var controller = serviceContainer.Get<LightSwitchController>();
+        controller.Shape = this;
+        Controller = controller;
+        return controller;
+    }
+}

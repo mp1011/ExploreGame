@@ -1,11 +1,14 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.Logics;
+using ExploringGame.Logics.ShapeControllers;
+using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
-public class HighHatLight : Shape, ICutoutShape
+public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>, IOnOff
 {
-    public override Theme Theme => new Theme(TextureKey.Ceiling);
+    public override Theme Theme => new Theme(Color.White);
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
     public Side ParentCutoutSide => Side.Top;
@@ -25,6 +28,18 @@ public class HighHatLight : Shape, ICutoutShape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return TriangleMaker.BuildCylinder(this, detail: 4, Axis.Y);
+        return TriangleMaker.BuildCylinder(this, detail: 20, Axis.Y);
+    }
+    
+    public LightController Controller { get; private set; }
+    public bool On { get => Controller.On; set => Controller.On = value; }
+
+    public IActiveObject CreateController(ServiceContainer serviceContainer)
+    {
+        var controller = serviceContainer.Get<LightController>();
+        controller.Shape = this;
+        controller.On = true;
+        Controller = controller;
+        return controller;
     }
 }
