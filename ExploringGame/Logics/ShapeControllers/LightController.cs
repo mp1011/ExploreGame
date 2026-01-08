@@ -16,7 +16,7 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
 
     public HighHatLight Shape { get; set; }
 
-    public Vector3 LightPosition => Shape.Position + new Vector3(0, -Shape.Height, 0);
+    public Vector3 LightPosition => Shape.Position + new Vector3(0, -Shape.Height/2f, 0);
 
     private int? _lightIndex;
     public bool On
