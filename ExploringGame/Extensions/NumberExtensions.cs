@@ -15,7 +15,7 @@ public static class NumberExtensions
         return number > Epsilon;
     }
 
-    public static bool IsAlmost(this float number, float compare, float tolerance)
+    public static bool IsAlmost(this float number, float compare, float tolerance=Epsilon)
     {
         return MathF.Abs(number - compare) < tolerance;
         

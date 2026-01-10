@@ -24,7 +24,7 @@
 [x] easier way of defining structures?
 [x] ability to rotate shapes after creation
 
-[ ] moving objects
+[x] moving objects
 	[x] rotating cube
 	[x] moving object
 	[x] hinged doo
@@ -54,10 +54,12 @@
 	[x] separate theme into its own class
 	[x] easier way to define alignments of adjacent rooms
 
-[ ] controllable lights
-	[ ] control via switch
-	[ ] multiple lights
+[x] controllable lights
+	[x] control via switch
+	[x] multiple lights
 	
+[x] easier way to place rooms (by specifying either the left or right edge)
 
-[ ] easier way to place rooms (by specifying either the left or right edge)
-[ ] see if we can adjust n,s,e,w as long as rotation is multiple of 90
+[ ] angled wa
+
+lls

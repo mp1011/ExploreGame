@@ -18,6 +18,8 @@ public class Room : Shape
     public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
 
     public override ViewFrom ViewFrom => ViewFrom.Inside;
+    
+    public List<VertexOffset> VertexOffsets { get; } = new();
 
     public Room(WorldSegment worldSegment, Theme theme = null)
     {
@@ -70,6 +72,9 @@ public class Room : Shape
 
         shape = new RemoveSurfaceRegion().RemoveCutouts(this, shape);
 
+        foreach(var vertexOffset in VertexOffsets)
+            shape = new VertexOffsetter().Execute(this, shape, vertexOffset);
+
         return shape;
     }
 
@@ -95,20 +100,20 @@ public class Room : Shape
 
 public record RoomConnection(Room Room, Room Other, Side Side, float Position = 0.5f)
 {
-    public RoomConnection(Room Room, Room Other, Side Side, HAlign Align) 
-        : this(Room, Other, Side, CalcPosition(Room, Other, Side, Align)) { }
+    public RoomConnection(Room Room, Room Other, Side Side, HAlign Align, float Offset=0f) 
+        : this(Room, Other, Side, CalcPosition(Room, Other, Side, Align, Offset)) { }
     public RoomConnection Reverse() => new RoomConnection(Other, Room, Side.Opposite(), 1.0f - Position);
 
-    private static float CalcPosition(Room room, Room other, Side side, HAlign align)
+    private static float CalcPosition(Room room, Room other, Side side, HAlign align, float offset)
     {
         switch(align)
         {
             case HAlign.Center:
                 return 0.5f;
             case HAlign.Left:
-                return (other.SideLength(side) / 2f) / room.SideLength(side);
+                return ((other.SideLength(side) / 2f) + offset) / room.SideLength(side);
             case HAlign.Right:
-                return (room.SideLength(side) - (other.SideLength(side) / 2f)) / room.SideLength(side);
+                return (room.SideLength(side) - (other.SideLength(side) / 2f) + offset) / room.SideLength(side);
             default:
                 throw new System.ArgumentException("Invalid side");
         }

@@ -122,6 +122,18 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
                             TextureInfo,
                             Side); // note: side will still refer to the original, unrotated side
     }
+
+    public Triangle ReplaceVertex(Vector3 oldVertex, Vector3 newVertex)
+    {
+        if (A == oldVertex)
+            return new Triangle(newVertex, B, C, TextureInfo, Side);
+        else if (B == oldVertex)
+            return new Triangle(A, newVertex, C, TextureInfo, Side);
+        else if (C == oldVertex)
+            return new Triangle(A, B, newVertex, TextureInfo, Side);
+        else
+            return this;
+    }
 }
 
 public record Placement2D(float Left, float Top, float Right, float Bottom);
