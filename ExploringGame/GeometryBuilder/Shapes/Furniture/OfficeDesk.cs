@@ -43,30 +43,30 @@ class OfficeDesk : PlaceableShape
         var middleHeight = DeskHeight - DeskSurfaceHeight - UpperHeight;
 
         var builder = new ShapeBuilder();
-        var top = builder.AddChild(this, new DeskTopPart(adj => adj.SliceY(0, Height - DeskSurfaceHeight)
-                                                   .SliceZ(DeskTopIndent, DeskDepth - DeskTopIndent)));
+        var top = builder.AddChild(this, new DeskTopPart(adj => adj.SliceFromTop(0, Height - DeskSurfaceHeight)
+                                                   .SliceFromNorth(DeskTopIndent, DeskDepth - DeskTopIndent)));
 
-        var upper = builder.AddChild(top, adj => adj.SliceY(0, UpperHeight));
+        var upper = builder.AddChild(top, adj => adj.SliceFromTop(0, UpperHeight));
 
         // middle left
-        builder.AddChild(top, adj => adj.SliceY(UpperHeight, middleHeight)
-                                        .SliceX(0, MiddleSideThickness));
+        builder.AddChild(top, adj => adj.SliceFromTop(UpperHeight, middleHeight)
+                                        .SliceFromWest(0, MiddleSideThickness));
         // middle right
-        builder.AddChild(top, adj => adj.SliceY(UpperHeight, middleHeight)
-                                        .SliceX(DeskWidth - MiddleSideThickness, MiddleSideThickness));
+        builder.AddChild(top, adj => adj.SliceFromTop(UpperHeight, middleHeight)
+                                        .SliceFromWest(DeskWidth - MiddleSideThickness, MiddleSideThickness));
 
-        var bottom = builder.AddChild(this, adj => adj.SliceY(Height - DeskSurfaceHeight, DeskSurfaceHeight));
+        var bottom = builder.AddChild(this, adj => adj.SliceFromTop(Height - DeskSurfaceHeight, DeskSurfaceHeight));
 
         // lower left drawers 
-        builder.AddChild(bottom, adj => adj.SliceX(0, BottomLeftDrawerWidth)
-                                           .SliceY(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness));
+        builder.AddChild(bottom, adj => adj.SliceFromWest(0, BottomLeftDrawerWidth)
+                                           .SliceFromTop(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness));
             
         // bottom right 
-        builder.AddChild(bottom, adj => adj.SliceX(DeskWidth - BottomRightWidth, BottomRightWidth)
-                                           .SliceY(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness));
+        builder.AddChild(bottom, adj => adj.SliceFromWest(DeskWidth - BottomRightWidth, BottomRightWidth)
+                                           .SliceFromTop(DeskSurfaceThickness, DeskSurfaceHeight - DeskSurfaceThickness));
 
         // surface
-        builder.AddChild(bottom, adj => adj.SliceY(0, DeskSurfaceThickness));
+        builder.AddChild(bottom, adj => adj.SliceFromTop(0, DeskSurfaceThickness));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

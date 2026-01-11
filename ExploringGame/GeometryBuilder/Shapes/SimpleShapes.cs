@@ -24,6 +24,8 @@ public class Box : Shape
 {
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
+    public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
+
     public Box() { }
 
     public Box(TextureKey textureKey)

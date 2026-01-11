@@ -10,6 +10,10 @@ public class BasementOffice : Room
 {
     public override Theme Theme => new BasementRoomTheme();
 
+    public Room Exit { get; }
+
+    public HighHatLight[] Lights { get; }
+
     public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
     {
         Width = 8f;
@@ -21,8 +25,8 @@ public class BasementOffice : Room
         AddConnectingRoom(new RoomConnection(this, westPart, Side.West, Align: HAlign.Left));
         westPart.VertexOffsets.Add(new VertexOffset(Side.NorthEast, new Vector3(0f, 0f, 1.0f)));
 
-        var exit = Copy(depth: Measure.Inches(39), width: Measure.Inches(50));
-        westPart.AddConnectingRoom(new RoomConnection(westPart, exit, Side.West, Align: HAlign.Right));
+        Exit = Copy(depth: Measure.Inches(39), width: Measure.Inches(50));
+        westPart.AddConnectingRoom(new RoomConnection(westPart, Exit, Side.West, Align: HAlign.Right));
 
         var eastPart = Copy(width: 2.0f);
         AddConnectingRoom(new RoomConnection(this, eastPart, Side.East, 0.5f));
@@ -37,7 +41,7 @@ public class BasementOffice : Room
         closet2.Place().OnFloor().OnSideInner(Side.SouthEast);
 
         var ceilingBar = AddChild(new Box(TextureKey.Ceiling));
-        ceilingBar.AdjustShape().From(this).SliceY(0.1f, 0.4f).SliceZ(4.0f, 0.4f);
+        ceilingBar.AdjustShape().From(this).SliceFromTop(0.1f, 0.4f).SliceFromNorth(4.0f, 0.4f);
         ceilingBar.SetSideUnanchored(Side.East, eastPart.GetSide(Side.East));
         ceilingBar.SetSideUnanchored(Side.West, westPart.GetSide(Side.West));
 
@@ -76,9 +80,13 @@ public class BasementOffice : Room
         var fireplace = new ElectricFireplace(this);
         fireplace.Place().OnFloor().OnSideInner(Side.North);
 
-        var lightSwitch = new LightSwitch(exit);
-        var light = new HighHatLight(this);
-        lightSwitch.ControlledObjects.Add(light);
+        var couch = new Couch(this);
+        couch.Place().OnFloor().OnSideInner(Side.South);
+
+        Lights =
+        [
+            new HighHatLight(this),
+        ];
     }
 
 

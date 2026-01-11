@@ -118,26 +118,48 @@ public class ShapeAdjuster
         }
     }
 
-    public ShapeAdjuster SliceY(float fromTop, float height)
+    public ShapeAdjuster SliceFromTop(float fromTop, float height)
     {
         _shape.TopAnchored = _shape.TopAnchored - fromTop;
         _shape.BottomUnanchored = _shape.TopAnchored - height;
         return this;
     }
 
-    public ShapeAdjuster SliceX(float fromWest, float width)
+    public ShapeAdjuster SliceFromWest(float fromWest, float width)
     {
         _shape.SetSide(Side.West, _shape.GetSide(Side.West) + fromWest);
         _shape.SetSideUnanchored(Side.East, _shape.GetSide(Side.West) + width);
         return this;
     }
 
-    public ShapeAdjuster SliceZ(float fromNorth, float depth)
+    public ShapeAdjuster SliceFromNorth(float fromNorth, float depth)
     {
         _shape.SetSide(Side.North, _shape.GetSide(Side.North) + fromNorth);
         _shape.SetSideUnanchored(Side.South, _shape.GetSide(Side.North) + depth);
         return this;
     }
+
+    public ShapeAdjuster SliceFromBottom(float fromBottom, float height)
+    {
+        _shape.SetSide(Side.Bottom, _shape.GetSide(Side.Bottom) + fromBottom);
+        _shape.SetSideUnanchored(Side.Top, _shape.GetSide(Side.Bottom) + height);
+        return this;
+    }
+
+    public ShapeAdjuster SliceFromEast(float fromEast, float width)
+    {
+        _shape.SetSide(Side.East, _shape.GetSide(Side.East) - fromEast);
+        _shape.SetSideUnanchored(Side.West, _shape.GetSide(Side.East) - width);
+        return this;
+    }
+
+    public ShapeAdjuster SliceFromSouth(float fromSouth, float depth)
+    {
+        _shape.SetSide(Side.South, _shape.GetSide(Side.South) - fromSouth);
+        _shape.SetSideUnanchored(Side.North, _shape.GetSide(Side.South) - depth);
+        return this;
+    }
+
 
     /// <summary>
     /// Adds an amount to each side, preserving the center

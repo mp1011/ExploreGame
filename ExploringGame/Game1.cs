@@ -5,6 +5,7 @@ using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
@@ -35,13 +36,14 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    private PointLightRenderEffect _pointLightEffect;
+    private BasicRenderEffect _basicEffect;
     private IRenderEffect _renderEffect;
 
     private ShapeBuffer[] _shapeBuffers;
     private Matrix _view;
     private Matrix _projection;
     private TextureSheet _basementTextures;
-    private Effect _pointLightEffect;
     private SpriteFont _debugFont;
 
     private SetupColliderBodies _setupColliderBodies;
@@ -118,16 +120,17 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        //_renderEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
-        _renderEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
+        _basicEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
             GraphicsDevice, Content, _basementTextures.Texture);
 
+        _renderEffect = _pointLightEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
     private WorldSegment CreateMainShape()
     {
-        return BasementOffice();
+        return new BasementWorldSegment();
     }
 
     public WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
@@ -245,14 +248,6 @@ public class Game1 : Game
         simpleRoom.AddChild(box);
        
         return new WorldSegment(simpleRoom);
-    }
-
-    private WorldSegment BasementOffice()
-    {
-        var ws = new WorldSegment();
-        var office = new BasementOffice(ws);
-
-        return ws;
     }
 
     private WorldSegment FurnitureRotateTest()
@@ -441,7 +436,6 @@ public class Game1 : Game
         return simpleRoom;
     }
 
-    private bool _collisionEnabled = true;
     private bool _initialized = false;
 
     protected override void Update(GameTime gameTime)
@@ -468,8 +462,13 @@ public class Game1 : Game
         _playerInput.Update();
         _playerMotion.Update(gameTime, Window);
 
-        if(_playerInput.IsKeyPressed(GameKey.DebugToggleCollision))
-            _collisionEnabled = !_collisionEnabled;
+        if (_playerInput.IsKeyPressed(GameKey.DebugToggleShader))
+        {
+            if (_renderEffect == _basicEffect)
+                _renderEffect = _pointLightEffect;
+            else
+                _renderEffect = _basicEffect;
+        }
             
       //  if(_collisionEnabled)
        //     _playerCollider.Update();

@@ -29,7 +29,7 @@ public class Room : Shape
         worldSegment.AddChild(this);
     }
 
-    public void AddConnectingRoom(RoomConnection connection)
+    public void AddConnectingRoom(RoomConnection connection, bool adjustPlacement = true)
     {
         if (_roomConnections.Any(p => p.Side == connection.Side))
             throw new System.NotSupportedException("multiple connections on the same side are not yet supported");
@@ -40,18 +40,21 @@ public class Room : Shape
         _roomConnections.Add(connection);
         connection.Other._roomConnections.Add(connection.Reverse());
 
-        connection.Other.Position = Position;
-        connection.Other.Place().OnSideOuter(connection.Side, this)
-                                .OnSideInner(Side.Bottom, this);
+        if (adjustPlacement)
+        {
+            connection.Other.Position = Position;
+            connection.Other.Place().OnSideOuter(connection.Side, this)
+                                    .OnSideInner(Side.Bottom, this);
 
-        var pos = connection.Position;
+            var pos = connection.Position;
 
-        // todo, don't like this
-        if (connection.Side == Side.West || connection.Side == Side.South)
-            pos = 1.0f - pos;
+            // todo, don't like this
+            if (connection.Side == Side.West || connection.Side == Side.South)
+                pos = 1.0f - pos;
 
-        var connectionPoint = RelativeAxisPoint(connection.Side.GetAxis().Orthogonal(), pos);
-        connection.Other.SetAxisPosition(connection.Side.GetAxis().Orthogonal(), connectionPoint);
+            var connectionPoint = RelativeAxisPoint(connection.Side.GetAxis().Orthogonal(), pos);
+            connection.Other.SetAxisPosition(connection.Side.GetAxis().Orthogonal(), connectionPoint);
+        }
     }
 
     public void AddConnectingRoomWithJunction(DoorJunction doorJunction, Room other, Side side)

@@ -42,4 +42,18 @@ public class ShapePlacer
         }
         return this;
     }
+
+    public ShapePlacer FromNorth(float amount) => FromSide(Side.North, amount);
+    public ShapePlacer FromSouth(float amount) => FromSide(Side.South, amount);
+    public ShapePlacer FromEast(float amount) => FromSide(Side.East, amount);
+    public ShapePlacer FromWest(float amount) => FromSide(Side.West, amount);
+
+    public ShapePlacer FromSide(Side side, float amount)
+    {
+        if(side == Side.South || side == Side.East || side == Side.Top)
+            amount = -amount;
+
+        _shape.SetSide(side, _shape.Parent.GetSide(side) + amount);
+        return this;
+    }
 }

@@ -13,7 +13,7 @@ public enum GameKey
     StrafeRight,
     Forward,
     Backward,
-    DebugToggleCollision
+    DebugToggleShader
 }
 
 public class PlayerInput
@@ -34,7 +34,7 @@ public class PlayerInput
         _keyMap[GameKey.Backward] = Keys.S;
         _keyMap[GameKey.StrafeLeft] = Keys.A;
         _keyMap[GameKey.StrafeRight] = Keys.D;
-        _keyMap[GameKey.DebugToggleCollision] = Keys.C;
+        _keyMap[GameKey.DebugToggleShader] = Keys.C;
 
     }
 

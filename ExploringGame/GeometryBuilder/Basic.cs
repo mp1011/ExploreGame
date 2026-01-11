@@ -102,7 +102,7 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
 
     public Winding CalcWinding(Vector3 observationPoint)
     {
-        Vector3 normal = Vector3.Cross(B - A, C - A); 
+        Vector3 normal = Vector3.Cross(B - A, C - A);
         Vector3 toCamera = observationPoint - A;
 
         var ccw = Vector3.Dot(normal, toCamera) > 0f;
@@ -111,7 +111,7 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
 
     public Triangle2D As2D(Vector3 faceOrigin, ViewFrom viewFrom)
     {
-       return new Triangle2D(this, faceOrigin, viewFrom);
+        return new Triangle2D(this, faceOrigin, viewFrom);
     }
 
     public Triangle Rotate(Vector3 pivot, Rotation rotation)
@@ -133,6 +133,11 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
             return new Triangle(A, B, newVertex, TextureInfo, Side);
         else
             return this;
+    }
+
+    public bool IsDegenerate
+    {
+        get => (A == B) || (B == C) || (A == C) || Vector3.Cross(B - A, C - A).LengthSquared() < 1e-8f;
     }
 }
 

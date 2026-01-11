@@ -16,9 +16,9 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>
     {
         room.AddChild(this);
 
-        Height = 1.0f;
-        Width = 1.0f;
-        Depth = 1.0f;
+        Height = Measure.Inches(5);
+        Width = Measure.Inches(0.5f);
+        Depth = Measure.Inches(5f);
 
         Position = room.Position;
     }

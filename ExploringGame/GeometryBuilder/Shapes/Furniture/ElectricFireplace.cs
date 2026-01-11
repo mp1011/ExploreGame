@@ -79,7 +79,7 @@ class ElectricFireplace : PlaceableShape
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             this.AdjustShape().From(Parent)
-                         .SliceY(fromTop: 0.0f, height: TopShelfHeight)
+                         .SliceFromTop(fromTop: 0.0f, height: TopShelfHeight)
                          .AxisStretch(Axis.X | Axis.Z, TopShelfOverhang);
             return BuildCuboid();
         }
@@ -103,7 +103,7 @@ class ElectricFireplace : PlaceableShape
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             this.AdjustShape().From(Parent)
-                         .SliceY(fromTop: TopShelfHeight, height: Parent.Height - TopShelfHeight);
+                         .SliceFromTop(fromTop: TopShelfHeight, height: Parent.Height - TopShelfHeight);
 
             return Array.Empty<Triangle>();
         }
@@ -131,7 +131,7 @@ class ElectricFireplace : PlaceableShape
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             this.AdjustShape().From(Parent)
-                         .SliceY(fromTop: 0, height: MiddleShelfHeight);
+                         .SliceFromTop(fromTop: 0, height: MiddleShelfHeight);
 
             // thought, maybe shape building should be its own service?
             var cuboid = BuildCuboid();
@@ -160,7 +160,7 @@ class ElectricFireplace : PlaceableShape
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             this.AdjustShape().From(Parent)
-                         .SliceY(fromTop: MiddleShelfHeight, height: Parent.Height - MiddleShelfHeight);
+                         .SliceFromTop(fromTop: MiddleShelfHeight, height: Parent.Height - MiddleShelfHeight);
             return Array.Empty<Triangle>();
         }
     }
@@ -193,8 +193,8 @@ class ElectricFireplace : PlaceableShape
                 fromWest = MainWidth - LowerDoorWidth;
 
             this.AdjustShape().From(Parent)
-                              .SliceX(fromWest, LowerDoorWidth)
-                              .SliceZ(LowerDoorThickness, MainDepth - LowerDoorThickness);
+                              .SliceFromWest(fromWest, LowerDoorWidth)
+                              .SliceFromNorth(LowerDoorThickness, MainDepth - LowerDoorThickness);
 
             var cuboid = BuildCuboid();
             return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _innerSpacePlacement, ViewFrom);
@@ -343,9 +343,9 @@ class ElectricFireplace : PlaceableShape
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             this.AdjustShape().From(Parent)
-                              .SliceX(LowerDoorWidth, MainWidth - LowerDoorWidth * 2)
-                              .SliceZ(LowerDoorThickness, MainDepth - LowerDoorThickness)
-                              .SliceY(0, Parent.Height - FooterHeight);
+                              .SliceFromWest(LowerDoorWidth, MainWidth - LowerDoorWidth * 2)
+                              .SliceFromNorth(LowerDoorThickness, MainDepth - LowerDoorThickness)
+                              .SliceFromTop(0, Parent.Height - FooterHeight);
 
             var cuboid = BuildCuboid();
             return new RemoveSurfaceRegion().Execute(cuboid, Side.South, _heatingUnitPlacement, ViewFrom);
@@ -367,8 +367,8 @@ class ElectricFireplace : PlaceableShape
         {
             Position = Parent.Position;
             this.AdjustShape().From(Parent)
-                .SliceY(Parent.Height - FooterHeight, FooterHeight)
-                .SliceZ(0, LowerDoorThickness);
+                .SliceFromTop(Parent.Height - FooterHeight, FooterHeight)
+                .SliceFromNorth(0, LowerDoorThickness);
 
             return BuildCuboid();
 

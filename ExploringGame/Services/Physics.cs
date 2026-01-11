@@ -11,6 +11,7 @@ using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 using MathHelper = Microsoft.Xna.Framework.MathHelper;
 
@@ -35,6 +36,57 @@ public class Physics
         _world = new World();
         _world.BroadPhaseFilter = new CollisionGroupFilter();
     }
+
+    public RigidBody CreateMeshShape(Triangle[] triangles)
+    {
+        triangles = triangles.Select(p=>p.Invert()).ToArray();
+        var body = _world.CreateRigidBody();
+
+        var jTriangles = triangles.Where(p=>!p.IsDegenerate).Select(t => new JTriangle(
+            new JVector(t.A.X, t.A.Y, t.A.Z),
+            new JVector(t.B.X, t.B.Y, t.B.Z),
+            new JVector(t.C.X, t.C.Y, t.C.Z)
+            )).ToArray();
+
+        var mesh = new TriangleMesh(jTriangles);
+        body.AddShape(Enumerable.Range(0, mesh.Indices.Length).Select(i => new TriangleShape(mesh, i)), setMassInertia: false);
+        body.MotionType = MotionType.Static;
+        body.Tag = CollisionGroup.Environment;
+        return body;
+    }
+
+    //maybe?
+    //public RigidBody CreateStaticSurface(Quad quad)
+    //{
+    //    // Calculate center
+    //    var center = (quad.A + quad.B + quad.C + quad.D) / 4f;
+
+    //    // Calculate normal
+    //    var normal = Vector3.Normalize(Vector3.Cross(quad.B - quad.A, quad.D - quad.A));
+
+    //    // Calculate width and height
+    //    float width = Vector3.Distance(quad.A, quad.B);
+    //    float height = Vector3.Distance(quad.A, quad.D);
+    //    float thickness = WallColliderThickness;
+
+    //    new JTriangle()
+    //    new Jitter2.Collision.Shapes.TriangleMesh();
+    //    // Create box shape (width x height x thickness)
+    //    var body = _world.CreateRigidBody();
+    //    body.AddShape(new BoxShape(width, height, thickness));
+
+    //    // Compute rotation to align box Z+ with normal
+    //    var up = Vector3.UnitY;
+    //    var axis = Vector3.Cross(Vector3.UnitZ, normal);
+    //    float angle = (axis.LengthSquared() < 1e-6f) ? 0f : (float)Math.Acos(Vector3.Dot(Vector3.UnitZ, normal));
+    //    Quaternion rotation = axis.LengthSquared() < 1e-6f ? Quaternion.Identity : Quaternion.CreateFromAxisAngle(Vector3.Normalize(axis), angle);
+
+    //    body.Position = new Jitter2.LinearMath.JVector(center.X, center.Y, center.Z);
+    //    body.Orientation = new Jitter2.LinearMath.JQuaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
+    //    body.MotionType = MotionType.Static;
+    //    body.Tag = CollisionGroup.Environment;
+    //    return body;
+    //}    
 
     public RigidBody CreateStaticSurface(GShape shape, Side side)
     {

@@ -60,6 +60,6 @@
 	
 [x] easier way to place rooms (by specifying either the left or right edge)
 
-[ ] angled wa
+[ ] angled walls
+	[ ] working collision
 
-lls
