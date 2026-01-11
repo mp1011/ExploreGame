@@ -9,7 +9,7 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 
 public class Room : Shape
 {
-    private WorldSegment _worldSegment;
+    protected WorldSegment _worldSegment;
     private Theme _theme = Theme.Missing;
     public override Theme Theme => _theme;
 
@@ -21,12 +21,19 @@ public class Room : Shape
     
     public List<VertexOffset> VertexOffsets { get; } = new();
 
+    protected virtual Side OmitSides { get; }
+
     public Room(WorldSegment worldSegment, Theme theme = null)
     {
         if (theme != null)
             _theme = theme;
         _worldSegment = worldSegment;
         worldSegment.AddChild(this);
+    }
+
+    public virtual void LoadChildren()
+    {
+
     }
 
     public void AddConnectingRoom(RoomConnection connection, bool adjustPlacement = true)
@@ -68,6 +75,7 @@ public class Room : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         var shape = BuildCuboid();
+        shape = new SideRemover().Execute(shape, OmitSides);
 
         foreach(var connection in _roomConnections)
             shape = new RemoveSurfaceRegion().Execute(shape, connection.Side, 

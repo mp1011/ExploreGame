@@ -10,9 +10,9 @@ public class BasementOffice : Room
 {
     public override Theme Theme => new BasementRoomTheme();
 
-    public Room Exit { get; }
+    public Room Exit { get; private set; }
 
-    public HighHatLight[] Lights { get; }
+    public HighHatLight[] Lights { get; private set; }
 
     public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
     {
@@ -20,7 +20,10 @@ public class BasementOffice : Room
         Height = OfficeDesk.DeskHeight + Measure.Inches(19);
         Depth = OfficeDesk.DeskWidth + Measure.Inches(39 + 39 + 36);
         SetSide(Side.Bottom, 0f);
-        
+    }
+
+    public override void LoadChildren()
+    {
         var westPart = Copy(depth: Depth + 1.0f, width: 2.0f);
         AddConnectingRoom(new RoomConnection(this, westPart, Side.West, Align: HAlign.Left));
         westPart.VertexOffsets.Add(new VertexOffset(Side.NorthEast, new Vector3(0f, 0f, 1.0f)));
@@ -45,14 +48,14 @@ public class BasementOffice : Room
         ceilingBar.SetSideUnanchored(Side.East, eastPart.GetSide(Side.East));
         ceilingBar.SetSideUnanchored(Side.West, westPart.GetSide(Side.West));
 
-        var oilTankRoom = new OilTankRoom(worldSegment);
+        var oilTankRoom = new OilTankRoom(_worldSegment);
         oilTankRoom.Height = Height;
         oilTankRoom.Width = Width - 2.5f;
         oilTankRoom.Depth = 1.9f;
 
         eastPart2.AddConnectingRoomWithJunction(
             new DoorJunction(
-                worldSegment: worldSegment,
+                worldSegment: _worldSegment,
                 doorClose: new Angle(Side.North),
                 doorOpen: new Angle(Side.East),
                 hingePosition: HAlign.Left,
@@ -88,76 +91,4 @@ public class BasementOffice : Room
             new HighHatLight(this),
         ];
     }
-
-
-    //public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
-    //{        
-    //    Width =  8f;
-    //    Height = OfficeDesk.DeskHeight + Measure.Inches(19);
-    //    Depth = OfficeDesk.DeskWidth + Measure.Inches(39 + 39 + 36);
-    //    SetSide(Side.Bottom, 0f);
-
-    //    var westPart = Copy(depth: Depth + 1.0f, width: 1.0f);
-    //    AddConnectingRoom(new RoomConnection(this, westPart, Side.West, Align: HAlign.Left));
-
-    //    var exit = Copy(depth: Measure.Inches(39), width: Measure.Inches(50));
-    //    westPart.AddConnectingRoom(new RoomConnection(westPart, exit, Side.West, Align: HAlign.Right));
-
-    //    var eastPart = Copy(width: 2.0f);
-    //    AddConnectingRoom(new RoomConnection(this, eastPart, Side.East, 0.5f));
-
-    //    var eastPart2 = Copy(depth: 2.0f, width: 2.0f);
-    //    eastPart.AddConnectingRoom(new RoomConnection(eastPart, eastPart2, Side.North, 0.5f));
-
-    //    var angledPart = Copy(depth: 1.0f, width: 2.0f);
-    //    AddConnectingRoom(new RoomConnection(this, angledPart, Side.North, HAlign.Left));
-
-    //    //  var northPart = Copy(depth: 1.0f);
-    //    //  AddConnectingRoom(new RoomConnection(this, northPart, Side.North, 0.5f));
-
-    //    var oilTankRoom = new OilTankRoom(worldSegment);
-    //    oilTankRoom.Height = Height;
-    //    oilTankRoom.Width = Width - 2.5f;
-    //    oilTankRoom.Depth = 1.9f;
-
-    //    eastPart2.AddConnectingRoomWithJunction(
-    //        new DoorJunction(
-    //            worldSegment: worldSegment,
-    //            doorClose: new Angle(Side.North),
-    //            doorOpen: new Angle(Side.East),
-    //            hingePosition: HAlign.Left,
-    //            height: Height,
-    //            depth: Measure.Inches(30.5f),
-    //            width: 0.2f),
-    //        oilTankRoom,
-    //        Side.West);
-
-
-
-    //    var closet1 = new BasementCloset(westPart, Side.East);
-    //    closet1.Place().OnFloor().OnSideInner(Side.SouthWest);
-
-    //    var closet2 = new BasementCloset(eastPart, Side.West);
-    //    closet2.Place().OnFloor().OnSideInner(Side.SouthEast);
-
-    //    var desk1 = new OfficeDesk(westPart);
-    //    desk1.Place().OnFloor().OnSideInner(Side.West);
-    //    desk1.Rotation = Rotation.YawFromDegrees(-90);
-    //    desk1.X -= 0.9f;
-    //    desk1.Z += 0.65f;
-    //    AddChild(desk1);
-
-    //    var desk2 = new OfficeDesk(eastPart);
-    //    desk2.Place().OnFloor().OnSideInner(Side.East);
-    //    desk2.X += 0.9f;
-    //    desk2.Z += 0.65f;
-    //    desk2.Rotation = Rotation.YawFromDegrees(90);
-
-    //    var fireplace = new ElectricFireplace(this);
-    //    fireplace.Place().OnFloor().OnSideInner(Side.North);
-
-    //    var lightSwitch = new LightSwitch(exit);
-    //    var light = new HighHatLight(this);
-    //    lightSwitch.ControlledObjects.Add(light);
-    //}
 }

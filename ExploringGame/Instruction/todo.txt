@@ -63,10 +63,11 @@
 [x] angled walls
 	[x] working collision
 
-[ ] steps
-	[ ] final step adjusts to meet target floor height
-	[ ] stair room needs to render with S/N sides ommitted
-	[ ] stair walls need not render on the inner side
-	[ ] add a room connection to the upper room and verify it looks right
+[x] steps
+	[x] final step adjusts to meet target floor height
+	[x] stair room needs to render with S/N sides ommitted
+	[x] stair walls need not render on the inner side
+	[x] add a room connection to the upper room and verify it looks right
+	[x] stairs need sloped ceiling
 
 [ ] world segment transitions

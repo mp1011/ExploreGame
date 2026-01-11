@@ -11,12 +11,16 @@ public class BasementStairs : Stairs, ICutoutShape
 
     public Side ParentCutoutSide => Side.Top;
 
-    public BasementStairs(WorldSegment worldSegment, Room room) 
-        : base(worldSegment, new Vector3(x: Measure.Feet(3), y: Measure.Inches(7), z: Measure.Inches(10)))
+    protected override Side OmitSides => Side.South | Side.North;
+
+    public BasementStairs(WorldSegment worldSegment, Room bottomFloor, Room topFloor) 
+        : base(worldSegment, new Vector2(x: Measure.Feet(3), y: Measure.Inches(10)), bottomFloor, topFloor, 
+            width: Measure.Feet(3), depth: Measure.Feet(8))
     {
-        Width = Measure.Feet(3);
-        Height = room.Height * 2;
-        Depth = Measure.Feet(8);
+
+        var offset = topFloor.GetSide(Side.Top) - bottomFloor.GetSide(Side.Top);
+        VertexOffsets.Add(new VertexOffset(Side.NorthWest, new Vector3(0, -offset, 0)));
+        VertexOffsets.Add(new VertexOffset(Side.NorthEast, new Vector3(0, -offset, 0)));
     }
 
     protected override StairStep CreateStep()

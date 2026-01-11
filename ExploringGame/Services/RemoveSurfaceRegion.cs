@@ -20,9 +20,12 @@ class RemoveSurfaceRegion
             return triangles.Where(p => p.Side != surface).ToArray();
 
         var sideTriangles = triangles.Where(p=>p.Side == surface).ToArray();
+        if (!sideTriangles.Any())
+            return triangles;
+
         var sideCenter = sideTriangles.SelectMany(p => p.Vertices).Center();
 
-        var face = new Triangle2DGroup(triangles.Where(p => p.Side == surface).Select(p => p.As2D(sideCenter, viewFrom)).ToArray());
+        var face = new Triangle2DGroup(sideTriangles.Select(p => p.As2D(sideCenter, viewFrom)).ToArray());
           face.Left += placement.Left;
           face.Right -= placement.Right;
           face.Top -= placement.Top;

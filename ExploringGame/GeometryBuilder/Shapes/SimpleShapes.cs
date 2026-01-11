@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
@@ -26,6 +27,8 @@ public class Box : Shape
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
 
+    public Side OmitSides { get; set; }
+
     public Box() { }
 
     public Box(TextureKey textureKey)
@@ -35,6 +38,7 @@ public class Box : Shape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return BuildCuboid();
+        var shape = BuildCuboid();
+        return new SideRemover().Execute(shape, OmitSides);
     }
 }

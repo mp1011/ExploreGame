@@ -9,25 +9,58 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
 
 public abstract class Stairs : Room
 {
-    public  Vector3 StepSize  { get; }
+    protected Vector3 StepSize  { get; }
+    protected Shape BottomFloor { get; }
+
+    protected Shape TopFloor { get; }
 
     private StairStep[] _steps;
     protected abstract Side StartSide { get; }
 
-    public Stairs(WorldSegment worldSegment, Vector3 stepSize) : base(worldSegment)
+    public Stairs(WorldSegment worldSegment, Vector2 stepSize, Shape bottomFloor, Shape topFloor, float width, float depth) : base(worldSegment)
     {
-        StepSize = stepSize;
+        Width = width;
+        Depth = depth;
+        BottomFloor = bottomFloor;
+        TopFloor = topFloor;
+        StepSize = new Vector3(stepSize.X, 0, stepSize.Y); // required to compute step size Y
+        StepSize = new Vector3(stepSize.X, CalcStepHeight(), stepSize.Y);
+        Height = CalcHeight();
     }
 
     protected abstract StairStep CreateStep();
 
-    private void CreateAllSteps()
+    private float CalcStepHeight()
     {
-        var neededSize = this.GetAxisSize(StartSide.GetAxis());
-        var sizePerStep = StepSize.AxisValue(StartSide.GetAxis());
+        var heightDifference = TopFloor.GetSide(Side.Bottom) - BottomFloor.GetSide(Side.Bottom);
+        return heightDifference / (float)NumSteps;
+    }
 
-        int steps = (int)Math.Ceiling(neededSize / sizePerStep);
-        _steps = Enumerable.Range(0, steps).Select(p => AddChild(CreateStep())).ToArray();
+    private float CalcHeight()
+    {
+        return TopFloor.GetSide(Side.Top) - BottomFloor.GetSide(Side.Bottom);
+    }
+
+    private int NumSteps
+    {
+        get
+        {
+            var neededSize = this.GetAxisSize(StartSide.GetAxis());
+            var sizePerStep = StepSize.AxisValue(StartSide.GetAxis());
+            if (sizePerStep == 0f)
+                throw new ArgumentException("Invalid Step Size");
+
+            var numSteps = (int)Math.Ceiling(neededSize / sizePerStep);
+            if (numSteps == 0)
+                throw new ArgumentException("Invalid Step Size");
+
+            return numSteps;
+        }
+    }
+
+    private void CreateAllSteps()
+    {       
+        _steps = Enumerable.Range(0, NumSteps).Select(p => AddChild(CreateStep())).ToArray();
     }
 
     protected override void BeforeBuild()
@@ -51,12 +84,6 @@ public abstract class Stairs : Room
             stairPosition = step.GetSide(StartSide.Opposite());
             lastStep = step;
         }
-    }
-
-
-    protected override Triangle[] BuildInternal(QualityLevel quality)
-    {
-        return Array.Empty<Triangle>();
     }
 }
 

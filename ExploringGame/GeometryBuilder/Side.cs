@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
@@ -11,6 +13,7 @@ namespace ExploringGame.GeometryBuilder;
 [Flags]
 public enum Side
 {
+    None = 0,
     North = 1,
     West = 2,
     South = 4,
@@ -38,19 +41,11 @@ public static class SideExtensions
             _ => throw new System.ArgumentException("invalid side")
         };
 
-    public static Side[] Decompose(this Side side) =>
-        side switch
-        {
-            Side.North => new[] { Side.North },
-            Side.NorthWest => new[] { Side.North, Side.West },
-            Side.West => new[] { Side.West },
-            Side.SouthWest => new[] { Side.South, Side.West },
-            Side.South => new[] { Side.South },
-            Side.SouthEast => new[] { Side.South, Side.East },
-            Side.East => new[] { Side.East },
-            Side.NorthEast => new[] { Side.North, Side.East },
-            _ => new[] { side }
-        };
+    public static Side[] Decompose(this Side side)
+    {
+        var sides = new[] { Side.West, Side.North, Side.East, Side.South, Side.Top, Side.Bottom };
+        return sides.Where(p=> side.HasFlag(p)).ToArray();
+    }
 
     public static Side Opposite(this Side side) =>
         side switch
