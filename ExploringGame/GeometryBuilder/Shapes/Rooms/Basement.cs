@@ -50,7 +50,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
 
             // stair sides
             var wall6 = AddChild(new Box(TextureKey.Wall) { Depth = Measure.Feet(8), Height = Height, Width = InnerWallWidth * 2 });
-            wall6.Place().OnFloor().OnSideInner(Side.South).FromEast(Measure.Inches(55));
+            wall6.Place().OnFloor().OnSideInner(Side.South);
+            wall6.SetSide(Side.West, ceilingBar.GetSide(Side.East) + Measure.Feet(3));
             var wall7 = AddChild(new Box(TextureKey.Wall) { Depth = Measure.Feet(8) + Measure.Inches(5), Height = Height, Width = ceilingBar.Width });
             wall7.Place().OnFloor().OnSideInner(Side.South).OnSideInner(Side.West, ceilingBar);
 
@@ -61,6 +62,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
             var wall8 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(35) });
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
+            var stairs = AddChild(new BasementStairs(worldSegment, this));
+            stairs.Place().OnFloor().OnSideInner(Side.South).OnSideOuter(Side.West, wall6);
 
 
         }

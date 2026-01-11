@@ -10,6 +10,12 @@ namespace ExploringGame.Extensions;
 
 public static class VectorExtensions
 {
+
+    public static float AxisValue(this Vector3 vector, Axis axis)
+    {
+        return axis switch { Axis.X => vector.X, Axis.Y => vector.Y, Axis.Z => vector.Z, _ => throw new ArgumentException("invalid axis") };
+    }
+
     public static Vector3 SetY(this Vector3 vector, float y) => new Vector3(vector.X, y, vector.Z);
 
     public static bool IsValidPositive(this Vector3 vector)

@@ -2,6 +2,7 @@
 using ExploringGame.GeometryBuilder;
 using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
@@ -40,6 +41,8 @@ class RemoveSurfaceRegion
             var cutoutSurface = cutoutShape.Build().Where(p => p.Side == cutoutShape.ParentCutoutSide.Opposite()).ToArray();
             if (cutoutSurface.Length == 0)
                 continue;
+
+            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetSide(cutoutShape.ParentCutoutSide))).ToArray();
 
             var cutoutCenter = cutoutSurface.SelectMany(p => p.Vertices).Center();
             var cutout2D = new Triangle2DGroup(cutoutSurface.Select(p => p.As2D(cutoutCenter, shape.ViewFrom)).ToArray());                       

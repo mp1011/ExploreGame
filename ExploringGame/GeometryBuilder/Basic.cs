@@ -135,6 +135,18 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
             return this;
     }
 
+    public Triangle SetSide(Side side, float value)
+    {
+        switch(side)
+        {
+            case Side.Top:
+            case Side.Bottom:
+                return new Triangle(A.SetY(value), B.SetY(value), C.SetY(value), TextureInfo, Side);
+            default:
+                throw new Exception("not sure about this");
+        }
+    }
+
     public bool IsDegenerate
     {
         get => (A == B) || (B == C) || (A == C) || Vector3.Cross(B - A, C - A).LengthSquared() < 1e-8f;
