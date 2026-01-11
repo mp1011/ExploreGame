@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.Services;
 using Jitter2.Dynamics;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ public static class ColliderMakers
     public static IColliderMaker BoundingBox(GShape shape) => new BoundingBoxColliderMaker(shape);
 
     public static IColliderMaker Room(Room room) => new RoomColliderMaker(room);
+
+    public static IColliderMaker Step(StairStep step) => new StepColliderMaker(step);
+
 }
 
 public class BoundingBoxColliderMaker : IColliderMaker

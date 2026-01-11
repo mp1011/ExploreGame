@@ -11,6 +11,7 @@ using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
+using System.Formats.Asn1;
 using System.Linq;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 using MathHelper = Microsoft.Xna.Framework.MathHelper;
@@ -21,7 +22,8 @@ public enum CollisionGroup
 {
     Player = 1,
     Environment = 2,
-    Doors = 4
+    Doors = 4,
+    Steps = 8,
 }
 
 public class Physics
@@ -35,6 +37,7 @@ public class Physics
     {
         _world = new World();
         _world.BroadPhaseFilter = new CollisionGroupFilter();
+        _world.NarrowPhaseFilter = new CollisionModifier(_world.NarrowPhaseFilter);
     }
 
     public RigidBody CreateMeshShape(Triangle[] triangles)
@@ -54,39 +57,6 @@ public class Physics
         body.Tag = CollisionGroup.Environment;
         return body;
     }
-
-    //maybe?
-    //public RigidBody CreateStaticSurface(Quad quad)
-    //{
-    //    // Calculate center
-    //    var center = (quad.A + quad.B + quad.C + quad.D) / 4f;
-
-    //    // Calculate normal
-    //    var normal = Vector3.Normalize(Vector3.Cross(quad.B - quad.A, quad.D - quad.A));
-
-    //    // Calculate width and height
-    //    float width = Vector3.Distance(quad.A, quad.B);
-    //    float height = Vector3.Distance(quad.A, quad.D);
-    //    float thickness = WallColliderThickness;
-
-    //    new JTriangle()
-    //    new Jitter2.Collision.Shapes.TriangleMesh();
-    //    // Create box shape (width x height x thickness)
-    //    var body = _world.CreateRigidBody();
-    //    body.AddShape(new BoxShape(width, height, thickness));
-
-    //    // Compute rotation to align box Z+ with normal
-    //    var up = Vector3.UnitY;
-    //    var axis = Vector3.Cross(Vector3.UnitZ, normal);
-    //    float angle = (axis.LengthSquared() < 1e-6f) ? 0f : (float)Math.Acos(Vector3.Dot(Vector3.UnitZ, normal));
-    //    Quaternion rotation = axis.LengthSquared() < 1e-6f ? Quaternion.Identity : Quaternion.CreateFromAxisAngle(Vector3.Normalize(axis), angle);
-
-    //    body.Position = new Jitter2.LinearMath.JVector(center.X, center.Y, center.Z);
-    //    body.Orientation = new Jitter2.LinearMath.JQuaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
-    //    body.MotionType = MotionType.Static;
-    //    body.Tag = CollisionGroup.Environment;
-    //    return body;
-    //}    
 
     public RigidBody CreateStaticSurface(GShape shape, Side side)
     {
@@ -127,7 +97,7 @@ public class Physics
         body.Tag = CollisionGroup.Environment;
         return body;
     }
-    public RigidBody CreateStaticBody(GShape shape)
+    public RigidBody CreateStaticBody(GShape shape, CollisionGroup collisionGroup = CollisionGroup.Environment)
     {
         if (shape.Width == 0 || shape.Height == 0 || shape.Depth == 0)
             return null;
@@ -142,7 +112,7 @@ public class Physics
         }
         body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
-        body.Tag = CollisionGroup.Environment;
+        body.Tag = collisionGroup;
         return body;
     }
 
@@ -265,7 +235,6 @@ public class Physics
 
         private bool IsCollisionAllowed(CollisionGroup groupA, CollisionGroup groupB)
         {
-            // Define collision rules here
             if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Environment)
                 return true;
             if (groupA == CollisionGroup.Environment && groupB == CollisionGroup.Player)
@@ -274,7 +243,41 @@ public class Physics
                 return true;
             if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Doors)
                 return true;
+            if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Steps)
+                return true;
+            if (groupA == CollisionGroup.Steps && groupB == CollisionGroup.Player)
+                return true;
             return false;
+        }
+    }
+
+    class CollisionModifier : INarrowPhaseFilter
+    {
+        private INarrowPhaseFilter _default;
+
+        public CollisionModifier(INarrowPhaseFilter defaultFilter)
+        {
+            _default = defaultFilter;
+        }
+
+        public bool Filter(RigidBodyShape shapeA, RigidBodyShape shapeB, ref JVector pointA, ref JVector pointB, ref JVector normal, ref float penetration)
+        {
+            var baseResult = _default.Filter(shapeA, shapeB, ref pointA, ref pointB, ref normal, ref penetration);
+
+            if (normal.Y < 0.6 && normal.Y > -0.6)
+            {
+                if ((CollisionGroup)shapeA.RigidBody.Tag == CollisionGroup.Steps)
+                    HandleStep(playerShape: shapeB, stepShape: shapeA);
+                else if ((CollisionGroup)shapeB.RigidBody.Tag == CollisionGroup.Steps)
+                    HandleStep(playerShape: shapeA, stepShape: shapeB);
+            }
+            return baseResult;
+        }
+
+        private void HandleStep(RigidBodyShape playerShape, RigidBodyShape stepShape)
+        {
+            var playerBody = playerShape.RigidBody;
+            playerBody.Velocity += new JVector(0, 2.0f, 0); // Adjust Y value as needed for your step height
         }
     }
 }

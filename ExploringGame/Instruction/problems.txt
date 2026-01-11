@@ -3,3 +3,4 @@
 - texture on oil tanker doesn't look right
 - fix/re-enable head bob
 - multiple instances of same shape type can share same vertices
+- stair climbing is akward

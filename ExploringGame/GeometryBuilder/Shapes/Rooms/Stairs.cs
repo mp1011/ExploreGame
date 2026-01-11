@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Extensions;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
@@ -10,7 +11,7 @@ public abstract class Stairs : Room
 {
     public  Vector3 StepSize  { get; }
 
-    private Shape[] _steps;
+    private StairStep[] _steps;
     protected abstract Side StartSide { get; }
 
     public Stairs(WorldSegment worldSegment, Vector3 stepSize) : base(worldSegment)
@@ -18,7 +19,7 @@ public abstract class Stairs : Room
         StepSize = stepSize;
     }
 
-    protected abstract Shape CreateStep();
+    protected abstract StairStep CreateStep();
 
     private void CreateAllSteps()
     {
@@ -56,5 +57,18 @@ public abstract class Stairs : Room
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         return Array.Empty<Triangle>();
+    }
+}
+
+
+public class StairStep : Shape
+{
+    public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+    public override IColliderMaker ColliderMaker => ColliderMakers.Step(this);
+
+    protected override Triangle[] BuildInternal(QualityLevel quality)
+    {
+        return BuildCuboid();
     }
 }

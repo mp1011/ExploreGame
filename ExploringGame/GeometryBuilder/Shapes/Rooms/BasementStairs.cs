@@ -19,9 +19,9 @@ public class BasementStairs : Stairs, ICutoutShape
         Depth = Measure.Feet(8);
     }
 
-    protected override Shape CreateStep()
+    protected override StairStep CreateStep()
     {
-        return new Box(TextureKey.Ceiling);
+        return new StairStep { MainTexture = new TextureInfo(TextureKey.Ceiling) };
     }
 
     public Triangle[] Build()
