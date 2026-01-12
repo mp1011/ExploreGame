@@ -237,6 +237,9 @@ public abstract class Shape
         if (child.Parent == this)
             return child;
 
+        if (child.Parent != null)
+            child.Parent._children.Remove(child);
+
         child.Parent = this;
         _children.Add(child);
         return child;

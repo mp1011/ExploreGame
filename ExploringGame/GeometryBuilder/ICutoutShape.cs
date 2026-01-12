@@ -6,6 +6,5 @@
 public interface ICutoutShape
 {
     Side ParentCutoutSide { get; }
-
     Triangle[] Build();
 }

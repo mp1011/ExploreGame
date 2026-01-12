@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 

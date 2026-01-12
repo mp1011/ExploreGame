@@ -5,6 +5,9 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 {
     public class BasementWorldSegment : WorldSegment
     {
+
+        public override WorldSegmentTransition[] Transitions => new[] { new WorldSegmentTransition<UpstairsWorldSegment, BasementStairs>(Side.South) };
+
         public BasementWorldSegment() : base()
         {
             var dummyUpstairs = AddChild(new Room(this, new BasementRoomTheme()));

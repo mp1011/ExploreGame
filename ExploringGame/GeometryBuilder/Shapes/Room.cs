@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;

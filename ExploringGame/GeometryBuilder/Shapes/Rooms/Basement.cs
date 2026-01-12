@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 
@@ -72,7 +73,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
             var stairs = AddChild(new BasementStairs(_worldSegment, bottomFloor: this, topFloor: _upstairs));
-            stairs.Place().OnFloor().OnSideInner(Side.South).OnSideOuter(Side.West, wall6);
+            stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
 
             AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
             _upstairs.AddConnectingRoom(new RoomConnection(_upstairs, stairs, Side.North), adjustPlacement: false);

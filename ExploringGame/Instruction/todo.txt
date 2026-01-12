@@ -71,3 +71,6 @@
 	[x] stairs need sloped ceiling
 
 [ ] world segment transitions
+	[ ] one-way transition
+	[ ] player backs out
+	[ ] multiple transitions

@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -72,7 +73,6 @@ public class BasementOffice : Room
         desk1.Rotation = Rotation.YawFromDegrees(-90);
         desk1.X -= 0.9f;
         desk1.Z += 0.65f;
-        AddChild(desk1);
 
         var desk2 = new OfficeDesk(eastPart);
         desk2.Place().OnFloor().OnSideInner(Side.East);

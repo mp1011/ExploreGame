@@ -1,4 +1,5 @@
-﻿using ExploringGame.Texture;
+﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
@@ -12,6 +13,8 @@ public class BasementStairs : Stairs, ICutoutShape
     public Side ParentCutoutSide => Side.Top;
 
     protected override Side OmitSides => Side.South | Side.North;
+
+    public Shape CutoutTarget => BottomFloor;
 
     public BasementStairs(WorldSegment worldSegment, Room bottomFloor, Room topFloor) 
         : base(worldSegment, new Vector2(x: Measure.Feet(3), y: Measure.Inches(10)), bottomFloor, topFloor, 

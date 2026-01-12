@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;

@@ -1,4 +1,4 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using System.Linq;
 
