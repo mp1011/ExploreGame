@@ -83,10 +83,10 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
 
             if (!_limitedView)
-            {
                 AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
-                _upstairs.AddConnectingRoom(new RoomConnection(_upstairs, Stairs, Side.North), adjustPlacement: false);
-            }
+ 
+            _upstairs.AddConnectingRoom(new RoomConnection(_upstairs, Stairs, Side.North), adjustPlacement: false);
+
         }
     }
 }

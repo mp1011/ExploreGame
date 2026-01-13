@@ -2,6 +2,7 @@
 using ExploringGame.Entities;
 using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
+using ExploringGame.Rendering;
 using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -27,6 +28,9 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        return new SegmentTransitionController(this, serviceContainer.Get<Player>(), serviceContainer.Get<TransitionShapesRegistrar>());
+        return new SegmentTransitionController(this, 
+            serviceContainer.Get<Player>(), 
+            serviceContainer.Get<TransitionShapesRegistrar>(),
+            serviceContainer.Get<RenderBuffers>());
     }
 }

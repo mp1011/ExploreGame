@@ -11,7 +11,6 @@ using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
-using System.Formats.Asn1;
 using System.Linq;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 using MathHelper = Microsoft.Xna.Framework.MathHelper;

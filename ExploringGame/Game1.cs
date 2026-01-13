@@ -10,7 +10,6 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
-using ExploringGame.Motion;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -19,7 +18,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Linq; // For random texture generation
 
 namespace ExploringGame;
 
@@ -30,6 +28,7 @@ public class Game1 : Game
     private PlayerMotion _playerMotion;
     private HeadBob _headBob;
     private PlayerInput _playerInput;
+    private RenderBuffers _renderBuffers;
 
     private WorldSegment _mainShape;
 
@@ -41,16 +40,12 @@ public class Game1 : Game
     private BasicRenderEffect _basicEffect;
     private IRenderEffect _renderEffect;
 
-    private ShapeBuffer[] _shapeBuffers;
     private Matrix _view;
     private Matrix _projection;
-    private TextureSheet _basementTextures;
     private SpriteFont _debugFont;
 
     private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
-
-    private Dictionary<Shape, Triangle[]> _triangles;
 
     public Game1()
     {
@@ -69,7 +64,12 @@ public class Game1 : Game
             GraphicsDevice.Viewport.AspectRatio,
             0.1f, 100f);
 
+        _serviceContainer.Bind<Game>(this);
         _serviceContainer.BindSingleton<TransitionShapesRegistrar>();
+      
+        _serviceContainer.BindSingleton<RenderBuffers>();
+        _renderBuffers = _serviceContainer.Get<RenderBuffers>();
+
         _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
@@ -99,8 +99,7 @@ public class Game1 : Game
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-        _triangles = _mainShape.Build((QualityLevel)8);
-        _setupColliderBodies.Execute(_mainShape);
+        
        
         base.Initialize();
     }
@@ -109,25 +108,25 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _basementTextures = new TextureSheet(Content.Load<Texture2D>("basement"))
+        _renderBuffers.CurrentTexture = new TextureSheet(Content.Load<Texture2D>("basement"))
             .Add(TextureKey.Floor, left: 1753, top: 886, right: 2866, bottom: 1640)
             .Add(TextureKey.Wall, left: 2975, top: 808, right: 4483, bottom: 2806)
             .Add(TextureKey.Ceiling, left: 214, top: 24, right: 1523, bottom: 2008)
             .Add(TextureKey.Wood, left: 1995, top: 80, right: 3625, bottom: 669)
             .Add(TextureKey.None, left: 912, top: 2221, right: 922, bottom: 2231);
-
-        _shapeBuffers = new ShapeBufferCreator(_triangles, _basementTextures, GraphicsDevice).Execute();
-        _triangles.Clear();
-
+       
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        _basicEffect = new BasicRenderEffect(GraphicsDevice, Content, _basementTextures.Texture);
+        _basicEffect = new BasicRenderEffect(GraphicsDevice, Content, _renderBuffers.CurrentTexture.Texture);
         _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
-            GraphicsDevice, Content, _basementTextures.Texture);
+            GraphicsDevice, Content, _renderBuffers.CurrentTexture.Texture);
 
         _renderEffect = _pointLightEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
+
+        _renderBuffers.BuildSegment(_mainShape);
+        _setupColliderBodies.Execute(_mainShape);
     }
 
     private WorldSegment CreateMainShape()
@@ -483,7 +482,7 @@ public class Game1 : Game
     {       
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-        _renderEffect.Draw(GraphicsDevice, _shapeBuffers, _view, _projection);
+        _renderEffect.Draw(GraphicsDevice, _renderBuffers.ActiveShapeBuffers, _view, _projection);
         
         // Draw debug information
         _spriteBatch.Begin();

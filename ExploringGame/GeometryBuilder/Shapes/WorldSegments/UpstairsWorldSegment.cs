@@ -13,6 +13,7 @@ class UpstairsWorldSegment : WorldSegment
     {
         var upstairsHall = AddChild(new UpstairsHall(this, transitionShapesRegistrar));      
         var basement = AddChild(new Basement(this, null, upstairsHall));
+        transitionShapesRegistrar.RecallPositionAndSize(basement);
         basement.LoadChildren();
        
        // Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };

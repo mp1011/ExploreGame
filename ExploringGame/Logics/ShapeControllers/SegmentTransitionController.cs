@@ -3,6 +3,7 @@ using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Rendering;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace ExploringGame.Logics.ShapeControllers;
 
 public class SegmentTransitionController : IShapeController<WorldSegment>
 {
+    private readonly RenderBuffers _renderBuffers;
     private readonly Player _player;
     private readonly TransitionShapesRegistrar _transitionShapesRegistrar;
 
@@ -53,11 +55,13 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
         }
     }
 
-    public SegmentTransitionController(WorldSegment worldSegment, Player player, TransitionShapesRegistrar transitionShapesRegistrar)
+    public SegmentTransitionController(WorldSegment worldSegment, Player player, 
+        TransitionShapesRegistrar transitionShapesRegistrar, RenderBuffers renderBuffers)
     {
         Shape = worldSegment;
         _player = player;
         _transitionShapesRegistrar = transitionShapesRegistrar;
+        _renderBuffers = renderBuffers;
     }
 
     public void Initialize()
@@ -79,6 +83,7 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
         {
             transition.PlayerWithinExit = true;
             _transitionSegment = Activator.CreateInstance(transition.Transition.WorldSegmentType, _transitionShapesRegistrar) as WorldSegment;
+            _renderBuffers.PrepareNextSegment(_transitionSegment);
         }
 
         if(transition.PlayerWithinExit)
@@ -101,6 +106,9 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
 
     private void ActivateTransition(TransitionDetail transition)
     {
-//        throw new System.NotImplementedException();
+        // todo, this needs more
+        _renderBuffers.SwapActive();
+
+        _transitions = Array.Empty<TransitionDetail>();
     }
 }
