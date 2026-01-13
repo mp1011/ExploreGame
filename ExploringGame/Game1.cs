@@ -1,4 +1,5 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Config;
+using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
@@ -68,6 +69,7 @@ public class Game1 : Game
             GraphicsDevice.Viewport.AspectRatio,
             0.1f, 100f);
 
+        _serviceContainer.BindSingleton<TransitionShapesRegistrar>();
         _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
@@ -130,7 +132,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return new BasementWorldSegment();
+        return _serviceContainer.Get<BasementWorldSegment>();
     }
 
     public WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));

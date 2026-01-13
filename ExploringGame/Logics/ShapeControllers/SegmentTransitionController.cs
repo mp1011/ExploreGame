@@ -1,20 +1,22 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Config;
+using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
 public class SegmentTransitionController : IShapeController<WorldSegment>
 {
     private readonly Player _player;
+    private readonly TransitionShapesRegistrar _transitionShapesRegistrar;
 
     public WorldSegment Shape { get; }
 
-    private List<TransitionDetail> _transitions;
+    private TransitionDetail[] _transitions;
 
     private bool _playerWithinExit;
 
@@ -30,9 +32,9 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
 
         public float TransferPosition { get; }
 
-        public TransitionDetail(Shape exitShape, WorldSegmentTransition transition)
+        public TransitionDetail(WorldSegmentTransition transition)
         {
-            ExitShape = exitShape;
+            ExitShape = transition.ExitShape;
             Transition = transition;
 
             var size = ExitShape.GetAxisSize(transition.ExitSide.GetAxis());
@@ -51,26 +53,16 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
         }
     }
 
-    public SegmentTransitionController(WorldSegment worldSegment, Player player)
+    public SegmentTransitionController(WorldSegment worldSegment, Player player, TransitionShapesRegistrar transitionShapesRegistrar)
     {
         Shape = worldSegment;
         _player = player;
+        _transitionShapesRegistrar = transitionShapesRegistrar;
     }
 
     public void Initialize()
     {
-        _transitions = new();
-        foreach (var child in Shape.TraverseAllChildren())
-        {
-            foreach(var transition in Shape.Transitions)
-            {
-                var shapeType = transition.ShapeType;
-                if(child.GetType() == shapeType)
-                {
-                    _transitions.Add(new TransitionDetail(child, transition));
-                }
-            }
-        }
+        _transitions = Shape.Transitions.Select(p => new TransitionDetail(p)).ToArray();
     }
 
     public void Update(GameTime gameTime)
@@ -86,7 +78,7 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
         if(!transition.PlayerWithinExit && transition.ExitShape.ContainsPoint(_player.Position)) 
         {
             transition.PlayerWithinExit = true;
-            _transitionSegment = Activator.CreateInstance(transition.Transition.WorldSegmentType) as WorldSegment;
+            _transitionSegment = Activator.CreateInstance(transition.Transition.WorldSegmentType, _transitionShapesRegistrar) as WorldSegment;
         }
 
         if(transition.PlayerWithinExit)
@@ -109,6 +101,6 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
 
     private void ActivateTransition(TransitionDetail transition)
     {
-        throw new System.NotImplementedException();
+//        throw new System.NotImplementedException();
     }
 }

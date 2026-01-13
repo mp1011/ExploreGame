@@ -1,4 +1,5 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Config;
+using ExploringGame.Entities;
 using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
 using System;
@@ -26,6 +27,6 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        return new SegmentTransitionController(this, serviceContainer.Get<Player>());
+        return new SegmentTransitionController(this, serviceContainer.Get<Player>(), serviceContainer.Get<TransitionShapesRegistrar>());
     }
 }

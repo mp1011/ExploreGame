@@ -1,25 +1,20 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms;
+﻿using ExploringGame.Config;
+using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.Texture;
+using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
 class UpstairsWorldSegment : WorldSegment
 {
-    public override WorldSegmentTransition[] Transitions => new[] { new WorldSegmentTransition<BasementWorldSegment, BasementStairs>(Side.North) };
+    public override WorldSegmentTransition[] Transitions { get; } = Array.Empty<WorldSegmentTransition>();
 
-    public UpstairsWorldSegment()
+    public UpstairsWorldSegment(TransitionShapesRegistrar transitionShapesRegistrar)
     {
-        var dummyUpstairs = AddChild(new Room(this, new BasementRoomTheme()));        
-      //  dummyUpstairs.Position = basement.Position;
-        dummyUpstairs.Height = Measure.Feet(8);
-        dummyUpstairs.Width = 10f;
-        dummyUpstairs.Depth = 10f;
-      //  dummyUpstairs.SetSide(Side.Bottom, basement.GetSide(Side.Top));
-     //   dummyUpstairs.SetSide(Side.North, basement.GetSide(Side.South));
-
-        dummyUpstairs.LoadChildren();
-      
-     //   dummyUpstairs.X = basement.X;
-     //   dummyUpstairs.SetSide(Side.North, basement.GetSide(Side.South));
+        var upstairsHall = AddChild(new UpstairsHall(this, transitionShapesRegistrar));      
+        var basement = AddChild(new Basement(this, null, upstairsHall));
+        basement.LoadChildren();
+       
+       // Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }
 }

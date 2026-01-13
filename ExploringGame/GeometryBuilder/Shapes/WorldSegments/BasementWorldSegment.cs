@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms;
+﻿using ExploringGame.Config;
+using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
@@ -6,27 +7,33 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
     public class BasementWorldSegment : WorldSegment
     {
 
-        public override WorldSegmentTransition[] Transitions => new[] { new WorldSegmentTransition<UpstairsWorldSegment, BasementStairs>(Side.South) };
+        public override WorldSegmentTransition[] Transitions { get; }
 
-        public BasementWorldSegment() : base()
+        public BasementWorldSegment(TransitionShapesRegistrar transitionShapesRegistrar) : base()
         {
-            var dummyUpstairs = AddChild(new Room(this, new BasementRoomTheme()));
+            var upstairsHall = AddChild(new UpstairsHall(this));
             var office = AddChild(new BasementOffice(this));
-            var basement = AddChild(new Basement(this, office, dummyUpstairs));
+            var basement = AddChild(new Basement(this, office, upstairsHall));
 
-            dummyUpstairs.Position = basement.Position;
-            dummyUpstairs.Height = Measure.Feet(8);
-            dummyUpstairs.Width = 10f;
-            dummyUpstairs.Depth = 10f;
-            dummyUpstairs.SetSide(Side.Bottom, basement.GetSide(Side.Top));
-            dummyUpstairs.SetSide(Side.North, basement.GetSide(Side.South));
+            upstairsHall.Position = basement.Position;
+            upstairsHall.Height = Measure.Feet(8);
+            upstairsHall.Width = 10f;
+            upstairsHall.Depth = 10f;
+            upstairsHall.SetSide(Side.Bottom, basement.GetSide(Side.Top));
+            upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
 
-            dummyUpstairs.LoadChildren();
+            upstairsHall.LoadChildren();
             office.LoadChildren();
             basement.LoadChildren();
 
-            dummyUpstairs.X = basement.X;
-            dummyUpstairs.SetSide(Side.North, basement.GetSide(Side.South));
+            upstairsHall.X = basement.X;
+            upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
+
+            Transitions = new[] { new WorldSegmentTransition<UpstairsWorldSegment>(basement.Stairs, Side.South) };
+
+            transitionShapesRegistrar.Set(basement.Stairs);
+            transitionShapesRegistrar.Set(basement);
+            transitionShapesRegistrar.Set(upstairsHall);
         }
     }
 }

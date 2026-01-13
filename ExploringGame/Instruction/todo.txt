@@ -74,3 +74,14 @@
 	[ ] one-way transition
 	[ ] player backs out
 	[ ] multiple transitions
+
+- write basement dimensions to a text file
+- create alt constructor for Basement which only loads the shapes needed and which reads the size/pos from this file
+- set shapes for upstairs segment
+- load the triangle buffers
+- swap buffer when player hits transfer spot++++++++++++++++++++
+
+
+
+
+

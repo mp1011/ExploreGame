@@ -47,3 +47,13 @@ public class BasementRoomTheme : Theme
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
     }
 }
+
+public class UpstairsHallTheme : Theme
+{
+    public UpstairsHallTheme()
+    {
+        SideTextures[Side.Top] = new TextureInfo(Color.White);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.Brown);
+        MainTexture = new TextureInfo(Color.LightGray);
+    }
+}
