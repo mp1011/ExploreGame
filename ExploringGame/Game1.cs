@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Config;
 using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
@@ -7,6 +8,7 @@ using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
@@ -28,11 +30,10 @@ public class Game1 : Game
     private PlayerMotion _playerMotion;
     private HeadBob _headBob;
     private PlayerInput _playerInput;
-    private RenderBuffers _renderBuffers;
-
+    private EntityMover _playerMover;
+    private CurrentAndNextLevelData _currentAndNextLevelData;
     private WorldSegment _mainShape;
 
-    private List<IActiveObject> _activeObjects = new();
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -54,9 +55,12 @@ public class Game1 : Game
         IsMouseVisible = false;
     }
 
+    private LevelData CurrentLevelData => _currentAndNextLevelData.Current;
+
     protected override void Initialize()
     {
         _serviceContainer = new ServiceContainer();
+        _serviceContainer.Bind(_serviceContainer);
 
         // Set up projection
         _projection = Matrix.CreatePerspectiveFieldOfView(
@@ -65,42 +69,37 @@ public class Game1 : Game
             0.1f, 100f);
 
         _serviceContainer.Bind<Game>(this);
-        _serviceContainer.BindSingleton<TransitionShapesRegistrar>();
-      
-        _serviceContainer.BindSingleton<RenderBuffers>();
-        _renderBuffers = _serviceContainer.Get<RenderBuffers>();
+        _physics = new Physics();
+        _serviceContainer.Bind(_physics);
+
+        _serviceContainer.BindSingleton<TransitionShapesRegistrar>();      
+        _serviceContainer.BindSingleton<CurrentAndNextLevelData>();
+        _currentAndNextLevelData = _serviceContainer.Get<CurrentAndNextLevelData>();
 
         _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
 
-        _physics = new Physics();
-        _serviceContainer.Bind(_physics);
+        
 
         _playerInput = new PlayerInput();
         _headBob = new HeadBob();
         _player = _serviceContainer.Get<Player>();
 
-        var playerMover = new EntityMover(_player, _physics);
-        _activeObjects.Add(playerMover);
-
-        playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(playerMover));
+        _playerMover = new EntityMover(_player, _physics);
+        _playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(_playerMover));
 
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.BindTransient<DoorController>();
 
         _mainShape = CreateMainShape();                        
-        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, playerMover);
-        _activeObjects.AddRange(_serviceContainer.CreateControllers(_mainShape.TraverseAllChildren()));
-
+        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
         
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-        
-       
         base.Initialize();
     }
 
@@ -108,7 +107,7 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _renderBuffers.CurrentTexture = new TextureSheet(Content.Load<Texture2D>("basement"))
+        _currentAndNextLevelData.CurrentTexture = new TextureSheet(Content.Load<Texture2D>("basement"))
             .Add(TextureKey.Floor, left: 1753, top: 886, right: 2866, bottom: 1640)
             .Add(TextureKey.Wall, left: 2975, top: 808, right: 4483, bottom: 2806)
             .Add(TextureKey.Ceiling, left: 214, top: 24, right: 1523, bottom: 2008)
@@ -118,15 +117,12 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        _basicEffect = new BasicRenderEffect(GraphicsDevice, Content, _renderBuffers.CurrentTexture.Texture);
+        _basicEffect = new BasicRenderEffect(GraphicsDevice, Content, _currentAndNextLevelData.CurrentTexture.Texture);
         _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
-            GraphicsDevice, Content, _renderBuffers.CurrentTexture.Texture);
+            GraphicsDevice, Content, _currentAndNextLevelData.CurrentTexture.Texture);
 
         _renderEffect = _pointLightEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
-
-        _renderBuffers.BuildSegment(_mainShape);
-        _setupColliderBodies.Execute(_mainShape);
     }
 
     private WorldSegment CreateMainShape()
@@ -437,8 +433,6 @@ public class Game1 : Game
         return simpleRoom;
     }
 
-    private bool _initialized = false;
-
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -447,18 +441,17 @@ public class Game1 : Game
         if (!IsActive)
             return;
 
-        if (!_initialized)
-        {
-            foreach (var obj in _activeObjects)
-                obj.Initialize();
-
-            _initialized = true;
-        }
-
         _physics.Update(gameTime);
 
-        foreach (var obj in _activeObjects)
-            obj.Update(gameTime);
+        if(CurrentLevelData == null)
+        {
+            _currentAndNextLevelData.PrepareNextSegment(_mainShape);
+            _currentAndNextLevelData.SwapActive();
+            _playerMover.Initialize();
+        }
+
+        _playerMover.Update(gameTime);
+        CurrentLevelData.Update(gameTime);
        
         _playerInput.Update();
         _playerMotion.Update(gameTime, Window);
@@ -471,9 +464,6 @@ public class Game1 : Game
                 _renderEffect = _basicEffect;
         }
             
-      //  if(_collisionEnabled)
-       //     _playerCollider.Update();
-
         _view = _player.CreateViewMatrix();
         base.Update(gameTime);
     }
@@ -482,7 +472,7 @@ public class Game1 : Game
     {       
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-        _renderEffect.Draw(GraphicsDevice, _renderBuffers.ActiveShapeBuffers, _view, _projection);
+        _renderEffect.Draw(GraphicsDevice, CurrentLevelData.ShapeBuffers, _view, _projection);
         
         // Draw debug information
         _spriteBatch.Begin();

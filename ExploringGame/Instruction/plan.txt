@@ -36,3 +36,12 @@
 	- Instead, we will create a Theme class to define textures, as a virtual property
 	- by default, there will be a "Missing" theme that paints the walls a bright color, to make it easy to see
 	
+
+initialized
+ShapeBuffer[]
+IActiveObjects
+
+
+
+    private List<IActiveObject> _activeObjects = new();
+	ShapeBuffer[] 

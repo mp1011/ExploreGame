@@ -3,7 +3,7 @@ using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
-using ExploringGame.Rendering;
+using ExploringGame.LevelControl;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace ExploringGame.Logics.ShapeControllers;
 
 public class SegmentTransitionController : IShapeController<WorldSegment>
 {
-    private readonly RenderBuffers _renderBuffers;
+    private readonly CurrentAndNextLevelData _renderBuffers;
     private readonly Player _player;
     private readonly TransitionShapesRegistrar _transitionShapesRegistrar;
 
@@ -56,7 +56,7 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
     }
 
     public SegmentTransitionController(WorldSegment worldSegment, Player player, 
-        TransitionShapesRegistrar transitionShapesRegistrar, RenderBuffers renderBuffers)
+        TransitionShapesRegistrar transitionShapesRegistrar, CurrentAndNextLevelData renderBuffers)
     {
         Shape = worldSegment;
         _player = player;

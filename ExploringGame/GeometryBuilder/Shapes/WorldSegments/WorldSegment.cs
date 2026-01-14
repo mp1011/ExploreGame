@@ -1,8 +1,8 @@
 ﻿using ExploringGame.Config;
 using ExploringGame.Entities;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
-using ExploringGame.Rendering;
 using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -31,6 +31,6 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
         return new SegmentTransitionController(this, 
             serviceContainer.Get<Player>(), 
             serviceContainer.Get<TransitionShapesRegistrar>(),
-            serviceContainer.Get<RenderBuffers>());
+            serviceContainer.Get<CurrentAndNextLevelData>());
     }
 }

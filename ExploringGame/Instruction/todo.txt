@@ -71,8 +71,9 @@
 	[x] stairs need sloped ceiling
 
 [ ] world segment transitions
-	[ ] one-way transition
+	[x] one-way transition
 	[ ] player backs out
+	[ ] colliders properly loaded
 	[ ] multiple transitions
 
 - write basement dimensions to a text file
