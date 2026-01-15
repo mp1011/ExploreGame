@@ -1,10 +1,9 @@
 ﻿using ExploringGame.GeometryBuilder;
-using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Entities;
 
-public class Player : IWithPosition
+public class Player : IWithPosition, ICamera
 {
     public Vector3 Position { get; set; } = new Vector3(0, 1.5f, 0);
     public Rotation Rotation { get; set; } = new Rotation(0, 0.1f, 0);

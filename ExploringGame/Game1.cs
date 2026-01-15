@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Config;
 using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
@@ -27,7 +28,9 @@ public class Game1 : Game
 {
     private ServiceContainer _serviceContainer;
     private Player _player;
+    private CameraService _cameraService;
     private PlayerMotion _playerMotion;
+    private DebugController _debugController;
     private HeadBob _headBob;
     private PlayerInput _playerInput;
     private EntityMover _playerMover;
@@ -41,8 +44,7 @@ public class Game1 : Game
     private BasicRenderEffect _basicEffect;
     private IRenderEffect _renderEffect;
 
-    private Matrix _view;
-    private Matrix _projection;
+
     private SpriteFont _debugFont;
 
     private SetupColliderBodies _setupColliderBodies;
@@ -61,12 +63,6 @@ public class Game1 : Game
     {
         _serviceContainer = new ServiceContainer();
         _serviceContainer.Bind(_serviceContainer);
-
-        // Set up projection
-        _projection = Matrix.CreatePerspectiveFieldOfView(
-            MathHelper.ToRadians(70f), //MathHelper.PiOver4, 
-            GraphicsDevice.Viewport.AspectRatio,
-            0.1f, 100f);
 
         _serviceContainer.Bind<Game>(this);
         _physics = new Physics();
@@ -96,9 +92,15 @@ public class Game1 : Game
         _mainShape = CreateMainShape();                        
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
-        
+
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+        _serviceContainer.BindSingleton<CameraService>();
+        _cameraService = _serviceContainer.Get<CameraService>();
+
+        _serviceContainer.BindSingleton<DebugController>();
+        _debugController = _serviceContainer.Get<DebugController>();
 
         base.Initialize();
     }
@@ -452,19 +454,26 @@ public class Game1 : Game
 
         _playerMover.Update(gameTime);
         CurrentLevelData.Update(gameTime);
-       
-        _playerInput.Update();
-        _playerMotion.Update(gameTime, Window);
 
-        if (_playerInput.IsKeyPressed(GameKey.DebugToggleShader))
+        _playerInput.Update();
+        if (_playerInput.IsKeyDown(GameKey.DebugKey))
         {
-            if (_renderEffect == _basicEffect)
-                _renderEffect = _pointLightEffect;
-            else
-                _renderEffect = _basicEffect;
+            _debugController.Update();
+            if (_playerInput.IsKeyDown(GameKey.DebugKey) && _playerInput.IsKeyPressed(Keys.S))
+            {
+                if (_renderEffect == _basicEffect)
+                    _renderEffect = _pointLightEffect;
+                else
+                    _renderEffect = _basicEffect;
+            }
         }
-            
-        _view = _player.CreateViewMatrix();
+        else
+        {
+            _playerMotion.Update(gameTime, Window);
+        }
+
+
+        _cameraService.Update();
         base.Update(gameTime);
     }
 
@@ -472,7 +481,7 @@ public class Game1 : Game
     {       
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-        _renderEffect.Draw(GraphicsDevice, CurrentLevelData.ShapeBuffers, _view, _projection);
+        _renderEffect.Draw(GraphicsDevice, CurrentLevelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
         
         // Draw debug information
         _spriteBatch.Begin();

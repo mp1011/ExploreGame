@@ -13,7 +13,7 @@ public enum GameKey
     StrafeRight,
     Forward,
     Backward,
-    DebugToggleShader
+    DebugKey,
 }
 
 public class PlayerInput
@@ -34,17 +34,17 @@ public class PlayerInput
         _keyMap[GameKey.Backward] = Keys.S;
         _keyMap[GameKey.StrafeLeft] = Keys.A;
         _keyMap[GameKey.StrafeRight] = Keys.D;
-        _keyMap[GameKey.DebugToggleShader] = Keys.C;
-
+        
+        _keyMap[GameKey.DebugKey] = Keys.RightAlt;
     }
 
     public void Update()
     {
         _lastState = _currentState;
         _currentState = Keyboard.GetState();
-
     }
 
+    public bool IsKeyPressed(Keys key) => _currentState.IsKeyDown(key) && !_lastState.IsKeyDown(key);
     public bool IsKeyDown(GameKey key) => _currentState.IsKeyDown(_keyMap[key]);
     public bool IsKeyPressed(GameKey key) => _currentState.IsKeyDown(_keyMap[key])
                                              && !_lastState.IsKeyDown(_keyMap[key]);

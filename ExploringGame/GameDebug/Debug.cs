@@ -1,4 +1,4 @@
-﻿namespace ExploringGame;
+﻿namespace ExploringGame.GameDebug;
 
 public static class Debug
 {
