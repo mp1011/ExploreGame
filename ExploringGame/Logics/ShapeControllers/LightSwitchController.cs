@@ -38,6 +38,10 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff
         On = true;
     }
 
+    public void Stop()
+    {
+    }
+
     public void Update(GameTime gameTime)
     {
         if (_player.Position.SquaredDistance(Shape.Position) > ActivationRange * ActivationRange)

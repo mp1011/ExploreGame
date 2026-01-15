@@ -32,6 +32,10 @@ public class TestMoverController : IShapeController<TestMover>
     {
     }
 
+    public void Stop()
+    {
+    }
+
     public void Update(GameTime gameTime)
     {
         if (Shape.Y < 3.0f)

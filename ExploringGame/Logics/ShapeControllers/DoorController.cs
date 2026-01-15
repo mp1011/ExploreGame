@@ -20,12 +20,14 @@ public class DoorController : IShapeController<Door>
     private readonly PlayerInput _playerInput;
     private readonly Player _player;
     private readonly AudioService _audioService;
+    private readonly Physics _physics;
     private RigidBody _rigidBody;
     private AngularMotor _motor;
     private bool _closeSoundPlayed = true;
 
-    public DoorController(PlayerInput playerInput, Player player, AudioService audioService)
+    public DoorController(PlayerInput playerInput, Player player, AudioService audioService, Physics physics)
     {
+        _physics = physics;
         _audioService = audioService;
         _playerInput = playerInput;
         _player = player;
@@ -36,6 +38,11 @@ public class DoorController : IShapeController<Door>
     {
         _rigidBody = Shape.ColliderBodies.First();
         //_motor = _rigidBody.Constraints.OfType<AngularMotor>().First();
+    }
+
+    public void Stop()
+    {
+        _rigidBody = null;
     }
 
     public void Update(GameTime gameTime)

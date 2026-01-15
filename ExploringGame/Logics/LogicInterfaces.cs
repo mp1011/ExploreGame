@@ -24,6 +24,7 @@ public interface IActiveObject
 {
     void Initialize();
     void Update(GameTime gameTime);
+    void Stop();
 }
 
 

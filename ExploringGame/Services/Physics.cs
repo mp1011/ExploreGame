@@ -39,6 +39,11 @@ public class Physics
         _world.NarrowPhaseFilter = new CollisionModifier(_world.NarrowPhaseFilter);
     }
 
+    public void Remove(RigidBody body)
+    {
+        _world.Remove(body);
+    }
+    
     public RigidBody CreateMeshShape(Triangle[] triangles)
     {
         triangles = triangles.Select(p=>p.Invert()).ToArray();

@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
+using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ public class LevelData
     {
         WorldSegment = worldSegment;
         ShapeBuffers = shapeBuffers;
-        ActiveObjects = activeObjects;
+        ActiveObjects = activeObjects.OrderBy(p => p is SegmentTransitionController ? 1 : 0).ToArray();
         Initialized = false;
     }
 
@@ -36,6 +37,16 @@ public class LevelData
         Initialized = true;        
     }
 
+    public void Stop()
+    {
+        if (!Initialized)
+            return;
+
+        foreach (var obj in ActiveObjects)
+            obj.Stop();
+
+        Initialized = false;
+    }
     
     public void Update(GameTime gameTime)
     {

@@ -57,6 +57,11 @@ public class PhysicsTestShapeController : IShapeController<PhysicsTestShape>
         _body.AffectedByGravity = true;
     }
 
+    public void Stop()
+    {
+        _body = null;
+    }
+
     public void Update(GameTime gameTime)
     {
         Shape.Position = _body.Position.ToVector3();

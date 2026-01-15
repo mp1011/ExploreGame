@@ -5,6 +5,7 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace ExploringGame.LevelControl;
 
@@ -13,6 +14,7 @@ public class CurrentAndNextLevelData
     private readonly Game _game;
     private readonly ServiceContainer _serviceContainer;
     private readonly SetupColliderBodies _setupColliderBodies;
+    private readonly Physics _physics;
 
     public LevelData Next { get; private set; }
 
@@ -20,9 +22,10 @@ public class CurrentAndNextLevelData
 
     public TextureSheet CurrentTexture { get; set; }
 
-    public CurrentAndNextLevelData(Game game, SetupColliderBodies setupColliderBodies, ServiceContainer serviceContainer)
+    public CurrentAndNextLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, ServiceContainer serviceContainer)
     {
         _game = game;
+        _physics = physics;
         _serviceContainer = serviceContainer;
         _setupColliderBodies = setupColliderBodies;
     }
@@ -39,6 +42,18 @@ public class CurrentAndNextLevelData
     {
         if (Next == null)
             return;
+
+        if (Current != null)
+        {
+            Current.Stop();
+
+            foreach (var body in Current.WorldSegment.TraverseAllChildren()
+                                                     .Where(p=>p.ColliderBodies != null)
+                                                     .SelectMany(p=>p.ColliderBodies))
+            {                                                      
+                _physics.Remove(body);
+            }
+        }
 
         Current = Next;
 

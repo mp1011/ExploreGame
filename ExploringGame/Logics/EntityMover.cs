@@ -33,6 +33,11 @@ public class EntityMover : IActiveObject
         CollisionResponder.Subscribe(_body);
     }
 
+    public void Stop()
+    {
+        _body = null;
+    }
+
     public void Update(GameTime gameTime)
     {
         Motion.Update();

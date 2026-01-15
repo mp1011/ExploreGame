@@ -1,5 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.Rendering;
+using ExploringGame.Services;
+using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -36,6 +38,11 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
 
     public void Initialize()
     {
+    }
+
+    public void Stop()
+    {
+        On = false;
     }
 
     public void Update(GameTime gameTime)

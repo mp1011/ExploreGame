@@ -69,6 +69,10 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
         _transitions = Shape.Transitions.Select(p => new TransitionDetail(p)).ToArray();
     }
 
+    public void Stop()
+    {
+    }
+
     public void Update(GameTime gameTime)
     {
         foreach (var transition in _transitions)
