@@ -5,4 +5,4 @@
 - multiple instances of same shape type can share same vertices
 - stair climbing is akward
 - difficult to create rooms when they depend on eachother
-- segment transition is firing even when player is not inside sector
+- issue with lights when moving across segments

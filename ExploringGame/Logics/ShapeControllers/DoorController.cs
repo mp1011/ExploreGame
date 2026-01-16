@@ -2,6 +2,7 @@
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
@@ -21,28 +22,33 @@ public class DoorController : IShapeController<Door>
     private readonly Player _player;
     private readonly AudioService _audioService;
     private readonly Physics _physics;
+    private readonly GameState _gameState;
     private RigidBody _rigidBody;
     private AngularMotor _motor;
     private bool _closeSoundPlayed = true;
 
-    public DoorController(PlayerInput playerInput, Player player, AudioService audioService, Physics physics)
+    public DoorController(PlayerInput playerInput, Player player, AudioService audioService, Physics physics,
+        GameState gameState)
     {
         _physics = physics;
         _audioService = audioService;
         _playerInput = playerInput;
         _player = player;
+        _gameState = gameState;
     }
 
 
     public void Initialize()
     {
         _rigidBody = Shape.ColliderBodies.First();
+        Shape.Open = _gameState.GetBoolean(Shape.StateKey);
         //_motor = _rigidBody.Constraints.OfType<AngularMotor>().First();
     }
 
     public void Stop()
     {
         _rigidBody = null;
+        _gameState.Set(Shape.StateKey, Shape.Open);
     }
 
     public void Update(GameTime gameTime)

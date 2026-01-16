@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics;
+﻿using ExploringGame.LevelControl;
+using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -34,11 +35,12 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
     public LightController Controller { get; private set; }
     public bool On { get => Controller.On; set => Controller.On = value; }
 
+    public StateKey StateKey => StateKey.None;
+
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
         var controller = serviceContainer.Get<LightController>();
         controller.Shape = this;
-        controller.On = true;
         Controller = controller;
         return controller;
     }

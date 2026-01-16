@@ -27,6 +27,10 @@ public class PointLights
         if (_lights.Count >= MAX_LIGHTS)
             return null;
 
+        var existingIndex = _lights.FindIndex(p => p.Position == position);
+        if (existingIndex > -1)
+            return existingIndex;
+
         color ??= Color.White;
         _lights.Add(new PointLight(position, color.Value, intensity));
         RefreshArrays();

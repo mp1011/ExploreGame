@@ -68,6 +68,8 @@ public class Game1 : Game
         _physics = new Physics();
         _serviceContainer.Bind(_physics);
 
+        _serviceContainer.BindSingleton<GameState>();
+
         _serviceContainer.BindSingleton<TransitionShapesRegistrar>();      
         _serviceContainer.BindSingleton<CurrentAndNextLevelData>();
         _currentAndNextLevelData = _serviceContainer.Get<CurrentAndNextLevelData>();
@@ -101,6 +103,7 @@ public class Game1 : Game
 
         _serviceContainer.BindSingleton<DebugController>();
         _debugController = _serviceContainer.Get<DebugController>();
+
 
         base.Initialize();
     }
@@ -177,13 +180,13 @@ public class Game1 : Game
         simpleRoom.Depth = 10f;
         simpleRoom.Y = 2;
 
-        var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HAlign.Left));
+        var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HAlign.Left, StateKey.OfficeDoor1Open));
         door1.Place().OnFloor();
         door1.Z -= 3.0f;
         door1.X -= 2.0f;
         door1.Theme.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Red);
 
-        var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HAlign.Right));
+        var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HAlign.Right, StateKey.OfficeDoor2Open));
         door2.Place().OnFloor();
         door2.Z -= 3.0f;
         door2.X += 2.0f;

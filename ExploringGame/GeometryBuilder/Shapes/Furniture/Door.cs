@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics;
+﻿using ExploringGame.LevelControl;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Texture;
@@ -20,8 +21,11 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
     
     public bool Open { get; set; }
 
-    public Door(Shape parent, Angle closedDegrees, Angle openDegrees, HAlign hingeSide)
+    public StateKey StateKey { get; }
+
+    public Door(Shape parent, Angle closedDegrees, Angle openDegrees, HAlign hingeSide, StateKey stateKey)
     {
+        StateKey = stateKey;
         HingePosition = hingeSide;
         OpenAngle = openDegrees;
         ClosedAngle = closedDegrees;

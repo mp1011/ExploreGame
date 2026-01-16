@@ -92,6 +92,12 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
 
         if(transition.PlayerWithinExit)
         {
+            if(!transition.ExitShape.ContainsPoint(_player.Position))
+            {
+                transition.PlayerWithinExit = false;
+                return;
+            }
+
             var playerPos = _player.Position.AxisValue(transition.Axis);
             switch(transition.Transition.ExitSide)
             {

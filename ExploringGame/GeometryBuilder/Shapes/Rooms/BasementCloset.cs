@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using System;
@@ -29,13 +30,13 @@ public class BasementCloset : Shape
         {
             var closedAngle = new Angle(Side.North);
             var openAngle = new Angle(Side.East);
-            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HAlign.Left));
+            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HAlign.Left, stateKey: StateKey.OfficeDoor1Open));
         }
         else if (doorSide == Side.West)
         {
             var closedAngle = new Angle(Side.North);
             var openAngle = new Angle(Side.West);
-            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HAlign.Right));
+            _door = AddChild(new Door(this, closedDegrees: closedAngle, openDegrees: openAngle, hingeSide: HAlign.Right, stateKey: StateKey.OfficeDoor2Open));
         }
         else
             throw new ArgumentException();

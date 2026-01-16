@@ -1,8 +1,8 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.LevelControl;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
@@ -12,11 +12,15 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff
 
     private readonly PlayerInput _playerInput;
     private readonly Player _player;
+    private readonly GameState _gameState;
 
-    public LightSwitchController(PlayerInput playerInput, Player player)
+    public StateKey StateKey => Shape.StateKey;
+
+    public LightSwitchController(PlayerInput playerInput, Player player, GameState gameState)
     {
         _playerInput = playerInput;
         _player = player;
+        _gameState = gameState;
     }
 
     public LightSwitch Shape { get; set; }
@@ -35,11 +39,12 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff
 
     public void Initialize()
     {
-        On = true;
+        this.LoadState(_gameState);
     }
 
     public void Stop()
     {
+        this.SaveState(_gameState);
     }
 
     public void Update(GameTime gameTime)

@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -61,6 +62,7 @@ public class BasementOffice : Room
                 doorOpen: new Angle(Side.East),
                 hingePosition: HAlign.Left,
                 height: Height,
+                doorStateKey: StateKey.OfficeDoor3Open,
                 depth: Measure.Inches(30.5f),
                 width: 0.2f),
             oilTankRoom,

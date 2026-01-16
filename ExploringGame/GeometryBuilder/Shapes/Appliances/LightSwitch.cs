@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics;
+﻿using ExploringGame.LevelControl;
+using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -11,8 +12,10 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>
     public override Theme Theme => new Theme(Color.Red);
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
+    public StateKey StateKey { get; }
+
     public List<IOnOff> ControlledObjects { get; } = new List<IOnOff>();
-    public LightSwitch(Room room)
+    public LightSwitch(Room room, StateKey key)
     {
         room.AddChild(this);
 
@@ -21,6 +24,7 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>
         Depth = Measure.Inches(5f);
 
         Position = room.Position;
+        StateKey = key;
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

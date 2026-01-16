@@ -70,17 +70,22 @@
 	[x] add a room connection to the upper room and verify it looks right
 	[x] stairs need sloped ceiling
 
-[ ] world segment transitions
+[x] world segment transitions
 	[x] one-way transition
-	[ ] player backs out
-	[ ] colliders properly loaded
-	[ ] multiple transitions
+	[x] player backs out
+	[x] colliders properly loaded
+	[ ] active object state preserved
 
-- write basement dimensions to a text file
-- create alt constructor for Basement which only loads the shapes needed and which reads the size/pos from this file
-- set shapes for upstairs segment
-- load the triangle buffers
-- swap buffer when player hits transfer spot++++++++++++++++++++
+- world state object
+	specific keys:
+		basement light switch
+		door1 open
+		door2 open
+		door3 open
+
+	when exitting an area, don't change lights (original will stay)
+	remove light logic from on/off property and move to Update method, so it only runs when active
+	light should not "double up" since it will recall light switch state
 
 
 

@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using System.Runtime.CompilerServices;
@@ -36,7 +37,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
                 SetSide(Side.East, _office.Exit.GetSide(Side.West));
                 SetSide(Side.North, _office.Exit.GetSide(Side.North) - Measure.Inches(31));
 
-                var lightSwitch = new LightSwitch(this);
+                var lightSwitch = new LightSwitch(this, StateKey.OfficeLightOn);
                 lightSwitch.Place().OnSideInner(Side.East);
                 lightSwitch.SetSide(Side.North, GetSide(Side.North) + Measure.Inches(22));
                 lightSwitch.ControlledObjects.AddRange(_office.Lights);

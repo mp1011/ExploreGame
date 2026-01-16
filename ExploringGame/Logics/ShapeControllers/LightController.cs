@@ -1,9 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.LevelControl;
 using ExploringGame.Rendering;
-using ExploringGame.Services;
-using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
@@ -36,24 +34,17 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
         }
     }
 
+    public StateKey StateKey => StateKey.None;
+
     public void Initialize()
     {
     }
 
     public void Stop()
     {
-        On = false;
     }
 
     public void Update(GameTime gameTime)
-    {
-        if(!On && Keyboard.GetState().IsKeyDown(Keys.L))
-        {
-            On = true;
-        }
-        if (On && Keyboard.GetState().IsKeyDown(Keys.O))
-        {
-            On = false;
-        }
+    {       
     }
 }
