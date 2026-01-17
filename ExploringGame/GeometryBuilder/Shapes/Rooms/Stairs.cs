@@ -85,6 +85,8 @@ public abstract class Stairs : Room
             stairPosition = step.GetSide(StartSide.Opposite());
             lastStep = step;
         }
+
+        _steps[^1].SetSideUnanchored(StartSide.Opposite(), TopFloor.GetSide(StartSide));
     }
 }
 

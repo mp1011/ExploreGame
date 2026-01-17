@@ -281,7 +281,7 @@ public class Physics
         private void HandleStep(RigidBodyShape playerShape, RigidBodyShape stepShape)
         {
             var playerBody = playerShape.RigidBody;
-            playerBody.Velocity += new JVector(0, 2.0f, 0); // Adjust Y value as needed for your step height
+            playerBody.Velocity += new JVector(0, 3.0f, 0); // Adjust Y value as needed for your step height
         }
     }
 }

@@ -74,20 +74,15 @@
 	[x] one-way transition
 	[x] player backs out
 	[x] colliders properly loaded
-	[ ] active object state preserved
-
-- world state object
-	specific keys:
-		basement light switch
-		door1 open
-		door2 open
-		door3 open
-
-	when exitting an area, don't change lights (original will stay)
-	remove light logic from on/off property and move to Update method, so it only runs when active
-	light should not "double up" since it will recall light switch state
+	[x] active object state preserved
 
 
+[ ] define rooms
+[ ] better texture images
+[ ] improve texture usage
+
+
+[ ] 
 
 
 

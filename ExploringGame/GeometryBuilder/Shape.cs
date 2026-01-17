@@ -9,14 +9,13 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-
 public abstract class Shape
 {
     public virtual IColliderMaker ColliderMaker => null;
 
     public RigidBody[] ColliderBodies { get; set; }
 
-    public Shape? Parent { get; private set; }
+    public Shape Parent { get; private set; }
 
     private List<Shape> _children = new();
 

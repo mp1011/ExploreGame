@@ -39,9 +39,6 @@ public class Room : Shape
 
     public void AddConnectingRoom(RoomConnection connection, bool adjustPlacement = true)
     {
-        if (_roomConnections.Any(p => p.Side == connection.Side))
-            throw new System.NotSupportedException("multiple connections on the same side are not yet supported");
-        
         if(connection.Room != this)
             throw new System.ArgumentException("connection.Room must be this room");
 
@@ -77,10 +74,11 @@ public class Room : Shape
     {
         var shape = BuildCuboid();
         shape = new SideRemover().Execute(shape, OmitSides);
+        var originalShape = shape;
 
         foreach(var connection in _roomConnections)
             shape = new RemoveSurfaceRegion().Execute(shape, connection.Side, 
-                connection.CalcCutoutPlacement(), ViewFrom);
+                connection.CalcCutoutPlacement(shape), ViewFrom);
 
         shape = new RemoveSurfaceRegion().RemoveCutouts(this, shape);
 
@@ -131,14 +129,25 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         }
     }
     
-    public Placement2D CalcCutoutPlacement()
+    public Placement2D CalcCutoutPlacement(Triangle[] triangles)
     {
+        var vertices = triangles.Where(p => p.Side == Side).SelectMany(p => p.Vertices).ToArray();
+        if (!vertices.Any())
+            return new Placement2D(0, 0, 0, 0);
+
+        var wallTop = vertices.Max(p => p.Y);
+        var wallBottom = vertices.Min(p => p.Y);
+        var wallWest = vertices.Min(p => p.X);
+        var wallEast = vertices.Max(p => p.X);
+        var wallSouth = vertices.Max(p => p.Z);
+        var wallNorth = vertices.Min(p => p.Z);
+
         float left, top, right, bottom;
 
-        var thisFloor = Room.GetSide(Side.Bottom);
+        var thisFloor = wallBottom;
         var otherFloor = Other.GetSide(Side.Bottom);
 
-        var thisCeiling = Room.GetSide(Side.Top);
+        var thisCeiling = wallTop;
         var otherCeiling = Other.GetSide(Side.Top);
 
         top = thisCeiling - otherCeiling;
@@ -149,20 +158,20 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         switch(Side)
         {
             case Side.South:
-                left = Room.GetSide(Side.East) - Other.GetSide(Side.East);
-                right = Other.GetSide(Side.West) - Room.GetSide(Side.West);
+                left = wallEast - Other.GetSide(Side.East);
+                right = Other.GetSide(Side.West) - wallWest;
                 break;
             case Side.North:
-                left = Other.GetSide(Side.West) - Room.GetSide(Side.West);
-                right = Room.GetSide(Side.East) - Other.GetSide(Side.East);
+                left = Other.GetSide(Side.West) - wallWest;
+                right = wallEast - Other.GetSide(Side.East);
                 break;
             case Side.West:
-                left = Room.GetSide(Side.South) - Other.GetSide(Side.South);
-                right = Other.GetSide(Side.North) - Room.GetSide(Side.North);
+                left = wallSouth - Other.GetSide(Side.South);
+                right = Other.GetSide(Side.North) - wallNorth;
                 break;
             case Side.East:
-                left = Other.GetSide(Side.North) - Room.GetSide(Side.North);
-                right = Room.GetSide(Side.South) - Other.GetSide(Side.South);
+                left = Other.GetSide(Side.North) - wallNorth;
+                right = wallSouth - Other.GetSide(Side.South);
                 break;
             default:
                 throw new System.NotImplementedException("fix me");

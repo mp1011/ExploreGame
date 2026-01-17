@@ -133,9 +133,42 @@ public class Game1 : Game
     private WorldSegment CreateMainShape()
     {
         return _serviceContainer.Get<BasementWorldSegment>();
+        //return TwoHallTest();
     }
 
-    public WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
+    private WorldSegment TwoHallTest()
+    {
+        var ws = new WorldSegment();
+        var room = new Room(ws, new BasementRoomTheme());
+        room.Width = 10;
+        room.Height = 3f;
+        room.Depth = 10f;
+
+        var south1 = room.Copy(width: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, south1, Side.South, HAlign.Left));
+        var south2 = room.Copy(width: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, south2, Side.South, HAlign.Right));
+
+        var north1 = room.Copy(width: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, north1, Side.North, HAlign.Left));
+        var north2 = room.Copy(width: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, north2, Side.North, HAlign.Right));
+
+        var west1 = room.Copy(depth: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, west1, Side.West, HAlign.Left));
+        var west2 = room.Copy(depth: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, west2, Side.West, HAlign.Right));
+
+        var east1 = room.Copy(depth: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, east1, Side.East, HAlign.Left));
+        var east2 = room.Copy(depth: 2f);
+        room.AddConnectingRoom(new RoomConnection(room, east2, Side.East, HAlign.Right));
+
+
+        return ws;
+    }
+
+    private WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
 
     private WorldSegment CircleCutoutTest()
     {

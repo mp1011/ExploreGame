@@ -17,12 +17,12 @@ class UpstairsWorldSegment : WorldSegment
         transitionShapesRegistrar.RecallPositionAndSize(basement);
         basement.LoadChildren();
 
-        var dummyRoom = new Room(this, new Theme(Color.Purple));
-        dummyRoom.Position = upstairsHall.Position;
-        dummyRoom.Size = upstairsHall.Size;
-        dummyRoom.Depth = 2.0f;
-        dummyRoom.Place().OnSideOuter(Side.West, upstairsHall);
-        upstairsHall.AddConnectingRoom(new RoomConnection(upstairsHall, dummyRoom, Side.West));
+        //var dummyRoom = new Room(this, new Theme(Color.Purple));
+        //dummyRoom.Position = upstairsHall.Position;
+        //dummyRoom.Size = upstairsHall.Size;
+        //dummyRoom.Depth = 2.0f;
+        //dummyRoom.Place().OnSideOuter(Side.West, upstairsHall);
+        //upstairsHall.AddConnectingRoom(new RoomConnection(upstairsHall, dummyRoom, Side.West));
        
         Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }

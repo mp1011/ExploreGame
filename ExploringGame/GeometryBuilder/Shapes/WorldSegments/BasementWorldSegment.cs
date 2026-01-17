@@ -19,7 +19,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             upstairsHall.Height = Measure.Feet(8);
             upstairsHall.Width = 10f;
             upstairsHall.Depth = 10f;
-            upstairsHall.SetSide(Side.Bottom, basement.GetSide(Side.Top));
+            upstairsHall.SetSide(Side.Bottom, basement.GetSide(Side.Top) + Measure.Inches(5));
             upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
 
             upstairsHall.LoadChildren();
@@ -28,6 +28,10 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 
             upstairsHall.X = basement.X;
             upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
+            upstairsHall.SetSideUnanchored(Side.South, basement.GetSide(Side.South) + Measure.Feet(3));
+            upstairsHall.SetSideUnanchored(Side.West, basement.GetSide(Side.West) + Measure.Feet(5));
+            upstairsHall.SetSideUnanchored(Side.East, basement.GetSide(Side.East) - Measure.Feet(3));
+
 
             Transitions = new[] { new WorldSegmentTransition<UpstairsWorldSegment>(basement.Stairs, Side.South) };
 

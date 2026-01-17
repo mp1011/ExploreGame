@@ -11,7 +11,7 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
 {
     public override ViewFrom ViewFrom => ViewFrom.None;
 
-    public virtual WorldSegmentTransition[] Transitions { get; }
+    public virtual WorldSegmentTransition[] Transitions { get; } = Array.Empty<WorldSegmentTransition>();
 
     public SegmentTransitionController Controller => throw new NotImplementedException();
 
