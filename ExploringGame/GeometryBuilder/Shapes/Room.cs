@@ -68,6 +68,12 @@ public class Room : Shape
         doorJunction.AddConnectingRoom(new RoomConnection(doorJunction, other, side));
     }
 
+    public void AddConnectingRoomWithJunction(DoorJunction doorJunction, Room other, Side side, HAlign align, float offset = 0f)
+    {
+        AddConnectingRoom(new RoomConnection(this, doorJunction, side, align, offset));
+        doorJunction.AddConnectingRoom(new RoomConnection(doorJunction, other, side));
+    }
+
     public RoomConnection[] GetRoomConnections(Side side) => _roomConnections.Where(p => p.Side == side).ToArray();
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

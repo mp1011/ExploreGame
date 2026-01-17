@@ -26,7 +26,20 @@ public class DoorJunction : Room
     protected override void BeforeBuild()
     {
         _door.Position = Position;
-        _door.X = GetSide(Side.East) + _door.Width / 2f;
-        _door.Z += (_door.Width / 2f);
+
+        // todo, this isnt right
+        if(_door.ClosedAngle.Degrees == 0f)
+        {
+            _door.X = GetSide(Side.East) + _door.Width / 2f;
+            _door.Z += (_door.Width / 2f);
+        }
+        else if(_door.ClosedAngle.Degrees == 90f)
+        {
+            _door.X += _door.Width;
+        }
+        else if (_door.ClosedAngle.Degrees == 270f)
+        {
+            _door.X -= _door.Width;
+        }
     }
 }
