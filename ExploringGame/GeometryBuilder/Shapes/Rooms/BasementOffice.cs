@@ -50,14 +50,14 @@ public class BasementOffice : Room
         ceilingBar.SetSideUnanchored(Side.East, eastPart.GetSide(Side.East));
         ceilingBar.SetSideUnanchored(Side.West, westPart.GetSide(Side.West));
 
-        var oilTankRoom = new OilTankRoom(_worldSegment);
+        var oilTankRoom = new OilTankRoom(WorldSegment);
         oilTankRoom.Height = Height;
         oilTankRoom.Width = Width - 2.5f;
         oilTankRoom.Depth = 1.9f;
 
         eastPart2.AddConnectingRoomWithJunction(
             new DoorJunction(
-                worldSegment: _worldSegment,
+                worldSegment: WorldSegment,
                 doorClose: new Angle(Side.North),
                 doorOpen: new Angle(Side.East),
                 hingePosition: HAlign.Left,

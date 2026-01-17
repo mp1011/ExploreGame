@@ -5,24 +5,21 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-public class Triangle2DGroup
+public class ConvexHull
 {
-    public Side Side { get; }
+    public Vector2[] Vertices { get; }
 
-    public Triangle2DGroup(Triangle2D[] triangles)
+    public ConvexHull(Triangle2D[] triangles)
     {
-        Triangles = triangles;
-        Side = triangles[0].Original.Side;
+        var side = triangles[0].Original.Side;
         foreach (var tri in triangles)
         {
-            if (tri.Original.Side != Side)
+            if (tri.Original.Side != side)
                 throw new System.Exception("All triangles in group must be from the same side");
         }
+
+        Vertices = CalcConvexHull(triangles).ToArray();
     }
-
-    public Triangle2D[] Triangles { get; private set; }
-
-    public IEnumerable<Vector2> Vertices => Triangles.SelectMany(p => p.Vertices);
 
     public float Left
     {
@@ -30,8 +27,7 @@ public class Triangle2DGroup
         set
         {
             var originalLeft = Left;
-            var verts = Vertices.Where(p=>p.X == originalLeft);
-            ReplacePoints(verts, value, Axis.X);
+            ReplacePoints(originalLeft, value, Axis.X);
         }
     }
 
@@ -41,8 +37,7 @@ public class Triangle2DGroup
         set
         {
             var originalRight = Right;
-            var verts = Vertices.Where(p => p.X == originalRight);
-            ReplacePoints(verts, value, Axis.X);
+            ReplacePoints(originalRight, value, Axis.X);
         }
     }
     public float Top
@@ -51,8 +46,7 @@ public class Triangle2DGroup
         set
         {
             var originalTop = Top;
-            var verts = Vertices.Where(p => p.Y == originalTop);
-            ReplacePoints(verts, value, Axis.Y);
+            ReplacePoints(originalTop, value, Axis.Y);
         }
     }
     public float Bottom
@@ -61,14 +55,23 @@ public class Triangle2DGroup
         set
         {
             var originalBottom = Bottom;
-            var verts = Vertices.Where(p => p.Y == originalBottom);
-            ReplacePoints(verts, value, Axis.Y);
+            ReplacePoints(originalBottom, value, Axis.Y);
         }
     }
 
-    public IEnumerable<Vector2> ConvexHull()
+    private void ReplacePoints(float originalValue, float newValue, Axis axis)
     {
-        var points = Vertices.Distinct().OrderBy(p => p.X).ThenBy(p => p.Y).ToList();
+        for(int i =0; i< Vertices.Length; i++)
+        {
+            if (Vertices[i].AxisValue(axis) == originalValue)
+                Vertices[i] = Vertices[i].Set(axis, newValue);
+        }             
+    }
+
+    private IEnumerable<Vector2> CalcConvexHull(IEnumerable<Triangle2D> triangles)
+    {
+        var vertices = triangles.SelectMany(p=>p.Vertices).ToArray();
+        var points = vertices.Distinct().OrderBy(p => p.X).ThenBy(p => p.Y).ToList();
         if (points.Count <= 1) return points;
 
         List<Vector2> hull = new();
@@ -97,16 +100,4 @@ public class Triangle2DGroup
         static float Cross(Vector2 o, Vector2 a, Vector2 b)
             => (a.X - o.X) * (b.Y - o.Y) - (a.Y - o.Y) * (b.X - o.X);
     }
-
-    private void ReplacePoints(IEnumerable<Vector2> vertices, float newValue, Axis axis)
-    {
-        foreach(var originalVertex in vertices)
-        {
-            var newVertex = originalVertex.Set(axis, newValue);
-
-            foreach (var triangle in Triangles)
-                triangle.ReplaceVertex(originalVertex, newVertex);
-        }
-    }
-
 }

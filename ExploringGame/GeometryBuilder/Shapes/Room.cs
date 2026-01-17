@@ -10,7 +10,8 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 
 public class Room : Shape
 {
-    protected WorldSegment _worldSegment;
+    public WorldSegment WorldSegment { get; private set; }
+
     private Theme _theme = Theme.Missing;
     public override Theme Theme => _theme;
 
@@ -28,7 +29,7 @@ public class Room : Shape
     {
         if (theme != null)
             _theme = theme;
-        _worldSegment = worldSegment;
+        WorldSegment = worldSegment;
         worldSegment.AddChild(this);
     }
 
@@ -96,7 +97,7 @@ public class Room : Shape
 
     public Room Copy(float? height = null, float? width = null, float? depth = null)
     {
-        var room = new Room(_worldSegment);
+        var room = new Room(WorldSegment);
         room._theme = Theme;
         room.Position = Position;
         room.Size = Size;

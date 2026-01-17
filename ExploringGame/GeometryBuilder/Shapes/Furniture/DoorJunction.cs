@@ -12,6 +12,38 @@ public class DoorJunction : Room
 {
     private Door _door;
 
+    public DoorJunction(Room room, Side wallSide, HAlign hingePosition, StateKey doorStateKey) : base(room.WorldSegment)
+    {
+        if(wallSide.GetAxis() == Axis.Z)
+        {
+            Width = Door.StandardWidth;
+            Depth = 0.2f;
+            Height = room.Height;
+        }
+        else
+        {
+            Depth = Door.StandardWidth;
+            Width = 0.2f;
+            Height = room.Height;
+        }
+
+        Angle doorOpen, doorClose;
+
+        if(hingePosition == HAlign.Left)
+        {
+            doorClose = new Angle(wallSide).RotateClockwise(90);
+            doorOpen = doorClose.RotateClockwise(90);
+        }
+        else
+        {
+            doorClose = new Angle(wallSide).RotateCounterClockwise(90);
+            doorOpen = doorClose.RotateCounterClockwise(90);
+        }
+
+        _door = new Door(this, doorClose, doorOpen, hingePosition, doorStateKey);
+        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
+    }
+
     public DoorJunction(WorldSegment worldSegment, Angle doorClose, Angle doorOpen, HAlign hingePosition, StateKey doorStateKey, float width, float height, float depth)
         : base(worldSegment)
     {
@@ -19,7 +51,6 @@ public class DoorJunction : Room
         Height = height;
         Depth = depth;
         _door = new Door(this, doorClose, doorOpen, hingePosition, doorStateKey);
-
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
     }
 

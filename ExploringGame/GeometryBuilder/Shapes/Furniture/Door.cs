@@ -11,6 +11,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 {
     private float _yGap = Measure.Inches(0.2f);
 
+    public static float StandardWidth => Measure.Inches(30.5f);
+
     public Angle ClosedAngle { get; }
     public Angle OpenAngle { get; }
     public HAlign HingePosition { get; }
@@ -33,7 +35,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
         parent.AddChild(this);
 
         // default door angle is west
-        Width = Measure.Inches(30.5f);
+        Width = StandardWidth;
         Depth = Measure.Inches(1.0f);
 
         Height = parent.Height - _yGap * 2;

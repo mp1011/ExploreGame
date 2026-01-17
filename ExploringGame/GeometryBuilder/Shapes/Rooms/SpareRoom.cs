@@ -5,11 +5,11 @@ using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
 
-public class KidsBedroom : Room
+public class SpareRoom : Room
 {
     private UpstairsHall _upstairsHall;
 
-    public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) : base(worldSegment)
+    public SpareRoom(WorldSegment worldSegment, UpstairsHall upstairsHall) : base(worldSegment)
     {
         _upstairsHall = upstairsHall;
         Width = Measure.Feet(10);
@@ -20,11 +20,11 @@ public class KidsBedroom : Room
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(WorldSegment, doorClose: new Angle(Side.East), doorOpen: new Angle(Side.South), HAlign.Right, StateKey.KidsBedroomDoorOpen,
-            width: Measure.Inches(30.5f), depth: 0.2f, height: Height), this, Side.South, HAlign.Left);
+            new DoorJunction(_upstairsHall.SouthHall, Side.West, HAlign.Left, StateKey.SpareRoomDoorOpen),        
+            this, Side.West, HAlign.Left, 3.0f);
 
-        SetSideUnanchored(Side.West, GetSide(Side.West) + 1.5f);
+        SetSideUnanchored(Side.South, GetSide(Side.South) - 1.5f);
     }
 
-    public override Theme Theme =>  new UpstairsHallTheme();
+    public override Theme Theme => new UpstairsHallTheme();
 }

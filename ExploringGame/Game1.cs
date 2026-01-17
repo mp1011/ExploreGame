@@ -21,6 +21,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame;
 
@@ -78,9 +79,7 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
-
         
-
         _playerInput = new PlayerInput();
         _headBob = new HeadBob();
         _player = _serviceContainer.Get<Player>();
@@ -91,7 +90,8 @@ public class Game1 : Game
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.BindTransient<DoorController>();
 
-        _mainShape = CreateMainShape();                        
+        _mainShape = CreateMainShape();
+        _player.Position = _mainShape.Children.First().Position;
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
 
@@ -126,14 +126,14 @@ public class Game1 : Game
         _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
             GraphicsDevice, Content, _currentAndNextLevelData.CurrentTexture.Texture);
 
-        _renderEffect = _pointLightEffect;
+        _renderEffect = _basicEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
     private WorldSegment CreateMainShape()
     {
-        return _serviceContainer.Get<BasementWorldSegment>();
-        //return TwoHallTest();
+        return _serviceContainer.Get<UpstairsWorldSegment>();
+       // return TwoHallTest();
     }
 
     private WorldSegment TwoHallTest()
@@ -144,25 +144,31 @@ public class Game1 : Game
         room.Height = 3f;
         room.Depth = 10f;
 
-        var south1 = room.Copy(width: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, south1, Side.South, HAlign.Left));
-        var south2 = room.Copy(width: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, south2, Side.South, HAlign.Right));
+        //var south1 = room.Copy(width: 2f);
+        //room.AddConnectingRoom(new RoomConnection(room, south1, Side.South, HAlign.Left));
+        //var south2 = room.Copy(width: 2f);
+        //room.AddConnectingRoom(new RoomConnection(room, south2, Side.South, HAlign.Right));
 
-        var north1 = room.Copy(width: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, north1, Side.North, HAlign.Left));
-        var north2 = room.Copy(width: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, north2, Side.North, HAlign.Right));
+        //var north1 = room.Copy(width: 2f);
+        //room.AddConnectingRoom(new RoomConnection(room, north1, Side.North, HAlign.Left));
+        //var north2 = room.Copy(width: 2f);
+        //room.AddConnectingRoom(new RoomConnection(room, north2, Side.North, HAlign.Right));
+
+        // Both sides indent = gap
+        // left only = gap
+        // right only = ok
+        // neither ok
+        // left only, no right - ok
 
         var west1 = room.Copy(depth: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, west1, Side.West, HAlign.Left));
+        room.AddConnectingRoom(new RoomConnection(room, west1, Side.West, HAlign.Left, Offset: 1.0f));
         var west2 = room.Copy(depth: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, west2, Side.West, HAlign.Right));
+        room.AddConnectingRoom(new RoomConnection(room, west2, Side.West, HAlign.Right, Offset: -0.0f));
 
-        var east1 = room.Copy(depth: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, east1, Side.East, HAlign.Left));
-        var east2 = room.Copy(depth: 2f);
-        room.AddConnectingRoom(new RoomConnection(room, east2, Side.East, HAlign.Right));
+        //var east1 = room.Copy(depth: 2f);
+        //room.AddConnectingRoom(new RoomConnection(room, east1, Side.East, HAlign.Left));
+        //var east2 = room.Copy(depth: 2f);
+        //room.AddConnectingRoom(new RoomConnection(room, east2, Side.East, HAlign.Right));
 
 
         return ws;

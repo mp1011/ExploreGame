@@ -80,7 +80,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
             var wall8 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(35) });
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
-            Stairs = AddChild(new BasementStairs(_worldSegment, bottomFloor: this, topFloor: _upstairs));
+            Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: _upstairs));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
 
             if (!_limitedView)

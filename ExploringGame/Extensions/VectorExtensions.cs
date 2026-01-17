@@ -16,6 +16,11 @@ public static class VectorExtensions
         return axis switch { Axis.X => vector.X, Axis.Y => vector.Y, Axis.Z => vector.Z, _ => throw new ArgumentException("invalid axis") };
     }
 
+    public static float AxisValue(this Vector2 vector, Axis axis)
+    {
+        return axis switch { Axis.X => vector.X, Axis.Y => vector.Y, _ => throw new ArgumentException("invalid axis") };
+    }
+
     public static Vector3 SetY(this Vector3 vector, float y) => new Vector3(vector.X, y, vector.Z);
 
     public static bool IsValidPositive(this Vector3 vector)
@@ -26,15 +31,26 @@ public static class VectorExtensions
     }
     public static Vector3 Center(this IEnumerable<Vector3> points)
     {
-        if (points == null || !points.Any())
-            return Vector3.Zero;
+        Vector3 min = points.First();
+        Vector3 max = points.First();
 
-        Vector3 sum = Vector3.Zero;
+        foreach (var p in points)
+        {
+            min = Vector3.Min(min, p);
+            max = Vector3.Max(max, p);
+        }
 
-        foreach (var v in points)
-            sum += v;
+        return (min + max) * 0.5f;
 
-        return sum / points.Count();
+        //if (points == null || !points.Any())
+        //    return Vector3.Zero;
+
+        //Vector3 sum = Vector3.Zero;
+
+        //foreach (var v in points)
+        //    sum += v;
+
+        //return sum / points.Count();
     }
 
     public static Vector2 As2D(this Vector3 vector, Side side)

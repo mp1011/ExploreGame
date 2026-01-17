@@ -11,7 +11,7 @@ internal class TriangleSubtracter
 {
     private const int mult = 100000;
 
-    public Triangle2D[] Subtract(Triangle2D triangle, Triangle2DGroup cutout)
+    public Triangle2D[] Subtract(Triangle2D triangle, ConvexHull cutout)
     {        
         var trianglePath = new Paths64
         {
@@ -27,7 +27,7 @@ internal class TriangleSubtracter
 
         var cutoutPath = new Paths64
         {
-            new Path64(cutout.ConvexHull().Select(p=> new Point64(p.X * mult, p.Y * mult))),
+            new Path64(cutout.Vertices.Select(p=> new Point64(p.X * mult, p.Y * mult))),
         };
 
         var result = Clipper.Difference(trianglePath, cutoutPath, FillRule.NonZero);

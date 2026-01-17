@@ -20,7 +20,7 @@ public class Bedroom : Room
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(_worldSegment, new Angle(Side.West), new Angle(Side.South), HAlign.Left, StateKey.BedroomDoorOpen,
+            new DoorJunction(WorldSegment, new Angle(Side.West), new Angle(Side.South), HAlign.Left, StateKey.BedroomDoorOpen,
             width: Measure.Inches(30.5f), depth: 0.2f, height: Height), this, Side.South, HAlign.Right);
 
         SetSideUnanchored(Side.East, GetSide(Side.East) - 1.5f);

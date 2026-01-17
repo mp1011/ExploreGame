@@ -23,6 +23,10 @@ class UpstairsWorldSegment : WorldSegment
         var kidsBedroom = new KidsBedroom(this, upstairsHall);
         kidsBedroom.LoadChildren();
 
+        var spareRoom = new SpareRoom(this, upstairsHall);
+        spareRoom.LoadChildren();
+
+        upstairsHall.LoadChildren();
 
         Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }

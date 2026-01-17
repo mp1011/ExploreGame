@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Extensions;
 using System;
+using System.Diagnostics.Metrics;
 
 namespace ExploringGame.GeometryBuilder;
 
@@ -50,4 +51,6 @@ public record Angle
         _ => throw new ArgumentException("invalid side")
     })
     { }
+
+    public static implicit operator Angle(Side value) => new Angle(value);
 }
