@@ -1,16 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 
 namespace ExploringGame.Rendering;
 
-record PointLight(Vector3 Position, Color Color, float Intensity);
+public record PointLight(int Index, Vector3 Position, Color Color, float Intensity)
+{
+    public bool On => Intensity > 0f;
+
+    public PointLight TurnOff() => new PointLight(Index, Vector3.Zero, Color.White, 0f);
+
+    public static PointLight DefaultOff => new PointLight(-1, Vector3.Zero, Color.White, 0f);
+}
 
 public class PointLights
 {
     public const int MAX_LIGHTS = 10;
 
-    private List<PointLight> _lights = new List<PointLight>();
+    private PointLight[] _lights;
 
     public Vector3[] Positions { get; private set; }
     public Vector3[] Colors { get; private set; }
@@ -19,27 +26,35 @@ public class PointLights
 
     public PointLights()
     {
+        _lights = Enumerable.Range(0, MAX_LIGHTS)
+            .Select(p => new PointLight(p, Vector3.Zero, Color.White, 0f))
+            .ToArray();
+
         RefreshArrays();
     }
 
-    public int? AddLight(Vector3 position, Color? color = null, float intensity = 1.0f)
-    {
-        if (_lights.Count >= MAX_LIGHTS)
-            return null;
+    public PointLight AddLight(Vector3 position, Color? color = null, float intensity = 1.0f)
+    {        
+        var existing = _lights.FirstOrDefault(p => p.Position == position && p.Color == color && p.Intensity == intensity);
 
-        var existingIndex = _lights.FindIndex(p => p.Position == position);
-        if (existingIndex > -1)
-            return existingIndex;
+        if (existing != null)
+            return existing ?? PointLight.DefaultOff;
 
-        color ??= Color.White;
-        _lights.Add(new PointLight(position, color.Value, intensity));
+        var firstFree = _lights.FirstOrDefault(p => !p.On);
+        if (firstFree == null)
+            return PointLight.DefaultOff;
+
+        _lights[firstFree.Index] = new PointLight(firstFree.Index, position, color ?? Color.White, intensity);
         RefreshArrays();
-        return _lights.Count - 1;
+        return _lights[firstFree.Index];
     }
 
     public void RemoveLight(int index)
     {
-        _lights.RemoveAt(index);
+        if (index < 0)
+            return;
+
+        _lights[index] = _lights[index].TurnOff();
         RefreshArrays();
     }
 

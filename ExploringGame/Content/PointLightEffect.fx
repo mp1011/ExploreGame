@@ -1,5 +1,5 @@
 // Minimal point light effect for MonoGame
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 10
 float4x4 World;
 float4x4 View;
 float4x4 Projection;

@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Config;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
@@ -40,5 +41,13 @@ public class UpstairsHall : Room
         var linenCloset = Copy(width: Measure.Feet(1), depth: Door.StandardWidth);
         SouthHall.AddConnectingRoomWithJunction(new DoorJunction(SouthHall, Side.West, HAlign.Left, StateKey.LinenClosetDoorOpen),
             other: linenCloset, Side.West, HAlign.Left, offset: 0.2f);
+
+        var hallLight = new HighHatLight(SouthHall, SouthHall.X, SouthHall.Z);
+
+        var hallLightSwitch = new LightSwitch(this, StateKey.HallLightOn);
+        hallLightSwitch.ControlledObjects.Add(hallLight);
+
+        hallLightSwitch.Position = Position;
+        hallLightSwitch.Place().OnSideInner(Side.West);
     }
 }

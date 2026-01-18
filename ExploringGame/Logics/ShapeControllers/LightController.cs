@@ -18,18 +18,19 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
 
     public Vector3 LightPosition => Shape.Position + new Vector3(0, -Shape.Height/2f, 0);
 
-    private int? _lightIndex;
+    private PointLight _light = PointLight.DefaultOff;
+
     public bool On
     {
-        get => _lightIndex.HasValue;
+        get => _light.On;
         set
         {
-            if (value && !_lightIndex.HasValue)
-                _lightIndex = _pointLights.AddLight(LightPosition);
-            else if (!value && _lightIndex.HasValue)
+            if (value && !_light.On)
+                _light = _pointLights.AddLight(LightPosition, intensity: Shape.Intensity);
+            else if (!value && _light.On)
             {
-                _pointLights.RemoveLight(_lightIndex.Value);
-                _lightIndex = null;
+                _pointLights.RemoveLight(_light.Index);
+                _light = _light.TurnOff();
             }
         }
     }

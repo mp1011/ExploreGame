@@ -14,6 +14,8 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
 
     public Side ParentCutoutSide => Side.Top;
 
+    public float Intensity => 0.6f;
+
     Triangle[] ICutoutShape.Build() => BuildInternal(QualityLevel.Basic);
 
     public HighHatLight(Room room, float x, float z)
