@@ -260,4 +260,22 @@ public static class VectorExtensions
     public static Vector3 ToVector3(this JVector v) => new Vector3(v.X, v.Y, v.Z);
     public static JVector ToJVector(this Vector3 v) => new JVector(v.X, v.Y, v.Z);
 
+    public static Winding WindingNumber(this Vector2[] vertices)
+    {
+        if (vertices == null || vertices.Length < 3)
+            throw new ArgumentException("At least 3 vertices are required.");
+
+        float signedArea = 0f;
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            Vector2 a = vertices[i];
+            Vector2 b = vertices[(i + 1) % vertices.Length];
+
+            signedArea += (b.X - a.X) * (b.Y + a.Y);
+        }
+
+        // Negative = clockwise, Positive = counterclockwise
+        return signedArea > 0f ? Winding.Clockwise : Winding.CounterClockwise;
+    }
 }

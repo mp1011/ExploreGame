@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-public class ConvexHull
+public class ConvexHull : IPolygon2D
 {
     public Vector2[] Vertices { get; }
 
@@ -58,6 +58,8 @@ public class ConvexHull
             ReplacePoints(originalBottom, value, Axis.Y);
         }
     }
+
+    IEnumerable<Vector2> IPolygon2D.Vertices => Vertices;
 
     private void ReplacePoints(float originalValue, float newValue, Axis axis)
     {

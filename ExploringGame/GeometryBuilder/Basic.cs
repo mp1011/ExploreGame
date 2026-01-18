@@ -29,6 +29,11 @@ public enum Winding
     CounterClockwise,
 }
 
+public interface IPolygon2D
+{
+    IEnumerable<Vector2> Vertices { get; }
+}
+
 public enum HAlign
 {
     Left,

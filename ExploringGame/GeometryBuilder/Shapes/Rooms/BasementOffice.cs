@@ -90,7 +90,9 @@ public class BasementOffice : Room
 
         Lights =
         [
-            new HighHatLight(this),
+            new HighHatLight(this, 0f, -0.7f),
+            new HighHatLight(this, 3f, -0.7f),
+
         ];
     }
 }

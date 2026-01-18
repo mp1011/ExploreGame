@@ -30,7 +30,7 @@ class RemoveSurfaceRegion
 
     public Triangle[] RemoveCutouts(Shape shape, Triangle[] triangles)
     {
-        foreach(var cutoutShape in shape.Children.OfType<ICutoutShape>())
+        foreach (var cutoutShape in shape.Children.OfType<ICutoutShape>())
         {
             var cutoutSurface = cutoutShape.Build().Where(p => p.Side == cutoutShape.ParentCutoutSide.Opposite()).ToArray();
             if (cutoutSurface.Length == 0)
@@ -39,8 +39,28 @@ class RemoveSurfaceRegion
             cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetSide(cutoutShape.ParentCutoutSide))).ToArray();
 
             var cutoutCenter = cutoutSurface.SelectMany(p => p.Vertices).Center();
-            var cutout2D = new ConvexHull(cutoutSurface.Select(p => p.As2D(cutoutCenter, shape.ViewFrom)).ToArray());                       
+            var cutout2D = new ConvexHull(cutoutSurface.Select(p => p.As2D(cutoutCenter, shape.ViewFrom)).ToArray());
             triangles = triangles.SelectMany(p => RemoveFace(p, cutoutShape.ParentCutoutSide, cutout2D, cutoutCenter, shape.ViewFrom)).ToArray();
+        }
+
+        return triangles;
+    }
+
+    public Triangle[] RemoveCutouts_alt(Shape shape, Triangle[] triangles)
+    {
+        foreach(var cutoutShape in shape.Children.OfType<ICutoutShape>())
+        {
+            var cutoutSurface = cutoutShape.Build().Where(p => p.Side == cutoutShape.ParentCutoutSide.Opposite()).ToArray();
+            if (cutoutSurface.Length == 0)
+                continue;
+
+            var parentSide = triangles.Where(p => p.Side == cutoutShape.ParentCutoutSide).ToArray();
+            var sideCenter = parentSide.SelectMany(p => p.Vertices).Center();
+
+            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetSide(cutoutShape.ParentCutoutSide))).ToArray();
+            var cutout2D = new ConvexHull(cutoutSurface.Select(p => p.As2D(sideCenter, shape.ViewFrom)).ToArray());
+                      
+            triangles = triangles.SelectMany(p => RemoveFace(p, cutoutShape.ParentCutoutSide, cutout2D, sideCenter, shape.ViewFrom)).ToArray();
         }
 
         return triangles;

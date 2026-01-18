@@ -50,7 +50,7 @@ public record FaceBasis(Vector3 U, Vector3 N, Vector3 V)
 /// <summary>
 /// 2D Projection of a 3D Triangle
 /// </summary>
-public class Triangle2D
+public class Triangle2D : IPolygon2D
 {
     public Triangle Original { get; }
 
@@ -162,6 +162,27 @@ public class Triangle2D
     }
 
    
+    public bool ContainsPoint(Vector2 point)
+    {
+        var t = this;
+        var p = point;
+
+        var v0 = new Vector2(t.C.X - t.A.X, t.C.Y - t.A.Y);
+        var v1 = new Vector2(t.B.X - t.A.X, t.B.Y - t.A.Y);
+        var v2 = new Vector2(p.X - t.A.X, p.Y - t.A.Y);
+
+        float dot00 = v0.X * v0.X + v0.Y * v0.Y;
+        float dot01 = v0.X * v1.X + v0.Y * v1.Y;
+        float dot02 = v0.X * v2.X + v0.Y * v2.Y;
+        float dot11 = v1.X * v1.X + v1.Y * v1.Y;
+        float dot12 = v1.X * v2.X + v1.Y * v2.Y;
+
+        float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+        float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+        return (u >= 0) && (v >= 0) && (u + v <= 1);
+    }
 
     public void ReplaceVertex(Vector2 oldV, Vector2 newV)
     {

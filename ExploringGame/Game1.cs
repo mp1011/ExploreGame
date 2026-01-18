@@ -91,7 +91,7 @@ public class Game1 : Game
         _serviceContainer.BindTransient<DoorController>();
 
         _mainShape = CreateMainShape();
-        _player.Position = _mainShape.Children.First().Position;
+    //    _player.Position = _mainShape.Children.First().Position;
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
 
@@ -132,8 +132,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return _serviceContainer.Get<UpstairsWorldSegment>();
-       // return TwoHallTest();
+        return _serviceContainer.Get<BasementWorldSegment>();
     }
 
     private WorldSegment TwoHallTest()
@@ -185,12 +184,9 @@ public class Game1 : Game
         room.Depth = 8f;
         room.Y = 2;
 
-        var light = new HighHatLight(room);
-        light.Width = 2.0f;
-        light.Depth = 2.0f;
-        light.Height = 1.0f;
+        var light = new HighHatLight(room, 2.0f, 0f);
         light.Place().OnSideOuter(Side.Top, room);
-
+       
 
         return worldSegment;
     }
