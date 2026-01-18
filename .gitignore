@@ -416,3 +416,12 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/ExploringGame/Content/brick.png
+/ExploringGame/Content/brick.xcf
+/ExploringGame/Content/tile.png
+/ExploringGame/Content/tile.xcf
+/ExploringGame/Content/wood_slant.png
+/ExploringGame/Content/wood_slant.xcf
+/ExploringGame/Content/wood_tile.jpeg
+/ExploringGame/Content/wood_tile.png
+/ExploringGame/Content/wood_tile.xcf
