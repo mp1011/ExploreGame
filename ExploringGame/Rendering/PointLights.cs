@@ -34,7 +34,8 @@ public class PointLights
     }
 
     public PointLight AddLight(Vector3 position, Color? color = null, float intensity = 1.0f)
-    {        
+    {
+        color = color ?? Color.White;
         var existing = _lights.FirstOrDefault(p => p.Position == position && p.Color == color && p.Intensity == intensity);
 
         if (existing != null)
@@ -44,7 +45,7 @@ public class PointLights
         if (firstFree == null)
             return PointLight.DefaultOff;
 
-        _lights[firstFree.Index] = new PointLight(firstFree.Index, position, color ?? Color.White, intensity);
+        _lights[firstFree.Index] = new PointLight(firstFree.Index, position, color.Value, intensity);
         RefreshArrays();
         return _lights[firstFree.Index];
     }

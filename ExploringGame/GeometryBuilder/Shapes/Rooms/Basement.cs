@@ -88,6 +88,14 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
  
             _upstairs.AddConnectingRoom(new RoomConnection(_upstairs, Stairs, Side.North), adjustPlacement: false);
 
+
+            var light = new HighHatLight(this, 1.0f, 0f);
+            var lightSwitch2 = new LightSwitch(this, StateKey.BasementLightOn);
+            lightSwitch2.ControlledObjects.Add(light);
+
+            lightSwitch2.Position = wall2.Position;
+            lightSwitch2.Place().OnSideOuter(Side.West, wall2);
+            lightSwitch2.Y -= 0.5f;
         }
     }
 }

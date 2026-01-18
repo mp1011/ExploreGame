@@ -14,7 +14,8 @@ public enum StateKey
     KidsBedroomDoorOpen,
     LinenClosetDoorOpen,
     SpareRoomDoorOpen,
-    HallLightOn
+    HallLightOn,
+    BasementLightOn
 }
 
 public class GameState
@@ -26,6 +27,7 @@ public class GameState
     {
         Set(StateKey.OfficeLightOn, true);
         Set(StateKey.HallLightOn, true);
+        Set(StateKey.BasementLightOn, true);
     }
 
     public int Get(StateKey key)

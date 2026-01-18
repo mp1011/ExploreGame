@@ -97,7 +97,8 @@ public class PointLightRenderEffect : RenderEffect<Effect>
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
     {
         var pointLightEffect = contentManager.Load<Effect>("PointLightEffect").Clone();
-        pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
+        //TEST  pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
+        pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.0f, 0.0f, 0.0f));
         pointLightEffect.Parameters["Texture"].SetValue(texture);
         return pointLightEffect;
     }

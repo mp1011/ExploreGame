@@ -20,9 +20,9 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
 
     public HighHatLight(Room room, float x, float z)
     {
-        X = x;
+        X = room.X + x;
         Y = room.Y;
-        Z = z;
+        Z = room.Z + z;
         room.AddChild(this);
 
         Height = 0.1f;

@@ -50,23 +50,26 @@ float4 PSMain(PSInput input) : SV_Target
     float3 texColor = tex2D(TextureSampler, input.TexCoord).rgb;
     float3 baseColor = texColor * input.Color.rgb;    
     float3 diffuse = float3(0,0,0);
+    float attenuation = 1.0;
+    
     for (int i = 0; i < LightCount; ++i)
     {
         float3 toLight = LightPositions[i] - input.WorldPos;
         float dist = length(toLight);
         float3 toLightDir = normalize(toLight);
-        float NdotL = dot(normal, toLightDir);
+        float NdotL = dot(normal, toLightDir);        
         float lightFactor;
         if (NdotL > 0.1)
         {
-            lightFactor = NdotL;            
+            lightFactor = NdotL;
+            attenuation = (1.0 / (1.0 + dist * dist)) * 10.0;
         }
         else
         {
-            // Use distance-based lighting when normal is facing away
-            lightFactor = 1.0 / (1.0 + dist * dist * 0.1); // tweak falloff as needed            
+            lightFactor = 1.0 / (1.0 + dist * dist * 0.1);      
+            attenuation = 1.0;
         }
-        diffuse += baseColor * LightColors[i] * lightFactor * LightIntensities[i];
+        diffuse += baseColor * LightColors[i] * lightFactor * LightIntensities[i] * attenuation;
     }
     float3 ambient = baseColor * AmbientColor;
     return float4(diffuse + ambient, 1);
