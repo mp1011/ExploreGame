@@ -15,17 +15,18 @@ public class CurrentAndNextLevelData
     private readonly ServiceContainer _serviceContainer;
     private readonly SetupColliderBodies _setupColliderBodies;
     private readonly Physics _physics;
+    private readonly LoadedTextureSheets _loadedTextureSheets;
 
     public LevelData Next { get; private set; }
 
     public LevelData Current { get; private set; }
 
-    public TextureSheet CurrentTexture { get; set; }
-
-    public CurrentAndNextLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, ServiceContainer serviceContainer)
+    public CurrentAndNextLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
+        LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer)
     {
         _game = game;
         _physics = physics;
+        _loadedTextureSheets = loadedTextureSheets;
         _serviceContainer = serviceContainer;
         _setupColliderBodies = setupColliderBodies;
     }
@@ -33,7 +34,7 @@ public class CurrentAndNextLevelData
     public void PrepareNextSegment(WorldSegment worldSegment)
     {
         var triangles = worldSegment.Build((QualityLevel)8); //todo, quality level
-        var shapeBuffers = new ShapeBufferCreator(triangles, CurrentTexture, _game.GraphicsDevice).Execute();
+        var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
         var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
         Next = new LevelData(worldSegment, shapeBuffers, activeObjects);
     }

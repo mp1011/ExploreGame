@@ -9,6 +9,8 @@ public class Theme
     public TextureInfo MainTexture { get; set; } = new TextureInfo(Color.Magenta);
     public Dictionary<Side, TextureInfo> SideTextures { get; set; } = new();
 
+    public virtual TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
+
     public Theme() { }
 
     public Theme(TextureKey key)
@@ -40,6 +42,8 @@ public class Theme
 
 public class BasementRoomTheme : Theme
 {
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
+
     public BasementRoomTheme()
     {
         SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
@@ -50,10 +54,12 @@ public class BasementRoomTheme : Theme
 
 public class UpstairsHallTheme : Theme
 {
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
+
     public UpstairsHallTheme()
     {
-        SideTextures[Side.Top] = new TextureInfo(Color.White);
-        SideTextures[Side.Bottom] = new TextureInfo(Color.Brown);
-        MainTexture = new TextureInfo(Color.LightGray);
+        SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);      
+        SideTextures[Side.Bottom] = new TextureInfo(Color.Brown, TextureKey.Floor);
+        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
     }
 }

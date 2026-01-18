@@ -70,7 +70,7 @@ public class Game1 : Game
         _serviceContainer.Bind(_physics);
 
         _serviceContainer.BindSingleton<GameState>();
-
+        _serviceContainer.BindSingleton<LoadedTextureSheets>();
         _serviceContainer.BindSingleton<TransitionShapesRegistrar>();      
         _serviceContainer.BindSingleton<CurrentAndNextLevelData>();
         _currentAndNextLevelData = _serviceContainer.Get<CurrentAndNextLevelData>();
@@ -112,21 +112,21 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _currentAndNextLevelData.CurrentTexture = new TextureSheet(Content.Load<Texture2D>("basement"))
-            .Add(TextureKey.Floor, left: 1753, top: 886, right: 2866, bottom: 1640)
-            .Add(TextureKey.Wall, left: 2975, top: 808, right: 4483, bottom: 2806)
-            .Add(TextureKey.Ceiling, left: 214, top: 24, right: 1523, bottom: 2008)
-            .Add(TextureKey.Wood, left: 1995, top: 80, right: 3625, bottom: 669)
-            .Add(TextureKey.None, left: 912, top: 2221, right: 922, bottom: 2231);
-       
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        _basicEffect = new BasicRenderEffect(GraphicsDevice, Content, _currentAndNextLevelData.CurrentTexture.Texture);
-        _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), 
-            GraphicsDevice, Content, _currentAndNextLevelData.CurrentTexture.Texture);
+        _basicEffect = new BasicRenderEffect(this);
+        _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), this);
 
-        _renderEffect = _basicEffect;
+        var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();
+        loadedTextures.AddTexture(new BasementTextureSheet(Content));
+        loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
+
+        // todo - need better way to load textures
+        _basicEffect.SetTextures(loadedTextures);
+        _pointLightEffect.SetTextures(loadedTextures);
+
+        _renderEffect = _pointLightEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 

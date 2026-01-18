@@ -11,14 +11,14 @@ namespace ExploringGame.Services;
 
 internal class ShapeBufferCreator
 {
-    private readonly TextureSheet _textureSheet;
+    private readonly LoadedTextureSheets _textureSheets;
     private GraphicsDevice _graphicsDevice;
     private Dictionary<Shape, Triangle[]> _shapeTriangles;
 
-    public ShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles, 
-        TextureSheet textureSheet, GraphicsDevice graphicsDevice)
+    public ShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles,
+        LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice)
     {
-        _textureSheet = textureSheet;
+        _textureSheets = loadedTextureSheets;
         _graphicsDevice = graphicsDevice;
         _shapeTriangles = shapeTriangles;
     }
@@ -36,26 +36,30 @@ internal class ShapeBufferCreator
     {
         var activeObjects = worldSegment.TraverseAllChildren().OfType<IPlaceableObject>().ToArray();
         var activeObjectShapes = activeObjects.SelectMany(p => p.Children).ToArray();
-        var staticShapes = worldSegment.TraverseAllChildren().Except(activeObjectShapes).ToArray();
+        var staticShapeGroups = worldSegment.TraverseAllChildren().Except(activeObjectShapes).GroupBy(p=>p.Theme.TextureSheetKey);
 
-        yield return CreateShapeBuffer(worldSegment, staticShapes);
+        foreach (var shapeGroup in staticShapeGroups)
+        {
+            yield return CreateShapeBuffer(worldSegment, shapeGroup.ToArray(), shapeGroup.Key);
+        }
 
         foreach(var activeObject in activeObjects)
         {
-            yield return CreateShapeBuffer(activeObject.Self, activeObject.Children);
+            yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey);
         }
     }
 
 
     private ShapeBuffer CreateShapeBuffer(
         Shape shape,
-        Shape[] children)
+        Shape[] children,
+        TextureSheetKey key)
     {
         var worldSegmentTriangles = new Dictionary<Shape, Triangle[]>();
         foreach (var child in children)
             worldSegmentTriangles[child] = _shapeTriangles[child];
 
-        var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheet, _graphicsDevice);
-        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3);
+        var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
+        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key);
     }
 }

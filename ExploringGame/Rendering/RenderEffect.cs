@@ -2,22 +2,36 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 namespace ExploringGame.Rendering;
 
 public interface IRenderEffect
 {
     void Draw(GraphicsDevice graphicsDevice, ShapeBuffer[] shapeBuffers, Matrix view, Matrix projection);
+    void SetTextures(LoadedTextureSheets textureSheets);
 }
 
 public abstract class RenderEffect<TEffect> : IRenderEffect
     where TEffect : Effect
 {
-    private TEffect _effect;
-
-    protected RenderEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
+    private readonly Game _game;
+    private Dictionary<TextureSheetKey, TEffect> _effects = new Dictionary<TextureSheetKey, TEffect>();
+    
+    protected RenderEffect(Game game)
     {
-        _effect = CreateEffect(graphicsDevice, contentManager, texture);
-    }  
+        _game = game;
+    }
+
+    public void SetTextures(LoadedTextureSheets textureSheets)
+    {
+        _effects.Clear();
+
+        foreach (var textureSheet in textureSheets.LoadedTextures)
+        {
+            _effects[textureSheet.Key] = CreateEffect(_game.GraphicsDevice, _game.Content, textureSheet.Texture);
+        }
+    }
 
     protected abstract TEffect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture);
 
@@ -27,12 +41,13 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
     {
         foreach (var shapeBuffer in shapeBuffers)
         {
-            SetParameters(_effect, shapeBuffer.Shape.GetWorldMatrix(), view, projection);
+            var effect = _effects[shapeBuffer.Texture];
+            SetParameters(effect, shapeBuffer.Shape.GetWorldMatrix(), view, projection);
 
             graphicsDevice.SetVertexBuffer(shapeBuffer.VertexBuffer);
             graphicsDevice.Indices = shapeBuffer.IndexBuffer;
 
-            foreach (var pass in _effect.CurrentTechnique.Passes)
+            foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();                
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, shapeBuffer.TriangleCount);
@@ -43,8 +58,7 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
 
 public class BasicRenderEffect : RenderEffect<BasicEffect>
 {
-    public BasicRenderEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture) 
-        : base(graphicsDevice, contentManager, texture)
+    public BasicRenderEffect(Game game) : base(game)
     {
     }
 
@@ -75,15 +89,14 @@ public class PointLightRenderEffect : RenderEffect<Effect>
 {
     private PointLights _pointLights;
 
-    public PointLightRenderEffect(PointLights pointLights, GraphicsDevice graphicsDevice, ContentManager content, Texture2D texture) 
-        : base(graphicsDevice, content, texture)
+    public PointLightRenderEffect(PointLights pointLights, Game game) : base(game)
     {
         _pointLights = pointLights;
     }
 
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
     {
-        var pointLightEffect = contentManager.Load<Effect>("PointLightEffect");
+        var pointLightEffect = contentManager.Load<Effect>("PointLightEffect").Clone();
         pointLightEffect.Parameters["AmbientColor"].SetValue(new Vector3(0.08f, 0.08f, 0.08f));
         pointLightEffect.Parameters["Texture"].SetValue(texture);
         return pointLightEffect;
