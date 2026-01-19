@@ -1,8 +1,6 @@
 ﻿using ExploringGame.Config;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
-using ExploringGame.Services;
-using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
@@ -10,13 +8,12 @@ class UpstairsWorldSegment : WorldSegment
 {
     public override WorldSegmentTransition[] Transitions { get; }
 
-    public UpstairsWorldSegment(TransitionShapesRegistrar transitionShapesRegistrar)
+    public UpstairsWorldSegment(TransitionShapesRegistrar transitionShapesRegistrar, BasementWorldSegment basementWorldSegment)
     {
-        var upstairsHall = AddChild(new UpstairsHall(this, transitionShapesRegistrar));      
-        var basement = AddChild(new Basement(this, null, upstairsHall));
-        transitionShapesRegistrar.RecallPositionAndSize(basement);
-        basement.LoadChildren();
+        var upstairsHall = basementWorldSegment.Children.OfType<UpstairsHall>().First();
+        var basement = basementWorldSegment.Children.OfType<Basement>().First();
 
+        upstairsHall.LoadChildren();
         var bedroom = new Bedroom(this, upstairsHall);
         bedroom.LoadChildren();
 
@@ -26,8 +23,7 @@ class UpstairsWorldSegment : WorldSegment
         var spareRoom = new SpareRoom(this, upstairsHall);
         spareRoom.LoadChildren();
 
-        upstairsHall.LoadChildren();
-
         Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }
+
 }

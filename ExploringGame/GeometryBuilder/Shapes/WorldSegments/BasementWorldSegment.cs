@@ -22,7 +22,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             upstairsHall.SetSide(Side.Bottom, basement.GetSide(Side.Top) + Measure.Inches(5));
             upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
 
-            upstairsHall.LoadChildren();
             office.LoadChildren();
             basement.LoadChildren();
 

@@ -12,7 +12,7 @@ namespace ExploringGame.Logics.ShapeControllers;
 
 public class SegmentTransitionController : IShapeController<WorldSegment>
 {
-    private readonly CurrentAndNextLevelData _renderBuffers;
+    private readonly LoadedLevelData _renderBuffers;
     private readonly Player _player;
     private readonly TransitionShapesRegistrar _transitionShapesRegistrar;
 
@@ -56,7 +56,7 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
     }
 
     public SegmentTransitionController(WorldSegment worldSegment, Player player, 
-        TransitionShapesRegistrar transitionShapesRegistrar, CurrentAndNextLevelData renderBuffers)
+        TransitionShapesRegistrar transitionShapesRegistrar, LoadedLevelData renderBuffers)
     {
         Shape = worldSegment;
         _player = player;
@@ -83,35 +83,35 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
 
     private void CheckTransition(TransitionDetail transition)
     {
-        if(!transition.PlayerWithinExit && transition.ExitShape.ContainsPoint(_player.Position)) 
-        {
-            transition.PlayerWithinExit = true;
-            _transitionSegment = Activator.CreateInstance(transition.Transition.WorldSegmentType, _transitionShapesRegistrar) as WorldSegment;
-            _renderBuffers.PrepareNextSegment(_transitionSegment);
-        }
+        //if(!transition.PlayerWithinExit && transition.ExitShape.ContainsPoint(_player.Position)) 
+        //{
+        //    transition.PlayerWithinExit = true;
+        //    _transitionSegment = Activator.CreateInstance(transition.Transition.WorldSegmentType, _transitionShapesRegistrar) as WorldSegment;
+        //    _renderBuffers.PrepareNextSegment(_transitionSegment);
+        //}
 
-        if(transition.PlayerWithinExit)
-        {
-            if(!transition.ExitShape.ContainsPoint(_player.Position))
-            {
-                transition.PlayerWithinExit = false;
-                return;
-            }
+        //if(transition.PlayerWithinExit)
+        //{
+        //    if(!transition.ExitShape.ContainsPoint(_player.Position))
+        //    {
+        //        transition.PlayerWithinExit = false;
+        //        return;
+        //    }
 
-            var playerPos = _player.Position.AxisValue(transition.Axis);
-            switch(transition.Transition.ExitSide)
-            {
-                case Side.West:
-                case Side.North:
-                    if (playerPos < transition.TransferPosition)
-                        ActivateTransition(transition);
-                    break;
-                default:
-                    if (playerPos > transition.TransferPosition)
-                        ActivateTransition(transition);
-                    break;
-            }
-        }
+        //    var playerPos = _player.Position.AxisValue(transition.Axis);
+        //    switch(transition.Transition.ExitSide)
+        //    {
+        //        case Side.West:
+        //        case Side.North:
+        //            if (playerPos < transition.TransferPosition)
+        //                ActivateTransition(transition);
+        //            break;
+        //        default:
+        //            if (playerPos > transition.TransferPosition)
+        //                ActivateTransition(transition);
+        //            break;
+        //    }
+        //}
     }
 
     private void ActivateTransition(TransitionDetail transition)

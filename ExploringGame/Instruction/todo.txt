@@ -77,7 +77,8 @@
 	[x] active object state preserved
 
 
-[ ] fix multiple lights
+[x] fix multiple lights
+[ ] fix segment transitions
 	
 
 [ ] define rooms
@@ -85,7 +86,9 @@
 [ ] improve texture usage
 
 
-[ ] 
-
+- update rendering code to support multiple active segments
+- when worldsegment loads, load all immediate children
+- when player is in junction, either load or unload immediate children
+of next section (except for this one)
 
 

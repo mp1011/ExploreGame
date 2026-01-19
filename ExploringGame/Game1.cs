@@ -35,7 +35,7 @@ public class Game1 : Game
     private HeadBob _headBob;
     private PlayerInput _playerInput;
     private EntityMover _playerMover;
-    private CurrentAndNextLevelData _currentAndNextLevelData;
+    private LoadedLevelData _loadedLevelData;
     private WorldSegment _mainShape;
 
     private GraphicsDeviceManager _graphics;
@@ -58,8 +58,6 @@ public class Game1 : Game
         IsMouseVisible = false;
     }
 
-    private LevelData CurrentLevelData => _currentAndNextLevelData.Current;
-
     protected override void Initialize()
     {
         _serviceContainer = new ServiceContainer();
@@ -72,8 +70,8 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<GameState>();
         _serviceContainer.BindSingleton<LoadedTextureSheets>();
         _serviceContainer.BindSingleton<TransitionShapesRegistrar>();      
-        _serviceContainer.BindSingleton<CurrentAndNextLevelData>();
-        _currentAndNextLevelData = _serviceContainer.Get<CurrentAndNextLevelData>();
+        _serviceContainer.BindSingleton<LoadedLevelData>();
+        _loadedLevelData = _serviceContainer.Get<LoadedLevelData>();
 
         _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<Player>();
@@ -483,15 +481,15 @@ public class Game1 : Game
 
         _physics.Update(gameTime);
 
-        if(CurrentLevelData == null)
+        if(_loadedLevelData.LoadedSegments.Count == 0)
         {
-            _currentAndNextLevelData.PrepareNextSegment(_mainShape);
-            _currentAndNextLevelData.SwapActive();
+            _loadedLevelData.LoadSegment(_mainShape);
+            _loadedLevelData.SwapActive();
             _playerMover.Initialize();
         }
 
         _playerMover.Update(gameTime);
-        CurrentLevelData.Update(gameTime);
+        _loadedLevelData.Update(gameTime);
 
         _playerInput.Update();
         if (_playerInput.IsKeyDown(GameKey.DebugKey))
@@ -519,7 +517,9 @@ public class Game1 : Game
     {       
         GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-        _renderEffect.Draw(GraphicsDevice, CurrentLevelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
+
+        foreach(var levelData in _loadedLevelData.LoadedSegments)
+            _renderEffect.Draw(GraphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
         
         // Draw debug information
         _spriteBatch.Begin();

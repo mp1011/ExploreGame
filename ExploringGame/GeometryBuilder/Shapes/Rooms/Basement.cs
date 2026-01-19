@@ -3,13 +3,11 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
-using System.Runtime.CompilerServices;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms
 {
     internal class Basement : Room
     {
-        private bool _limitedView;
         private Room _upstairs;
         private BasementOffice _office;
 
@@ -20,7 +18,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
 
         public Basement(WorldSegment worldSegment, BasementOffice office, Room upstairs) : base(worldSegment)
         {
-            _limitedView = office == null;
             _upstairs = upstairs;
             _office = office;
 
@@ -31,19 +28,16 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
         }
 
         public override void LoadChildren()
-        {
-            if (!_limitedView)
-            {
-                SetSide(Side.East, _office.Exit.GetSide(Side.West));
-                SetSide(Side.North, _office.Exit.GetSide(Side.North) - Measure.Inches(31));
+        {           
+            SetSide(Side.East, _office.Exit.GetSide(Side.West));
+            SetSide(Side.North, _office.Exit.GetSide(Side.North) - Measure.Inches(31));
 
-                var lightSwitch = new LightSwitch(this, StateKey.OfficeLightOn);
-                lightSwitch.Place().OnSideInner(Side.East);
-                lightSwitch.SetSide(Side.North, GetSide(Side.North) + Measure.Inches(22));
-                lightSwitch.ControlledObjects.AddRange(_office.Lights);
-                lightSwitch.Y -= 0.5f;
-            }
-
+            var lightSwitch = new LightSwitch(this, StateKey.OfficeLightOn);
+            lightSwitch.Place().OnSideInner(Side.East);
+            lightSwitch.SetSide(Side.North, GetSide(Side.North) + Measure.Inches(22));
+            lightSwitch.ControlledObjects.AddRange(_office.Lights);
+            lightSwitch.Y -= 0.5f;
+            
             // L-shaped walls
             var wall1 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(31) });
             wall1.Place().OnFloor().OnSideInner(Side.East).FromNorth(Measure.Inches(31 + 36 + 31));
@@ -83,11 +77,9 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
             Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: _upstairs));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
 
-            if (!_limitedView)
-                AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
+            AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
  
             _upstairs.AddConnectingRoom(new RoomConnection(_upstairs, Stairs, Side.North), adjustPlacement: false);
-
 
             var light = new HighHatLight(this, 1.0f, 0f);
             var lightSwitch2 = new LightSwitch(this, StateKey.BasementLightOn);

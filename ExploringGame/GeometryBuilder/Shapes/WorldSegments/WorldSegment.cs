@@ -31,6 +31,6 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
         return new SegmentTransitionController(this, 
             serviceContainer.Get<Player>(), 
             serviceContainer.Get<TransitionShapesRegistrar>(),
-            serviceContainer.Get<CurrentAndNextLevelData>());
-    }
+            serviceContainer.Get<LoadedLevelData>());
+    }    
 }
