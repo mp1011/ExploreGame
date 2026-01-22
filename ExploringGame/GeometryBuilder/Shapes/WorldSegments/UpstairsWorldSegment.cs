@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
-class UpstairsWorldSegment : WorldSegment
+public class UpstairsWorldSegment : WorldSegment
 {
     public override WorldSegmentTransition[] Transitions { get; }
 
@@ -17,12 +17,23 @@ class UpstairsWorldSegment : WorldSegment
         var bedroom = new Bedroom(this, upstairsHall);
         bedroom.LoadChildren();
 
+        var bathroom = new Bathroom(this, upstairsHall);
+        bathroom.LoadChildren();
+
         var kidsBedroom = new KidsBedroom(this, upstairsHall);
         kidsBedroom.LoadChildren();
 
         var spareRoom = new SpareRoom(this, upstairsHall);
         spareRoom.LoadChildren();
 
+        var kitchen = new Kitchen(this, upstairsHall);
+        kitchen.LoadChildren();
+
+        var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
+        livingRoom.LoadChildren();
+
+        var den = new Den(this, livingRoom);
+        den.LoadChildren();
         Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }
 

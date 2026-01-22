@@ -15,6 +15,7 @@ public class UpstairsHall : Room
     public override Theme Theme => new UpstairsHallTheme();
 
     public Room SouthHall { get; private set; }
+    public Room NorthHall { get; private set; }
 
     public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
     {
@@ -26,8 +27,8 @@ public class UpstairsHall : Room
         SouthHall = Copy(width: Measure.Feet(7), depth: Measure.Feet(10));
         AddConnectingRoom(new RoomConnection(this, SouthHall, Side.South, HAlign.Right));
 
-        var northHall = Copy(width: Measure.Feet(4), depth: Measure.Feet(10));
-        AddConnectingRoom(new RoomConnection(this, northHall, Side.North, HAlign.Left));
+        NorthHall = Copy(width: Measure.Feet(4), depth: Measure.Feet(14));
+        AddConnectingRoom(new RoomConnection(this, NorthHall, Side.North, HAlign.Left));
 
         var linenCloset = Copy(width: Measure.Feet(1), depth: Door.StandardWidth);
         SouthHall.AddConnectingRoomWithJunction(new DoorJunction(SouthHall, Side.West, HAlign.Left, StateKey.LinenClosetDoorOpen),

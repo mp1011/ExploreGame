@@ -15,6 +15,7 @@ public enum TextureKey
     Floor = 4,
     Plain = 5,
     Brick = 6,
+    Tile = 7,
 }
 
 public enum TextureSheetKey
@@ -80,6 +81,7 @@ public class UpstairsTextureSheet : TextureSheet
         Add(TextureKey.Plain, left: 4005, top: 1109, right: 4643, bottom: 1807);
         Add(TextureKey.Wood, left: 2276, top: 31, right: 3971, bottom: 1501);
         Add(TextureKey.Brick, left: 3830, top: 21, right: 4914, bottom: 976);
+        Add(TextureKey.Tile, left: 1108, top: 37, right: 2231, bottom: 1169);
         Add(TextureKey.None, left: 100, top: 1500, right: 200, bottom: 1600);
     }
 }

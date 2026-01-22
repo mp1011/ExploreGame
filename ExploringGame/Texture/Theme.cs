@@ -63,3 +63,25 @@ public class UpstairsHallTheme : Theme
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
     }
 }
+
+public class KitchenTheme : Theme
+{
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
+
+    public KitchenTheme()
+    {
+        SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Tile, TextureStyle.XZTile, TileSize: 1f);
+        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
+    }
+}
+
+public class BathroomTheme : Theme
+{
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
+
+    public BathroomTheme()
+    {
+        MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
+    }
+}

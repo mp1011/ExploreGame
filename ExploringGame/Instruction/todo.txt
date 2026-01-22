@@ -79,16 +79,14 @@
 
 [x] fix multiple lights
 [ ] fix segment transitions
-	
-
-[ ] define rooms
-[ ] better texture images
-[ ] improve texture usage
+	[ ] define rooms (enough to define third world segment)
+[ ] better texture placement
+	[ ] X/Y seperate stretch/repeat
 
 
-- update rendering code to support multiple active segments
-- when worldsegment loads, load all immediate children
-- when player is in junction, either load or unload immediate children
-of next section (except for this one)
 
+
+- when player is at a junction
+- if player moves through the junction in the positive direction - then load all neighbors of the next section, besides those already loaded
+- if player is moving in the negatiev direction - unload all neighbors of the next section, besides those already loaded
 
