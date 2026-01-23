@@ -132,7 +132,7 @@ public class Game1 : Game
     private WorldSegment CreateMainShape()
     {
         //  return _serviceContainer.Get<BasementWorldSegment>();
-        return JunctionTest(HAlign.Right, DoorDirection.Pull);
+        return DoubleDoorJunctionTest(DoorDirection.Push);
     }
 
     private WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
@@ -152,6 +152,27 @@ public class Game1 : Game
         room.AddConnectingRoomWithJunction(new DoorJunction(eastRoom, Side.East, doorAlign, doorDirection, StateKey.OfficeDoor1Open), eastRoom, Side.East);
         room.AddConnectingRoomWithJunction(new DoorJunction(southRoom, Side.South, doorAlign, doorDirection, StateKey.OfficeDoor1Open), southRoom, Side.South);
         room.AddConnectingRoomWithJunction(new DoorJunction(northRoom, Side.North, doorAlign, doorDirection, StateKey.OfficeDoor1Open), northRoom, Side.North);
+
+        return ws;
+    }
+
+    private WorldSegment DoubleDoorJunctionTest(DoorDirection doorDirection)
+    {
+        var ws = new WorldSegment();
+        var room = new Room(ws, new BasementRoomTheme());
+        room.Width = 10;
+        room.Height = 3f;
+        room.Depth = 10f;
+
+        var westRoom = room.Copy();
+        var eastRoom = room.Copy();
+        var northRoom = room.Copy();
+        var southRoom = room.Copy();
+
+        room.AddConnectingRoomWithJunction(new DoubleDoorJunction(westRoom, Side.West, doorDirection, StateKey.OfficeDoor1Open), westRoom, Side.West);
+        room.AddConnectingRoomWithJunction(new DoubleDoorJunction(eastRoom, Side.East, doorDirection, StateKey.OfficeDoor1Open), eastRoom, Side.East);
+        room.AddConnectingRoomWithJunction(new DoubleDoorJunction(southRoom, Side.South, doorDirection, StateKey.OfficeDoor1Open), southRoom, Side.South);
+        room.AddConnectingRoomWithJunction(new DoubleDoorJunction(northRoom, Side.North, doorDirection, StateKey.OfficeDoor1Open), northRoom, Side.North);
 
         return ws;
     }
@@ -227,51 +248,6 @@ public class Game1 : Game
 
         return new WorldSegment(simpleRoom);
     }
-
-    private WorldSegment DoorTest()
-    {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 10f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 10f;
-        simpleRoom.Y = 2;
-
-        var door1 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(270f), new Angle(180f), HAlign.Left, StateKey.OfficeDoor1Open));
-        door1.Place().OnFloor();
-        door1.Z -= 3.0f;
-        door1.X -= 2.0f;
-        door1.Theme.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Red);
-
-        var door2 = simpleRoom.AddChild(new Door(simpleRoom, new Angle(90), new Angle(180f), HAlign.Right, StateKey.OfficeDoor2Open));
-        door2.Place().OnFloor();
-        door2.Z -= 3.0f;
-        door2.X += 2.0f;
-        door2.Theme.MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.Blue);
-
-        return new WorldSegment(simpleRoom);
-    }
-
-    private WorldSegment DoorTest2()
-    {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 10f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 10f;
-        simpleRoom.Y = 2;
-        
-        var closet = new BasementCloset(simpleRoom, Side.East);
-        closet.Position = simpleRoom.Position;
-        closet.Place().OnFloor();
-        closet.Z -= 3.0f;
-
-        var closet2 = new BasementCloset(simpleRoom, Side.West);
-        closet2.Position = simpleRoom.Position;
-        closet2.Place().OnFloor();
-        closet2.Z += 3.0f;
-
-        return new WorldSegment(simpleRoom);
-    }
-
 
     private WorldSegment PhysicsTest()
     {

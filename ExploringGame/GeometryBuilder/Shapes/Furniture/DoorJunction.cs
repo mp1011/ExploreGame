@@ -30,22 +30,7 @@ public class DoorJunction : Room
             Height = room.Height;
         }
 
-        Angle doorOpen, doorClose;
-
-        var openMod = doorDirection == DoorDirection.Pull ? 1 : -1;
-
-        if(hingePosition == HAlign.Left)
-        {
-            doorClose = new Angle(wallSide).RotateClockwise(90);
-            doorOpen = doorClose.RotateClockwise(90 * openMod);
-        }
-        else
-        {
-            doorClose = new Angle(wallSide).RotateCounterClockwise(90);
-            doorOpen = doorClose.RotateCounterClockwise(90 * openMod);
-        }
-
-        _door = new Door(this, doorClose, doorOpen, hingePosition, doorStateKey);
+        _door = new Door(this, wallSide, hingePosition, doorDirection, doorStateKey);
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
     }
 

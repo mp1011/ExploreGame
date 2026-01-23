@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -11,9 +12,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 public class DoubleDoorJunction : Room
 {
     private Door _leftDoor, _rightDoor;
+    private Side _wallSide;
 
-    public DoubleDoorJunction(Room room, Side wallSide, StateKey doorStateKey) : base(room.WorldSegment)
+    public DoubleDoorJunction(Room room, Side wallSide, DoorDirection doorDirection, StateKey doorStateKey) : base(room.WorldSegment)
     {
+        _wallSide = wallSide;
         if(wallSide.GetAxis() == Axis.Z)
         {
             Width = Door.StandardWidth * 2;
@@ -27,13 +30,8 @@ public class DoubleDoorJunction : Room
             Height = room.Height;
         }
 
-        var doorClose = new Angle(wallSide).RotateClockwise(90);
-        var doorOpen = doorClose.RotateClockwise(90);
-        _leftDoor = new Door(this, doorClose, doorOpen, HAlign.Left, doorStateKey);
-
-        doorClose = new Angle(wallSide).RotateCounterClockwise(90);
-        doorOpen = doorClose.RotateCounterClockwise(90);
-        _rightDoor = new Door(this, doorClose, doorOpen, HAlign.Right, doorStateKey);
+        _leftDoor = new Door(this, wallSide, HAlign.Left, doorDirection, doorStateKey);
+        _rightDoor = new Door(this, wallSide, HAlign.Right, doorDirection, doorStateKey);
              
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
     }
@@ -50,16 +48,12 @@ public class DoubleDoorJunction : Room
 
     private void PlaceDoor(Door door)
     {
-        // todo, this isnt right
-        if (door.ClosedAngle.Degrees == 0f)
-        {
-            door.X -= 0.6f;
-            door.Z += door.Width;
-        }
-        else if (door.ClosedAngle.Degrees == 180f)
-        {
-            door.X += 0.6f;
-            door.Z -= door.Width;
-        }
+        door.Position = Position;
+
+        var hingeSide = door.HingePosition == HAlign.Left ? _wallSide.CounterClockwiseTurn()
+                                                           : _wallSide.ClockwiseTurn();
+
+        var hingePosition = Position.SetAxis(hingeSide.GetAxis(), GetSide(hingeSide));
+        door.SetHingePosition(hingePosition);
     }
 }

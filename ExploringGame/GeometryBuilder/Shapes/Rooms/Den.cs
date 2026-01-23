@@ -22,7 +22,7 @@ public class Den : Room
     public override void LoadChildren()
     {
         SetSide(Side.Bottom, _livingRoom.GetSide(Side.Bottom));
-        _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, StateKey.DenDoorsOpen), this, Side.East, HAlign.Right, -1.0f);
+        _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, DoorDirection.Push, StateKey.DenDoorsOpen), this, Side.East, HAlign.Right, -1.0f);
         SetSideUnanchored(Side.South, _livingRoom.GetSide(Side.South));
     }
 }

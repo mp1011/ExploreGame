@@ -27,12 +27,28 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 
     public StateKey StateKey { get; }
 
-    public Door(Shape parent, Angle closedDegrees, Angle openDegrees, HAlign hingeSide, StateKey stateKey)
+    public Door(Shape parent, Side wallSide, HAlign hingePosition, DoorDirection doorDirection, StateKey stateKey)
     {
+
+        Angle doorOpen, doorClose;
+
+        var openMod = doorDirection == DoorDirection.Pull ? 1 : -1;
+
+        if (hingePosition == HAlign.Left)
+        {
+            doorClose = new Angle(wallSide).RotateClockwise(90);
+            doorOpen = doorClose.RotateClockwise(90 * openMod);
+        }
+        else
+        {
+            doorClose = new Angle(wallSide).RotateCounterClockwise(90);
+            doorOpen = doorClose.RotateCounterClockwise(90 * openMod);
+        }
+
         StateKey = stateKey;
-        HingePosition = hingeSide;
-        OpenAngle = openDegrees;
-        ClosedAngle = closedDegrees;
+        HingePosition = hingePosition;
+        OpenAngle = doorOpen;
+        ClosedAngle = doorClose;
 
         parent.AddChild(this);
 
@@ -43,7 +59,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
         Height = parent.Height - _yGap * 2;
 
         MainTexture = new TextureInfo(Key: TextureKey.Ceiling);
-        Rotation = Rotation.YawFromDegrees(closedDegrees.Degrees);
+        Rotation = Rotation.YawFromDegrees(doorClose.Degrees);
     }
     
 
