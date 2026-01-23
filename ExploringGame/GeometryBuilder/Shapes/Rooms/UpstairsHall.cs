@@ -31,7 +31,7 @@ public class UpstairsHall : Room
         AddConnectingRoom(new RoomConnection(this, NorthHall, Side.North, HAlign.Left));
 
         var linenCloset = Copy(width: Measure.Feet(1), depth: Door.StandardWidth);
-        SouthHall.AddConnectingRoomWithJunction(new DoorJunction(SouthHall, Side.West, HAlign.Left, StateKey.LinenClosetDoorOpen),
+        SouthHall.AddConnectingRoomWithJunction(new DoorJunction(SouthHall, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.LinenClosetDoorOpen),
             other: linenCloset, Side.West, HAlign.Left, offset: 0.2f);
 
         var hallLight = new HighHatLight(SouthHall, 0f, 0f);

@@ -47,6 +47,9 @@ public static class SideExtensions
         return sides.Where(p=> side.HasFlag(p)).ToArray();
     }
 
+    public static Side CounterClockwiseTurn(this Side side) => new Angle(side).RotateCounterClockwise(90).ToSide();
+    public static Side ClockwiseTurn(this Side side) => new Angle(side).RotateClockwise(90).ToSide();
+
     public static Side Opposite(this Side side) =>
         side switch
         {

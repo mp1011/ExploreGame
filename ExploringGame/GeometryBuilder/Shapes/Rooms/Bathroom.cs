@@ -21,6 +21,6 @@ public class Bathroom : Room
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.East, HAlign.Right, StateKey.BathroomDoorOpen), this, Side.East);
+            new DoorJunction(this, Side.East, HAlign.Right, DoorDirection.Pull, StateKey.BathroomDoorOpen), this, Side.East);
     }
 }

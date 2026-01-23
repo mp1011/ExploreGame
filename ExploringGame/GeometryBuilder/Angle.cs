@@ -52,5 +52,14 @@ public record Angle
     })
     { }
 
+    public Side ToSide() => Degrees switch
+    {
+        0.0f => Side.North,
+        270.0f => Side.East,
+        180.0f => Side.South,
+        90.0f => Side.West,
+        _ => throw new ArgumentException("invalid angle for side")
+    };
+
     public static implicit operator Angle(Side value) => new Angle(value);
 }

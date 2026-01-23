@@ -56,6 +56,7 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = false;
+        _graphics.IsFullScreen = false;
     }
 
     protected override void Initialize()
@@ -130,7 +131,29 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return _serviceContainer.Get<BasementWorldSegment>();
+        //  return _serviceContainer.Get<BasementWorldSegment>();
+        return JunctionTest(HAlign.Right, DoorDirection.Pull);
+    }
+
+    private WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
+    {
+        var ws = new WorldSegment();
+        var room = new Room(ws, new BasementRoomTheme());
+        room.Width = 10;
+        room.Height = 3f;
+        room.Depth = 10f;
+
+        var westRoom = room.Copy();
+        var eastRoom = room.Copy();
+        var northRoom = room.Copy();
+        var southRoom = room.Copy();
+
+        room.AddConnectingRoomWithJunction(new DoorJunction(westRoom, Side.West, doorAlign, doorDirection, StateKey.OfficeDoor1Open), westRoom, Side.West);
+        room.AddConnectingRoomWithJunction(new DoorJunction(eastRoom, Side.East, doorAlign, doorDirection, StateKey.OfficeDoor1Open), eastRoom, Side.East);
+        room.AddConnectingRoomWithJunction(new DoorJunction(southRoom, Side.South, doorAlign, doorDirection, StateKey.OfficeDoor1Open), southRoom, Side.South);
+        room.AddConnectingRoomWithJunction(new DoorJunction(northRoom, Side.North, doorAlign, doorDirection, StateKey.OfficeDoor1Open), northRoom, Side.North);
+
+        return ws;
     }
 
     private WorldSegment TwoHallTest()

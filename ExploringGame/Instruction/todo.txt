@@ -76,17 +76,19 @@
 	[x] colliders properly loaded
 	[x] active object state preserved
 
+[ ] figure out door placement
+	[ ] make test rooms for single and double doors
 
-[x] fix multiple lights
-[ ] fix segment transitions
-	[ ] define rooms (enough to define third world segment)
+[ ] properly align rooms
+
 [ ] better texture placement
 	[ ] X/Y seperate stretch/repeat
 
+[ ] lights
+	[ ] illuminate only below
+	[ ] fix ceiling artifacts
+	[ ] deactivate lights when not needed
+	[ ] add lights to all rooms
 
-
-
-- when player is at a junction
-- if player moves through the junction in the positive direction - then load all neighbors of the next section, besides those already loaded
-- if player is moving in the negatiev direction - unload all neighbors of the next section, besides those already loaded
+[ ] segment transitions
 

@@ -1,8 +1,10 @@
-﻿using ExploringGame.LevelControl;
+﻿using ExploringGame.Extensions;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
@@ -57,5 +59,14 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
         controller.Shape = this;
         Controller = controller;
         return controller;
+    }
+
+    public void SetHingePosition(Vector3 newHingePosition)
+    {
+        var hingeX = HingePosition == HAlign.Left ? GetSide(Side.West) : GetSide(Side.East);
+        var currentHingePosition = Position.SetX(hingeX);
+
+        var delta = newHingePosition - currentHingePosition;
+        Position = Position + delta;
     }
 }

@@ -56,19 +56,8 @@ public class BasementOffice : Room
         oilTankRoom.Depth = 1.9f;
 
         eastPart2.AddConnectingRoomWithJunction(
-            new DoorJunction(
-                worldSegment: WorldSegment,
-                doorClose: new Angle(Side.North),
-                doorOpen: new Angle(Side.East),
-                hingePosition: HAlign.Left,
-                height: Height,
-                doorStateKey: StateKey.OfficeDoor3Open,
-                depth: Measure.Inches(30.5f),
-                width: 0.2f),
-            oilTankRoom,
-            Side.West);
-
-
+            new DoorJunction(oilTankRoom, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.OfficeDoor3Open),
+            oilTankRoom, Side.West);
 
         var desk1 = new OfficeDesk(westPart);
         desk1.Place().OnFloor().OnSideInner(Side.West);

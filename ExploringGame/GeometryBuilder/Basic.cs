@@ -41,6 +41,12 @@ public enum HAlign
     Right
 };
 
+public enum DoorDirection
+{
+    Push,
+    Pull
+}
+
 /// <summary>
 /// Yaw = side to side
 /// Pitch = up and down

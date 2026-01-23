@@ -21,7 +21,20 @@ public static class VectorExtensions
         return axis switch { Axis.X => vector.X, Axis.Y => vector.Y, _ => throw new ArgumentException("invalid axis") };
     }
 
+    public static Vector3 SetAxis(this Vector3 vector, Axis axis, float value)
+    {
+        return axis switch
+        {
+            Axis.X => vector.SetX(value),
+            Axis.Y => vector.SetY(value),
+            Axis.Z => vector.SetZ(value),
+            _ => throw new ArgumentException("invalid axis")
+        };
+    }
+
     public static Vector3 SetY(this Vector3 vector, float y) => new Vector3(vector.X, y, vector.Z);
+    public static Vector3 SetX(this Vector3 vector, float x) => new Vector3(x, vector.Y, vector.Z);
+    public static Vector3 SetZ(this Vector3 vector, float z) => new Vector3(vector.X, vector.Y,z);
 
     public static bool IsValidPositive(this Vector3 vector)
     {

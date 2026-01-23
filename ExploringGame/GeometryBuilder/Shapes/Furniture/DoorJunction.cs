@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -11,9 +12,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 public class DoorJunction : Room
 {
     private Door _door;
+    private Side _wallSide;
 
-    public DoorJunction(Room room, Side wallSide, HAlign hingePosition, StateKey doorStateKey) : base(room.WorldSegment)
+    public DoorJunction(Room room, Side wallSide, HAlign hingePosition, DoorDirection doorDirection, StateKey doorStateKey) : base(room.WorldSegment)
     {
+        _wallSide = wallSide;
         if(wallSide.GetAxis() == Axis.Z)
         {
             Width = Door.StandardWidth;
@@ -29,27 +32,19 @@ public class DoorJunction : Room
 
         Angle doorOpen, doorClose;
 
+        var openMod = doorDirection == DoorDirection.Pull ? 1 : -1;
+
         if(hingePosition == HAlign.Left)
         {
             doorClose = new Angle(wallSide).RotateClockwise(90);
-            doorOpen = doorClose.RotateClockwise(90);
+            doorOpen = doorClose.RotateClockwise(90 * openMod);
         }
         else
         {
             doorClose = new Angle(wallSide).RotateCounterClockwise(90);
-            doorOpen = doorClose.RotateCounterClockwise(90);
+            doorOpen = doorClose.RotateCounterClockwise(90 * openMod);
         }
 
-        _door = new Door(this, doorClose, doorOpen, hingePosition, doorStateKey);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-    }
-
-    public DoorJunction(WorldSegment worldSegment, Angle doorClose, Angle doorOpen, HAlign hingePosition, StateKey doorStateKey, float width, float height, float depth)
-        : base(worldSegment)
-    {
-        Width = width;
-        Height = height;
-        Depth = depth;
         _door = new Door(this, doorClose, doorOpen, hingePosition, doorStateKey);
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
     }
@@ -58,19 +53,10 @@ public class DoorJunction : Room
     {
         _door.Position = Position;
 
-        // todo, this isnt right
-        if(_door.ClosedAngle.Degrees == 0f)
-        {
-            _door.X = GetSide(Side.East) + _door.Width / 2f;
-            _door.Z += (_door.Width / 2f);
-        }
-        else if(_door.ClosedAngle.Degrees == 90f)
-        {
-            _door.X += _door.Width;
-        }
-        else if (_door.ClosedAngle.Degrees == 270f)
-        {
-            _door.X -= _door.Width;
-        }
+        var hingeSide = _door.HingePosition == HAlign.Left ? _wallSide.CounterClockwiseTurn()
+                                                           : _wallSide.ClockwiseTurn();
+
+        var hingePosition = Position.SetAxis(hingeSide.GetAxis(), GetSide(hingeSide));
+        _door.SetHingePosition(hingePosition);
     }
 }
