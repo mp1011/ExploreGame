@@ -131,8 +131,8 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        //  return _serviceContainer.Get<BasementWorldSegment>();
-        return DoubleDoorJunctionTest(DoorDirection.Push);
+        return _serviceContainer.Get<BasementWorldSegment>();
+       // return DoubleDoorJunctionTest(DoorDirection.Push);
     }
 
     private WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)

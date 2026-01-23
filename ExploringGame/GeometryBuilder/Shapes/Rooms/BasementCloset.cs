@@ -1,7 +1,9 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
@@ -30,13 +32,13 @@ public class BasementCloset : Shape
         {
             var closedAngle = new Angle(Side.North);
             var openAngle = new Angle(Side.East);
-            _door = AddChild(new Door(this, Side.East, HAlign.Left, DoorDirection.Pull, StateKey.OfficeDoor1Open));
+            _door = AddChild(new Door(this, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.OfficeDoor1Open));
         }
         else if (doorSide == Side.West)
         {
             var closedAngle = new Angle(Side.North);
             var openAngle = new Angle(Side.West);
-            _door = AddChild(new Door(this, Side.West, HAlign.Right, DoorDirection.Pull, StateKey.OfficeDoor2Open));
+            _door = AddChild(new Door(this, Side.East, HAlign.Right, DoorDirection.Pull, StateKey.OfficeDoor2Open));
         }
         else
             throw new ArgumentException();
@@ -45,18 +47,14 @@ public class BasementCloset : Shape
     protected override void BeforeBuild()
     {
         _door.Position = Position;
+        _door.SetHingePosition(_doorSide switch
+        {
+            Side.East => new Vector3(GetSide(Side.East), Position.Y, GetSide(Side.South) - _doorPlacement.Left),
+            Side.West => new Vector3(GetSide(Side.West), Position.Y, GetSide(Side.South) - _doorPlacement.Right),
+            _ => throw new ArgumentException()
+        });
 
-        // todo, door placement is tricky         
-        if (_doorSide == Side.East)
-        {
-            _door.X = GetSide(Side.East) + _door.Width / 2f;
-            _door.Z += (_door.Width / 2f) + 0.1f;
-        }
-        else
-        {
-            _door.X = GetSide(Side.West) - _door.Width / 2f;
-            _door.Z += (_door.Width / 2f) - 0.1f;
-        }
+      //  _door.SetHingePosition(Position);
     }
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
