@@ -20,6 +20,9 @@ public class SetupColliderBodies
             if (shape.ColliderMaker == null)
                 continue;
 
+            if(!shape.HasValidSize)
+                continue;
+
             shape.ColliderBodies = shape.ColliderMaker.CreateColliders(_physics).ToArray();
         }
     }

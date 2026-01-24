@@ -16,7 +16,7 @@ public class BasementStairs : Stairs, ICutoutShape
 
     public Shape CutoutTarget => BottomFloor;
 
-    public BasementStairs(WorldSegment worldSegment, Room bottomFloor, Room topFloor) 
+    public BasementStairs(WorldSegment worldSegment, Shape bottomFloor, Shape topFloor) 
         : base(worldSegment, new Vector2(x: Measure.Feet(3), y: Measure.Inches(10)), bottomFloor, topFloor, 
             width: Measure.Feet(3), depth: Measure.Feet(8))
     {

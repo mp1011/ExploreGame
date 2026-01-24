@@ -1,12 +1,10 @@
-﻿using ExploringGame.Config;
-using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
-using System.ComponentModel;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
 
@@ -19,7 +17,10 @@ public class UpstairsHall : Room
 
     public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
     {
-        
+        Height = Measure.Feet(7);
+        Width = 10f;
+        Depth = 10f;
+        Position = new Vector3(-12.799999f, 5.7599998f, 15.38f);
     }
 
     public override void LoadChildren()

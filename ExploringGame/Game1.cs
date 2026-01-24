@@ -1,6 +1,4 @@
-﻿using ExploringGame.Config;
-using ExploringGame.Entities;
-using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
 using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
@@ -20,8 +18,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ExploringGame;
 
@@ -69,8 +65,7 @@ public class Game1 : Game
         _serviceContainer.Bind(_physics);
 
         _serviceContainer.BindSingleton<GameState>();
-        _serviceContainer.BindSingleton<LoadedTextureSheets>();
-        _serviceContainer.BindSingleton<TransitionShapesRegistrar>();      
+        _serviceContainer.BindSingleton<LoadedTextureSheets>();  
         _serviceContainer.BindSingleton<LoadedLevelData>();
         _loadedLevelData = _serviceContainer.Get<LoadedLevelData>();
 
@@ -131,7 +126,7 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return _serviceContainer.Get<BasementWorldSegment>();
+       return _serviceContainer.Get<BasementWorldSegment>();
        // return DoubleDoorJunctionTest(DoorDirection.Push);
     }
 
@@ -159,6 +154,7 @@ public class Game1 : Game
     private WorldSegment DoubleDoorJunctionTest(DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
+        ws.SetSide(Side.Bottom, 0f);
         var room = new Room(ws, new BasementRoomTheme());
         room.Width = 10;
         room.Height = 3f;
@@ -482,6 +478,8 @@ public class Game1 : Game
 
         if(_loadedLevelData.LoadedSegments.Count == 0)
         {
+            // todo
+            _player.Position = new Vector3(7.4f, 1.4f, -7.0f);
             _loadedLevelData.LoadSegment(_mainShape);
             _loadedLevelData.SwapActive();
             _playerMover.Initialize();

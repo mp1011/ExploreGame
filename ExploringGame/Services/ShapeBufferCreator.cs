@@ -36,7 +36,7 @@ internal class ShapeBufferCreator
     {
         var activeObjects = worldSegment.TraverseAllChildren().OfType<IPlaceableObject>().ToArray();
         var activeObjectShapes = activeObjects.SelectMany(p => p.Children).ToArray();
-        var staticShapeGroups = worldSegment.TraverseAllChildren().Except(activeObjectShapes).GroupBy(p=>p.Theme.TextureSheetKey);
+        var staticShapeGroups = worldSegment.TraverseAllChildren().Except(activeObjectShapes).Where(p=>p.ViewFrom != ViewFrom.None).GroupBy(p=>p.Theme.TextureSheetKey);
 
         foreach (var shapeGroup in staticShapeGroups)
         {

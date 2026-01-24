@@ -1,5 +1,5 @@
-﻿using ExploringGame.Config;
-using ExploringGame.GeometryBuilder.Shapes.Rooms;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms;
+using System;
 using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -8,33 +8,51 @@ public class UpstairsWorldSegment : WorldSegment
 {
     public override WorldSegmentTransition[] Transitions { get; }
 
-    public UpstairsWorldSegment(TransitionShapesRegistrar transitionShapesRegistrar, BasementWorldSegment basementWorldSegment)
+    public UpstairsWorldSegment()
     {
-        var upstairsHall = basementWorldSegment.Children.OfType<UpstairsHall>().First();
-        var basement = basementWorldSegment.Children.OfType<Basement>().First();
+        Depth = Measure.Feet(50);
+        Width = Measure.Feet(50);
+        Height = Measure.Feet(10);
+        SetSide(Side.Bottom, Measure.Feet(8));
 
-        upstairsHall.LoadChildren();
-        var bedroom = new Bedroom(this, upstairsHall);
-        bedroom.LoadChildren();
+        var upstairsHall = new UpstairsHall(this);
+        //var kitchen = new Kitchen(this, upstairsHall);
+        //var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
+        //var bedroom = new Bedroom(this, upstairsHall);
+        //var bathroom = new Bathroom(this, upstairsHall);
+        //var kidsBedroom = new KidsBedroom(this, upstairsHall);
+        //var spareRoom = new SpareRoom(this, upstairsHall);
+        //var den = new Den(this, livingRoom);
+        //var halfBath = new HalfBathroom(this, den);
 
-        var bathroom = new Bathroom(this, upstairsHall);
-        bathroom.LoadChildren();
 
-        var kidsBedroom = new KidsBedroom(this, upstairsHall);
-        kidsBedroom.LoadChildren();
+        //upstairsHall.Position = basement.Position;
+        //upstairsHall.Height = Measure.Feet(8);
+        //upstairsHall.Width = 10f;
+        //upstairsHall.Depth = 10f;
+        //upstairsHall.SetSide(Side.Bottom, basement.GetSide(Side.Top) + Measure.Inches(5));
+        //upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
 
-        var spareRoom = new SpareRoom(this, upstairsHall);
-        spareRoom.LoadChildren();
+        //upstairsHall.X = basement.X;
+        //upstairsHall.SetSide(Side.North, basement.GetSide(Side.South));
+        //upstairsHall.SetSideUnanchored(Side.South, basement.GetSide(Side.South) + Measure.Feet(3));
+        //upstairsHall.SetSideUnanchored(Side.West, basement.GetSide(Side.West) + Measure.Feet(5));
+        //upstairsHall.SetSideUnanchored(Side.East, basement.GetSide(Side.East) - Measure.Feet(3));
 
-        var kitchen = new Kitchen(this, upstairsHall);
-        kitchen.LoadChildren();
+        //upstairsHall.LoadChildren();
+        //livingRoom.LoadChildren();
+        //bedroom.LoadChildren();
+        //bathroom.LoadChildren();
+        //kidsBedroom.LoadChildren();
+        //spareRoom.LoadChildren();
+        //kitchen.LoadChildren();
+        //livingRoom.LoadChildren();
+        //den.LoadChildren();
+        //halfBath.LoadChildren();
 
-        var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
-        livingRoom.LoadChildren();
+        Transitions = Array.Empty<WorldSegmentTransition>();
 
-        var den = new Den(this, livingRoom);
-        den.LoadChildren();
-        Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
+       // Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }
 
 }

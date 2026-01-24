@@ -12,8 +12,8 @@ public class Kitchen : Room
     {
         _upstairsHall = upstairsHall;
         Height = upstairsHall.Height;
-        Width = 5.0f;
-        Depth = 10.0f;
+        Width = Measure.Feet(0);
+        Depth = Measure.Feet(0);
 
     }
 

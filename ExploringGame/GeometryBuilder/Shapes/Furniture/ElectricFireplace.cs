@@ -49,6 +49,7 @@ class ElectricFireplace : PlaceableShape
 
     public ElectricFireplace(Shape parent)
     {
+        Position = parent.Position;
         parent.AddChild(this);
         Width = MainWidth;
         Depth = MainDepth;

@@ -10,6 +10,7 @@ public enum StateKey
     OfficeDoor2Open,
     OfficeDoor3Open,
     OfficeLightOn,
+    BasementStairsDoorOpen,
     BedroomDoorOpen,
     KidsBedroomDoorOpen,
     LinenClosetDoorOpen,
@@ -17,7 +18,9 @@ public enum StateKey
     HallLightOn,
     BasementLightOn,
     DenDoorsOpen,
-    BathroomDoorOpen,
+    BathroomDoorOpen, 
+    HalfBathroomDoorOpen,
+    DenClosetDoorOpen
 }
 
 public class GameState

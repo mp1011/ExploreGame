@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics.Collision.ColliderMakers;
+﻿using ExploringGame.Extensions;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Jitter2.Dynamics;
@@ -35,6 +36,9 @@ public abstract class Shape
     }
     public TextureInfo TextureInfoForSide(Side side) => Theme.TextureInfoForSide(side);
     public Dictionary<Side, TextureInfo> SideTextures => Theme.SideTextures;
+
+    public bool HasValidSize => Size.X.IsNonZeroNumber() && Size.Y.IsNonZeroNumber() && Size.Z.IsNonZeroNumber();
+
     #endregion
 
     public float X
@@ -280,7 +284,7 @@ public abstract class Shape
             return Parent.SelfOrDescendantOf(shape);
     }
 
-    public Matrix GetWorldMatrix()
+    public virtual Matrix GetWorldMatrix()
     {
         var scaleMatrix = Matrix.Identity; // todo, see about this
         var rotationMatrix = Rotation?.AsMatrix() ?? Matrix.Identity;

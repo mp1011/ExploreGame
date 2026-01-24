@@ -19,6 +19,7 @@ internal class Couch : PlaceableShape
 
     public Couch(Shape parent)
     {
+        Position = parent.Position;
         parent.AddChild(this);
         Width = Measure.Inches(72);
         Height = Measure.Inches(38);

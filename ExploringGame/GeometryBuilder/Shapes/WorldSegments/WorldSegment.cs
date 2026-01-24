@@ -1,8 +1,8 @@
-﻿using ExploringGame.Config;
-using ExploringGame.Entities;
+﻿using ExploringGame.Entities;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
+using Microsoft.Xna.Framework;
 using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -30,7 +30,11 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
     {
         return new SegmentTransitionController(this, 
             serviceContainer.Get<Player>(), 
-            serviceContainer.Get<TransitionShapesRegistrar>(),
             serviceContainer.Get<LoadedLevelData>());
-    }    
+    }
+
+    public override Matrix GetWorldMatrix()
+    {
+        return Matrix.CreateTranslation(Vector3.Zero);
+    }
 }

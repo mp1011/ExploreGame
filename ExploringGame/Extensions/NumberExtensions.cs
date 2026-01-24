@@ -15,6 +15,11 @@ public static class NumberExtensions
         return number > Epsilon;
     }
 
+    public static bool IsNonZeroNumber(this float number)
+    {
+        return !(number == 0 || float.IsNaN(number));             
+    }
+
     public static bool IsAlmost(this float number, float compare, float tolerance=Epsilon)
     {
         return MathF.Abs(number - compare) < tolerance;

@@ -27,6 +27,9 @@ public class Room : Shape
 
     public Room(WorldSegment worldSegment, Theme theme = null)
     {
+        Position = worldSegment.Position;
+        SetSide(Side.Bottom, worldSegment.GetSide(Side.Bottom));
+
         if (theme != null)
             _theme = theme;
         WorldSegment = worldSegment;

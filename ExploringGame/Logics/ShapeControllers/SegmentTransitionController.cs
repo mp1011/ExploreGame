@@ -1,6 +1,4 @@
-﻿using ExploringGame.Config;
-using ExploringGame.Entities;
-using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
@@ -14,8 +12,6 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
 {
     private readonly LoadedLevelData _renderBuffers;
     private readonly Player _player;
-    private readonly TransitionShapesRegistrar _transitionShapesRegistrar;
-
     public WorldSegment Shape { get; }
 
     private TransitionDetail[] _transitions;
@@ -55,12 +51,10 @@ public class SegmentTransitionController : IShapeController<WorldSegment>
         }
     }
 
-    public SegmentTransitionController(WorldSegment worldSegment, Player player, 
-        TransitionShapesRegistrar transitionShapesRegistrar, LoadedLevelData renderBuffers)
+    public SegmentTransitionController(WorldSegment worldSegment, Player player, LoadedLevelData renderBuffers)
     {
         Shape = worldSegment;
         _player = player;
-        _transitionShapesRegistrar = transitionShapesRegistrar;
         _renderBuffers = renderBuffers;
     }
 

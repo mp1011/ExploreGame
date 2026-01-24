@@ -18,10 +18,12 @@ public class BasementOffice : Room
 
     public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
     {
-        Width = 8f;
-        Height = OfficeDesk.DeskHeight + Measure.Inches(19);
-        Depth = OfficeDesk.DeskWidth + Measure.Inches(39 + 39 + 36);
+        Width = Measure.Feet(17);
+        Height = Measure.Feet(7);
+        Depth = Measure.Feet(22);
         SetSide(Side.Bottom, 0f);
+
+        this.Place().OnSideInner(Side.NorthEast);
     }
 
     public override void LoadChildren()

@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
@@ -15,12 +16,14 @@ public class LivingRoom : Room
         _upstairsHall = upstairs;
         _kitchen = kitchen;
 
-        Height = _upstairsHall.Height;
-        Width = 10f;
-        Depth = 10f;
+        Height = Measure.Feet(7);
+        Width = Measure.Feet(0);
+        Depth = Measure.Feet(0);
 
         Theme = new UpstairsHallTheme();
         Theme.SideTextures[Side.North] = new TextureInfo(TextureKey.Wood);
+
+        this.Place().OnSideInner(Side.NorthWest);
     }
 
     public override void LoadChildren()

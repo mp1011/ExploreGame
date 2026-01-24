@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
@@ -12,9 +13,11 @@ public class Bedroom : Room
     public Bedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) : base(worldSegment)
     {
         _upstairsHall = upstairsHall;
-        Width = Measure.Feet(10);
-        Height = Measure.Feet(8);
-        Depth = Measure.Feet(10);
+        Width = Measure.Feet(16);
+        Height = Measure.Feet(7);
+        Depth = Measure.Feet(16);
+
+        this.Place().OnSideInner(Side.SouthWest);
     }
 
     public override void LoadChildren()
