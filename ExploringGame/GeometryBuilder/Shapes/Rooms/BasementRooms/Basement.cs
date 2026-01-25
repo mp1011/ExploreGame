@@ -5,7 +5,7 @@ using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 {
     internal class Basement : Room
     {
@@ -16,13 +16,15 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
 
         public BasementStairs Stairs { get; private set; }
 
+        public DoorJunction BasementStairsDoor { get; private set; }
+
         public Basement(WorldSegment worldSegment, BasementOffice office) : base(worldSegment)
         {
             _office = office;
 
             Width = Measure.Feet(20);
             Height = Measure.Feet(8);
-            Depth = Measure.Feet(34);
+            Depth = Measure.Feet(28);
             SetSide(Side.Bottom, 0f);
         }
 
@@ -73,21 +75,21 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms
             var wall8 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(35) });
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
-            var upstairsBegin = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
+            BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
                 { Depth =0.5f, Width = Measure.Feet(3) };
 
-            upstairsBegin.SetSide(Side.Bottom, GetSide(Side.Top) + Measure.Inches(5));
-            upstairsBegin.SetSide(Side.North, GetSide(Side.South));
+            BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
+            BasementStairsDoor.SetSide(Side.North, GetSide(Side.South));
          
-            Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: upstairsBegin));
+            Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: BasementStairsDoor));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
 
-            upstairsBegin.SetSide(Side.East, Stairs.GetSide(Side.East));
+            BasementStairsDoor.SetSide(Side.East, Stairs.GetSide(Side.East));
 
 
             AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
 
-            upstairsBegin.AddConnectingRoom(new RoomConnection(upstairsBegin, Stairs, Side.North), adjustPlacement: false);
+            BasementStairsDoor.AddConnectingRoom(new RoomConnection(BasementStairsDoor, Stairs, Side.North), adjustPlacement: false);
 
             var light = new HighHatLight(this, 1.0f, 0f);
             var lightSwitch2 = new LightSwitch(this, StateKey.BasementLightOn);

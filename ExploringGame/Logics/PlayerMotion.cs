@@ -1,7 +1,9 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+
 
 namespace ExploringGame.Logics;
 
@@ -13,7 +15,7 @@ internal class PlayerMotion
     public const float StopAccel = 1.0f;
     public const float JumpSpeed = -5.00f;
 
-    public const float Gravity = 10.0f;
+    public static float Gravity => Debug.FlyMode ? 0f : 10.0f;
     public const float GravityAccel = 0.4f;
 
     private PlayerInput _playerInput;
@@ -50,9 +52,19 @@ internal class PlayerMotion
         // fix me
         // nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
 
-        //todo, check if on floor
-        if (_playerInput.IsKeyPressed(GameKey.Jump) && _playerMotion.Motion.CurrentY == 0)
-            _playerMotion.Motion.CurrentY = JumpSpeed;
+        if (Debug.FlyMode)
+        {
+            if (_playerInput.IsKeyDown(GameKey.Jump))
+                _playerMotion.Motion.CurrentY = JumpSpeed;
+            else
+                _playerMotion.Motion.CurrentY = 0f;
+        }
+        else
+        {
+            //todo, check if on floor
+            if (_playerInput.IsKeyPressed(GameKey.Jump) && _playerMotion.Motion.CurrentY == 0)
+                _playerMotion.Motion.CurrentY = JumpSpeed;
+        }
 
         // Mouse look
         var mouse = Mouse.GetState();

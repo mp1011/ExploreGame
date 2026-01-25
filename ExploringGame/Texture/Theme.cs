@@ -40,9 +40,22 @@ public class Theme
     public static Theme Missing { get => new Theme { MainTexture = new TextureInfo(Color.Magenta) }; }
 }
 
+public class TestTheme : Theme
+{
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
+
+    public TestTheme()
+    {
+        MainTexture = new TextureInfo(Color.Pink, TextureKey.Ceiling);
+        SideTextures[Side.Top] = new TextureInfo(Color.Gray, TextureKey.Ceiling);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.Purple, TextureKey.Ceiling);
+    }
+}
+
 public class BasementRoomTheme : Theme
 {
     public override TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
+
 
     public BasementRoomTheme()
     {

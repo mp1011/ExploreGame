@@ -3,7 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 
 public class OilTankRoom : Room
 {

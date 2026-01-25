@@ -1,20 +1,17 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class Kitchen : Room
 {
     private readonly UpstairsHall _upstairsHall;
 
     public override Theme Theme => new KitchenTheme();
-    public Kitchen(WorldSegment worldSegment, UpstairsHall upstairsHall) : base(worldSegment)
+    public Kitchen(WorldSegment worldSegment, UpstairsHall upstairsHall) 
+        : base(worldSegment, height: upstairsHall.Height, width: 4f, depth: 4f)
     {
         _upstairsHall = upstairsHall;
-        Height = upstairsHall.Height;
-        Width = Measure.Feet(0);
-        Depth = Measure.Feet(0);
-
     }
 
     public override void LoadChildren()

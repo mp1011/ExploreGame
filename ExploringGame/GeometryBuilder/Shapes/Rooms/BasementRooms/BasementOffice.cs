@@ -6,7 +6,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 
 public class BasementOffice : Room
 {
@@ -18,9 +18,11 @@ public class BasementOffice : Room
 
     public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
     {
-        Width = Measure.Feet(17);
+        Width = Measure.Feet(17) - 2.0f;
         Height = Measure.Feet(7);
-        Depth = Measure.Feet(22);
+        Depth = Measure.Feet(22) - 1.9f;
+
+        SetSide(Side.North, worldSegment.GetSide(Side.North) + 1.9f);
         SetSide(Side.Bottom, 0f);
 
         this.Place().OnSideInner(Side.NorthEast);

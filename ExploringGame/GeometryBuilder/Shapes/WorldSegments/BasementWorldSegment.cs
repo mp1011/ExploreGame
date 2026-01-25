@@ -1,5 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms;
-using System;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 {
@@ -8,9 +8,9 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 
         public override WorldSegmentTransition[] Transitions { get; }
 
-        public BasementWorldSegment() : base()
+        public BasementWorldSegment(UpstairsWorldSegment upstairsWorldSegment) : base()
         {
-            Depth = Measure.Feet(50);
+            Depth = Measure.Feet(53);
             Width = Measure.Feet(50);
             Height = Measure.Feet(10);
             SetSide(Side.Bottom, 0f);
@@ -20,8 +20,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 
             office.LoadChildren();
             basement.LoadChildren();
+
+            var upstairsHall = upstairsWorldSegment?.FindChild<UpstairsHall>() ?? new UpstairsHall(this);
+            upstairsHall.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
+            basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South, 0.5f);
          
-          //  Transitions = Array.Empty<WorldSegmentTransition>();
             Transitions = new[] { new WorldSegmentTransition<UpstairsWorldSegment>(basement.Stairs, Side.South) };
         }
     }

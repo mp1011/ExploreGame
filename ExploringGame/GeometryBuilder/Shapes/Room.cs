@@ -25,9 +25,18 @@ public class Room : Shape
 
     protected virtual Side OmitSides { get; }
 
-    public Room(WorldSegment worldSegment, Theme theme = null)
+    public Room(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null,
+        Theme theme = null)
     {
         Position = worldSegment.Position;
+
+        if(width.HasValue)
+            Width = width.Value;
+        if(depth.HasValue)
+            Depth = depth.Value;
+        if (height.HasValue) 
+            Height = height.Value;
+
         SetSide(Side.Bottom, worldSegment.GetSide(Side.Bottom));
 
         if (theme != null)
@@ -39,6 +48,12 @@ public class Room : Shape
     public virtual void LoadChildren()
     {
 
+    }
+
+    public void AddConnectingRoom(Room other, Side side, float? placement = null)
+    {
+        AddConnectingRoom(new RoomConnection(this, other, side, placement.GetValueOrDefault()),
+            adjustPlacement: placement.HasValue);
     }
 
     public void AddConnectingRoom(RoomConnection connection, bool adjustPlacement = true)
@@ -72,10 +87,16 @@ public class Room : Shape
         junction.AddConnectingRoom(new RoomConnection(junction, other, side));
     }
 
-    public void AddConnectingRoomWithJunction(Room junction, Room other, Side side, HAlign align, float offset = 0f)
+    public void AddConnectingRoomWithJunction(Room junction, Room other, Side side, HAlign align, float offset = 0f, bool adjustPlacement = true)
     {
+        if(!adjustPlacement)
+        {
+            junction.SetSide(side, other.GetSide(side.Opposite()));
+            junction.SetSideUnanchored(side.Opposite(), GetSide(side));
+        }
+
         AddConnectingRoom(new RoomConnection(this, junction, side, align, offset));
-        junction.AddConnectingRoom(new RoomConnection(junction, other, side));
+        junction.AddConnectingRoom(new RoomConnection(junction, other, side), adjustPlacement);
     }
 
     public RoomConnection[] GetRoomConnections(Side side) => _roomConnections.Where(p => p.Side == side).ToArray();

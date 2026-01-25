@@ -3,19 +3,17 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class Bathroom : Room
 {
     private readonly UpstairsHall _upstairsHall;
     public override Theme Theme => new BathroomTheme();
 
-    public Bathroom(UpstairsWorldSegment worldSegment, UpstairsHall hall) : base(worldSegment)
+    public Bathroom(UpstairsWorldSegment worldSegment, UpstairsHall hall) 
+        : base(worldSegment, height: hall.Height, width: Measure.Feet(10), depth: Measure.Feet(5))
     {
         _upstairsHall = hall;
-        Height = hall.Height;
-        Width = Measure.Feet(10);
-        Depth = Measure.Feet(5);
     }
 
     public override void LoadChildren()

@@ -29,5 +29,11 @@ public class DebugController
             _cameraService.SetCamera(_player);
         }
 
+
+        else if (_playerInput.IsKeyPressed(Keys.G))
+        {
+            Debug.FlyMode = !Debug.FlyMode;
+        }
+
     }
 }

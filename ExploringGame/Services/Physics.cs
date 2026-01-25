@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
@@ -240,9 +241,9 @@ public class Physics
         private bool IsCollisionAllowed(CollisionGroup groupA, CollisionGroup groupB)
         {
             if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Environment)
-                return true;
+                return !Debug.FlyMode;
             if (groupA == CollisionGroup.Environment && groupB == CollisionGroup.Player)
-                return true;
+                return !Debug.FlyMode;
             if (groupA == CollisionGroup.Doors && groupB == CollisionGroup.Player)
                 return true;
             if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Doors)

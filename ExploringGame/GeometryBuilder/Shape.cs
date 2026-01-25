@@ -260,6 +260,11 @@ public abstract class Shape
            point.Z >= min.Z && point.Z <= max.Z;
     }
 
+    public TShape FindChild<TShape>() where TShape : Shape
+    {
+        return TraverseAllChildren().OfType<TShape>().FirstOrDefault();
+    }
+
     public Shape[] TraverseAllChildren()
     {
         List<Shape> shapes = new List<Shape>();

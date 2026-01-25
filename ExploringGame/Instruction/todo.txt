@@ -76,10 +76,16 @@
 	[x] colliders properly loaded
 	[x] active object state preserved
 
-[ ] figure out door placement
-	[ ] make test rooms for single and double doors
+[x] figure out door placement
+	[x] make test rooms for single and double doors
 
 [ ] properly align rooms
+- get the rooms with known positions into place
+- place hall using these rooms as the guide
+
+
+
+
 
 [ ] better texture placement
 	[ ] X/Y seperate stretch/repeat
@@ -91,4 +97,5 @@
 	[ ] add lights to all rooms
 
 [ ] segment transitions
+
 

@@ -4,29 +4,24 @@ using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
-public class KidsBedroom : Room
+public class Bedroom : Room
 {
     private UpstairsHall _upstairsHall;
 
-    public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) : base(worldSegment)
+    public Bedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) 
+        : base(worldSegment, width: Measure.Feet(17 ), depth: Measure.Feet(12), height: Measure.Feet(7))
     {
         _upstairsHall = upstairsHall;
-        Width = Measure.Feet(16);
-        Height = Measure.Feet(7);
-        Depth = Measure.Feet(16);
-
         this.Place().OnSideInner(Side.SouthWest);
-        this.X += Measure.Feet(17);
     }
 
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Pull, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left);
-
-        SetSideUnanchored(Side.West, GetSide(Side.West) + 1.5f);
+            new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Pull,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
+                adjustPlacement: false);
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();

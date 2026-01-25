@@ -33,12 +33,12 @@ public class ShapePlacer
         return this;
     }
 
-    public ShapePlacer OnSideOuter(Side side, Shape other = null)
+    public ShapePlacer OnSideOuter(Side side, Shape other = null, float offset = 0f)
     {
         other = other ?? _shape.Parent;
         foreach (var s in side.Decompose())
         {
-            _shape.SetSide(s.Opposite(), other.GetSide(s));
+            _shape.SetSide(s.Opposite(), other.GetSide(s) + offset);
         }
         return this;
     }

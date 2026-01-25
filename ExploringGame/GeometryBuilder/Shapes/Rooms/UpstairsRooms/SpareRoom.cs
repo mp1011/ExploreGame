@@ -1,29 +1,27 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class SpareRoom : Room
 {
     private UpstairsHall _upstairsHall;
 
-    public SpareRoom(WorldSegment worldSegment, UpstairsHall upstairsHall) : base(worldSegment)
+    public SpareRoom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom) 
+        : base(worldSegment, height: upstairsHall.Height, width: Measure.Feet(12), depth: Measure.Feet(16))
     {
         _upstairsHall = upstairsHall;
-        Width = Measure.Feet(10);
-        Height = Measure.Feet(8);
-        Depth = Measure.Feet(10);
+        this.Place().OnSideInner(Side.West);
     }
 
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(_upstairsHall.SouthHall, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.SpareRoomDoorOpen),        
-            this, Side.West, HAlign.Left, 3.0f);
-
-        SetSideUnanchored(Side.South, GetSide(Side.South) - 1.5f);
+            this, Side.West, HAlign.Left, 3.0f, adjustPlacement: false);
     }
 
     public override Theme Theme => new UpstairsHallTheme();

@@ -126,14 +126,14 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-       return _serviceContainer.Get<BasementWorldSegment>();
+        return new BasementWorldSegment(null);
        // return DoubleDoorJunctionTest(DoorDirection.Push);
     }
 
     private WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
-        var room = new Room(ws, new BasementRoomTheme());
+        var room = new Room(ws, theme: new BasementRoomTheme());
         room.Width = 10;
         room.Height = 3f;
         room.Depth = 10f;
@@ -155,7 +155,7 @@ public class Game1 : Game
     {
         var ws = new WorldSegment();
         ws.SetSide(Side.Bottom, 0f);
-        var room = new Room(ws, new BasementRoomTheme());
+        var room = new Room(ws, theme: new BasementRoomTheme());
         room.Width = 10;
         room.Height = 3f;
         room.Depth = 10f;
@@ -176,7 +176,7 @@ public class Game1 : Game
     private WorldSegment TwoHallTest()
     {
         var ws = new WorldSegment();
-        var room = new Room(ws, new BasementRoomTheme());
+        var room = new Room(ws, theme: new BasementRoomTheme());
         room.Width = 10;
         room.Height = 3f;
         room.Depth = 10f;
@@ -216,7 +216,7 @@ public class Game1 : Game
     private WorldSegment CircleCutoutTest()
     {
         var worldSegment = new WorldSegment();
-        var room = new Room(worldSegment, new BasementRoomTheme());
+        var room = new Room(worldSegment, theme: new BasementRoomTheme());
         room.Width = 8;
         room.Height = 3f;
         room.Depth = 8f;

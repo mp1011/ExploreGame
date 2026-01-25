@@ -4,7 +4,7 @@ using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class Den : Room
 {
@@ -13,23 +13,18 @@ public class Den : Room
     public Room EastPart { get; private set;  }
     public override Theme Theme => new UpstairsHallTheme();
 
-    public Den(UpstairsWorldSegment worldSegment, LivingRoom livingRoom) : base(worldSegment)
+    public Den(UpstairsWorldSegment worldSegment, LivingRoom livingRoom) 
+        : base(worldSegment, height: livingRoom.Height, width: Measure.Feet(17), depth: Measure.Feet(23))
     {
         _livingRoom = livingRoom;
-        Height = _livingRoom.Height;
-        Width = Measure.Feet(17);
-        Depth = Measure.Feet(22);
-
         this.Place().OnSideInner(Side.NorthEast);
     }
 
     public override void LoadChildren()
     {
-        SetSide(Side.Bottom, _livingRoom.GetSide(Side.Bottom));
-        _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, DoorDirection.Push, StateKey.DenDoorsOpen), this, Side.East, HAlign.Right, -1.0f);
-        SetSideUnanchored(Side.South, _livingRoom.GetSide(Side.South));
-
-
+        _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, DoorDirection.Push, StateKey.DenDoorsOpen), 
+            this, Side.East, HAlign.Right, -1.0f, adjustPlacement: false);
+        
         EastPart = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
         AddConnectingRoom(new RoomConnection(this, EastPart, Side.East, HAlign.Right));
 

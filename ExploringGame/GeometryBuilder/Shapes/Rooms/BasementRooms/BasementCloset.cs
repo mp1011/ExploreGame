@@ -6,7 +6,7 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 
 public class BasementCloset : Shape
 {

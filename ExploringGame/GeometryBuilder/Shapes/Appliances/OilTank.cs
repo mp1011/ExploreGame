@@ -14,7 +14,7 @@ public class OilTank : PlaceableShape
     public OilTank(Shape room)
     {
         room.AddChild(this);
-        Width = 5.0f;
+        Width = 3.0f;
         Height = 2.0f;
         Depth = 1.3f;
         Position = room.Position;

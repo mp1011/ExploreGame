@@ -6,21 +6,18 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class UpstairsHall : Room
 {
-    public override Theme Theme => new UpstairsHallTheme();
+    public override Theme Theme => new TestTheme(); //> new UpstairsHallTheme();
 
     public Room SouthHall { get; private set; }
     public Room NorthHall { get; private set; }
 
-    public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
+    public UpstairsHall(WorldSegment worldSegment) : base(worldSegment, 
+        height: Measure.Feet(7), width: Measure.Feet(4), depth: Measure.Feet(4))
     {
-        Height = Measure.Feet(7);
-        Width = 10f;
-        Depth = 10f;
-        Position = new Vector3(-12.799999f, 5.7599998f, 15.38f);
     }
 
     public override void LoadChildren()

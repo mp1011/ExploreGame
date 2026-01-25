@@ -2,7 +2,7 @@
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Rooms;
+namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 
 public class BasementStairs : Stairs, ICutoutShape
 {
