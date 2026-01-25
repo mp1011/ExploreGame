@@ -6,6 +6,17 @@ public enum TextureStyle
 {
     FillSide,
     XZTile,
+    HorizontalRepeat
+}
+
+public static class TextureStyleExtensions
+{
+    public static bool HasTiling(this TextureStyle style) => style switch
+    {
+        TextureStyle.XZTile => true,
+        TextureStyle.HorizontalRepeat => true,
+        _ => false
+    };
 }
 
 public record TextureInfo(Color Color, TextureKey Key, TextureStyle Style = TextureStyle.FillSide, float? TileSize = null)

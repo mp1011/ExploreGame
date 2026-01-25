@@ -321,11 +321,11 @@ public abstract class Shape
         if (quality == QualityLevel.DoNotRender)
             output[this] = Array.Empty<Triangle>();
         else if (quality == QualityLevel.CuboidOnly)
-            output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() : AdjustTrianglesForDisplay(BuildCuboid());
+            output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() : AdjustTrianglesForDisplay(BuildCuboid(), quality);
         else
         {
             output[this] = ViewFrom == ViewFrom.None ? Array.Empty<Triangle>() :
-                                                       AdjustTrianglesForDisplay(BuildInternal(quality));
+                                                       AdjustTrianglesForDisplay(BuildInternal(quality), quality);
             foreach(var child in Children)
                 child.Build(quality - 1, output);
         }
@@ -350,10 +350,13 @@ public abstract class Shape
     /// </summary>
     /// <param name="triangles"></param>
     /// <returns></returns>
-    private Triangle[] AdjustTrianglesForDisplay(IEnumerable<Triangle> triangles)
+    private Triangle[] AdjustTrianglesForDisplay(IEnumerable<Triangle> triangles, QualityLevel quality)
     {
         var adjusted = CorrectWinding(triangles);
-        adjusted = new SplitTrianglesForTiling().Execute(this, adjusted);
+
+        if(quality > QualityLevel.Basic)
+            adjusted = new SplitTrianglesForTiling().Execute(this, adjusted);
+
         return adjusted;
     }
 

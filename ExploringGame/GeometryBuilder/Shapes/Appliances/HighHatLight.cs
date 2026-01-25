@@ -9,6 +9,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
 public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>, IOnOff
 {
+    private bool _initialState;
+
     public override Theme Theme => new Theme(Color.White);
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
@@ -18,8 +20,9 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
 
     Triangle[] ICutoutShape.Build() => BuildInternal(QualityLevel.Basic);
 
-    public HighHatLight(Room room, float x, float z)
+    public HighHatLight(Room room, float x, float z, bool initialState=false)
     {
+        _initialState = initialState;
         X = room.X + x;
         Y = room.Y;
         Z = room.Z + z;
@@ -47,6 +50,7 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
         var controller = serviceContainer.Get<LightController>();
         controller.Shape = this;
         Controller = controller;
+        On = _initialState;
         return controller;
     }
 }

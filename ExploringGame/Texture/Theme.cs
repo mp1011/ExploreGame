@@ -73,7 +73,7 @@ public class UpstairsHallTheme : Theme
     {
         SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);      
         SideTextures[Side.Bottom] = new TextureInfo(Color.Brown, TextureKey.Floor);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
+        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Brick, TextureStyle.HorizontalRepeat, TileSize: 3.0f);
     }
 }
 
@@ -96,5 +96,13 @@ public class BathroomTheme : Theme
     public BathroomTheme()
     {
         MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
+    }
+}
+
+public class LivingRoomTheme : UpstairsHallTheme
+{
+    public LivingRoomTheme()
+    {
+        SideTextures[Side.North] = new TextureInfo(TextureKey.Wood);
     }
 }

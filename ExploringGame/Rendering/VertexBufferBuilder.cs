@@ -11,7 +11,7 @@ namespace ExploringGame.Rendering;
 public class VertexBufferBuilder
 {
     public (VertexBuffer, IndexBuffer, int) Build(Dictionary<Shape, Triangle[]> triangles, TextureSheet textureSheet, GraphicsDevice graphicsDevice)
-    {     
+    {
         List<VertexPositionColorNormalTexture> vertices = new();
         List<int> indices = new();
         Dictionary<(Vector3, Color, Vector2), int> indexCache = new();
@@ -27,8 +27,8 @@ public class VertexBufferBuilder
         return (vb, ib, triangles.SelectMany(p => p.Value).Count());
     }
 
-    private void BuildBuffers(Dictionary<Shape, Triangle[]> shapeTriangles, 
-                             List<VertexPositionColorNormalTexture> vertices, 
+    private void BuildBuffers(Dictionary<Shape, Triangle[]> shapeTriangles,
+                             List<VertexPositionColorNormalTexture> vertices,
                              List<int> indices,
                              Dictionary<(Vector3, Color, Vector2), int> indexCache,
                              TextureSheet textureSheet)
@@ -44,7 +44,7 @@ public class VertexBufferBuilder
             CreateVertices(Side.Bottom, textureSheet, triangles, vertices, indices, indexCache);
         }
     }
-    
+
 
     private void CreateVertices(Side side,
                                 TextureSheet textureSheet,
@@ -57,17 +57,17 @@ public class VertexBufferBuilder
 
         var cornerVertices = GetCornerVertices(side, sideTriangles);
 
-        foreach(var triangle in sideTriangles)
+        foreach (var triangle in sideTriangles)
         {
             foreach (var vertex in triangle.Vertices)
             {
                 var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle.TextureInfo, vertex, cornerVertices.Item1, cornerVertices.Item2);
                 int index;
-                if(!indexCache.TryGetValue((vertex, triangle.TextureInfo.Color, textureCoords), out index))
+                if (!indexCache.TryGetValue((vertex, triangle.TextureInfo.Color, textureCoords), out index))
                 {
                     indexCache.Add((vertex, triangle.TextureInfo.Color, textureCoords), vertices.Count);
                     indices.Add(vertices.Count);
-                    vertices.Add(new VertexPositionColorNormalTexture(vertex, triangle.TextureInfo.Color, triangle.Normal, textureCoords));                    
+                    vertices.Add(new VertexPositionColorNormalTexture(vertex, triangle.TextureInfo.Color, triangle.Normal, textureCoords));
                 }
                 else
                 {
@@ -98,24 +98,55 @@ public class VertexBufferBuilder
 
     public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
     {
-        switch(texture.Style)
+        var textureCoordinates = texture.Style switch
         {
-            case TextureStyle.FillSide:
-                var position2d = position.As2D(side);
-                var topLeftCorner2d = topLeftCorner.As2D(side);
-                var bottomRightCorner2d = bottomRightCorner.As2D(side);
+            TextureStyle.FillSide => CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner),
+            TextureStyle.XZTile => CalcTextureCoordinates_XZTile(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner),
+            TextureStyle.HorizontalRepeat => CalcTextureCoordinates_HorizontalRepeat(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner),
+            _ => throw new System.ArgumentException($"Unknown texture style {texture.Style}")
+        };
 
-                var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
-                return textureSheet.TexturePosition(texture.Key, coordinates);
-            case TextureStyle.XZTile:
+        return textureSheet.TexturePosition(texture.Key, textureCoordinates);
+    }
+
+    private Vector2 CalcTextureCoordinates_FillSide(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    {
+        var position2d = position.As2D(side);
+        var topLeftCorner2d = topLeftCorner.As2D(side);
+        var bottomRightCorner2d = bottomRightCorner.As2D(side);
+
+        var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
+        return coordinates;
+    }
+
+    private Vector2 CalcTextureCoordinates_XZTile(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    {
+        var tileSize = texture.TileSize.Value;
+        var tx = position.X.NMod(tileSize) / tileSize;
+        var ty = position.Z.NMod(tileSize) / tileSize;
+        return new Vector2(tx, ty);
+    }
+
+    private Vector2 CalcTextureCoordinates_HorizontalRepeat(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    {     
+        var coordinates = CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner);
+
+        switch (side)
+        {
+            case Side.West:
+            case Side.East:
                 var tileSize = texture.TileSize.Value;
-                var tx = position.X.NMod(tileSize) / tileSize;
-                var ty = position.Z.NMod(tileSize) / tileSize;
-                return textureSheet.TexturePosition(texture.Key, new Vector2(tx, ty));
+                var tx = position.Z.NMod(tileSize) / tileSize;
+                return new Vector2(tx, coordinates.Y);
+            case Side.North:
+            case Side.South:
+                tileSize = texture.TileSize.Value;
+                tx = position.X.NMod(tileSize) / tileSize;
+                return new Vector2(tx, coordinates.Y);
 
             default:
-                throw new System.ArgumentException("invalid style");
+                throw new System.ArgumentException("HorizontalRepeat texture style cannot apply to Top or Bottom sides");
         }
-        
     }
+
 }

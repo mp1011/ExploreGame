@@ -8,8 +8,6 @@ namespace ExploringGame.Services;
 
 public class SplitTrianglesForTiling
 {
-    private const float TargetWidth = 10.0f;
-
     public Triangle[] Execute(Shape shape, Triangle[] triangles)
     {
         if (!ShapeHasTiling(shape))
@@ -22,22 +20,22 @@ public class SplitTrianglesForTiling
 
     private bool ShapeHasTiling(Shape shape)
     {
-        return shape.Theme.MainTexture.Style == TextureStyle.XZTile ||
-               shape.Theme.SideTextures.Values.Any(p => p.Style == TextureStyle.XZTile);
+        return shape.Theme.MainTexture.Style.HasTiling() ||
+               shape.Theme.SideTextures.Values.Any(p => p.Style.HasTiling());
     }
 
     private IEnumerable<Triangle> SplitTrianglesIfNeeded(Shape shape, Triangle[] triangles, Side side)
     {
         var sideTriangles = triangles.Where(p => p.Side == side).ToArray();
 
-        if(shape.TextureInfoForSide(side).Style != TextureStyle.XZTile)
+        if(!shape.TextureInfoForSide(side).Style.HasTiling())
             return sideTriangles;
 
-        return SplitTriangles(sideTriangles);
+        return SplitTriangles(sideTriangles, 0.3f);
     }
 
-    private IEnumerable<Triangle> SplitTriangles(Triangle[] triangles)
+    private IEnumerable<Triangle> SplitTriangles(Triangle[] triangles, float targetWidth)
     {
-        return new SierpinskiSplitter().ExecuteUntilLengthReached(triangles, TargetWidth);
+        return new SierpinskiSplitter().ExecuteUntilLengthReached(triangles, targetWidth);
     }
 }
