@@ -22,12 +22,12 @@ internal class TestMaps
         room.Height = 3f;
         room.Depth = 10f;
 
-        //var light = new HighHatLight(room, 0f, 0f, initialState: true);
-        //light.Place().OnSideOuter(Side.Top, room);
-     
-        //var cube = room.AddChild(new Box(TextureKey.Ceiling));
-        //cube.Size = new Vector3(1f, 1f, 1f);
-        //cube.Place().OnFloor();
+        var light = new HighHatLight(room, 0f, 0f, initialState: true);
+        light.Place().OnSideOuter(Side.Top, room);
+
+        var cube = room.AddChild(new Box(TextureKey.Ceiling));
+        cube.Size = new Vector3(1f, 1f, 1f);
+        cube.Place().OnFloor();
 
         return ws;
 
@@ -233,7 +233,7 @@ internal class TestMaps
     private WorldSegment ConnectingRoomsTest()
     {
         var world = new WorldSegment();
-        var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.XZTile, TileSize: 50.0f);
+        var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.Tile, TileSize: 50.0f);
 
         var pos = 0.3f;
 

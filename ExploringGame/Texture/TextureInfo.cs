@@ -5,7 +5,7 @@ namespace ExploringGame.Texture;
 public enum TextureStyle
 {
     FillSide,
-    XZTile,
+    Tile,
     HorizontalRepeat
 }
 
@@ -13,7 +13,7 @@ public static class TextureStyleExtensions
 {
     public static bool HasTiling(this TextureStyle style) => style switch
     {
-        TextureStyle.XZTile => true,
+        TextureStyle.Tile => true,
         TextureStyle.HorizontalRepeat => true,
         _ => false
     };

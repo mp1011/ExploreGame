@@ -130,7 +130,7 @@ public class Game1 : Game
     private WorldSegment CreateMainShape()
     {
         _renderEffect = _basicEffect;
-        return TestMaps.TextureTestMap(new KitchenTheme());
+        return TestMaps.TextureTestMap(new UpstairsHallTheme());
       //  return new BasementWorldSegment(null);
     }
 
