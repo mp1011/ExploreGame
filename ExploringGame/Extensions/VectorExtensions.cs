@@ -54,16 +54,6 @@ public static class VectorExtensions
         }
 
         return (min + max) * 0.5f;
-
-        //if (points == null || !points.Any())
-        //    return Vector3.Zero;
-
-        //Vector3 sum = Vector3.Zero;
-
-        //foreach (var v in points)
-        //    sum += v;
-
-        //return sum / points.Count();
     }
 
     public static Vector2 As2D(this Vector3 vector, Side side)
@@ -241,6 +231,22 @@ public static class VectorExtensions
         }
 
         return (boundingTopLeft, boundingBottomRight);
+    }
+
+    public static (Vector2, Vector2) GetBoundingBoxCorners(this IEnumerable<Vector2> verts)
+    {
+        if (!verts.Any())
+            return (Vector2.Zero, Vector2.Zero);
+
+        Vector2 boundingTopLeft, boundingBottomRight;
+        
+        boundingTopLeft = new Vector2(verts.Min(p => p.X),
+                                      verts.Min(p => p.Y));
+
+        boundingBottomRight = new Vector2(verts.Max(p => p.X),
+                                            verts.Max(p => p.Y));
+
+        return (boundingTopLeft, boundingBottomRight); ;
     }
 
 

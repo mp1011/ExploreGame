@@ -54,8 +54,10 @@ internal class PlayerMotion
 
         if (Debug.FlyMode)
         {
-            if (_playerInput.IsKeyDown(GameKey.Jump))
-                _playerMotion.Motion.CurrentY = JumpSpeed;
+            if (_playerInput.IsKeyDown(GameKey.Jump))           
+                _playerMotion.Motion.CurrentY = JumpSpeed;            
+            else if (_playerInput.IsKeyDown(GameKey.Crouch))
+                _playerMotion.Motion.CurrentY = -JumpSpeed;
             else
                 _playerMotion.Motion.CurrentY = 0f;
         }

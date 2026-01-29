@@ -22,12 +22,12 @@ internal class TestMaps
         room.Height = 3f;
         room.Depth = 10f;
 
-        var light = new HighHatLight(room, 0f, 0f, initialState: true);
-        light.Place().OnSideOuter(Side.Top, room);
+        //var light = new HighHatLight(room, 0f, 0f, initialState: true);
+        //light.Place().OnSideOuter(Side.Top, room);
      
-        var cube = room.AddChild(new Box(TextureKey.Ceiling));
-        cube.Size = new Vector3(1f, 1f, 1f);
-        cube.Place().OnFloor();
+        //var cube = room.AddChild(new Box(TextureKey.Ceiling));
+        //cube.Size = new Vector3(1f, 1f, 1f);
+        //cube.Place().OnFloor();
 
         return ws;
 

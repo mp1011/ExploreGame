@@ -84,7 +84,7 @@ public class KitchenTheme : Theme
     public KitchenTheme()
     {
         SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);
-        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Tile, TextureStyle.XZTile, TileSize: 1f);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Tile, TextureStyle.XZTile, TileSize: 2);
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
     }
 }

@@ -352,12 +352,14 @@ public abstract class Shape
     /// <returns></returns>
     private Triangle[] AdjustTrianglesForDisplay(IEnumerable<Triangle> triangles, QualityLevel quality)
     {
-        var adjusted = CorrectWinding(triangles);
+        var adjusted = triangles.ToArray();
 
-        if(quality > QualityLevel.Basic)
+        if (quality > QualityLevel.Basic)
             adjusted = new SplitTrianglesForTiling().Execute(this, adjusted);
 
-        return adjusted;
+        adjusted = CorrectWinding(adjusted);
+
+        return adjusted.Where(p => !p.IsDegenerate).ToArray();
     }
 
     private Triangle[] CorrectWinding(IEnumerable<Triangle> triangles)

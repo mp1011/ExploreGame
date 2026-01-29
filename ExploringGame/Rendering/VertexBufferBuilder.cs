@@ -1,9 +1,12 @@
 ﻿using ExploringGame.Extensions;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ExploringGame.Rendering;
@@ -57,24 +60,40 @@ public class VertexBufferBuilder
 
         var cornerVertices = GetCornerVertices(side, sideTriangles);
 
+        var debugTriangles = new List<DebugTriangleWithTexture>();
         foreach (var triangle in sideTriangles)
         {
+            List<VertexPositionColorNormalTexture> debugTriangleVerts = new();
+
             foreach (var vertex in triangle.Vertices)
             {
-                var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle.TextureInfo, vertex, cornerVertices.Item1, cornerVertices.Item2);
+                var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle, vertex, cornerVertices);
                 int index;
                 if (!indexCache.TryGetValue((vertex, triangle.TextureInfo.Color, textureCoords), out index))
                 {
                     indexCache.Add((vertex, triangle.TextureInfo.Color, textureCoords), vertices.Count);
                     indices.Add(vertices.Count);
                     vertices.Add(new VertexPositionColorNormalTexture(vertex, triangle.TextureInfo.Color, triangle.Normal, textureCoords));
+
+                    debugTriangleVerts.Add(vertices[^1]);
                 }
                 else
                 {
                     indices.Add(index);
+                    debugTriangleVerts.Add(vertices[index]);
                 }
             }
+
+            if(side == Side.Bottom)
+                debugTriangles.Add(new DebugTriangleWithTexture(debugTriangleVerts, side));
         }
+
+        if (side == Side.Bottom)
+        {
+            foreach(var d in debugTriangles)
+                PolygonVisualizer.SavePolygonImage("texture", new[] { d }); 
+        }
+            
     }
 
     /// <summary>
@@ -96,57 +115,81 @@ public class VertexBufferBuilder
                 verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
     }
 
-    public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
     {
+        var texture = triangle.TextureInfo;
         var textureCoordinates = texture.Style switch
         {
-            TextureStyle.FillSide => CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner),
-            TextureStyle.XZTile => CalcTextureCoordinates_XZTile(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner),
-            TextureStyle.HorizontalRepeat => CalcTextureCoordinates_HorizontalRepeat(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner),
+            TextureStyle.FillSide => CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, corners),
+            TextureStyle.XZTile => CalcTextureCoordinates_XZTile(side, textureSheet, triangle, position, corners),
+            TextureStyle.HorizontalRepeat => CalcTextureCoordinates_HorizontalRepeat(side, textureSheet, texture, position, corners),
             _ => throw new System.ArgumentException($"Unknown texture style {texture.Style}")
         };
 
         return textureSheet.TexturePosition(texture.Key, textureCoordinates);
     }
 
-    private Vector2 CalcTextureCoordinates_FillSide(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    private Vector2 CalcTextureCoordinates_FillSide(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, (Vector3, Vector3) corners)
     {
         var position2d = position.As2D(side);
-        var topLeftCorner2d = topLeftCorner.As2D(side);
-        var bottomRightCorner2d = bottomRightCorner.As2D(side);
+        var topLeftCorner2d = corners.Item1.As2D(side);
+        var bottomRightCorner2d = corners.Item2.As2D(side);
 
         var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
         return coordinates;
     }
 
-    private Vector2 CalcTextureCoordinates_XZTile(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+
+    private Vector2 CalcTextureCoordinates_XZTile(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
     {
-        var tileSize = texture.TileSize.Value;
-        var tx = position.X.NMod(tileSize) / tileSize;
-        var ty = position.Z.NMod(tileSize) / tileSize;
-        return new Vector2(tx, ty);
+        // var t2d = triangle.As2D(topLeftCorner, ViewFrom.Inside);
+        
+        var textureSize = triangle.TextureInfo.TileSize.Value;
+
+        var uBegin = Math.Min(corners.Item1.X, corners.Item2.X);
+        var vBegin = Math.Min(corners.Item1.Z, corners.Item2.Z);
+
+        var u = position.X - uBegin;
+        var v = position.Z - vBegin;
+
+        var uMod = u.NMod(textureSize) / textureSize;
+        var vMod = v.NMod(textureSize) / textureSize;
+
+        var isUMax = position.X == triangle.Vertices.Max(p => p.X);
+        var isVMax = position.Z == triangle.Vertices.Max(p => p.Z);
+
+        if (isUMax && uMod == 0f)
+            uMod = 1.0f;
+
+        if (isVMax && vMod == 0f)
+            vMod = 1.0f;
+
+        return new Vector2(uMod, vMod);
     }
 
-    private Vector2 CalcTextureCoordinates_HorizontalRepeat(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, Vector3 topLeftCorner, Vector3 bottomRightCorner)
+    private Vector2 CalcTextureCoordinates_HorizontalRepeat(Side side, TextureSheet textureSheet, TextureInfo texture, Vector3 position, (Vector3,Vector3) corners)
     {     
-        var coordinates = CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, topLeftCorner, bottomRightCorner);
-
-        switch (side)
-        {
-            case Side.West:
-            case Side.East:
-                var tileSize = texture.TileSize.Value;
-                var tx = position.Z.NMod(tileSize) / tileSize;
-                return new Vector2(tx, coordinates.Y);
-            case Side.North:
-            case Side.South:
-                tileSize = texture.TileSize.Value;
-                tx = position.X.NMod(tileSize) / tileSize;
-                return new Vector2(tx, coordinates.Y);
-
-            default:
-                throw new System.ArgumentException("HorizontalRepeat texture style cannot apply to Top or Bottom sides");
-        }
+        var coordinates = CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, corners);
+        throw new NotImplementedException();
+        //switch (side)
+        //{
+        //    case Side.West:
+        //    case Side.East:
+        //        var tileSize = texture.TileSize.Value;
+        //        var x = position.Z - topLeftCorner.Z;
+        //        if (x > texture.TileSize.Value)
+        //            x = texture.TileSize.Value;
+        //        return new Vector2(x / texture.TileSize.Value, coordinates.Y);
+        //    case Side.North:
+        //    case Side.South:
+        //        tileSize = texture.TileSize.Value;
+        //        x = position.X - topLeftCorner.X;
+        //        if (x > texture.TileSize.Value)
+        //            x = texture.TileSize.Value;
+        //        return new Vector2(x / texture.TileSize.Value, coordinates.Y);
+        //    default:
+        //        throw new System.ArgumentException("HorizontalRepeat texture style cannot apply to Top or Bottom sides");
+        //}
     }
 
 }

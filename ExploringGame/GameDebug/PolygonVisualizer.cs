@@ -8,6 +8,11 @@ using Color = System.Drawing.Color;
 
 namespace ExploringGame.GameDebug;
 
+public interface IDebugPolygon2d : IPolygon2D
+{
+    public (Vector2, string)[] AnnotatedVertices { get; }
+}
+
 public class PolygonVisualizer
 {
     private const int Width = 500;
@@ -52,7 +57,7 @@ public class PolygonVisualizer
         var translate = new Vector2(minX < 0 ? -minX : 0, minY < 0 ? -minY : 0);
         var scale = new Vector2(50f, 50f);
 
-        Bitmap bmp = new Bitmap(Width, Height);
+        Bitmap bmp = new Bitmap(Width + 100, Height+50);
         using (Graphics g = Graphics.FromImage(bmp))
         {
             g.Clear(Color.White);
@@ -68,6 +73,9 @@ public class PolygonVisualizer
                 {
                     g.FillPolygon(brush, vertices.Select(p=> new PointF(p.X,p.Y)).ToArray());
                     g.DrawPolygon(pen, vertices.Select(p => new PointF(p.X, p.Y)).ToArray());
+
+                    if (polygon is IDebugPolygon2d debugPolygon)
+                        DrawAnnotations(g, debugPolygon, translate, scale);
                 }
 
                 index++;
@@ -75,5 +83,17 @@ public class PolygonVisualizer
         }
 
         return bmp;
+    }
+
+    private static void DrawAnnotations(Graphics g, IDebugPolygon2d debugPolygon, Vector2 translate, Vector2 scale)
+    {
+        using Brush brush = new SolidBrush(Color.Black);
+        using Font font = new Font(FontFamily.GenericSerif, 12f);
+        foreach (var vertice in debugPolygon.AnnotatedVertices)
+        {
+            var v = (vertice.Item1 + translate) * scale;
+
+            g.DrawString(vertice.Item2, font, brush, new PointF(v.X, v.Y));
+        }
     }
 }

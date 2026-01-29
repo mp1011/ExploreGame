@@ -1,7 +1,10 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace ExploringGame.Services;
@@ -24,18 +27,29 @@ public class SplitTrianglesForTiling
                shape.Theme.SideTextures.Values.Any(p => p.Style.HasTiling());
     }
 
-    private IEnumerable<Triangle> SplitTrianglesIfNeeded(Shape shape, Triangle[] triangles, Side side)
-    {
+    private Triangle[] SplitTrianglesIfNeeded(Shape shape, Triangle[] triangles, Side side)
+    {      
+        var textureInfo = shape.TextureInfoForSide(side);
         var sideTriangles = triangles.Where(p => p.Side == side).ToArray();
 
-        if(!shape.TextureInfoForSide(side).Style.HasTiling())
+        if (!textureInfo.Style.HasTiling())
             return sideTriangles;
 
-        return SplitTriangles(sideTriangles, 0.3f);
+        var sideCenter = sideTriangles.SelectMany(p => p.Vertices).Center();
+        var triangles2D = sideTriangles.Select(p => p.As2D(sideCenter, shape.ViewFrom)).ToArray();
+
+        triangles2D = triangles2D.SelectMany(p => SplitTrianglesIntoTiles(p, new Vector2(textureInfo.TileSize.Value, textureInfo.TileSize.Value)))
+                                 .ToArray();
+
+        return triangles2D.Select(p => p.To3D(sideCenter, shape.ViewFrom)).ToArray();
     }
 
-    private IEnumerable<Triangle> SplitTriangles(Triangle[] triangles, float targetWidth)
+    private IEnumerable<Triangle2D> SplitTrianglesIntoTiles(Triangle2D triangle, Vector2 tileSize)
     {
-        return new SierpinskiSplitter().ExecuteUntilLengthReached(triangles, targetWidth);
+        var result = TriangleSubdivider.Subdivide(triangle, tileSize.X, tileSize.Y);
+
+        PolygonVisualizer.SavePolygonImage("sub_divided", result.ToArray());
+
+        return result;
     }
 }

@@ -79,16 +79,14 @@
 [x] figure out door placement
 	[x] make test rooms for single and double doors
 
-[ ] properly align rooms
-- get the rooms with known positions into place
-- place hall using these rooms as the guide
-
-
-
-
-
+[x] properly align rooms
 [ ] better texture placement
-	[ ] X/Y seperate stretch/repeat
+	[x] X/Y seperate stretch/repeat
+	[ ] find better way to separate into triangles for repeating textures
+
+- the triangles seem to face arbitrary directions
+- we need regular quads, each exactly as big as one tile, as best as we can
+
 
 [ ] lights
 	[ ] illuminate only below
