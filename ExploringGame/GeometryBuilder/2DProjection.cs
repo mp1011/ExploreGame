@@ -76,6 +76,8 @@ public class Triangle2D : IPolygon2D
 
     public Vector2 Center => (A + B + C) / 3f;
 
+    public float[] SideLengths => [(A - B).Length(), (B - C).Length(), (C - A).Length()];
+        
     public Winding Winding
     {
         get

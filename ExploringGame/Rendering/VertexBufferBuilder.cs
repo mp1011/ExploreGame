@@ -58,13 +58,10 @@ public class VertexBufferBuilder
     {
         var sideTriangles = triangles.Where(p => p.Side == side).ToArray();
 
-        var cornerVertices = GetCornerVertices(side, sideTriangles);
+        var cornerVertices = sideTriangles.GetCornerVertices(side);
 
-        var debugTriangles = new List<DebugTriangleWithTexture>();
         foreach (var triangle in sideTriangles)
         {
-            List<VertexPositionColorNormalTexture> debugTriangleVerts = new();
-
             foreach (var vertex in triangle.Vertices)
             {
                 var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle, vertex, cornerVertices);
@@ -74,45 +71,13 @@ public class VertexBufferBuilder
                     indexCache.Add((vertex, triangle.TextureInfo.Color, textureCoords), vertices.Count);
                     indices.Add(vertices.Count);
                     vertices.Add(new VertexPositionColorNormalTexture(vertex, triangle.TextureInfo.Color, triangle.Normal, textureCoords));
-
-                    debugTriangleVerts.Add(vertices[^1]);
                 }
                 else
                 {
                     indices.Add(index);
-                    debugTriangleVerts.Add(vertices[index]);
                 }
             }
-
-            if(side == Side.Bottom)
-                debugTriangles.Add(new DebugTriangleWithTexture(debugTriangleVerts, side));
-        }
-
-        if (side == Side.Bottom)
-        {
-            foreach(var d in debugTriangles)
-                PolygonVisualizer.SavePolygonImage("texture", new[] { d }); 
-        }
-            
-    }
-
-    /// <summary>
-    /// Returns the two vertices which should have 0,0 and 1,1 texture coordinates
-    /// </summary>
-    /// <param name="side"></param>
-    /// <param name="sideTriangles"></param>
-    /// <returns></returns>
-    /// <exception cref="System.NotImplementedException"></exception>
-    private (Vector3, Vector3) GetCornerVertices(Side side, IEnumerable<Triangle> sideTriangles)
-    {
-        if (!sideTriangles.Any())
-            return (Vector3.Zero, Vector3.Zero);
-
-        var verts = sideTriangles.SelectMany(p => p.Vertices).ToArray();
-        var boundingBoxCorners = verts.GetBoundingBoxCorners(side);
-
-        return (verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item1)).First(),
-                verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
+        }            
     }
 
     public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
@@ -139,8 +104,36 @@ public class VertexBufferBuilder
         return coordinates;
     }
 
-
     private Vector2 CalcTextureCoordinates_Tile(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
+    {
+        var gridOrigin = corners.Item1;
+
+        var axisUV = side.GetAxisUV();
+        var axisU = axisUV.Item1;
+        var axisV = axisUV.Item2;
+
+        var textureSize = triangle.TextureInfo.TileSize.Value;
+
+        var u = position.AxisValue(axisU) - gridOrigin.AxisValue(axisU);
+        var v = position.AxisValue(axisV) - gridOrigin.AxisValue(axisV);
+
+        var uMod = u.NMod(textureSize) / textureSize;
+        var vMod = v.NMod(textureSize) / textureSize;
+
+        var isUMax = position.AxisValue(axisU) == triangle.Vertices.Max(p => p.AxisValue(axisU));
+        var isVMax = position.AxisValue(axisV) == triangle.Vertices.Max(p => p.AxisValue(axisV));
+
+        if (isUMax && uMod == 0f)
+            uMod = 1.0f;
+
+        if (isVMax && vMod == 0f)
+            vMod = 1.0f;
+
+        return new Vector2(uMod, vMod);
+    }
+
+
+    private Vector2 CalcTextureCoordinates_Tile_deleteme(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
     {
         var axisUV = side.GetAxisUV();
         var axisU = axisUV.Item1;
@@ -157,8 +150,8 @@ public class VertexBufferBuilder
         var uMod = u.NMod(textureSize) / textureSize;
         var vMod = v.NMod(textureSize) / textureSize;
 
-        var isUMax = position.X == triangle.Vertices.Max(p => p.AxisValue(axisU));
-        var isVMax = position.Z == triangle.Vertices.Max(p => p.AxisValue(axisV));
+        var isUMax = position.AxisValue(axisU) == triangle.Vertices.Max(p => p.AxisValue(axisU));
+        var isVMax = position.AxisValue(axisV) == triangle.Vertices.Max(p => p.AxisValue(axisV));
 
         if (isUMax && uMod == 0f)
             uMod = 1.0f;

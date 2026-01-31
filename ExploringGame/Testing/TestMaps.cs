@@ -8,25 +8,36 @@ using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace ExploringGame.Testing;
 
 internal class TestMaps
 {
+
+    public static WorldSegment TilingTextureTestMap()
+    {
+        var t = new Theme(TextureSheetKey.Upstairs);
+        t.MainTexture = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 1.0f);
+       // t.SideTextures[Side.East] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
+       // t.SideTextures[Side.South] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
+        return TextureTestMap(t);
+    }
+
     public static WorldSegment TextureTestMap(Theme theme)
     {
         var ws = new WorldSegment();
         var room = new Room(ws, theme: theme);
-        room.Width = 10;
+        room.Width = 9;
         room.Height = 3f;
-        room.Depth = 10f;
+        room.Depth = 9f;
 
-        var light = new HighHatLight(room, 0f, 0f, initialState: true);
-        light.Place().OnSideOuter(Side.Top, room);
+        //var light = new HighHatLight(room, 0f, 0f, initialState: true);
+        //light.Place().OnSideOuter(Side.Top, room);
 
-        var cube = room.AddChild(new Box(TextureKey.Ceiling));
-        cube.Size = new Vector3(1f, 1f, 1f);
+        var cube = room.AddChild(new Box(theme));
+        cube.Size = new Vector3(2f, 2f, 2f);
         cube.Place().OnFloor();
 
         return ws;

@@ -9,9 +9,14 @@ public class Theme
     public TextureInfo MainTexture { get; set; } = new TextureInfo(Color.Magenta);
     public Dictionary<Side, TextureInfo> SideTextures { get; set; } = new();
 
-    public virtual TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
+    public virtual TextureSheetKey TextureSheetKey { get; } = TextureSheetKey.Basement;
 
     public Theme() { }
+
+    public Theme(TextureSheetKey key)
+    {
+        TextureSheetKey = key;
+    }
 
     public Theme(TextureKey key)
     {

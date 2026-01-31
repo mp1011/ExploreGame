@@ -164,6 +164,25 @@ public static class VectorExtensions
         return new Vector2((C.X - A.X) / width, (C.Y - A.Y) / height);
     }
 
+    /// <summary>
+    /// Returns the two vertices which should have 0,0 and 1,1 texture coordinates
+    /// </summary>
+    /// <param name="side"></param>
+    /// <param name="sideTriangles"></param>
+    /// <returns></returns>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public static (Vector3, Vector3) GetCornerVertices(this IEnumerable<Triangle> sideTriangles, Side side)
+    {
+        if (!sideTriangles.Any())
+            return (Vector3.Zero, Vector3.Zero);
+
+        var verts = sideTriangles.SelectMany(p => p.Vertices).ToArray();
+        var boundingBoxCorners = verts.GetBoundingBoxCorners(side);
+
+        return (verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item1)).First(),
+                verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
+    }
+
     public static (Vector3, Vector3) GetBoundingBoxCorners(this Vector3[] verts, Side side)
     {
         if (!verts.Any())

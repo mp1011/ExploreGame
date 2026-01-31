@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.VisualBasic;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
@@ -29,11 +30,19 @@ public class Box : Shape
 
     public Side OmitSides { get; set; }
 
+    private Theme _theme;
+    public override Theme Theme => _theme;
+
     public Box() { }
 
     public Box(TextureKey textureKey)
     {
         MainTexture = new TextureInfo(Key: textureKey);
+    }
+
+    public Box(Theme theme)
+    {
+        _theme = theme;
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

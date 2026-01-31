@@ -35,21 +35,19 @@ public class SplitTrianglesForTiling
         if (!textureInfo.Style.HasTiling())
             return sideTriangles;
 
-        var sideCenter = sideTriangles.SelectMany(p => p.Vertices).Center();
-        var triangles2D = sideTriangles.Select(p => p.As2D(sideCenter, shape.ViewFrom)).ToArray();
+        if (!sideTriangles.Any())
+            return triangles;
 
-        triangles2D = triangles2D.SelectMany(p => SplitTrianglesIntoTiles(p, new Vector2(textureInfo.TileSize.Value, textureInfo.TileSize.Value)))
-                                 .ToArray();
+        var corner = sideTriangles.GetCornerVertices(side).Item1;
 
-        return triangles2D.Select(p => p.To3D(sideCenter, shape.ViewFrom)).ToArray();
+
+        return sideTriangles.SelectMany(t => SplitTriangleIntoTiles(t, new Vector2(textureInfo.TileSize.Value, textureInfo.TileSize.Value), corner))
+                        .ToArray();
+        
     }
 
-    private IEnumerable<Triangle2D> SplitTrianglesIntoTiles(Triangle2D triangle, Vector2 tileSize)
+    private IEnumerable<Triangle> SplitTriangleIntoTiles(Triangle triangle, Vector2 tileSize, Vector3 gridOrigin)
     {
-        var result = TriangleSubdivider.Subdivide(triangle, tileSize.X, tileSize.Y);
-
-        PolygonVisualizer.SavePolygonImage("sub_divided", result.ToArray());
-
-        return result;
+        return TriangleSubdivider.Subdivide(triangle, tileSize, gridOrigin);
     }
 }
