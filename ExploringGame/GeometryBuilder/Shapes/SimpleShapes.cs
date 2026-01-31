@@ -30,7 +30,7 @@ public class Box : Shape
 
     public Side OmitSides { get; set; }
 
-    private Theme _theme;
+    private Theme _theme = new Theme();
     public override Theme Theme => _theme;
 
     public Box() { }

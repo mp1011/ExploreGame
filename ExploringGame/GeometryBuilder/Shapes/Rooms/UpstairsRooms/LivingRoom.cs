@@ -1,4 +1,6 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 
@@ -24,5 +26,12 @@ public class LivingRoom : Room
     { 
         AddConnectingRoom(new RoomConnection(this, _kitchen, Side.South), adjustPlacement: false);
         AddConnectingRoom(new RoomConnection(this, _upstairsHall.NorthHall, Side.South), adjustPlacement: false);
+
+        var light = new HighHatLight(this, 0f, 0f);
+        var lightSwitch = new LightSwitch(this, StateKey.LivingRoomLightOn);
+        lightSwitch.ControlledObjects.Add(light);
+
+        lightSwitch.Position = Position;
+        lightSwitch.Place().OnSideInner(Side.East);
     }
 }

@@ -6,7 +6,7 @@ float4x4 Projection;
 
 float3 LightPositions[MAX_LIGHTS];
 float3 LightColors[MAX_LIGHTS];
-float LightIntensities[MAX_LIGHTS];
+float3 LightIntensities[MAX_LIGHTS];
 float3 LightRangeMin[MAX_LIGHTS];
 float3 LightRangeMax[MAX_LIGHTS];
 
@@ -14,10 +14,7 @@ int LightCount;
 float3 AmbientColor;
 
 Texture2D Texture : register(t0);
-sampler TextureSampler = sampler_state
-{
-    Texture = <Texture>;
-};
+sampler TextureSampler = sampler_state { Texture = <Texture>; };
 
 struct VSInput
 {
@@ -54,8 +51,8 @@ float4 PSMain(PSInput input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
     float3 texColor = tex2D(TextureSampler, input.TexCoord).rgb;
-    float3 baseColor = texColor * input.Color.rgb;
-    float3 diffuse = float3(0, 0, 0);
+    float3 baseColor = texColor * input.Color.rgb;    
+    float3 diffuse = float3(0,0,0);
     float attenuation = 1.0;
     
     for (int i = 0; i < LightCount; ++i)
@@ -63,16 +60,13 @@ float4 PSMain(PSInput input) : SV_Target
         float3 rangeMin = LightRangeMin[i];
         float3 rangeMax = LightRangeMax[i];
         
-        float3 wp = input.WorldPos;
-        if (wp.x < rangeMin.x || wp.x > rangeMax.x ||
-           wp.y < rangeMin.y || wp.y > rangeMax.y ||
-           wp.z < rangeMin.z || wp.z > rangeMax.z)
-            continue;
-                           
+      //  if (rangeMin.x == 99 || rangeMax.x == 99)
+        //    continue;
+                
         float3 toLight = LightPositions[i] - input.WorldPos;
         float dist = length(toLight);
         float3 toLightDir = normalize(toLight);
-        float NdotL = dot(normal, toLightDir);
+        float NdotL = dot(normal, toLightDir);        
         float lightFactor;
         if (NdotL > 0.1)
         {
@@ -81,7 +75,7 @@ float4 PSMain(PSInput input) : SV_Target
         }
         else
         {
-            lightFactor = 1.0 / (1.0 + dist * dist * 0.1);
+            lightFactor = 1.0 / (1.0 + dist * dist * 0.1);      
             attenuation = 1.0;
         }
         diffuse += baseColor * LightColors[i] * lightFactor * LightIntensities[i] * attenuation;

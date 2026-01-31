@@ -129,8 +129,8 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-        return TestMaps.TilingTextureTestMap();
-      //  return new BasementWorldSegment(null);
+      //  return TestMaps.TilingTextureTestMap();
+        return new BasementWorldSegment(null);
     }
 
     protected override void Update(GameTime gameTime)

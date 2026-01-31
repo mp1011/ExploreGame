@@ -20,7 +20,11 @@ public enum StateKey
     DenDoorsOpen,
     BathroomDoorOpen, 
     HalfBathroomDoorOpen,
-    DenClosetDoorOpen
+    DenClosetDoorOpen,
+    KitchenLightOn,
+    LivingRoomLightOn,
+    DenLightOn
+        
 }
 
 public class GameState

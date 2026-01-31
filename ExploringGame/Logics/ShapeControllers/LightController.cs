@@ -26,7 +26,11 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
         set
         {
             if (value && !_light.On)
-                _light = _pointLights.AddLight(LightPosition, intensity: Shape.Intensity);
+                _light = _pointLights.AddLight(LightPosition,
+                    color: Color.White,
+                    intensity: Shape.Intensity,
+                    rangeMin: Shape.RangeMin,
+                    rangeMax: Shape.RangeMax);
             else if (!value && _light.On)
             {
                 _pointLights.RemoveLight(_light.Index);

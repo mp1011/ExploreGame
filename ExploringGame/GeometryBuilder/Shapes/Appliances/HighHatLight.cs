@@ -20,6 +20,10 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
 
     Triangle[] ICutoutShape.Build() => BuildInternal(QualityLevel.Basic);
 
+    public Vector3 RangeMin => new Vector3(Position.X - 50f, Position.Y - Parent.Height - 0.5f, Position.Z - 50f);
+
+    public Vector3 RangeMax => new Vector3(Position.X + 50f, Position.Y + 0.5f, Position.Z + 50f);
+
     public HighHatLight(Room room, float x, float z, bool initialState=false)
     {
         _initialState = initialState;

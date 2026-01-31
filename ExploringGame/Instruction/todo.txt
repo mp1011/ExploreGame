@@ -80,13 +80,9 @@
 	[x] make test rooms for single and double doors
 
 [x] properly align rooms
-[ ] better texture placement
+[x] better texture placement
 	[x] X/Y seperate stretch/repeat
-	[ ] find better way to separate into triangles for repeating textures
-
-- the triangles seem to face arbitrary directions
-- we need regular quads, each exactly as big as one tile, as best as we can
-
+	[x] find better way to separate into triangles for repeating textures
 
 [ ] lights
 	[ ] illuminate only below

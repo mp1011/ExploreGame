@@ -109,6 +109,10 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         effect.Parameters["LightPositions"].SetValue(_pointLights.Positions);
         effect.Parameters["LightColors"].SetValue(_pointLights.Colors);
         effect.Parameters["LightIntensities"].SetValue(_pointLights.Intensities);
+
+        effect.Parameters["LightRangeMin"]?.SetValue(_pointLights.RangeMins);
+        effect.Parameters["LightRangeMax"]?.SetValue(_pointLights.RangeMaxs);
+
         effect.Parameters["LightCount"].SetValue(_pointLights.Intensities.Length);
 
 

@@ -19,7 +19,7 @@ internal class TestMaps
     public static WorldSegment TilingTextureTestMap()
     {
         var t = new Theme(TextureSheetKey.Upstairs);
-        t.MainTexture = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 1.0f);
+        t.MainTexture = new TextureInfo(TextureKey.Brick, TextureStyle.Tile, TileSize: 1.0f);
        // t.SideTextures[Side.East] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
        // t.SideTextures[Side.South] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
         return TextureTestMap(t);

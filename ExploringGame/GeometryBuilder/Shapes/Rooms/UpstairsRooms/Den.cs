@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
@@ -31,5 +32,12 @@ public class Den : Room
         var closet = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
 
         AddConnectingRoomWithJunction(new DoorJunction(closet, Side.East, HAlign.Left, DoorDirection.Pull, StateKey.DenClosetDoorOpen), closet, Side.East, HAlign.Left, offset: 0.5f);
+
+        var light = new HighHatLight(this, 0f, 0f);
+        var lightSwitch = new LightSwitch(this, StateKey.DenLightOn);
+        lightSwitch.ControlledObjects.Add(light);
+
+        lightSwitch.Position = Position;
+        lightSwitch.Place().OnSideInner(Side.South);
     }
 }
