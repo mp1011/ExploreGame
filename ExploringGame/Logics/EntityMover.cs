@@ -12,6 +12,8 @@ namespace ExploringGame.Logics;
 public class EntityMover : IActiveObject
 {
     private readonly Physics _physics;
+    private readonly CollisionGroup _myGroup;
+    private readonly CollisionGroup _collidesWithGroups;
 
     public AcceleratedMotion Motion { get; }
     private IWithPosition _entity;
@@ -19,17 +21,19 @@ public class EntityMover : IActiveObject
 
     public CollisionResponder CollisionResponder { get; }
 
-    public EntityMover(IWithPosition entity, Physics physics)
+    public EntityMover(IWithPosition entity, Physics physics, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
         Motion = new AcceleratedMotion();
         _entity = entity;
         _physics = physics;
+        _myGroup = myGroup;
+        _collidesWithGroups = collidesWithGroups;
         CollisionResponder = new CollisionResponder(this);
     }
 
     public void Initialize()
     {
-        _body = _physics.CreateCapsule(_entity);        
+        _body = _physics.CreateCapsule(_entity, _myGroup, _collidesWithGroups);        
         CollisionResponder.Subscribe(_body);
     }
 

@@ -18,14 +18,19 @@ using MathHelper = Microsoft.Xna.Framework.MathHelper;
 
 namespace ExploringGame.Services;
 
+[Flags]
 public enum CollisionGroup
 {
+    None = 0,
     Player = 1,
     Environment = 2,
     Doors = 4,
     Steps = 8,
-    NonPlayerEntity = 16
+    SolidEntity = 16,
+    All = Player | Environment | Doors | Steps | SolidEntity
 }
+
+public record CollisionInfo(CollisionGroup MyGroup, CollisionGroup CollidesWithGroups);
 
 public class Physics
 {
@@ -60,7 +65,7 @@ public class Physics
         var mesh = new TriangleMesh(jTriangles);
         body.AddShape(Enumerable.Range(0, mesh.Indices.Length).Select(i => new TriangleShape(mesh, i)), setMassInertia: false);
         body.MotionType = MotionType.Static;
-        body.Tag = CollisionGroup.Environment;
+        body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity);
         return body;
     }
 
@@ -100,7 +105,7 @@ public class Physics
         }
 
         body.MotionType = MotionType.Static;
-        body.Tag = CollisionGroup.Environment;
+        body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity);
         return body;
     }
     public RigidBody CreateStaticBody(GShape shape, CollisionGroup collisionGroup = CollisionGroup.Environment)
@@ -118,7 +123,11 @@ public class Physics
         }
         body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
-        body.Tag = collisionGroup;
+        // Determine collision targets based on group
+        var collidesWithGroups = collisionGroup == CollisionGroup.Steps 
+            ? CollisionGroup.Player 
+            : CollisionGroup.Player | CollisionGroup.SolidEntity;
+        body.Tag = new CollisionInfo(collisionGroup, collidesWithGroups);
         return body;
     }
 
@@ -139,11 +148,16 @@ public class Physics
         InitPhysics(body);
 
         body.MotionType = MotionType.Dynamic;
-        body.Tag = CollisionGroup.Environment;
+        body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity);
         return body;
     }
 
     public RigidBody CreateCapsule(IWithPosition entity)
+    {
+        return CreateCapsule(entity, CollisionGroup.Player, CollisionGroup.Environment | CollisionGroup.Doors | CollisionGroup.Steps | CollisionGroup.SolidEntity);
+    }
+
+    public RigidBody CreateCapsule(IWithPosition entity, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new CapsuleShape(0.4f, 2.0f)); //todo
@@ -155,7 +169,7 @@ public class Physics
         var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
         upright.Initialize(JVector.UnitY, AngularLimit.Full);
 
-        body.Tag = CollisionGroup.Player;
+        body.Tag = new CollisionInfo(myGroup, collidesWithGroups);
         return body;
     }
 
@@ -201,7 +215,7 @@ public class Physics
 
         var rotationQ = door.Rotation.AsQuaternion();
         doorBody.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
-        doorBody.Tag = CollisionGroup.Doors;
+        doorBody.Tag = new CollisionInfo(CollisionGroup.Doors, CollisionGroup.Player);
 
         //  h.Motor.IsEnabled = true;
         //   h.Motor.TargetVelocity = 20.0f;
@@ -232,28 +246,36 @@ public class Physics
         {
             if(proxyA is RigidBodyShape bodyA && proxyB is RigidBodyShape bodyB)
             {
-               return IsCollisionAllowed((CollisionGroup)bodyA.RigidBody.Tag,
-                                         (CollisionGroup)bodyB.RigidBody.Tag);
+                var infoA = bodyA.RigidBody.Tag as CollisionInfo;
+                var infoB = bodyB.RigidBody.Tag as CollisionInfo;
+                
+                if (infoA == null || infoB == null)
+                    return false;
+                
+                return IsCollisionAllowed(infoA, infoB);
             }
 
             return false;
         }
 
-        private bool IsCollisionAllowed(CollisionGroup groupA, CollisionGroup groupB)
+        private bool IsCollisionAllowed(CollisionInfo infoA, CollisionInfo infoB)
         {
-            if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Environment)
+            // Check if A can collide with B's group and B can collide with A's group
+            bool aCollidesWithB = (infoA.CollidesWithGroups & infoB.MyGroup) != 0;
+            bool bCollidesWithA = (infoB.CollidesWithGroups & infoA.MyGroup) != 0;
+            
+            // Both must allow the collision
+            if (!aCollidesWithB || !bCollidesWithA)
+                return false;
+            
+            // Special case: respect FlyMode for Player + Environment collisions
+            if ((infoA.MyGroup == CollisionGroup.Player && infoB.MyGroup == CollisionGroup.Environment) ||
+                (infoA.MyGroup == CollisionGroup.Environment && infoB.MyGroup == CollisionGroup.Player))
+            {
                 return !Debug.FlyMode;
-            if (groupA == CollisionGroup.Environment && groupB == CollisionGroup.Player)
-                return !Debug.FlyMode;
-            if (groupA == CollisionGroup.Doors && groupB == CollisionGroup.Player)
-                return true;
-            if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Doors)
-                return true;
-            if (groupA == CollisionGroup.Player && groupB == CollisionGroup.Steps)
-                return true;
-            if (groupA == CollisionGroup.Steps && groupB == CollisionGroup.Player)
-                return true;
-            return false;
+            }
+            
+            return true;
         }
     }
 
@@ -272,9 +294,12 @@ public class Physics
 
             if (normal.Y < 0.6 && normal.Y > -0.6)
             {
-                if ((CollisionGroup)shapeA.RigidBody.Tag == CollisionGroup.Steps)
+                var infoA = shapeA.RigidBody.Tag as CollisionInfo;
+                var infoB = shapeB.RigidBody.Tag as CollisionInfo;
+                
+                if (infoA?.MyGroup == CollisionGroup.Steps)
                     HandleStep(playerShape: shapeB, stepShape: shapeA);
-                else if ((CollisionGroup)shapeB.RigidBody.Tag == CollisionGroup.Steps)
+                else if (infoB?.MyGroup == CollisionGroup.Steps)
                     HandleStep(playerShape: shapeA, stepShape: shapeB);
             }
             return baseResult;

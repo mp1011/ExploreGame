@@ -72,7 +72,9 @@ public class Game1 : Game
         _headBob = new HeadBob();
         _player = _serviceContainer.Get<Player>();
 
-        _playerMover = new EntityMover(_player, _physics);
+        _playerMover = new EntityMover(_player, _physics, 
+            myGroup: CollisionGroup.Player,
+            collidesWithGroups: CollisionGroup.All & ~CollisionGroup.Player);
         _playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(_playerMover));
 
         _serviceContainer.Bind(_playerInput);

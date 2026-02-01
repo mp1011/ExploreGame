@@ -1,6 +1,7 @@
 using ExploringGame.Entities;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using static ExploringGame.Services.Physics;
 
 namespace ExploringGame.Logics;
 
@@ -11,8 +12,8 @@ public class TestEntityController : IShapeController<TestEntity>
 {
     private const float MoveSpeed = 1.0f;
     private const float Acceleration = 0.2f;
-    private const float Gravity = 0f; // 10.0f;
-    private const float GravityAccel = 0f; // 0.4f;
+    private const float Gravity = 0f;// 10.0f;
+    private const float GravityAccel = 0f; // = 0.4f;
 
     private readonly Player _player;
     private readonly Physics _physics;
@@ -28,8 +29,9 @@ public class TestEntityController : IShapeController<TestEntity>
 
     public void Initialize()
     {
-        // Create EntityMover for physics and motion
-        _entityMover = new EntityMover(Shape, _physics);
+        _entityMover = new EntityMover(Shape, _physics,
+            myGroup: CollisionGroup.SolidEntity, 
+            collidesWithGroups: CollisionGroup.Environment | CollisionGroup.Player);
         _entityMover.Initialize();
         
         // Set up motion parameters
