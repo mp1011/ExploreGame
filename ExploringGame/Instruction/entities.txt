@@ -1,0 +1,58 @@
+﻿# GOAL
+Implement non-player entities with their own behaviors
+
+# MODEL
+An entity has the following attributes:
+- a Shape (describes their behavior, position, and rotation)
+- a Behavior (runs once per frame)
+- Motion (via an EntityMover)
+- Collision Detection
+
+# PREP WORK
+- look at how all of this is done for the Player
+- identify how we can generalize this for non-player entities
+
+# ANALYSIS OF PLAYER ENTITY
+Current Player Implementation:
+1.	Shape/Position:	The Player class implements IWithPosition (provides Position and Rotation)
+	- Player implements ICamera for view matrix generation
+	- Position and Rotation are updated every frame
+	- NPCs don't need camera views, and unlike the player they will have a physical Shape with which to capture their position and rotation
+2.	Behavior (runs once per frame):
+•	PlayerMotion class handles the player's frame-by-frame behavior
+•	Located in Update() method, processes input and updates motion targets
+•	Handles mouse look, keyboard movement, jumping, and fly mode
+3.	Motion (via EntityMover):
+•	EntityMover is a generic class that works with any IWithPosition entity
+•	Uses AcceleratedMotion for smooth acceleration/deceleration
+•	Integrates with Jitter2 physics engine via RigidBody
+•	Updates entity position from physics body each frame
+4.	Collision Detection:
+•	CollisionResponder subscribes to RigidBody collision events
+•	DetectFloorCollision is added as a collision response for the player
+•	EntityMover creates a physics capsule for the player
+How Shapes Already Handle Entity-like Behavior:
+The codebase already has a pattern for shapes with behavior:
+•	IControllable interface: Shapes can create controllers
+•	IActiveObject interface: Controllers have Initialize(), Update(), Stop() lifecycle
+•	Examples:
+•	Door with DoorController (animated doors)
+•	PhysicsTestShape with PhysicsTestShapeController (moving physics objects)
+•	LightSwitch with LightSwitchController (interactive switches)
+Key Insights for Generalization:
+1.	EntityMover is already generic - It accepts any IWithPosition, not just Player
+2.	Shape Controllers already exist - Many shapes use the IControllable/IActiveObject pattern
+3.	Collision system is reusable - CollisionResponder can be added to any EntityMover
+4.	The main difference - Player has input-driven behavior, while NPC entities would need AI-driven behavior
+
+
+# BASIC TESTING ENTITY - ✅ IMPLEMENTED
+- create a simple entity to demonstrate the concept of non-player entities
+- appearance is a unit sphere, colored red
+- collides with walls
+- move slowly in a straight line directly at player (no pathfinding, just direct line)
+
+# CURRENT TODO
+- fix motion of testing entity
+- fix appearance of testing entity (create sphere maker)
+- fix physics shape to match (currently hard-coded to use Capsule)

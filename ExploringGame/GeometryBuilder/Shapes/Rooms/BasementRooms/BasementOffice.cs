@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
@@ -87,5 +88,11 @@ public class BasementOffice : Room
             new HighHatLight(this, 3f, -0.7f),
 
         ];
+
+        // Add test entity for testing
+        var testEntity = new TestEntity();
+        testEntity.Position = new Vector3(Position.X, Position.Y, Position.Z);
+        testEntity.Place().OnFloor(this);
+        AddChild(testEntity);
     }
 }

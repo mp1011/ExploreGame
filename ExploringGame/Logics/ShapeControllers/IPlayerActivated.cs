@@ -32,8 +32,6 @@ public static class IPlayerActivatedExtensions
         const float lookThreshold = 0.50f;
         var dot = Vector3.Dot(forward, toTarget);
 
-        GameDebug.Debug.Watch1 = dot.ToString("F2");
-
         if (!playerActivated.PlayerInput.IsKeyPressed(GameKey.Use))
             return false;
 

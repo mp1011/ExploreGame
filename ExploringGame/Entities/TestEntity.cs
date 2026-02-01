@@ -1,0 +1,38 @@
+using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.Logics;
+using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
+
+namespace ExploringGame.Entities;
+
+/// <summary>
+/// A simple test entity that moves toward the player
+/// </summary>
+public class TestEntity : PlaceableShape, IWithPosition, IControllable
+{
+    public TestEntity()
+    {
+        Width = 1.0f;
+        Height = 1.0f;
+        Depth = 1.0f;
+        
+        MainTexture = new TextureInfo(Color.Red, TextureKey.Wall);       
+        Rotation = new Rotation(0, 0, 0);
+    }
+
+    public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+    public IActiveObject CreateController(ServiceContainer serviceContainer)
+    {
+        var controller = serviceContainer.Get<TestEntityController>();
+        controller.Shape = this;
+        return controller;
+    }
+
+    protected override Triangle[] BuildInternal(QualityLevel quality)
+    {
+        // PlaceableShape handles building at origin via BeforeBuild/AfterBuild
+        return BuildCuboid();
+    }
+}

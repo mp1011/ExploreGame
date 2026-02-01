@@ -1,12 +1,5 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GameDebug;
-using ExploringGame.GeometryBuilder;
-using ExploringGame.GeometryBuilder.Shapes;
-using ExploringGame.GeometryBuilder.Shapes.Appliances;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
-using ExploringGame.GeometryBuilder.Shapes.Rooms;
-using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
-using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
@@ -14,13 +7,10 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
-using ExploringGame.Testing;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Diagnostics.Tracing;
 
 namespace ExploringGame;
 
@@ -76,6 +66,7 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
+        _serviceContainer.BindTransient<TestEntityController>();
         
         _playerInput = new PlayerInput();
         _headBob = new HeadBob();

@@ -24,6 +24,7 @@ public enum CollisionGroup
     Environment = 2,
     Doors = 4,
     Steps = 8,
+    NonPlayerEntity = 16
 }
 
 public class Physics

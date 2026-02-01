@@ -17,9 +17,9 @@ public class ShapePlacer
         _shape = shape;
     }
 
-    public ShapePlacer OnFloor()
+    public ShapePlacer OnFloor(Shape other = null)
     {
-        _shape.BottomAnchored = _shape.Parent.BottomAnchored;
+        _shape.BottomAnchored = (other ?? _shape.Parent).BottomAnchored;
         return this;
     }
 

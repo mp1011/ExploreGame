@@ -1,4 +1,5 @@
-﻿using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -10,7 +11,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-public abstract class Shape
+public abstract class Shape : IWithPosition
 {
     public virtual IColliderMaker ColliderMaker => null;
 
