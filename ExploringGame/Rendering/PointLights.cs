@@ -15,7 +15,7 @@ public record PointLight(int Index, Vector3 Position, Color Color, float Intensi
 
 public class PointLights
 {
-    public const int MAX_LIGHTS = 10;
+    public const int MAX_LIGHTS = 20;
 
     private PointLight[] _lights;
 

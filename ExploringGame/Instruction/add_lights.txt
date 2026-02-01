@@ -1,0 +1,22 @@
+# GOAL
+Add a ceiling light and switch to each of the following rooms
+1. Bathroom
+2. Bedroom
+3. Half Bathroom
+4. Spare Room
+
+# STEPS FOR EACH LIGHT
+- add a HighHatLight to the center of the room
+- add a switch to one of the walls that doesn't have a door
+- add a new StateKey to represent the light state for this room
+
+# GLOBAL STEPS
+- raise the max lights that the shader supports to 20
+
+# QUESTIONS AND ANSWERS
+1.	Which wall (North/South/East/West) should each switch be placed on?
+	- which wall does not matter as long as there is no door
+2.	Do you want the new lights to be initially ON or OFF for each room?
+	- initially OFF
+3.	Confirm: set both shader MAX_LIGHTS and MAX_LIGHTS to 20 (and adjust any arrays accordingly)?
+	- Yes

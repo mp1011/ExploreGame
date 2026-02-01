@@ -2,6 +2,9 @@
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Texture;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using Microsoft.Xna.Framework;
+using ExploringGame.Services;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
@@ -20,5 +23,11 @@ public class Bathroom : Room
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.East, HAlign.Right, DoorDirection.Pull, StateKey.BathroomDoorOpen), this, Side.East);
+
+        var light = new HighHatLight(this, 0f, 0f, initialState: false);
+        var sw = new LightSwitch(this, Side.North, StateKey.BathroomLightOn);
+        sw.ControlledObjects.Add(light);
+        sw.Position = this.Position;
+        sw.Place().OnSideInner(Side.North);
     }
 }

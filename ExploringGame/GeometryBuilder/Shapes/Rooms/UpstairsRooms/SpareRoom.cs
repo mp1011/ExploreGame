@@ -3,6 +3,8 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
@@ -22,6 +24,12 @@ public class SpareRoom : Room
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(_upstairsHall.SouthHall, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.SpareRoomDoorOpen),        
             this, Side.West, HAlign.Left, 3.0f, adjustPlacement: false);
+
+        var light = new HighHatLight(this, 0f, 0f);
+        var sw = new LightSwitch(this, Side.East, StateKey.SpareRoomLightOn);
+        sw.ControlledObjects.Add(light);
+        sw.Position = this.Position;
+        sw.Place().OnSideInner(Side.East);
     }
 
     public override Theme Theme => new UpstairsHallTheme();
