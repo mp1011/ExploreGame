@@ -34,7 +34,7 @@ public class UpstairsHall : Room
 
         var hallLight = new HighHatLight(SouthHall, 0f, 0f);
 
-        var hallLightSwitch = new LightSwitch(this, StateKey.HallLightOn);
+        var hallLightSwitch = new LightSwitch(this, Side.West, StateKey.HallLightOn);
         hallLightSwitch.ControlledObjects.Add(hallLight);
 
         hallLightSwitch.Position = Position;

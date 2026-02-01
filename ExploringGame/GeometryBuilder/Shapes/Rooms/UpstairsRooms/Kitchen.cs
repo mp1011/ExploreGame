@@ -23,7 +23,7 @@ public class Kitchen : Room
         SetSideUnanchored(Side.North, _upstairsHall.NorthHall.GetSide(Side.North));
 
         var light = new HighHatLight(this, 0f, 0f);
-        var lightSwitch = new LightSwitch(this, StateKey.KitchenLightOn);
+        var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);
         lightSwitch.ControlledObjects.Add(light);
 
         lightSwitch.Position = Position;

@@ -28,7 +28,7 @@ public class LivingRoom : Room
         AddConnectingRoom(new RoomConnection(this, _upstairsHall.NorthHall, Side.South), adjustPlacement: false);
 
         var light = new HighHatLight(this, 0f, 0f);
-        var lightSwitch = new LightSwitch(this, StateKey.LivingRoomLightOn);
+        var lightSwitch = new LightSwitch(this, Side.East, StateKey.LivingRoomLightOn);
         lightSwitch.ControlledObjects.Add(light);
 
         lightSwitch.Position = Position;

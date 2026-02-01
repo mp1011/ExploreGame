@@ -1,15 +1,14 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.LevelControl;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
-public class LightSwitchController : IShapeController<LightSwitch>, IOnOff
+public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPlayerActivated
 {
-    public const float ActivationRange = 2.0f;
-
     private readonly PlayerInput _playerInput;
     private readonly Player _player;
     private readonly GameState _gameState;
@@ -37,6 +36,16 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff
         }
     }
 
+    #region IPlayerActivated
+    float IPlayerActivated.ActivationRange => 2.0f;
+
+    PlayerInput IPlayerActivated.PlayerInput => _playerInput;
+
+    Player IPlayerActivated.Player => _player;
+
+    Shape IPlayerActivated.Shape => Shape;
+    #endregion
+
     public void Initialize()
     {
         this.LoadState(_gameState);
@@ -49,10 +58,7 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff
 
     public void Update(GameTime gameTime)
     {
-        if (_player.Position.SquaredDistance(Shape.Position) > ActivationRange * ActivationRange)
-            return;
-
-        if (_playerInput.IsKeyPressed(GameKey.Use))
+        if(this.CheckPlayerActivation())
             On = !On;
     }
 }

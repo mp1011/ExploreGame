@@ -34,7 +34,7 @@ public class Den : Room
         AddConnectingRoomWithJunction(new DoorJunction(closet, Side.East, HAlign.Left, DoorDirection.Pull, StateKey.DenClosetDoorOpen), closet, Side.East, HAlign.Left, offset: 0.5f);
 
         var light = new HighHatLight(this, 0f, 0f);
-        var lightSwitch = new LightSwitch(this, StateKey.DenLightOn);
+        var lightSwitch = new LightSwitch(this, Side.South, StateKey.DenLightOn);
         lightSwitch.ControlledObjects.Add(light);
 
         lightSwitch.Position = Position;

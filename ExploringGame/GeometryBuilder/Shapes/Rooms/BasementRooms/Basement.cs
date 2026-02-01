@@ -33,7 +33,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             SetSide(Side.East, _office.Exit.GetSide(Side.West));
             SetSide(Side.North, _office.Exit.GetSide(Side.North) - Measure.Inches(31));
 
-            var lightSwitch = new LightSwitch(this, StateKey.OfficeLightOn);
+            var lightSwitch = new LightSwitch(this, Side.East, StateKey.OfficeLightOn);
             lightSwitch.Place().OnSideInner(Side.East);
             lightSwitch.SetSide(Side.North, GetSide(Side.North) + Measure.Inches(22));
             lightSwitch.ControlledObjects.AddRange(_office.Lights);
@@ -92,7 +92,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             BasementStairsDoor.AddConnectingRoom(new RoomConnection(BasementStairsDoor, Stairs, Side.North), adjustPlacement: false);
 
             var light = new HighHatLight(this, 1.0f, 0f);
-            var lightSwitch2 = new LightSwitch(this, StateKey.BasementLightOn);
+            var lightSwitch2 = new LightSwitch(this, Side.West, StateKey.BasementLightOn);
             lightSwitch2.ControlledObjects.Add(light);
 
             lightSwitch2.Position = wall2.Position;

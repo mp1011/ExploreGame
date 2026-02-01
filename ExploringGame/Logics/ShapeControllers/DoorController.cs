@@ -12,11 +12,17 @@ using System.Linq;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
-public class DoorController : IShapeController<Door>
+public class DoorController : IShapeController<Door>, IPlayerActivated
 {
-    public float ActivationRange = 2.0f;
+    public float ActivationRange => 2.0f;
 
     public Door Shape { get; set; }
+
+    #region IPlayerActivated
+    PlayerInput IPlayerActivated.PlayerInput => _playerInput;
+    Player IPlayerActivated.Player => _player;
+    Shape IPlayerActivated.Shape => Shape;
+    #endregion
 
     private readonly PlayerInput _playerInput;
     private readonly Player _player;
@@ -75,10 +81,7 @@ public class DoorController : IShapeController<Door>
         Shape.Position = _rigidBody.Position.ToVector3();
         Shape.Rotation = Rotation.FromJQuaternion(_rigidBody.Orientation);
 
-        if (_player.Position.SquaredDistance(Shape.Position) > ActivationRange * ActivationRange)
-            return;
-
-        if (_playerInput.IsKeyPressed(GameKey.Use))
+        if (this.CheckPlayerActivation())
         {
             Shape.Open = !Shape.Open;
             if(Shape.Open)

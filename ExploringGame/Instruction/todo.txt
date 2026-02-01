@@ -84,11 +84,24 @@
 	[x] X/Y seperate stretch/repeat
 	[x] find better way to separate into triangles for repeating textures
 
-[ ] lights
-	[ ] illuminate only below
+[x] lights
+	[x] illuminate only below
 	[ ] fix ceiling artifacts
 	[ ] deactivate lights when not needed
-	[ ] add lights to all rooms
+	[x] add lights to all rooms
+
+
+[x] fix problem of player being near multiple interactive objects (should only affect one)
+[ ] put light switches in reasonable places
+[ ] add lights to all rooms (may need to raise light count in shader)
+
+
+[ ] add other entity
+	[ ] basic pathfinding (waypoint based possibly?)
+	[ ] "dev" appearance - but with visible "front"
+
+
+
 
 [ ] segment transitions
 

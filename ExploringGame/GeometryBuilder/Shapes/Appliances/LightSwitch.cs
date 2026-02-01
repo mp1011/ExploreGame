@@ -15,13 +15,23 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>
     public StateKey StateKey { get; }
 
     public List<IOnOff> ControlledObjects { get; } = new List<IOnOff>();
-    public LightSwitch(Room room, StateKey key)
+    public LightSwitch(Room room, Side wallSide, StateKey key)
     {
         room.AddChild(this);
 
         Height = Measure.Inches(5);
-        Width = Measure.Inches(0.5f);
-        Depth = Measure.Inches(5f);
+
+        if(wallSide.GetAxis() == Axis.X)
+        {
+            Width = Measure.Inches(0.5f);
+            Depth = Measure.Inches(5f);
+        }
+        else
+        {
+            Width = Measure.Inches(5f);
+            Depth = Measure.Inches(0.5f);            
+        }
+       
 
         Position = room.Position;
         StateKey = key;
