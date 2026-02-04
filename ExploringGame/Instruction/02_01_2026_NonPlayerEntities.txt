@@ -3,5 +3,14 @@ Finish implementing the Test Entity
 
 # TASKS
 [x] control what collision type to use instead of assuming Capsule
-[ ] rotate entity to face its movement direction
-[ ] fix problem where adding gravity stops entity from moving at all
+[x] rotate entity to face its movement direction
+[x] fix problem where adding gravity stops entity from moving at all
+
+#  rotate entity to face its movement direction - ? COMPLETE
+- arbitrarily pick one side of TestEntity to be the "Front"
+  ? North side chosen as front
+- give the front a different color so we can tell what direction it's facing
+  ? North side colored yellow, other sides remain red
+- rotate the entity to match its motion direction
+  ? Yaw calculated using atan2(x, -z) from movement direction
+  ? Shape.Rotation updated each frame to face movement direction

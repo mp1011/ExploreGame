@@ -20,11 +20,14 @@ public class TestEntity : PlaceableShape, IWithPosition, IControllable
 
     public TestEntity()
     {
-        Width = 1.0f;
+        Width = 0.5f;
         Height = 1.0f;
         Depth = 1.0f;
         
-        MainTexture = new TextureInfo(Color.Red, TextureKey.Wall);       
+        MainTexture = new TextureInfo(Color.Red, TextureKey.Wall);
+        // North side is the "front" - make it yellow so we can see which way it's facing
+        SideTextures[Side.North] = new TextureInfo(Color.Yellow, TextureKey.Wall);
+        
         Rotation = new Rotation(0, 0, 0);
     }
 

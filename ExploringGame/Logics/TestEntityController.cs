@@ -30,6 +30,7 @@ public class TestEntityController : IShapeController<TestEntity>
     public void Initialize()
     {
         _entityMover = new EntityMover(Shape, _physics);
+        _entityMover.CollisionResponder.AddResponse(new Collision.DetectFloorCollision(_entityMover));
         _entityMover.Initialize();
         
         // Set up motion parameters
@@ -59,6 +60,11 @@ public class TestEntityController : IShapeController<TestEntity>
         {
             directionToPlayer.Normalize();
             _entityMover.Motion.TargetMotion = directionToPlayer * MoveSpeed;
+            
+            // Rotate to face movement direction
+            // North side (yellow front) needs 180 degree offset to face forward
+            float targetYaw = (float)System.Math.Atan2(directionToPlayer.X, directionToPlayer.Z) + (float)System.Math.PI;
+            Shape.Rotation = new GeometryBuilder.Rotation(targetYaw, 0, 0);
         }
         else
         {

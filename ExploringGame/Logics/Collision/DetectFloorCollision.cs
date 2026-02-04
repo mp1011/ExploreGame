@@ -1,6 +1,4 @@
-﻿using Jitter2.Collision.Shapes;
-using Jitter2.Dynamics;
-using Microsoft.Xna.Framework;
+﻿using Jitter2.Dynamics;
 
 namespace ExploringGame.Logics.Collision;
 
