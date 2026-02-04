@@ -25,7 +25,8 @@ class OfficeDesk : PlaceableShape
     public static readonly float UpperHeight = 0.6f;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
-
+    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
 

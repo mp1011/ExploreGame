@@ -1,13 +1,13 @@
 ﻿using ExploringGame.Extensions;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
-using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.TestShapes;
 
-public class PhysicsTestShape : Shape, IPlaceableObject, IControllable
+public class PhysicsTestShape : Shape, IPlaceableObject, IControllable, ICollidable
 {
     public PhysicsTestShape()
     {
@@ -20,6 +20,11 @@ public class PhysicsTestShape : Shape, IPlaceableObject, IControllable
     public Shape Self => this;
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+    public CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;
+
+    public CollisionGroup CollidesWithGroups => CollisionGroup.Environment;
+
     Shape[] IPlaceableObject.Children => TraverseAllChildren();
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)

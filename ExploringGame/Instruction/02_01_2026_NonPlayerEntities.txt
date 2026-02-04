@@ -1,0 +1,7 @@
+# GOAL
+Finish implementing the Test Entity
+
+# TASKS
+[x] control what collision type to use instead of assuming Capsule
+[ ] rotate entity to face its movement direction
+[ ] fix problem where adding gravity stops entity from moving at all

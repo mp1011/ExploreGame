@@ -1,6 +1,8 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
@@ -11,6 +13,11 @@ namespace ExploringGame.Entities;
 /// </summary>
 public class TestEntity : PlaceableShape, IWithPosition, IControllable
 {
+    public override IColliderMaker ColliderMaker => new BoxColliderMaker(this);
+
+    public override CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.Environment | CollisionGroup.Steps;
+
     public TestEntity()
     {
         Width = 1.0f;
@@ -32,7 +39,6 @@ public class TestEntity : PlaceableShape, IWithPosition, IControllable
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        // PlaceableShape handles building at origin via BeforeBuild/AfterBuild
         return BuildCuboid();
     }
 }

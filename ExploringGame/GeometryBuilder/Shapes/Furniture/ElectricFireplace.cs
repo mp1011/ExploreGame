@@ -45,6 +45,8 @@ class ElectricFireplace : PlaceableShape
     public const float FooterHeight = 0.1f;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
+    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
     public override ViewFrom ViewFrom =>  ViewFrom.Outside;
 
     public ElectricFireplace(Shape parent)

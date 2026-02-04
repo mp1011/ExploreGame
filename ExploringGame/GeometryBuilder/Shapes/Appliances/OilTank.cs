@@ -11,6 +11,9 @@ public class OilTank : PlaceableShape
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
 
+    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
+
     public OilTank(Shape room)
     {
         room.AddChild(this);

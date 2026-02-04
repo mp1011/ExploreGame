@@ -9,6 +9,8 @@ public class DebugBirdsEyeCamera : ICamera
     public Vector3 Position { get; set; }
     public Rotation Rotation { get; set; }
 
+    public Vector3 Size => new Vector3(1, 1, 1);
+
     private Player _player;
 
     public DebugBirdsEyeCamera(Player player)

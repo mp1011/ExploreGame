@@ -6,6 +6,7 @@ namespace ExploringGame.Entities;
 public interface IWithPosition
 {
     public Vector3 Position { get; set; }
+    public Vector3 Size { get; }
     public Rotation Rotation { get; set; }
 }
 

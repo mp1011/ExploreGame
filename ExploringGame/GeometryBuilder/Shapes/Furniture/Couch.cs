@@ -16,7 +16,8 @@ internal class Couch : PlaceableShape
     public override ViewFrom ViewFrom =>  ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
-
+    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
     public Couch(Shape parent)
     {
         Position = parent.Position;

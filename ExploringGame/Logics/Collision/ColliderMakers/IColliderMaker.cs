@@ -45,7 +45,7 @@ public class BoundingBoxColliderMaker : IColliderMaker
         }
         else if (_shape.ViewFrom == ViewFrom.Outside)
         {
-            yield return physics.CreateStaticBody(_shape);
+            yield return physics.CreateStaticBody(_shape, CollisionGroup.Environment);
         }
     }
 }

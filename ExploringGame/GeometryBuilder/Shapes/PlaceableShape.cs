@@ -1,9 +1,11 @@
 ﻿using ExploringGame.Logics;
+using ExploringGame.Logics.Collision;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
-public abstract class PlaceableShape : Shape, IPlaceableObject
+public abstract class PlaceableShape : Shape, IPlaceableObject, ICollidable
 {
     private Vector3 _savedPosition;
     private Rotation _savedRotation;
@@ -11,6 +13,9 @@ public abstract class PlaceableShape : Shape, IPlaceableObject
     public Shape Self => this;
 
     Shape[] IPlaceableObject.Children => TraverseAllChildren();
+
+    public abstract CollisionGroup CollisionGroup { get; }
+    public abstract CollisionGroup CollidesWithGroups { get; }
 
     protected override void BeforeBuild()
     {

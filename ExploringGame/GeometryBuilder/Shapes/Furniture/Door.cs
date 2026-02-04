@@ -3,6 +3,7 @@ using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
@@ -22,7 +23,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => new DoorColliderMaker(this);
-    
+    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
     public bool Open { get; set; }
 
     public StateKey StateKey { get; }
