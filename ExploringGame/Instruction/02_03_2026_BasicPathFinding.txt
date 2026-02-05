@@ -1,0 +1,36 @@
+# GOAL
+Add basic pathfinding to the Test Entity so it "chases" the player regardless of location
+
+# SUB-GOALS
+- Test Entity will not get stuck on corners
+- Test Entity will move around obstacles
+- If player is in a different room, or even a different floor, Test Entity will find its way to where the player is
+
+# UPDATES FOR TESTING
+- when in "FlyMode", the Test Entity will stop moving
+	- this will let us test pathfinding where the player is far away
+
+
+# TECHNICAL APPROACH
+- combination of Raycast + Avoidance and Waypoint Graph
+- Waypoints generated based on room layout
+- entity will use raycast when within the same room and Waypoint otherwise
+
+## Waypoints
+- place waypoints at center of each object which inherits from Room
+- join waypoints using RoomConnection
+- represent Waypoints as a connected graph. Later we'll enhance this graph to add more information such as locked doors.
+
+## Doors
+- at this point in development, doors are not treated as obstacles as the Test Entity will be able to push them open. This will be addressed later.
+
+## General Approach
+1. Try Raycast. If there is a straight line of sight, move in that direction
+2. If Raycast fails, cast a few more rays in offset directions. Pick one that will get the entity closer to the player.
+3. If all raycasts fail, use Waypoint graph to find a node path to the player.
+4. Change the "target" to the appropriate Waypoint and repeat.
+
+# RESEARCH
+- How can we do raycasting?
+	- look into _world.DynamicTree.RayCast()
+

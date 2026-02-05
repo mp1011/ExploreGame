@@ -1,0 +1,58 @@
+# GOAL
+Introduce a unit testing to more easily test pathfinding logic
+
+# SETUP
+
+## SETTING UP THE WORLD - ? COMPLETE
+- currently, Game1 doesn't support custom segments, we must hard-code that into CreateMainShape()
+- instead, let's pass the main world segment in as the argument to Game1
+  ? Game1 now accepts optional WorldSegment parameter in constructor
+  ? Uses null-coalescing operator to fall back to CreateMainShape() if not provided
+
+## SIMULATING PLAYER INPUT - ? COMPLETE
+- we currently have a class for keyboard input but mouse input uses Mouse directly
+- instead, let's include mouse input in our PlayerInput class so we don't reference Mouse directly
+  ? PlayerInput now tracks both keyboard and mouse state
+  ? Added GetMouseDelta() and CenterMouse() methods
+  ? Removed all Mouse references from PlayerMotion
+- create an interface to capture the public methods of PlayerInput, so we can create a MockPlayerInput for testing
+  ? Created IPlayerInput interface
+  ? PlayerInput implements IPlayerInput
+  ? PlayerMotion now uses IPlayerInput instead of concrete PlayerInput
+
+## RECORDING SCREENSHOTS - COMPLETE
+- when testing, we don't normally need to render anything. We can bypass most of the Draw method
+- we want to take a screenshot only on the last frame of testing and save it to an image
+- our strategy is to create a derived class of Game1 for testing
+- separate out the main drawing logic from Draw(), not counting printing the debug text, into a separate protected method
+- in the Draw() method in TestGame, render the frame onto a texture.
+
+## INITIAL HELLO WORLD
+- create a test that puts the player in a basic room, tries to walk forward, and after some time asserts the player is still in the bounds of the room.
+
+# TASKS
+1. ? Create a unit testing project 
+	- use xUnit
+	- create a new project called ExploringGame.Tests
+	- include a mocking library (NSubstitute)
+2. ? Refactor Game1 to accept the main world segment instead of hard coding it
+3. ? Refactor player input so both keyboard AND mouse input are handled by the PlayerInput class
+4. ? Create an interface for PlayerInput so we can mock it in our tests 
+5. ? Scaffold a test called BasicRoomTest, don't give it any implementation. The test should immediately fail.
+
+# IMPLEMENTATION NOTES
+
+## Files Created:
+- ExploringGame.Tests/ExploringGame.Tests.csproj
+- ExploringGame.Tests/BasicRoomTest.cs
+- ExploringGame/Logics/IPlayerInput.cs
+
+## Files Modified:
+- ExploringGame/Logics/PlayerInput.cs - Now implements IPlayerInput, handles mouse input
+- ExploringGame/Logics/PlayerMotion.cs - Uses IPlayerInput, removed Mouse references
+- ExploringGame/Game1.cs - Constructor accepts optional WorldSegment parameter
+
+## Next Steps:
+- Implement RequestScreenshot() functionality in Game1
+- Implement BasicRoomTest with actual test logic
+- Create test utilities for running game frames

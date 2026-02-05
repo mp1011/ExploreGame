@@ -16,23 +16,23 @@ namespace ExploringGame;
 
 public class Game1 : Game
 {
-    private ServiceContainer _serviceContainer;
+    protected ServiceContainer _serviceContainer;
     private Player _player;
-    private CameraService _cameraService;
+    protected CameraService _cameraService;
     private PlayerMotion _playerMotion;
     private DebugController _debugController;
     private HeadBob _headBob;
-    private PlayerInput _playerInput;
+    private IPlayerInput _playerInput;
     private EntityMover _playerMover;
-    private LoadedLevelData _loadedLevelData;
+    protected LoadedLevelData _loadedLevelData;
     private WorldSegment _mainShape;
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    private PointLightRenderEffect _pointLightEffect;
-    private BasicRenderEffect _basicEffect;
-    private IRenderEffect _renderEffect;
+    protected PointLightRenderEffect _pointLightEffect;
+    protected BasicRenderEffect _basicEffect;
+    protected IRenderEffect _renderEffect;
 
 
     private SpriteFont _debugFont;
@@ -40,14 +40,21 @@ public class Game1 : Game
     private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
 
-    public Game1()
+    public Game1() : this(null)
+    {
+    }
+
+    public Game1(WorldSegment mainWorldSegment)
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = false;
         _graphics.IsFullScreen = false;
+        _mainShape = mainWorldSegment;
     }
 
+    protected virtual IPlayerInput CreatePlayerInput() => new PlayerInput();
+    
     protected override void Initialize()
     {
         _serviceContainer = new ServiceContainer();
@@ -67,8 +74,8 @@ public class Game1 : Game
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
         _serviceContainer.BindTransient<TestEntityController>();
-        
-        _playerInput = new PlayerInput();
+
+        _playerInput = CreatePlayerInput();
         _headBob = new HeadBob();
         _player = _serviceContainer.Get<Player>();
 
@@ -78,7 +85,7 @@ public class Game1 : Game
         _serviceContainer.Bind(_playerInput);
         _serviceContainer.BindTransient<DoorController>();
 
-        _mainShape = CreateMainShape();
+        _mainShape ??= CreateMainShape();
     //    _player.Position = _mainShape.Children.First().Position;
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
@@ -145,7 +152,7 @@ public class Game1 : Game
         _playerMover.Update(gameTime);
         _loadedLevelData.Update(gameTime);
 
-        _playerInput.Update();
+        _playerInput.Update(Window);
         if (_playerInput.IsKeyDown(GameKey.DebugKey))
         {
             _debugController.Update();
@@ -167,14 +174,19 @@ public class Game1 : Game
         base.Update(gameTime);
     }
 
-    protected override void Draw(GameTime gameTime)
-    {       
-        GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer,Color.CornflowerBlue,1.0f,0);
-        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+    protected virtual void DrawWorld(GraphicsDevice graphicsDevice)
+    {
+        graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
+        graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-        foreach(var levelData in _loadedLevelData.LoadedSegments)
-            _renderEffect.Draw(GraphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
-        
+        foreach (var levelData in _loadedLevelData.LoadedSegments)
+            _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
+    }
+
+    protected override void Draw(GameTime gameTime)
+    {
+        DrawWorld(GraphicsDevice);
+
         // Draw debug information
         _spriteBatch.Begin();
         _spriteBatch.DrawString(_debugFont,

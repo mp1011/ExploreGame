@@ -8,12 +8,11 @@ using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace ExploringGame.Testing;
 
-internal class TestMaps
+public class TestMaps
 {
 
     public static WorldSegment TilingTextureTestMap()
@@ -227,7 +226,7 @@ internal class TestMaps
         return faceTest;
     }
 
-    private WorldSegment EmptyRoom()
+    public static WorldSegment EmptyRoom()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;

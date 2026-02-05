@@ -1,0 +1,29 @@
+# GOAL 
+Mock player input for unit testing
+
+# TASK
+- create a MockPlayerInput class that implements IPlayerInput
+	- this should be placed in the ExploringGame.Tests project
+	- in the Update method, increment a frame counter
+- create an InputEvent record with the following properties:
+	- FrameNumber: int
+	- Key: GameKey
+	- IsPressed: bool
+	- MouseDelta: Vector2?
+- give MockPlayerInput a list of InputEvents
+- in the test Player_WalksForward_StaysInRoom, create a single InputEvent for pressing the forward key on frame 1
+
+# How MockPlayerInput should interpret events
+- each frame, check the events that match the frame number
+- if the event is a key press, add that key to the list of pressed keys.
+	- that key should remain pressed until MockPlayerInput sees another event of the same GameKey where IsPressed=false
+
+# QUESTIONS AND ANSWERS
+1. CenterMouse Behavior
+IPlayerInput has a CenterMouse(GameWindow) method. In the mock, should this:
+•	Do nothing (no-op)?
+•	Or should it do something specific for testing?
+	- for now, have it do nothing
+2. Multiple Events Per Frame
+If there are multiple key events on the same frame, should they all be processed, or just the last one?
+	- process all events for that frame

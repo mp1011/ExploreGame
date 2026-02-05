@@ -2,8 +2,6 @@
 using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-
 
 namespace ExploringGame.Logics;
 
@@ -18,14 +16,12 @@ internal class PlayerMotion
     public static float Gravity => Debug.FlyMode ? 0f : 10.0f;
     public const float GravityAccel = 0.4f;
 
-    private PlayerInput _playerInput;
+    private IPlayerInput _playerInput;
     private Player _player;
     private HeadBob _headBob;
     private EntityMover _playerMotion;
-    private MouseState _prevMouse;
-    private bool _firstMouse = true;
 
-    public PlayerMotion(Player player, HeadBob headBob, PlayerInput playerInput, EntityMover playerMotion)
+    public PlayerMotion(Player player, HeadBob headBob, IPlayerInput playerInput, EntityMover playerMotion)
     {
         _playerInput = playerInput;
         _player = player;
@@ -69,21 +65,11 @@ internal class PlayerMotion
         }
 
         // Mouse look
-        var mouse = Mouse.GetState();
-        if (!_firstMouse)
-        {
-            var delta = mouse.Position - _prevMouse.Position;
-            yaw -= delta.X * 0.01f;
-            pitch -= delta.Y * 0.01f;
-            pitch = MathHelper.Clamp(pitch, -MathHelper.PiOver2 + 0.1f, MathHelper.PiOver2 - 0.1f);
-            Mouse.SetPosition(window.ClientBounds.Width / 2, window.ClientBounds.Height / 2);
-            _prevMouse = Mouse.GetState();
-        }
-        else
-        {
-            _firstMouse = false;
-            _prevMouse = mouse;
-        }
+        var mouseDelta = _playerInput.GetMouseDelta();
+        yaw -= mouseDelta.X * 0.01f;
+        pitch -= mouseDelta.Y * 0.01f;
+        pitch = MathHelper.Clamp(pitch, -MathHelper.PiOver2 + 0.1f, MathHelper.PiOver2 - 0.1f);
+        _playerInput.CenterMouse(window);
 
         _player.Rotation = new Rotation(yaw, pitch, _player.Rotation.Roll);
     }

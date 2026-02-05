@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 namespace ExploringGame.Logics;
@@ -16,11 +17,14 @@ public enum GameKey
     DebugKey,
 }
 
-public class PlayerInput
+public class PlayerInput : IPlayerInput
 {
-    private KeyboardState _lastState;
-    private KeyboardState _currentState;
+    private KeyboardState _lastKeyboardState;
+    private KeyboardState _currentKeyboardState;
+    private MouseState _lastMouseState;
+    private MouseState _currentMouseState;
     private Dictionary<GameKey, Keys> _keyMap;
+    private bool _firstMouse = true;
 
     public PlayerInput()
     {
@@ -38,15 +42,39 @@ public class PlayerInput
         _keyMap[GameKey.DebugKey] = Keys.RightAlt;
     }
 
-    public void Update()
+    public void Update(GameWindow window)
     {
-        _lastState = _currentState;
-        _currentState = Keyboard.GetState();
+        _lastKeyboardState = _currentKeyboardState;
+        _currentKeyboardState = Keyboard.GetState();
+
+        _lastMouseState = _currentMouseState;
+        _currentMouseState = Mouse.GetState();
+
+        if (_firstMouse)
+        {
+            CenterMouse(window);
+            _lastMouseState = _currentMouseState;
+            _firstMouse = false;
+        }
     }
 
-    public bool IsKeyPressed(Keys key) => _currentState.IsKeyDown(key) && !_lastState.IsKeyDown(key);
-    public bool IsKeyDown(GameKey key) => _currentState.IsKeyDown(_keyMap[key]);
-    public bool IsKeyPressed(GameKey key) => _currentState.IsKeyDown(_keyMap[key])
-                                             && !_lastState.IsKeyDown(_keyMap[key]);
+    public bool IsKeyPressed(Keys key) => _currentKeyboardState.IsKeyDown(key) && !_lastKeyboardState.IsKeyDown(key);
+    public bool IsKeyDown(GameKey key) => _currentKeyboardState.IsKeyDown(_keyMap[key]);
+    public bool IsKeyPressed(GameKey key) => _currentKeyboardState.IsKeyDown(_keyMap[key])
+                                             && !_lastKeyboardState.IsKeyDown(_keyMap[key]);
 
+    public Vector2 GetMouseDelta()
+    {
+        if (_firstMouse)
+            return Vector2.Zero;
+
+        var delta = _currentMouseState.Position - _lastMouseState.Position;
+        return new Vector2(delta.X, delta.Y);
+    }
+
+    public void CenterMouse(GameWindow window)
+    {
+        Mouse.SetPosition(window.ClientBounds.Width / 2, window.ClientBounds.Height / 2);
+        _currentMouseState = Mouse.GetState();
+    }
 }
