@@ -19,12 +19,12 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
     public Door Shape { get; set; }
 
     #region IPlayerActivated
-    PlayerInput IPlayerActivated.PlayerInput => _playerInput;
+    IPlayerInput IPlayerActivated.PlayerInput => _playerInput;
     Player IPlayerActivated.Player => _player;
     Shape IPlayerActivated.Shape => Shape;
     #endregion
 
-    private readonly PlayerInput _playerInput;
+    private readonly IPlayerInput _playerInput;
     private readonly Player _player;
     private readonly AudioService _audioService;
     private readonly Physics _physics;
@@ -33,7 +33,7 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
     private AngularMotor _motor;
     private bool _closeSoundPlayed = true;
 
-    public DoorController(PlayerInput playerInput, Player player, AudioService audioService, Physics physics,
+    public DoorController(IPlayerInput playerInput, Player player, AudioService audioService, Physics physics,
         GameState gameState)
     {
         _physics = physics;

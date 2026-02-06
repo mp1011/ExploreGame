@@ -8,7 +8,7 @@ namespace ExploringGame.Logics.ShapeControllers;
 public interface IPlayerActivated
 {
     float ActivationRange { get; }
-    PlayerInput PlayerInput { get; }
+    IPlayerInput PlayerInput { get; }
     Player Player { get; }
     Shape Shape { get; }
 }
@@ -23,8 +23,6 @@ public static class IPlayerActivatedExtensions
         // Angular check: ensure player is looking roughly at the shape
         var forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(playerActivated.Player.Rotation.Yaw, playerActivated.Player.Rotation.Pitch, 0f));
         var toTarget = playerActivated.Shape.Position - playerActivated.Player.Position;
-        if (toTarget.LengthSquared() < 1e-6f)
-            return true;
 
         forward.Normalize();
         toTarget.Normalize();

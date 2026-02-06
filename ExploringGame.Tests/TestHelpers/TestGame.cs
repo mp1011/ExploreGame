@@ -23,6 +23,9 @@ public class TestGame : Game1
         var screenshotDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Screenshots");
         Directory.CreateDirectory(screenshotDir);
         _screenshotPath = Path.Combine(screenshotDir, $"test_{DateTime.Now:yyyyMMdd_HHmmss}.png");
+
+        _graphics.SynchronizeWithVerticalRetrace = false;
+        IsFixedTimeStep = false;
     }
 
     public T GetService<T>() => _serviceContainer.Get<T>();

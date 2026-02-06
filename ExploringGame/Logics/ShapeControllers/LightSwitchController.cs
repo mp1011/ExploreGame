@@ -9,13 +9,13 @@ namespace ExploringGame.Logics.ShapeControllers;
 
 public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPlayerActivated
 {
-    private readonly PlayerInput _playerInput;
+    private readonly IPlayerInput _playerInput;
     private readonly Player _player;
     private readonly GameState _gameState;
 
     public StateKey StateKey => Shape.StateKey;
 
-    public LightSwitchController(PlayerInput playerInput, Player player, GameState gameState)
+    public LightSwitchController(IPlayerInput playerInput, Player player, GameState gameState)
     {
         _playerInput = playerInput;
         _player = player;
@@ -39,7 +39,7 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPla
     #region IPlayerActivated
     float IPlayerActivated.ActivationRange => 2.0f;
 
-    PlayerInput IPlayerActivated.PlayerInput => _playerInput;
+    IPlayerInput IPlayerActivated.PlayerInput => _playerInput;
 
     Player IPlayerActivated.Player => _player;
 

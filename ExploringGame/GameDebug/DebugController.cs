@@ -7,11 +7,11 @@ namespace ExploringGame.GameDebug;
 
 public class DebugController
 {
-    private PlayerInput _playerInput;
+    private IPlayerInput _playerInput;
     private CameraService _cameraService;
     private Player _player;
 
-    public DebugController(PlayerInput playerInput, CameraService cameraService, Player player)
+    public DebugController(IPlayerInput playerInput, CameraService cameraService, Player player)
     {
         _player = player;
         _playerInput = playerInput;

@@ -7,6 +7,7 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
+using ExploringGame.Testing;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -27,7 +28,7 @@ public class Game1 : Game
     protected LoadedLevelData _loadedLevelData;
     private WorldSegment _mainShape;
 
-    private GraphicsDeviceManager _graphics;
+    protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
     protected PointLightRenderEffect _pointLightEffect;
@@ -76,13 +77,14 @@ public class Game1 : Game
         _serviceContainer.BindTransient<TestEntityController>();
 
         _playerInput = CreatePlayerInput();
+        _serviceContainer.Bind(_playerInput);
         _headBob = new HeadBob();
         _player = _serviceContainer.Get<Player>();
 
         _playerMover = new EntityMover(_player, _physics);
         _playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(_playerMover));
 
-        _serviceContainer.Bind(_playerInput);
+        
         _serviceContainer.BindTransient<DoorController>();
 
         _mainShape ??= CreateMainShape();
@@ -127,8 +129,8 @@ public class Game1 : Game
 
     private WorldSegment CreateMainShape()
     {
-      //  return TestMaps.TilingTextureTestMap();
-        return new BasementWorldSegment(null);
+        return TestMaps.TilingTextureTestMap();
+      //d  return new BasementWorldSegment(null);
     }
 
     protected override void Update(GameTime gameTime)

@@ -92,14 +92,21 @@
 
 
 [x] fix problem of player being near multiple interactive objects (should only affect one)
-[ ] put light switches in reasonable places
-[ ] add lights to all rooms (may need to raise light count in shader)
+[x] put light switches in reasonable places
+[x] add lights to all rooms (may need to raise light count in shader)
 
 
-[ ] add other entity
+[x] add other entity
 	[ ] basic pathfinding (waypoint based possibly?)
-	[ ] "dev" appearance - but with visible "front"
+	[x] "dev" appearance - but with visible "front"
 
+[ ] implement raycast test
+	[ ] create a test room with an obstacle in the middle and a test entity
+	[ ] do a raycast from player to entity and show onscreen if the ray hits or not
+	[ ] once working, codify into some unit tests
+
+unit testing improvements
+	[ ] fake GameTime to tests act like game is running at a normal framerate
 
 
 
