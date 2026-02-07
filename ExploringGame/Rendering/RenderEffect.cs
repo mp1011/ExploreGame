@@ -8,7 +8,7 @@ namespace ExploringGame.Rendering;
 
 public interface IRenderEffect
 {
-    void Draw(GraphicsDevice graphicsDevice, ShapeBuffer[] shapeBuffers, Matrix view, Matrix projection);
+    void Draw(GraphicsDevice graphicsDevice, IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection);
     void SetTextures(LoadedTextureSheets textureSheets);
 }
 
@@ -37,7 +37,7 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
 
     public abstract void SetParameters(TEffect effect, Matrix world, Matrix view, Matrix projection);
     
-    public void Draw(GraphicsDevice graphicsDevice, ShapeBuffer[] shapeBuffers, Matrix view, Matrix projection)
+    public void Draw(GraphicsDevice graphicsDevice, IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
         foreach (var shapeBuffer in shapeBuffers)
         {

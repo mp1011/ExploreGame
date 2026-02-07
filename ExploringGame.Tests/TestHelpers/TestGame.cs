@@ -2,6 +2,7 @@
 using ExploringGame.Logics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExploringGame.Tests.TestHelpers;
 
@@ -15,6 +16,11 @@ public class TestGame : Game1
     private TimeSpan _fakeFrameTime = TimeSpan.FromMilliseconds(16.67); // 60 fps
 
     public MockPlayerInput MockPlayerInput { get; }
+
+
+    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime) : 
+        this(worldSegment, (int)(simulationTime.TotalSeconds * 60))
+    {}
 
     public TestGame(WorldSegment worldSegment, int framesToRun) : base(worldSegment, useTestRenderer: true)
     {

@@ -1,4 +1,4 @@
-﻿using ExploringGame.Entities;
+using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
@@ -13,7 +13,7 @@ using System;
 
 namespace ExploringGame.Testing;
 
-public class TestMaps
+public static partial class TestMaps
 {
 
     public static WorldSegment TilingTextureTestMap()
@@ -109,7 +109,7 @@ public class TestMaps
 
     }
 
-    private WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
+    private static WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
         var room = new Room(ws, theme: new BasementRoomTheme());
@@ -130,7 +130,7 @@ public class TestMaps
         return ws;
     }
 
-    private WorldSegment DoubleDoorJunctionTest(DoorDirection doorDirection)
+    private static WorldSegment DoubleDoorJunctionTest(DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
         ws.SetSide(Side.Bottom, 0f);
@@ -152,7 +152,7 @@ public class TestMaps
         return ws;
     }
 
-    private WorldSegment TwoHallTest()
+    private static WorldSegment TwoHallTest()
     {
         var ws = new WorldSegment();
         var room = new Room(ws, theme: new BasementRoomTheme());
@@ -190,9 +190,9 @@ public class TestMaps
         return ws;
     }
 
-    private WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
+    private static WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
 
-    private WorldSegment CircleCutoutTest()
+    private static WorldSegment CircleCutoutTest()
     {
         var worldSegment = new WorldSegment();
         var room = new Room(worldSegment, theme: new BasementRoomTheme());
@@ -208,7 +208,7 @@ public class TestMaps
         return worldSegment;
     }
 
-    private WorldSegment ComplexShapeTest(Func<Shape, Shape> createShape)
+    private static WorldSegment ComplexShapeTest(Func<Shape, Shape> createShape)
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
@@ -224,7 +224,7 @@ public class TestMaps
         return new WorldSegment(simpleRoom);
     }
 
-    private WorldSegment PhysicsTest()
+    private static WorldSegment PhysicsTest()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 10f;
@@ -244,7 +244,7 @@ public class TestMaps
         return world;
     }
 
-    private WorldSegment MotionTest()
+    private static WorldSegment MotionTest()
     {
 
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
@@ -259,7 +259,7 @@ public class TestMaps
         return new WorldSegment(simpleRoom);
     }
 
-    private WorldSegment FurnitureRotateTest()
+    private static WorldSegment FurnitureRotateTest()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
@@ -284,7 +284,7 @@ public class TestMaps
         return ws;
     }
 
-    private Shape SingleFaceTest()
+    private static Shape SingleFaceTest()
     {
         var faceTest = new SingleFaceTest(Side.North);
         faceTest.Y = 2.0f;
@@ -306,7 +306,7 @@ public class TestMaps
         return world;
     }
 
-    private WorldSegment ConnectingRoomsTest()
+    private static WorldSegment ConnectingRoomsTest()
     {
         var world = new WorldSegment();
         var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.Tile, TileSize: 50.0f);
@@ -373,7 +373,7 @@ public class TestMaps
         return world;
     }
 
-    private WorldSegment RoomWithFireplace()
+    private static WorldSegment RoomWithFireplace()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
@@ -394,7 +394,7 @@ public class TestMaps
         return ws;
     }
 
-    private WorldSegment RoomWithDesk()
+    private static WorldSegment RoomWithDesk()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
@@ -412,7 +412,7 @@ public class TestMaps
         return ws;
     }
 
-    private WorldSegment FaceCutoutTestRoom()
+    private static WorldSegment FaceCutoutTestRoom()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;
@@ -429,7 +429,7 @@ public class TestMaps
         return new WorldSegment(simpleRoom);
     }
 
-    private Shape MengerSpongeRoom()
+    private static Shape MengerSpongeRoom()
     {
         var simpleRoom = new SimpleRoom(new BasementRoomTheme());
         simpleRoom.Width = 16f;

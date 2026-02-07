@@ -1,10 +1,12 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -90,4 +92,22 @@ public class LoadedLevelData
 
         //Next = null;
     }
+
+    public LevelData FindLevelDataForWorldSegment(WorldSegment worldSegment)
+    {
+        return LoadedSegments.FirstOrDefault(ld => ld.WorldSegment == worldSegment);
+    }
+
+    public void AddStampedShape<TStamp>(WorldSegment worldSegment, StampedShape<TStamp> stampedShape)
+        where TStamp : ShapeStamp
+    {
+        var levelData = FindLevelDataForWorldSegment(worldSegment);
+        if (levelData == null)
+        {
+            throw new InvalidOperationException($"WorldSegment not found in loaded segments");
+        }
+
+        levelData.AddStampedShape(stampedShape);
+    }
 }
+

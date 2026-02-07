@@ -50,6 +50,7 @@ public class Game1 : Game
         _graphics.IsFullScreen = false;
         _mainShape = mainWorldSegment;
         _useTestRenderer = useTestRenderer;
+
     }
 
     protected virtual IPlayerInput CreatePlayerInput() => new PlayerInput();
@@ -73,6 +74,7 @@ public class Game1 : Game
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
         _serviceContainer.BindTransient<TestEntityController>();
+        _serviceContainer.BindTransient<Testing.TestShapeStampGeneratorController>();
 
         _playerInput = CreatePlayerInput();
         _serviceContainer.Bind(_playerInput);
@@ -171,7 +173,10 @@ public class Game1 : Game
         graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
         foreach (var levelData in _loadedLevelData.LoadedSegments)
+        {
             _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
+            _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
+        }
     }
 
     protected override void Draw(GameTime gameTime)

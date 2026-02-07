@@ -1,0 +1,75 @@
+# GOAL
+Allow us to create multiple copies at runtime of a shape without needing multiple vertex buffers.
+
+# MODEL
+- ShapeStamp : Shape
+	- abstract class
+	- used as a template
+	- generates a vertex buffer
+	- is not rendered
+	- does not generate Collider Bodies
+	- child of the WorldSegment
+	- generated during world creation
+	- assumed there is only one instance of a given type within a WorldSegment
+- StampedShape<TStamp> : Shape
+	- abstract class
+	- type argument TStamp derives from ShapeStamp
+	- does not generate a vertex buffer
+	- may have Collider Bodies
+	- generated at runtime
+	- is rendered, using the vertex buffer of its TStamp
+
+# CURRENT RENDERING SYSTEM
+- VertexBufferBuilder generates a vertex buffer, index buffer, and triangle count for a group of Shapes
+- results are stored in a ShapeBuffer which references the parent Shape and the buffers that belong to it
+- static shapes are grouped into ShapeBuffers by texture usage
+- active shapes each get their own ShapeBuffer
+- ShapeBuffers stored in LevelData object
+- these get passed into the current IRenderEffect of the game
+- the IRenderEffect goes through each ShapeBuffer and draws it to the screen
+
+# PROPOSED CHANGES 
+- in LevelData
+	- ShapeBuffers (ShapeBuffer[]) - contains shapes that are not ShapeStamps and not StampedShapes 
+	- StampShapeBuffers (Dictionary<Shape, ShapeBuffer>) - contains ShapeBuffers from ShapeStamps 
+	- StampedShapeBuffers (List<ShapeBuffer>) - contains ShapeBuffers from StampedShapes
+- in Game1->DrawWorld
+	- add a second call to _renderEffect.Draw for the StampedShapeBuffers
+- to add a new StampedShape at runtime:
+	- using the LoadedLevelData class, find the LevelData for the current world segment
+	- insert a new entry into StampedShapeBuffers, taking the buffers from the matching StampShapeBuffers 
+
+# TESTING
+- create a TestShapeStamp class that displays as a small 0.5 unit cube with its sides each a different color
+- create a TestStampedShape class that derives from StampedShape<TestShapeStamp>
+- create a TestShapeStampGenerator shape and a corresponding TestShapeStampGeneratorController
+- the controller will generate a new TestStampedShape once every second at some random location within 5.0 units of the generator's center
+- create a new map in Testing\TestMaps that includes the TestShapeStampGenerator
+
+# QUESTIONS AND ANSWERS
+Q: ShapeBuffer currently has a reference to a Shape. When we create ShapeBuffers for StampedShapes:
+•	Does the ShapeBuffer point to the StampedShape (for its world matrix)?
+•	But use vertex/index buffers from the ShapeStamp?
+•	Or do we need to modify ShapeBuffer to separate geometry reference from transform reference?
+A: the ShapeBuffer for a StampedShape will have a reference to its own shape, but it will take the VertexBuffer, IndexBuffer, and TriangleCount from the stamped shape
+
+Q:. Buffer Sharing Mechanism
+The document says:
+insert a new entry into StampedShapeBuffers, taking the buffers from the matching StampShapeBuffers
+Does this mean:
+•	Create a new ShapeBuffer instance that shares references to the stamp's vertex/index buffers? (YES)
+•	Or somehow reuse the same ShapeBuffer but with different transforms? (NO)
+ 
+Q: Finding the Matching ShapeStamp
+When a StampedShape<TestShapeStamp> is created at runtime:
+•	How does it find the TestShapeStamp instance?
+A: using the LoadedLevelData class, find the LevelData of the current world segment. This has a dictionary registry of the shape stamps.
+
+Q: Rendering Multiple Instances
+If 10 TestStampedShape instances exist:
+•	Do we create 10 separate ShapeBuffer entries in StampedShapeBuffers?
+A: Yes there will be 10 separate ShapeBuffer entries, but they will all point to the same vertex / index buffer 
+
+Q. Build Process Exclusion
+How do we prevent ShapeStamp from generating ShapeBuffers in the normal build?
+A: Starting with the array of all shapebuffers, we seperate them into those for ShapeStamps and everything else 

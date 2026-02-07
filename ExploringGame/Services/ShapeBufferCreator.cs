@@ -36,14 +36,34 @@ internal class ShapeBufferCreator
     {
         var activeObjects = worldSegment.TraverseAllChildren().OfType<IPlaceableObject>().ToArray();
         var activeObjectShapes = activeObjects.SelectMany(p => p.Children).ToArray();
-        var staticShapeGroups = worldSegment.TraverseAllChildren().Except(activeObjectShapes).Where(p=>p.ViewFrom != ViewFrom.None).GroupBy(p=>p.Theme.TextureSheetKey);
+        
+        // Get all shapes except active object children
+        var allShapes = worldSegment.TraverseAllChildren()
+            .Except(activeObjectShapes)
+            .Where(p => p.ViewFrom != ViewFrom.None)
+            .ToArray();
 
+        // Separate ShapeStamps from regular static shapes
+        var shapeStamps = allShapes.OfType<ShapeStamp>().ToArray();
+        var staticShapes = allShapes.Except(shapeStamps);
+        
+        // Group regular static shapes by texture
+        var staticShapeGroups = staticShapes.GroupBy(p => p.Theme.TextureSheetKey);
+
+        // Create buffers for grouped static shapes
         foreach (var shapeGroup in staticShapeGroups)
         {
             yield return CreateShapeBuffer(worldSegment, shapeGroup.ToArray(), shapeGroup.Key);
         }
 
-        foreach(var activeObject in activeObjects.Where(p=>p.Self.ViewFrom != ViewFrom.None))
+        // Create individual buffers for each ShapeStamp
+        foreach (var shapeStamp in shapeStamps)
+        {
+            yield return CreateShapeBuffer(shapeStamp, new[] { shapeStamp }, shapeStamp.Theme.TextureSheetKey);
+        }
+
+        // Create buffers for active objects
+        foreach(var activeObject in activeObjects.Where(p => p.Self.ViewFrom != ViewFrom.None))
         {
             yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey);
         }

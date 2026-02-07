@@ -3,6 +3,7 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using Jitter2.Collision;
 using Jitter2.Collision.Shapes;
+using Jitter2.Dynamics;
 using System;
 
 namespace ExploringGame.Extensions;
@@ -33,5 +34,10 @@ public static class JitterExtensions
         }
         else
             return null;
+    }
+
+    public static CollisionInfo CollisionInfo(this RigidBody body)
+    {
+        return body.Tag as CollisionInfo ?? new CollisionInfo(CollisionGroup.None, CollisionGroup.None);
     }
 }
