@@ -28,11 +28,7 @@ public class WaypointGraph
         {
             var waypoint = new Waypoint(room);
             _waypoints[room] = waypoint;
-
-            // Create and add debug marker
-            var debugMarker = new DebugMarker(waypoint.Position);
-            waypoint.DebugMarker = debugMarker;
-            worldSegment.AddChild(debugMarker);
+            worldSegment.AddChild(waypoint);
         }
 
         // Connect waypoints based on room connections

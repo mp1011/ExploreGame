@@ -43,7 +43,7 @@ public class BoundingBoxColliderMaker : IColliderMaker
             yield return physics.CreateStaticSurface(_shape, Side.Bottom);
             yield return physics.CreateStaticSurface(_shape, Side.Top);
         }
-        else if (_shape.ViewFrom == ViewFrom.Outside)
+        else
         {
             yield return physics.CreateStaticBody(_shape, CollisionGroup.Environment);
         }

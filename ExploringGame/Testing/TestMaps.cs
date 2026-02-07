@@ -10,7 +10,6 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
-using System.Threading;
 
 namespace ExploringGame.Testing;
 
@@ -53,10 +52,11 @@ public class TestMaps
         return world;
     }
 
-    public static WorldSegment PathfindingTest()
+    public static TestWorldSegment PathfindingTest()
     {
-        var world = new WorldSegment();
+        var world = new TestWorldSegment();
         var room = new Room(world, theme: new UpstairsHallTheme());
+        room.Tag = "Room A";
         room.Width = 16f;
         room.Height = 4f;
         room.Depth = 8f;
@@ -75,14 +75,17 @@ public class TestMaps
 
        
         var westRoom = room.Copy();
+        westRoom.Tag = "Room B";
         var junction = room.Copy(depth: 2.0f, width: 0.5f);
+        junction.Tag = "A-B Junction";
         room.AddConnectingRoomWithJunction(junction, westRoom, Side.West);
 
 
         var northRoom = room.Copy();
+        northRoom.Tag = "Room C";
         var junction2 = room.Copy(depth: 0.5f, width: 2.0f);
+        junction2.Tag = "B-C Junction";
         westRoom.AddConnectingRoomWithJunction(junction2, northRoom, Side.North);
-
 
         return world;
     }

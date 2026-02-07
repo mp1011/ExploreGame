@@ -4,7 +4,6 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
-using static ExploringGame.Services.Physics;
 
 namespace ExploringGame.Logics;
 
@@ -41,11 +40,9 @@ public class TestEntityController : IShapeController<TestEntity>
         _entityMover.Motion.Acceleration = Acceleration;
         _entityMover.Motion.Gravity = GravityAccel;
 
-        // Get waypoint graph from WorldSegment
-        if (WorldSegment?.WaypointGraph != null)
-        {
-            _pathFinder = new PathFinder(_physics, WorldSegment.WaypointGraph);
-        }
+        _pathFinder = new PathFinder(_physics, WorldSegment.WaypointGraph, Shape);
+        _pathFinder.PrimaryTarget = new PathFinderTarget(_player);
+        _pathFinder.CurrentTarget = _pathFinder.PrimaryTarget;
     }
 
     public void Stop()
@@ -56,28 +53,8 @@ public class TestEntityController : IShapeController<TestEntity>
 
     public void Update(GameTime gameTime)
     {
-        if (_entityMover == null)
-            return;
+        Vector3 targetDirection = _pathFinder.GetTargetDirection(gameTime);
 
-
-
-        // Use pathfinder if available, otherwise use simple direct movement
-        Vector3 targetDirection;
-        if (_pathFinder != null)
-        {
-            targetDirection = _pathFinder.GetTargetDirection(Shape, _player);
-        }
-        else
-        {
-            // Fallback: simple direct movement
-            targetDirection = _player.Position - Shape.Position;
-            targetDirection.Y = 0;
-            if (targetDirection.LengthSquared() > 0.01f)
-            {
-                targetDirection.Normalize();
-            }
-        }
-        
         // Apply speed and movement
         if (targetDirection.LengthSquared() > 0.01f)
         {

@@ -24,7 +24,6 @@ public class Game1 : Game
     protected CameraService _cameraService;
     private PlayerMotion _playerMotion;
     private DebugController _debugController;
-    private HeadBob _headBob;
     private IPlayerInput _playerInput;
     private EntityMover _playerMover;
     protected LoadedLevelData _loadedLevelData;
@@ -77,7 +76,6 @@ public class Game1 : Game
 
         _playerInput = CreatePlayerInput();
         _serviceContainer.Bind(_playerInput);
-        _headBob = new HeadBob();
         _player = _serviceContainer.Get<Player>();
 
         _playerMover = new EntityMover(_player, _physics);
@@ -86,7 +84,7 @@ public class Game1 : Game
         
         _serviceContainer.BindTransient<DoorController>();
 
-        _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
+        _playerMotion = new PlayerMotion(_player, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
 
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;

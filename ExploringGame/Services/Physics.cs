@@ -283,6 +283,9 @@ public class Physics
 
         private bool IsCollisionAllowed(CollisionInfo infoA, CollisionInfo infoB)
         {
+            if(infoA.MyGroup == CollisionGroup.None || infoB.MyGroup == CollisionGroup.None)
+                return false;
+
             // Check if A can collide with B's group and B can collide with A's group
             bool aCollidesWithB = (infoA.CollidesWithGroups & infoB.MyGroup) != 0;
             bool bCollidesWithA = (infoB.CollidesWithGroups & infoA.MyGroup) != 0;

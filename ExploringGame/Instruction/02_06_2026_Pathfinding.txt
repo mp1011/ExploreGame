@@ -1,0 +1,19 @@
+# GOAL 
+Simplify the pathfinding code to make it easier to try new approaches
+
+# TECHNICAL APPROACH
+1. Create a class PathFinderTarget
+	- this will have an IWithPosition for the target
+	- it will also have a TimeAway property that will increment while the entity is far from the target
+2. PathFinder will have a PrimaryTarget and CurrentTarget, both being PathFinderTarget instances
+	- "CurrentTarget" is the target that the entity is actively moving toward
+3. Start by setting "CurrentTarget" to "PrimaryTarget"
+
+
+# PATHFINDING LOGIC
+1. Check Line of Sight to Primary Target
+	- If Yes - set CurrentTarget to PrimaryTarget
+2. Check Line of Sight to Current Target
+	- if Yes - move toward CurrentTarget
+		if entity has reached current target, change CurrentTarget to PrimaryTarget
+	

@@ -1,27 +1,26 @@
-using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
-using Microsoft.Xna.Framework;
+using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Services;
+using System;
 using System.Collections.Generic;
 
 namespace ExploringGame.Logics.Pathfinding;
 
-public class Waypoint
+public class Waypoint : PlaceableShape
 {
     public Room Room { get; }
-    public Vector3 Position { get; }
     public List<Waypoint> Neighbors { get; } = new();
-    public DebugMarker DebugMarker { get; set; }
 
-    public bool IsTargeted
-    {
-        get => DebugMarker?.IsTargeted ?? false;
-        set => DebugMarker.IsTargeted = value;
-    }
+    public bool IsTargeted { get; set; }
 
     public Waypoint(Room room)
     {
         Room = room;
         Position = room.Position;
+        Width = 0.2f;
+        Height = 0.2f;
+        Depth = 0.2f;
     }
 
     public void AddNeighbor(Waypoint neighbor)
@@ -31,4 +30,19 @@ public class Waypoint
             Neighbors.Add(neighbor);
         }
     }
+
+    public override ViewFrom ViewFrom => ViewFrom.None;
+
+    public override CollisionGroup CollisionGroup => CollisionGroup.None;
+
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.None;
+
+    public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
+
+    protected override Triangle[] BuildInternal(QualityLevel quality)
+    {
+        return Array.Empty<Triangle>();
+    }
+
+    public override string ToString() => $"Waypoint ({Room})";
 }

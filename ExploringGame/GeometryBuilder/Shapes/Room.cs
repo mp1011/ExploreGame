@@ -26,6 +26,8 @@ public class Room : Shape
 
     protected virtual Side OmitSides { get; }
 
+    public string Tag { get; set; }
+
     public Room(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null,
         Theme theme = null)
     {
@@ -138,6 +140,8 @@ public class Room : Shape
 
         return room;
     }
+
+    public override string ToString() => Tag ?? GetType().Name;
 }
 
 public record RoomConnection(Room Room, Room Other, Side Side, float Position = 0.5f)

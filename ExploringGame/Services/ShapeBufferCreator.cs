@@ -43,7 +43,7 @@ internal class ShapeBufferCreator
             yield return CreateShapeBuffer(worldSegment, shapeGroup.ToArray(), shapeGroup.Key);
         }
 
-        foreach(var activeObject in activeObjects)
+        foreach(var activeObject in activeObjects.Where(p=>p.Self.ViewFrom != ViewFrom.None))
         {
             yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey);
         }

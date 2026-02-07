@@ -11,6 +11,8 @@ public class TestGame : Game1
     private bool _screenshotTaken = false;
     private RenderTarget2D _renderTarget;
     private string _screenshotPath;
+    private TimeSpan _fakeElapsedTime = TimeSpan.Zero;
+    private TimeSpan _fakeFrameTime = TimeSpan.FromMilliseconds(16.67); // 60 fps
 
     public MockPlayerInput MockPlayerInput { get; }
 
@@ -53,7 +55,14 @@ public class TestGame : Game1
         {
             Exit();            
         }
-        base.Update(gameTime);
+
+        base.Update(FakeFrameTime());
+    }
+
+    private GameTime FakeFrameTime()
+    {
+        _fakeElapsedTime += _fakeFrameTime;
+        return new GameTime(_fakeElapsedTime, _fakeFrameTime);
     }
 
     protected override void Draw(GameTime gameTime)

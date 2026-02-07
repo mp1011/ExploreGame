@@ -36,9 +36,5 @@ public class DebugController
         {
             Debug.NoDepthStencil = !Debug.NoDepthStencil;
         }
-        else if (_playerInput.IsKeyPressed(Keys.P))
-        {
-            Debug.ShowWaypointMarkers = !Debug.ShowWaypointMarkers;
-        }
     }
 }

@@ -156,6 +156,12 @@ public static class VectorExtensions
         return delta.X * delta.X + delta.Y * delta.Y + delta.Z * delta.Z;
     }
 
+    public static float DistanceTo(this Vector3 a, Vector3 b)
+    {
+        Vector3 delta = a - b;
+        return delta.Length();
+    }
+
     public static Vector2 RelativeUnitPosition(this Vector2 C, Vector2 A, Vector2 B)
     {
         var width = B.X - A.X;

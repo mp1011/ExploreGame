@@ -93,6 +93,7 @@ public class BasementOffice : Room
         var testEntity = new TestEntity();
         testEntity.Position = new Vector3(Position.X, Position.Y, Position.Z);
         testEntity.Place().OnFloor(this);
+        testEntity.Y += 2.0f;
         AddChild(testEntity);
     }
 }

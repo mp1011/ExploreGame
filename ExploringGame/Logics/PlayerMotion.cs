@@ -18,14 +18,12 @@ internal class PlayerMotion
 
     private IPlayerInput _playerInput;
     private Player _player;
-    private HeadBob _headBob;
     private EntityMover _playerMotion;
 
-    public PlayerMotion(Player player, HeadBob headBob, IPlayerInput playerInput, EntityMover playerMotion)
+    public PlayerMotion(Player player, IPlayerInput playerInput, EntityMover playerMotion)
     {
         _playerInput = playerInput;
         _player = player;
-        _headBob = headBob;
         _playerMotion = playerMotion;
     }
 
@@ -43,10 +41,6 @@ internal class PlayerMotion
             _playerMotion.Motion.Acceleration = WalkAccel;
         else
             _playerMotion.Motion.Acceleration = StopAccel;
-
-        // bool isMoving = _player.Motion.CurrentMotion.LengthSquared() > 0;
-        // fix me
-        // nextPosition = _headBob.Update(isMoving, gameTime, nextPosition);
 
         if (Debug.FlyMode)
         {
