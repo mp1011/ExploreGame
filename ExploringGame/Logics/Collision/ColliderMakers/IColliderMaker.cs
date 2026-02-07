@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.Services;
@@ -15,7 +16,8 @@ public interface IColliderMaker
 
 public static class ColliderMakers
 {
-    public static IColliderMaker BoundingBox(GShape shape) => new BoundingBoxColliderMaker(shape);
+    public static IColliderMaker BoundingBox(ICollidable shape) => new BoundingBoxColliderMaker(shape);
+    public static IColliderMaker BoundingBox(IWithPosition shape) => new LegacyBoundingBoxColliderMaker(shape);
 
     public static IColliderMaker Room(Room room) => new RoomColliderMaker(room);
 
@@ -25,27 +27,31 @@ public static class ColliderMakers
 
 public class BoundingBoxColliderMaker : IColliderMaker
 {
-    private GShape _shape;
+    private ICollidable _shape;
 
-    public BoundingBoxColliderMaker(GShape shape)
+    public BoundingBoxColliderMaker(ICollidable shape)
+    {
+        _shape = shape;
+    }
+
+    public IEnumerable<RigidBody> CreateColliders(Physics physics)
+    {        
+        yield return physics.CreateStaticBody(_shape);        
+    }
+}
+
+public class LegacyBoundingBoxColliderMaker : IColliderMaker
+{
+    private IWithPosition _shape;
+
+    public LegacyBoundingBoxColliderMaker(IWithPosition shape)
     {
         _shape = shape;
     }
 
     public IEnumerable<RigidBody> CreateColliders(Physics physics)
     {
-        if (_shape.ViewFrom == ViewFrom.Inside)
-        {
-            yield return physics.CreateStaticSurface(_shape, Side.West);
-            yield return physics.CreateStaticSurface(_shape, Side.East);
-            yield return physics.CreateStaticSurface(_shape, Side.North);
-            yield return physics.CreateStaticSurface(_shape, Side.South);
-            yield return physics.CreateStaticSurface(_shape, Side.Bottom);
-            yield return physics.CreateStaticSurface(_shape, Side.Top);
-        }
-        else
-        {
-            yield return physics.CreateStaticBody(_shape, CollisionGroup.Environment);
-        }
+        yield return physics.CreateStaticBody(_shape, CollisionGroup.Environment, CollisionGroup.MovingObjects);
     }
 }
+

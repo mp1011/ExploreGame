@@ -69,6 +69,9 @@ public class PathFinder
         var currentPath = _waypointGraph.FindPath(startWaypoint, goalWaypoint);
 
         var newTarget = currentPath.TakeWhile(p => _physics.HasLineOfSight(_entity, p)).LastOrDefault() ?? CurrentTarget.Target;
+        if (newTarget == CurrentTarget.Target)
+            return CurrentTarget;
+
         return new PathFinderTarget(newTarget);
     }
 }

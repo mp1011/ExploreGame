@@ -14,7 +14,7 @@ namespace ExploringGame.Entities;
 /// </summary>
 public class TestEntity : PlaceableShape, IWithPosition, IControllable
 {
-    public float MoveSpeed { get; set; } = 4.0f;    
+    public float MoveSpeed { get; set; } = 2.0f;    
     public override IColliderMaker ColliderMaker => new BoxColliderMaker(this);
 
     public override CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;

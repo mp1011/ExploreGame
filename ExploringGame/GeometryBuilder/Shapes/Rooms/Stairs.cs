@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -91,11 +92,15 @@ public abstract class Stairs : Room
 }
 
 
-public class StairStep : Shape
+public class StairStep : Shape, ICollidable
 {
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.Step(this);
+
+    public CollisionGroup CollisionGroup => CollisionGroup.Steps;
+
+    public CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {

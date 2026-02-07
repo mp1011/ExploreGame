@@ -135,13 +135,16 @@ public class Physics
         body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity);
         return body;
     }
-    public RigidBody CreateStaticBody(GShape shape, CollisionGroup collisionGroup)
+
+    public RigidBody CreateStaticBody(ICollidable shape) => CreateStaticBody(shape, shape.CollisionGroup, shape.CollidesWithGroups);
+
+    public RigidBody CreateStaticBody(IWithPosition shape, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
-        if (shape.Width == 0 || shape.Height == 0 || shape.Depth == 0)
+        if (shape.Size.X == 0 || shape.Size.Y == 0 || shape.Size.Z == 0)
             return null;
 
         var body = _world.CreateRigidBody();
-        body.AddShape(new BoxShape(shape.Width, shape.Height, shape.Depth));
+        body.AddShape(new BoxShape(shape.Width(), shape.Height(), shape.Depth()));
 
         if (shape.Rotation != null)
         {
@@ -150,7 +153,7 @@ public class Physics
         }
         body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
-        body.Tag = new CollisionInfo(collisionGroup, CollisionGroup.MovingObjects);
+        body.Tag = new CollisionInfo(myGroup, collidesWithGroups);
         return body;
     }
 
@@ -223,7 +226,7 @@ public class Physics
         }
         
         var doorBody = CreateDynamicBody(door);
-        var hingeBody = CreateStaticBody(hinge, CollisionGroup.Environment);
+        var hingeBody = CreateStaticBody(hinge, CollisionGroup.Environment, CollisionGroup.None);
         InitPhysics(doorBody);
         doorBody.SetMassInertia(10.0f);
 

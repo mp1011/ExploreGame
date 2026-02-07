@@ -16,6 +16,6 @@ public class StepColliderMaker : IColliderMaker
 
     public IEnumerable<RigidBody> CreateColliders(Physics physics)
     {
-        yield return physics.CreateStaticBody(_step, CollisionGroup.Steps);
+        yield return physics.CreateStaticBody(_step);
     }
 }

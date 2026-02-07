@@ -21,7 +21,7 @@ public class PathFinderTarget
     {
         var distance = entity.Position.DistanceTo(Target.Position);
 
-        if(distance > _lastDistance)
+        if(distance >= _lastDistance)
             StuckTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
         _lastDistance = distance;
