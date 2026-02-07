@@ -51,6 +51,9 @@ public class LoadedLevelData
 
         foreach (var addedSegment in addedSegments)
         {
+            // Create waypoint graph before building so DebugMarkers are included
+            addedSegment.WaypointGraph = new Logics.Pathfinding.WaypointGraph(addedSegment);
+            
             var triangles = addedSegment.Build((QualityLevel)8); //todo, quality level
             var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
             var activeObjects = _serviceContainer.CreateControllers(addedSegment.TraverseAllChildren());

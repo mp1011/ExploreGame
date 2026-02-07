@@ -1,5 +1,6 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
@@ -13,6 +14,7 @@ namespace ExploringGame.Entities;
 /// </summary>
 public class TestEntity : PlaceableShape, IWithPosition, IControllable
 {
+    public float MoveSpeed { get; set; } = 2.0f;    
     public override IColliderMaker ColliderMaker => new BoxColliderMaker(this);
 
     public override CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;
@@ -37,6 +39,7 @@ public class TestEntity : PlaceableShape, IWithPosition, IControllable
     {
         var controller = serviceContainer.Get<TestEntityController>();
         controller.Shape = this;
+        controller.WorldSegment = Parent?.FindFirstAncestor<WorldSegment>();
         return controller;
     }
 

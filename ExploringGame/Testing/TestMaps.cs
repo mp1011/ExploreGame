@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
@@ -9,6 +10,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
+using System.Threading;
 
 namespace ExploringGame.Testing;
 
@@ -22,6 +24,67 @@ public class TestMaps
        // t.SideTextures[Side.East] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
        // t.SideTextures[Side.South] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
         return TextureTestMap(t);
+    }
+
+    public static WorldSegment RaycastTest()
+    {
+        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
+        simpleRoom.Width = 16f;
+        simpleRoom.Height = 4f;
+        simpleRoom.Depth = 8f;
+        simpleRoom.Y = 2;
+
+        var pillar = simpleRoom.AddChild(new Box(simpleRoom.Theme));
+        pillar.Height = simpleRoom.Height;
+        pillar.Width = 2.0f;
+        pillar.Depth = 2.0f;
+        pillar.Place().OnFloor();
+
+        pillar.Z -= 2.0f;
+
+        var testEntity = simpleRoom.AddChild(new TestEntity());
+        testEntity.MoveSpeed = 0f;
+        testEntity.Z -= 3.0f;
+        testEntity.X -= 3.0f;
+
+        var world = new WorldSegment();
+        world.AddChild(simpleRoom);
+
+        return world;
+    }
+
+    public static WorldSegment PathfindingTest()
+    {
+        var world = new WorldSegment();
+        var room = new Room(world, theme: new UpstairsHallTheme());
+        room.Width = 16f;
+        room.Height = 4f;
+        room.Depth = 8f;
+
+        var pillar = room.AddChild(new Box(room.Theme));
+        pillar.Height = room.Height;
+        pillar.Width = 2.0f;
+        pillar.Depth = 2.0f;
+        pillar.Place().OnFloor();
+
+        pillar.Z -= 2.0f;
+
+        var testEntity = room.AddChild(new TestEntity());
+        testEntity.Z -= 3.0f;
+        testEntity.X -= 3.0f;
+
+       
+        var westRoom = room.Copy();
+        var junction = room.Copy(depth: 2.0f, width: 0.5f);
+        room.AddConnectingRoomWithJunction(junction, westRoom, Side.West);
+
+
+        var northRoom = room.Copy();
+        var junction2 = room.Copy(depth: 0.5f, width: 2.0f);
+        westRoom.AddConnectingRoomWithJunction(junction2, northRoom, Side.North);
+
+
+        return world;
     }
 
     public static WorldSegment TextureTestMap(Theme theme)

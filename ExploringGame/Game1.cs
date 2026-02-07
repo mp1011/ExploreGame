@@ -17,6 +17,8 @@ namespace ExploringGame;
 
 public class Game1 : Game
 {
+    private bool _useTestRenderer = false;
+
     protected ServiceContainer _serviceContainer;
     private Player _player;
     protected CameraService _cameraService;
@@ -41,17 +43,14 @@ public class Game1 : Game
     private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
 
-    public Game1() : this(null)
-    {
-    }
-
-    public Game1(WorldSegment mainWorldSegment)
+    public Game1(WorldSegment mainWorldSegment, bool useTestRenderer)
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = false;
         _graphics.IsFullScreen = false;
         _mainShape = mainWorldSegment;
+        _useTestRenderer = useTestRenderer;
     }
 
     protected virtual IPlayerInput CreatePlayerInput() => new PlayerInput();
@@ -87,8 +86,6 @@ public class Game1 : Game
         
         _serviceContainer.BindTransient<DoorController>();
 
-        _mainShape ??= CreateMainShape();
-    //    _player.Position = _mainShape.Children.First().Position;
         _playerMotion = new PlayerMotion(_player, _headBob, _playerInput, _playerMover);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
 
@@ -123,14 +120,8 @@ public class Game1 : Game
         _basicEffect.SetTextures(loadedTextures);
         _pointLightEffect.SetTextures(loadedTextures);
 
-        _renderEffect = _pointLightEffect;
+        _renderEffect = _useTestRenderer ? _basicEffect : _pointLightEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
-    }
-
-    private WorldSegment CreateMainShape()
-    {
-        return TestMaps.TilingTextureTestMap();
-      //d  return new BasementWorldSegment(null);
     }
 
     protected override void Update(GameTime gameTime)
@@ -179,7 +170,7 @@ public class Game1 : Game
     protected virtual void DrawWorld(GraphicsDevice graphicsDevice)
     {
         graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
-        graphicsDevice.DepthStencilState = DepthStencilState.Default;
+        graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
         foreach (var levelData in _loadedLevelData.LoadedSegments)
             _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);

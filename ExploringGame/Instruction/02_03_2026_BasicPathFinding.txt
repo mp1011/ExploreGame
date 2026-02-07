@@ -1,4 +1,4 @@
-# GOAL
+﻿# GOAL
 Add basic pathfinding to the Test Entity so it "chases" the player regardless of location
 
 # SUB-GOALS
@@ -6,7 +6,7 @@ Add basic pathfinding to the Test Entity so it "chases" the player regardless of
 - Test Entity will move around obstacles
 - If player is in a different room, or even a different floor, Test Entity will find its way to where the player is
 
-# UPDATES FOR TESTING
+# UPDATES FOR TESTING (done)
 - when in "FlyMode", the Test Entity will stop moving
 	- this will let us test pathfinding where the player is far away
 
@@ -30,7 +30,60 @@ Add basic pathfinding to the Test Entity so it "chases" the player regardless of
 3. If all raycasts fail, use Waypoint graph to find a node path to the player.
 4. Change the "target" to the appropriate Waypoint and repeat.
 
-# RESEARCH
-- How can we do raycasting?
-	- look into _world.DynamicTree.RayCast()
 
+# QUESTIONS AND ANSWERS
+Q: How can we do raycasting?
+	- we can check direct line of sight with _physics.HasLineOfSight
+	- we can also get the raw raycast result with _physics.Raycast
+Q: Does Room have a Center or Position property we can use for waypoints?
+	- yes, room as a Position property which is the center of the room
+Q: How do we get a Room's RoomConnections?
+	- current there is a private _roomConnections field. We can expose this with a public read-only enumerable.
+Q: How do we get all Rooms in a WorldSegment?
+	- from the WorldSegment, call TraverseAllChildren and then take the items of type Room
+Q: Where should the pathfinding logic live?
+	- create a PathFinder class, in the Logics folder, and give TestEntity an instance of it
+Q: When should we build the Waypoint Graph?
+	- during the Initialize method of TestEntityController
+
+# IMPLEMENTATION - ✅ COMPLETE
+
+## Files Created:
+1. **Waypoint.cs** - Represents a waypoint node with Room reference and neighbors
+2. **WaypointGraph.cs** - Builds graph from rooms and implements A* pathfinding
+3. **PathFinder.cs** - Implements 3-step pathfinding algorithm:
+   - Step 1: Direct line of sight check
+   - Step 2: Offset raycast in 8 directions (fan pattern)
+   - Step 3: Waypoint-based navigation with A*
+
+## Files Modified:
+1. **Room.cs** - Exposed RoomConnections as public IEnumerable
+2. **Shape.cs** - Added FindFirstAncestor<T>() method for traversing up the hierarchy
+3. **TestEntity.cs** - Sets WorldSegment on controller via FindFirstAncestor
+4. **TestEntityController.cs**:
+   - Added WorldSegment property
+   - Creates WaypointGraph and PathFinder during Initialize
+   - Added FlyMode check to stop movement during testing
+   - Uses PathFinder for intelligent navigation with fallback to direct movement
+
+## How It Works:
+
+### PathFinding Algorithm:
+1. **HasLineOfSight**: If entity can see player directly, move straight toward them
+2. **Offset Raycasts**: Cast 8 rays in a fan pattern, pick direction that gets closest to player
+3. **Waypoint Navigation**: Use A* to find path through room waypoints, navigate to next waypoint
+
+### Waypoint Graph:
+- Built from all Rooms in WorldSegment
+- Rooms connected via their RoomConnections
+- A* algorithm finds optimal path through waypoints
+- Waypoints placed at room centers
+
+### FlyMode Support:
+- When Debug.FlyMode is true, entity stops moving
+- Allows testing pathfinding with player in distant locations
+
+## Testing:
+- Build successful
+- Ready for in-game testing
+- PathFinding handles obstacle avoidance and multi-room navigation

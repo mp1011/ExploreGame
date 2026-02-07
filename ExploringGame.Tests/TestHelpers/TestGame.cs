@@ -14,7 +14,7 @@ public class TestGame : Game1
 
     public MockPlayerInput MockPlayerInput { get; }
 
-    public TestGame(WorldSegment worldSegment, int framesToRun) : base(worldSegment)
+    public TestGame(WorldSegment worldSegment, int framesToRun) : base(worldSegment, useTestRenderer: true)
     {
         MockPlayerInput = new MockPlayerInput();
         _framesRemaining = framesToRun;

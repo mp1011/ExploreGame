@@ -34,6 +34,8 @@ public enum CollisionGroup
 
 public record CollisionInfo(CollisionGroup MyGroup, CollisionGroup CollidesWithGroups);
 
+public record RaycastResult(IDynamicTreeProxy HitObject, Vector3 Normal, float Lambda);
+
 public class Physics
 {
     public static bool DebugDrawHinge = false;
@@ -46,6 +48,29 @@ public class Physics
         _world = new World();
         _world.BroadPhaseFilter = new CollisionGroupFilter();
         _world.NarrowPhaseFilter = new CollisionModifier(_world.NarrowPhaseFilter);
+    }
+
+    public RaycastResult Raycast(ICollidable origin, IWithPosition target)
+    {
+        var direction = Vector3.Normalize(target.Position - origin.Position).ToJVector();
+
+        IDynamicTreeProxy proxy;
+        JVector normal;
+        float lambda;
+
+        if (_world.DynamicTree.RayCast(origin.Position.ToJVector(), direction, pre: p => !p.BelongsTo(origin), post: null, proxy: out proxy, normal: out normal, lambda: out lambda))
+        {
+            return new RaycastResult(proxy, normal.ToVector3(), lambda);
+        }
+        else
+            return new RaycastResult(null, Vector3.Zero, 0f);
+    }
+
+    public bool HasLineOfSight(ICollidable origin, ICollidable target)
+    {
+        var result = Raycast(origin, target);
+        
+        return result.HitObject != null && result.HitObject.BelongsTo(target);
     }
 
     public void Remove(RigidBody body)

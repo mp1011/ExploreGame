@@ -16,6 +16,7 @@ public class Room : Shape
     public override Theme Theme => _theme;
 
     private List<RoomConnection> _roomConnections = new List<RoomConnection>();
+    public IEnumerable<RoomConnection> RoomConnections => _roomConnections;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
 
@@ -144,6 +145,8 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
     public RoomConnection(Room Room, Room Other, Side Side, HAlign Align, float Offset=0f) 
         : this(Room, Other, Side, CalcPosition(Room, Other, Side, Align, Offset)) { }
     public RoomConnection Reverse() => new RoomConnection(Other, Room, Side.Opposite(), 1.0f - Position);
+
+    public Room GetOtherRoom(Room r) => r == Room ? Other : Room;
 
     private static float CalcPosition(Room room, Room other, Side side, HAlign align, float offset)
     {

@@ -1,0 +1,98 @@
+# GOAL
+Improve the pathfinding algorithm for TestEntity so that it more naturally chases the player
+
+# SUB-GOALS
+- Test Entity will not get stuck on corners
+- Test Entity will move around obstacles
+- If player is in a different room, or even a different floor, Test Entity will find its way to where the player is
+
+# PROBLEMS FROM FIRST ITERATION
+1. the "offset raycast" approach prevented the waypoint approach from being used, even when it should be. For now, we have temporarily disabled this step.
+2. the current approach finds the "current" waypoint by whichever is closest. However what we really want is the waypoint in the room the entity is currently in.
+
+# TASKS
+1. To assist with testing, we'd like to visualize the waypoints and see which one (if any) the test entity is moving towards
+	- to do this, we'll create a new kind of PlaceableShape, called a DebugMarker which will be a small brightly colored cube centered on each waypoint.
+	- we will color this DebugMarker different if the TestEntity is targetting it
+	- DebugMarkers can be made visible or invisible with a new flag in the Debug class, and toggled with a key binding in DebugController
+2. In the Pathfinder, modify the logic to find the "current" waypoint based on which room the entity is in, rather than which is closest
+
+# QUESTIONS AND ANSWERS
+Q: What colors should be used for:
+	- Default waypoint markers? RED
+	- Targeted waypoint marker? GREEN
+Q: How small should DebugMarkers be?
+	- 0.2 units in each dimension
+Q:	When should DebugMarkers be added to the world:
+	- during WaypointGraph construction
+Q:	File Location: Where should DebugMarker.cs be placed?
+	- use the GameDebug folder
+5.	Containment Check: How should I find what room an entity is in?
+	- do a simple bounding box check
+6.	Edge Cases: What if entity is in a doorway between rooms?
+	- doorways are also "Room"s so no special handling is needed
+7.	Flag Name: Should the Debug flag be called ShowWaypointMarkers?
+	- yes
+8.	Key Binding: Which key should toggle the markers? 'W'? 'P'? Or do you have a preference?
+	- use 'P' for "Pathfinding"
+About Offset Raycast:
+9.	Already Disabled?: The document says offset raycast was "temporarily disabled" - has this already been done?
+	- i have disabled this myself. leave it commented out until later
+
+# IMPLEMENTATION - ? COMPLETE
+
+## Files Created:
+1. **DebugMarker.cs** (GameDebug folder)
+   - Small 0.2x0.2x0.2 cube
+   - Red by default, Green when targeted
+   - Visibility controlled by Debug.ShowWaypointMarkers flag
+   - ViewFrom.None when hidden, ViewFrom.Outside when visible
+   - No collision (CollisionGroup.None)
+
+## Files Modified:
+
+### Debug.cs
+- Added `ShowWaypointMarkers` static boolean flag
+
+### DebugController.cs
+- Added 'P' key binding to toggle ShowWaypointMarkers
+
+### Waypoint.cs
+- Added `DebugMarker` property
+- Added `SetTargeted(bool)` method to change marker color
+
+### WaypointGraph.cs
+- Creates DebugMarker for each waypoint during graph construction
+- Adds markers to WorldSegment as children
+- Added `GetRoomContaining(Vector3)` method using bounding box check
+- Updated `FindNearestWaypoint()` to prefer room-based lookup over distance
+
+### PathFinder.cs
+- Added `_lastTargetedWaypoint` field to track current target
+- Added `UpdateTargetedMarker(Waypoint)` method
+- Updated `GetTargetDirection()` to clear markers on line-of-sight
+- Updated `NavigateViaWaypoints()` to set targeted marker
+- Room-based waypoint finding now used via WaypointGraph.FindNearestWaypoint()
+
+### TestGame.cs (Tests)
+- Fixed constructor to pass useTestRenderer parameter
+
+## How It Works:
+
+### Debug Visualization:
+1. Press 'P' to toggle waypoint marker visibility
+2. Red cubes appear at each room's center (waypoint)
+3. Currently targeted waypoint turns GREEN
+4. Shows pathfinding algorithm's current target
+
+### Room-Based Waypoint Finding:
+1. `WaypointGraph.FindNearestWaypoint()` first tries to find room containing position
+2. Uses Shape.ContainsPoint() for bounding box check
+3. Falls back to closest waypoint if not in any room
+4. More accurate for entities within rooms
+
+## Testing:
+- Build successful
+- Press 'P' to visualize pathfinding
+- Green marker shows TestEntity's current waypoint target
+- Red markers show all other waypoints

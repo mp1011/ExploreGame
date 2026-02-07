@@ -28,12 +28,17 @@ public class DebugController
         {
             _cameraService.SetCamera(_player);
         }
-
-
         else if (_playerInput.IsKeyPressed(Keys.G))
         {
             Debug.FlyMode = !Debug.FlyMode;
         }
-
+        else if (_playerInput.IsKeyPressed(Keys.D))
+        {
+            Debug.NoDepthStencil = !Debug.NoDepthStencil;
+        }
+        else if (_playerInput.IsKeyPressed(Keys.P))
+        {
+            Debug.ShowWaypointMarkers = !Debug.ShowWaypointMarkers;
+        }
     }
 }

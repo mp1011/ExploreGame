@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Logics.ShapeControllers;
 using Microsoft.Xna.Framework;
 using System;
@@ -14,6 +15,8 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
     public virtual Vector3 DefaultPlayerStart => Position;
 
     public virtual WorldSegmentTransition[] Transitions { get; } = Array.Empty<WorldSegmentTransition>();
+
+    public WaypointGraph WaypointGraph { get; set; }
 
     public SegmentTransitionController Controller => throw new NotImplementedException();
 

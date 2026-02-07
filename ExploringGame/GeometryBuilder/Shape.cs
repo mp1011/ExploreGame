@@ -266,6 +266,18 @@ public abstract class Shape : IWithPosition
         return TraverseAllChildren().OfType<TShape>().FirstOrDefault();
     }
 
+    public TShape FindFirstAncestor<TShape>() where TShape : Shape
+    {
+        var current = Parent;
+        while (current != null)
+        {
+            if (current is TShape ancestor)
+                return ancestor;
+            current = current.Parent;
+        }
+        return null;
+    }
+
     public Shape[] TraverseAllChildren()
     {
         List<Shape> shapes = new List<Shape>();
