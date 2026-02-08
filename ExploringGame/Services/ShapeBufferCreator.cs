@@ -4,6 +4,7 @@ using ExploringGame.Logics;
 using ExploringGame.Rendering;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,9 +44,11 @@ internal class ShapeBufferCreator
             .Where(p => p.ViewFrom != ViewFrom.None)
             .ToArray();
 
-        // Separate ShapeStamps from regular static shapes
+        // Separate ShapeStamps and StampedShapes from regular static shapes
+        // StampedShapes are handled at runtime by LevelData.AddStampedShape()
         var shapeStamps = allShapes.OfType<ShapeStamp>().ToArray();
-        var staticShapes = allShapes.Except(shapeStamps);
+        var stampedShapes = allShapes.OfType<StampedShape>().ToArray();
+        var staticShapes = allShapes.Except(shapeStamps).Except(stampedShapes);
         
         // Group regular static shapes by texture
         var staticShapeGroups = staticShapes.GroupBy(p => p.Theme.TextureSheetKey);
@@ -56,19 +59,36 @@ internal class ShapeBufferCreator
             yield return CreateShapeBuffer(worldSegment, shapeGroup.ToArray(), shapeGroup.Key);
         }
 
+        Dictionary<Type, ShapeBuffer> shapeStampBuffers = new();
         // Create individual buffers for each ShapeStamp
         foreach (var shapeStamp in shapeStamps)
         {
-            yield return CreateShapeBuffer(shapeStamp, new[] { shapeStamp }, shapeStamp.Theme.TextureSheetKey);
+            var buffer = CreateShapeBuffer(shapeStamp, new[] { shapeStamp }, shapeStamp.Theme.TextureSheetKey);
+            yield return buffer;
+            shapeStampBuffers[shapeStamp.GetType()] = buffer;
         }
 
         // Create buffers for active objects
         foreach(var activeObject in activeObjects.Where(p => p.Self.ViewFrom != ViewFrom.None))
         {
-            yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey);
+            if (activeObject.Self is StampedShape ss)
+                yield return CreateStampShapeBuffer(ss, shapeStampBuffers);
+            else
+                yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey);
+        }
+
+        // create buffers for stamped shapes
+        foreach(var stampedShape in stampedShapes)
+        {
+            yield return CreateStampShapeBuffer(stampedShape, shapeStampBuffers);
         }
     }
 
+    private ShapeBuffer CreateStampShapeBuffer(StampedShape stampedShape, Dictionary<Type, ShapeBuffer> shapeStampBuffers)
+    {
+        var buffer = stampedShape.GetStampBuffer(shapeStampBuffers);
+        return new ShapeBuffer(stampedShape, buffer.VertexBuffer, buffer.IndexBuffer, buffer.TriangleCount, buffer.Texture, buffer.RasterizerState);
+    }
 
     private ShapeBuffer CreateShapeBuffer(
         Shape shape,
@@ -80,6 +100,6 @@ internal class ShapeBufferCreator
             worldSegmentTriangles[child] = _shapeTriangles[child];
 
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
-        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key);
+        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState);
     }
 }

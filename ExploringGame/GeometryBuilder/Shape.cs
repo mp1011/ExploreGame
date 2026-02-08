@@ -5,6 +5,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -309,6 +310,7 @@ public abstract class Shape : IWithPosition
 
         return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(Position);
     }
+    public virtual RasterizerState RasterizerState { get; } = null;
 
     #region Build
 

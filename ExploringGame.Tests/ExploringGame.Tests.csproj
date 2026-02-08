@@ -22,4 +22,10 @@
     <ProjectReference Include="..\ExploringGame\ExploringGame.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Fixtures\WallDecalTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

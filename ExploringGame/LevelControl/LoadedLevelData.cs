@@ -109,5 +109,10 @@ public class LoadedLevelData
 
         levelData.AddStampedShape(stampedShape);
     }
+
+    public void AddWallDecal(WorldSegment worldSegment, GeometryBuilder.Shapes.Decals.WallDecal wallDecal)
+    {
+        AddStampedShape<GeometryBuilder.Shapes.Decals.WallDecalStamp>(worldSegment, wallDecal);
+    }
 }
 

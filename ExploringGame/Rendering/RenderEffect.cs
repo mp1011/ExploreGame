@@ -44,6 +44,13 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
             var effect = _effects[shapeBuffer.Texture];
             SetParameters(effect, shapeBuffer.Shape.GetWorldMatrix(), view, projection);
 
+            // Apply custom RasterizerState if present (e.g., for wall decals with depth bias)
+            var previousRasterizerState = graphicsDevice.RasterizerState;
+            if (shapeBuffer.RasterizerState != null)
+            {
+                graphicsDevice.RasterizerState = shapeBuffer.RasterizerState;
+            }
+
             graphicsDevice.SetVertexBuffer(shapeBuffer.VertexBuffer);
             graphicsDevice.Indices = shapeBuffer.IndexBuffer;
 
@@ -51,6 +58,12 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
             {
                 pass.Apply();                
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, shapeBuffer.TriangleCount);
+            }
+
+            // Restore previous RasterizerState
+            if (shapeBuffer.RasterizerState != null)
+            {
+                graphicsDevice.RasterizerState = previousRasterizerState;
             }
         }
     }

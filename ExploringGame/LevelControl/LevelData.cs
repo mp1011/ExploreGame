@@ -75,7 +75,7 @@ public class LevelData
         if (!StampShapeBuffers.TryGetValue(stampType, out var stampBuffer))
         {
             throw new InvalidOperationException($"No ShapeStamp of type {stampType.Name} found in this WorldSegment");
-        }
+        }       
 
         // Create a new ShapeBuffer that points to the stamped shape
         // but uses the vertex/index buffers from the stamp
@@ -84,7 +84,8 @@ public class LevelData
             stampBuffer.VertexBuffer,
             stampBuffer.IndexBuffer,
             stampBuffer.TriangleCount,
-            stampBuffer.Texture
+            stampBuffer.Texture,
+            stampBuffer.RasterizerState
         );
 
         StampedShapeBuffers.Add(stampedBuffer);

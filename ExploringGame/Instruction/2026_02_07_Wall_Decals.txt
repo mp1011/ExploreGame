@@ -1,0 +1,43 @@
+﻿# GOAL
+Generate flat decals we can place on walls, using ShapeStamps
+
+# MODEL
+- WallDecalStamp : ShapeStamp 
+	- generates a 1x1 two-triangle quad with a pure white texture
+	- original orientation isn't important because it will be rotated into place
+
+- WallDecal : StampedShape<WallDecalStamp>
+	- has a Side property and a Placement2D property which determine its position relative to its parent
+	- will be rotated and translated so that it sits exactly on the wall, facing into the room 
+	
+
+# RENDERING
+- use a RasterizerState with a DepthBias
+- add RasterizerState as a nullable property of ShapeBuffer, so the renderer can optionally use it when drawing that buffer
+
+	
+# QUESTIONS 
+Q: What should Placement2D represent?
+	- this should represent the offset between the sides of the wall and the sides of the decal in world units.
+	- orientation is based on the wall's side from the perspective of someone standing in the center of the room
+	- for example, for a West wall, the "left" direction is South, the "right" direction is North
+	- assume wall decals are only on north, south, east, and west walls, and the walls are axis aligned
+
+Q: Wall Positioning Logic
+When a WallDecal is created with a Side and parent Room:
+•	Should it automatically calculate its position to sit on that wall face?
+•	Should it be flush with the wall (same position) or use the depth bias only?
+•	Should it inherit the parent's world matrix and apply an offset?
+A: 
+	- The decals should be placed immediately so that it is flush with the wall on the given side. 
+	- we use depth bias so that we can place the decal exactly on the wall without z-fighting
+
+Q: DepthBias Value
+What should the DepthBias value be?
+•	-0.0001f (typical value)? YES
+
+Q: Orientation
+"Facing into the room" - should it:
+•	Use the wall's inward normal?
+•	Be rotated 180° from the wall's outward face?
+A: imagine the decal is like a poster hanging on the wall

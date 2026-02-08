@@ -1,0 +1,10 @@
+# GOAL
+Update unit tests by comparing the generated screenshot to a reference image.
+
+# TASK 
+- in TestGame, we are currently taking a screenshot and saving it to disk. 
+	- In addition, save it to memory as private member of TestGame
+- add a public method called AssertScreenshot to TestGame, passing in the path of a reference image (relative to the execution directory)
+	- this loads the reference image from disk and compares it to the screenshot taken
+	- as we may not be pixel perfect, the assertion should compare how close the images are in terms of RGB
+- implement this feature in WallDecalTest, using the image saved to Fixtures/WallDecalTest.png

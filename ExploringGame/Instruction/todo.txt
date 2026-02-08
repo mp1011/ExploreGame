@@ -114,3 +114,9 @@ unit testing improvements
 
 
 
+ // Determine if this needs depth bias (for wall decals)
+        Microsoft.Xna.Framework.Graphics.RasterizerState rasterizerState = null;
+        if (stampedShape is GeometryBuilder.Shapes.Decals.WallDecal)
+        {
+            rasterizerState = 
+        }

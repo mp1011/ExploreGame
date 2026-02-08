@@ -8,6 +8,5 @@ public class TestStampedShape : StampedShape<TestShapeStamp>
 {
     public override CollisionGroup CollisionGroup => CollisionGroup.None;
     public override CollisionGroup CollidesWithGroups => CollisionGroup.None;
-
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 }
