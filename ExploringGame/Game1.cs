@@ -162,6 +162,14 @@ public class Game1 : Game
             _playerMotion.Update(gameTime, Window);
         }
 
+        // Update debug display with player health
+        GameDebug.Debug.Watch1 = $"Player Health: {_player.Health}";
+        
+        // Check if player is dead
+        if (_player.Health <= 0)
+        {
+            Exit();
+        }
 
         _cameraService.Update();
         base.Update(gameTime);

@@ -1,0 +1,79 @@
+﻿# GOAL
+Generate a primary antagonist for the player, called a Light Spirit, who thrives in bright areas.
+
+# STATE
+The Light Spirit (abbreviated as LS in this document) has the following attributes
+- phase ( which behavior phase to run, described below)
+- health (integer value from 0-100)
+- in addition, the player will also have a Health amount (0-100). For now, this can be shown via Debug.Watch1 until we have a proper interface
+- when the player's health reaches 0, we just exit the game (we will implement proper gameplay later)
+
+# BEHAVIOR
+
+1. Absent Phase
+	- LS does not move and remains fixed at a location far underneath the play area
+	- LS health slowly increments until it reaches 100
+	- this phase lasts a minimum of 60 seconds, but will not end until the health reaches 100
+2. Break-in Phase
+	- once every 30 seconds, a "GateMark" will appear on a random wall (see "GateMark" section below for details)
+	- at this same interval, any existing Gatemark (besides the one recently created) will have a 10% chance to become "Active"
+	- once a Gatemark is active, the entity will slowly move in a straight line toward the closest Active Gatemark
+	- in this phase, the entity has no collision with the world and cannot be seen by the player
+	- when the entity reaches an Active Gatemark, the gatemark vanishes and the LS enters the Half-Presence phase
+3. Half-Presence Phase
+	- the entity is invisible but does collide with the world and player, although it will only push the player
+	- in this phase, the entity seeks out the player using the PathFindger logic that we tested on the TestEntity
+	- the entities speed matches the player's walking speed, but the player is able to run faster
+	- although mostly invisible, the entity's presence can be noted by the fact that any active lights will become slightly brighter in its presence
+	- the LS will lose health proportional to the amount of light it is exposted to (less light means more damage)
+		- this is calculated by comparing its distance to the PointLights in the world, taking into account the range limits
+	- the player will slowly lose health proportional to the distance to LS, but it will be small enough that the player will be able to escape
+	- this phase ends when either of the following occurs
+		- its health gets below 10
+		- every 60 seconds there will be a 40% chance of entering the next phase
+4. Full-Presence Phase
+	- the entity is now visible
+	- it still hunts the player as in the previous phase, but its speed is now faster than even the player's running speed
+	- if close to the player, it will cause massive harm with a very high chance the player will die
+	- the LS is even more vulnerable to darkness in this phase and will lose health very rapidly in darkness
+	- when the entity's health drops to 0, it returns to the Absent Phase and relocates itself to a location far underneath the player area
+
+# GATEMARKS
+- a GateMark (appreviated GM in this document) is a visual indicator of where the LS may break into our world
+- it is a type of WallDecal which will show as a small red square (0.5 x 0.5)
+- a GM will appear on a random eligible wall. A "wall" in this case is define as a Side (North, South, East, West) of a room.
+- A wall is eligible if the following conditions are met
+	- no other GM is currently on this wall
+	- the wall is axis aligned
+	- there are triangles present on this side in the Room's geometry
+	- the size of those Side Triangles is large enough to hold a GM
+- an "Active" GM is shown by adding a faint red PointLight at its location
+
+# SHAPE DETAILS
+- the LS's primary shape is not rendered and has no collision, and is used mostly to track its position
+- the LS has a child shape used for collision and for its appearance in the Full-Presence phase
+- this shape is spherical (we will need a helper method to approximate a sphere out of triangles), with a spherical ColliderBody
+- in the Half-Presence Phase, the collider body's position matches the LS's position, but its Shape Position will be set to below the player area
+	- this will make the LS invisible to the player, but still able to collide with the world and player
+- in the Full-Presence Phase, the collider body's position and shape position will match the LS's position, making it visible to the player
+
+# DEVELOPMENT TASKS
+1. Create a helper method to TriangleMaker generate a spherical body for a shape (DONE)
+2. Create method to generate a spherical RigidBody for collisions
+3. Give the Player a Health Attribute and show it via Debug.Watch1
+4. Create a shape and controller for the LightSpirit and insert it into the world within the UpstairsWorldSegment
+5. Add a Watch2 to the Debug class which we'll use to show the light spirits current phase
+
+# QUESTIONS AND ANSWERS
+Q. What specific rates should we use for things such as light amounts, rates of health loss, etc?
+	- we'll figure out proper values through playtesting, start with any arbitrary amount
+Q. How does player and LS health loss work?
+	- damage will occur once per second
+Q. Phase transition: "every 60 seconds there will be a 40% chance of entering next phase"
+•	Is this checked once at the 60-second mark?
+•	Or checked continuously after 60 seconds have elapsed?
+	- this is checked once every 60 seconds
+Q. Does UpstairsWorldSegment already exist?
+	- yes
+Q. When should the LS spawn?
+	(at game start)

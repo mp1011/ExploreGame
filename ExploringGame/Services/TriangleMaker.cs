@@ -181,4 +181,103 @@ public static class TriangleMaker
 
         return triangles.ToArray();
     }
+
+    /// <summary>
+    /// Generates triangles for a sphere using UV sphere (latitude/longitude) method
+    /// </summary>
+    /// <param name="shape">The shape to build the sphere for</param>
+    /// <param name="latitudeSegments">Number of horizontal segments (default: 16)</param>
+    /// <param name="longitudeSegments">Number of vertical segments (default: 16)</param>
+    /// <returns>Array of triangles forming a sphere</returns>
+    public static Triangle[] BuildSphere(Shape shape, int latitudeSegments = 16, int longitudeSegments = 16)
+    {
+        var triangles = new List<Triangle>();
+        var center = shape.Position;
+        var radius = Math.Min(Math.Min(shape.Width, shape.Height), shape.Depth) / 2f;
+
+        // Generate vertices for the sphere
+        var vertices = new List<Vector3>();
+        
+        // Top pole
+        vertices.Add(center + new Vector3(0, radius, 0));
+
+        // Generate latitude rings
+        for (int lat = 1; lat < latitudeSegments; lat++)
+        {
+            float theta = lat * (float)Math.PI / latitudeSegments; // 0 to PI
+            float sinTheta = (float)Math.Sin(theta);
+            float cosTheta = (float)Math.Cos(theta);
+
+            for (int lon = 0; lon < longitudeSegments; lon++)
+            {
+                float phi = lon * 2 * (float)Math.PI / longitudeSegments; // 0 to 2*PI
+                float sinPhi = (float)Math.Sin(phi);
+                float cosPhi = (float)Math.Cos(phi);
+
+                float x = cosPhi * sinTheta;
+                float y = cosTheta;
+                float z = sinPhi * sinTheta;
+
+                vertices.Add(center + new Vector3(x * radius, y * radius, z * radius));
+            }
+        }
+
+        // Bottom pole
+        vertices.Add(center + new Vector3(0, -radius, 0));
+
+        // Build triangles
+        var textureInfo = shape.MainTexture;
+
+        // Top cap triangles
+        for (int lon = 0; lon < longitudeSegments; lon++)
+        {
+            int next = (lon + 1) % longitudeSegments;
+            triangles.Add(new Triangle(
+                vertices[0],
+                vertices[1 + next],
+                vertices[1 + lon],
+                textureInfo,
+                Side.Top
+            ));
+        }
+
+        // Middle triangles
+        for (int lat = 0; lat < latitudeSegments - 2; lat++)
+        {
+            int currentRingStart = 1 + lat * longitudeSegments;
+            int nextRingStart = currentRingStart + longitudeSegments;
+
+            for (int lon = 0; lon < longitudeSegments; lon++)
+            {
+                int next = (lon + 1) % longitudeSegments;
+
+                int v1 = currentRingStart + lon;
+                int v2 = nextRingStart + lon;
+                int v3 = nextRingStart + next;
+                int v4 = currentRingStart + next;
+
+                // Two triangles per quad
+                triangles.Add(new Triangle(vertices[v1], vertices[v2], vertices[v3], textureInfo, Side.North));
+                triangles.Add(new Triangle(vertices[v1], vertices[v3], vertices[v4], textureInfo, Side.North));
+            }
+        }
+
+        // Bottom cap triangles
+        int bottomPoleIndex = vertices.Count - 1;
+        int lastRingStart = 1 + (latitudeSegments - 2) * longitudeSegments;
+        
+        for (int lon = 0; lon < longitudeSegments; lon++)
+        {
+            int next = (lon + 1) % longitudeSegments;
+            triangles.Add(new Triangle(
+                vertices[bottomPoleIndex],
+                vertices[lastRingStart + lon],
+                vertices[lastRingStart + next],
+                textureInfo,
+                Side.Bottom
+            ));
+        }
+
+        return triangles.ToArray();
+    }
 }

@@ -199,6 +199,25 @@ public class Physics
         return body;
     }
 
+    public RigidBody CreateSphere(IWithPosition entity, float radius, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
+    {
+        var body = _world.CreateRigidBody();
+        body.AddShape(new SphereShape(radius));
+        body.Position = entity.Position.ToJVector();
+        body.MotionType = MotionType.Dynamic;
+
+        InitPhysics(body);
+
+        body.Tag = new CollisionInfo(myGroup, collidesWithGroups);
+        return body;
+    }
+
+    public RigidBody CreateSphere(ICollidable entity, float radius)
+    {
+        return CreateSphere(entity, radius, entity.CollisionGroup, entity.CollidesWithGroups);
+    }
+
+
     public RigidBody CreateHingedDoor(Door door)
     {
         var hinge = new Box();

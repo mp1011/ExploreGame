@@ -53,7 +53,6 @@ public class PathFinder
         if (!_physics.HasLineOfSight(_entity, CurrentTarget.Target) || HasReachedTarget())
             CurrentTarget = FindPathToTarget();
                        
-        GameDebug.Debug.Watch1 = $"Current Target: {CurrentTarget}";
         return Vector3.Normalize(CurrentTarget.Target.Position - _entity.Position);        
     }
 

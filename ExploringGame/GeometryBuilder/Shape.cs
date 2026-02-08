@@ -400,7 +400,17 @@ public abstract class Shape : IWithPosition
     /// <returns></returns>
     protected Triangle[] BuildCuboid() => TriangleMaker.BuildCuboid(this);
 
+    /// <summary>
+    /// Generates triangles for a sphere
+    /// </summary>
+    /// <param name="latitudeSegments">Number of horizontal segments (default: 16)</param>
+    /// <param name="longitudeSegments">Number of vertical segments (default: 16)</param>
+    /// <returns></returns>
+    protected Triangle[] BuildSphere(int latitudeSegments = 16, int longitudeSegments = 16) => 
+        TriangleMaker.BuildSphere(this, latitudeSegments, longitudeSegments);
+
     protected abstract Triangle[] BuildInternal(QualityLevel quality);
 
     #endregion
 }
+
