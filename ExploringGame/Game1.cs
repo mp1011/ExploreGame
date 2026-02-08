@@ -75,6 +75,7 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<AudioService>();
         _serviceContainer.BindTransient<TestEntityController>();
         _serviceContainer.BindTransient<Testing.TestShapeStampGeneratorController>();
+        _serviceContainer.BindTransient<Logics.Controllers.LightSpiritController>();
 
         _playerInput = CreatePlayerInput();
         _serviceContainer.Bind(_playerInput);
@@ -202,6 +203,7 @@ public class Game1 : Game
 
         _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString("0.00"), new Vector2(10, 80), Color.White);
         _spriteBatch.DrawString(_debugFont, "Watch1: " + Debug.Watch1 ?? "", new Vector2(10, 100), Color.White);
+        _spriteBatch.DrawString(_debugFont, "Watch2: " + Debug.Watch2 ?? "", new Vector2(10, 120), Color.White);
 
         _spriteBatch.End();
 

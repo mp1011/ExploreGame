@@ -59,9 +59,15 @@ The Light Spirit (abbreviated as LS in this document) has the following attribut
 
 # DEVELOPMENT TASKS
 1. Create a helper method to TriangleMaker generate a spherical body for a shape (DONE)
-2. Create method to generate a spherical RigidBody for collisions
-3. Give the Player a Health Attribute and show it via Debug.Watch1
+2. Create method to generate a spherical RigidBody for collisions (DONE)
+3. Give the Player a Health Attribute and show it via Debug.Watch1 (DONE)
 4. Create a shape and controller for the LightSpirit and insert it into the world within the UpstairsWorldSegment
+- 4a - create shape classes and scaffold the controller (DONE)
+- 4b - implement Gatemark shape and controller (DONE)
+- 4c - implement Absent Phase
+- 4d - implement Break-in Phase
+- 4e - implement Half-Presence Phase
+- 4f - implement Full-Presence Phase
 5. Add a Watch2 to the Debug class which we'll use to show the light spirits current phase
 
 # QUESTIONS AND ANSWERS
