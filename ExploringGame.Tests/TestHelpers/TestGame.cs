@@ -18,18 +18,22 @@ public class TestGame : Game1
     private TimeSpan _fakeElapsedTime = TimeSpan.Zero;
     private TimeSpan _fakeFrameTime = TimeSpan.FromMilliseconds(16.67); // 60 fps
     private Color[] _screenshotData; // Store screenshot in memory
+    private Func<TestGame, GameTime, TestResult> _testAssertion;
+    private bool _testPassed = false;
+    private string _testFailureMessage;
 
     public MockPlayerInput MockPlayerInput { get; }
 
 
-    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime) : 
-        this(worldSegment, (int)(simulationTime.TotalSeconds * 60))
+    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null) : 
+        this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion)
     {}
 
-    public TestGame(WorldSegment worldSegment, int framesToRun) : base(worldSegment, useTestRenderer: true)
+    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null) : base(worldSegment, useTestRenderer: true)
     {
         MockPlayerInput = new MockPlayerInput();
         _framesRemaining = framesToRun;
+        _testAssertion = testAssertion;
         
         // Create screenshots directory in test output
         var screenshotDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Screenshots");
@@ -66,7 +70,31 @@ public class TestGame : Game1
             Exit();            
         }
 
-        base.Update(FakeFrameTime());
+        var fakeTime = FakeFrameTime();
+        base.Update(fakeTime);
+
+        // Execute test assertion if provided
+        if (_testAssertion != null)
+        {
+            var result = _testAssertion(this, fakeTime);
+
+            switch (result)
+            {
+                case TestResult.PASS:
+                    _testPassed = true;
+                    Exit();
+                    break;
+
+                case TestResult.FAIL:
+                    _testFailureMessage = "Test assertion failed during game execution";
+                    Exit();
+                    break;
+
+                case TestResult.CONTINUE:
+                    // Keep running
+                    break;
+            }
+        }
     }
 
     private GameTime FakeFrameTime()
@@ -161,6 +189,19 @@ public class TestGame : Game1
         if (disposing)
         {
             _renderTarget?.Dispose();
+
+            // Check test results if a test assertion was provided
+            if (_testAssertion != null)
+            {
+                if (_testFailureMessage != null)
+                {
+                    Assert.Fail(_testFailureMessage);
+                }
+                else if (!_testPassed)
+                {
+                    Assert.Fail("Test did not pass before game simulation ended");
+                }
+            }
         }
         base.Dispose(disposing);
     }

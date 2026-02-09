@@ -40,6 +40,40 @@ public class LightSpiritTests
         Assert.Equal(LightSpiritPhase.Absent, lightSpiritController.LightSpirit.Phase);
     }
 
+    [Fact]
+    public void LightSpirit_EventuallyTransitionsTo_BreakInPhase()
+    {
+        // Arrange
+        var worldSegment = CreateTestWorldWithLightSpirit();
+        
+        // Run for up to 2 minutes, but test will pass as soon as phase changes
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(2), (testGame, gameTime) =>
+        {
+            var loadedLevelData = testGame.GetService<LevelControl.LoadedLevelData>();
+            var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
+            
+            if (levelData == null)
+                return TestResult.CONTINUE;
+
+            var lightSpiritController = levelData.ActiveObjects
+                .OfType<LightSpiritController>()
+                .FirstOrDefault();
+
+            if (lightSpiritController == null)
+                return TestResult.CONTINUE;
+
+            // Check if phase has transitioned to BreakIn
+            if (lightSpiritController.LightSpirit.Phase == LightSpiritPhase.BreakIn)
+            {
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+        
+        game.Run();
+    }
+
     private WorldSegment CreateTestWorldWithLightSpirit()
     {
         var worldSegment = new TestWorldSegment(new Vector3(0, 1.5f, 5));

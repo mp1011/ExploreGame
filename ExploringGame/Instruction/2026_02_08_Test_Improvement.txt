@@ -1,0 +1,13 @@
+# GOAL
+Improve our ability to test code by adding assertions that can run while the game simulation is running, rather than only being able to assert after the game finishes.
+
+# TASKS
+1. Add an optional parameter to TestGame where we can specify a testing lambda
+	- lambda inputs: instance of TestGame, and a GameTime representing the simulated game time
+	- lambda output: an enum with one of the following values: FAIL, PASS, CONTINUE
+2. In the Update method of TestGame, execute the testing lambda each frame
+	- if the result is FAIL, stop the game and mark the test as failed
+	- if the result is PASS, stop the game and mark the test as passed
+	- if the result is CONTINUE, do nothing and let the game continue running
+	- if the game loop ends without the test lambda returning PASS, mark the test as failed
+3. Use this to implement another test in LightSpiritTests, which asserts that the phase eventually changes to "BreakIn"
