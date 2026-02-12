@@ -65,35 +65,43 @@ public class TestGame : Game1
 
     protected override void Update(GameTime gameTime)
     {
-        if (--_framesRemaining <= 0 && _screenshotTaken)
+        try
         {
-            Exit();            
-        }
-
-        var fakeTime = FakeFrameTime();
-        base.Update(fakeTime);
-
-        // Execute test assertion if provided
-        if (_testAssertion != null)
-        {
-            var result = _testAssertion(this, fakeTime);
-
-            switch (result)
+            if (--_framesRemaining <= 0 && _screenshotTaken)
             {
-                case TestResult.PASS:
-                    _testPassed = true;
-                    Exit();
-                    break;
-
-                case TestResult.FAIL:
-                    _testFailureMessage = "Test assertion failed during game execution";
-                    Exit();
-                    break;
-
-                case TestResult.CONTINUE:
-                    // Keep running
-                    break;
+                Exit();            
             }
+
+            var fakeTime = FakeFrameTime();
+            base.Update(fakeTime);
+
+            // Execute test assertion if provided
+            if (_testAssertion != null)
+            {
+                var result = _testAssertion(this, fakeTime);
+
+                switch (result)
+                {
+                    case TestResult.PASS:
+                        _testPassed = true;
+                        Exit();
+                        break;
+
+                    case TestResult.FAIL:
+                        _testFailureMessage = "Test assertion failed during game execution";
+                        Exit();
+                        break;
+
+                    case TestResult.CONTINUE:
+                        // Keep running
+                        break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _testFailureMessage = $"Exception during test execution: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+            Exit();
         }
     }
 
@@ -105,29 +113,37 @@ public class TestGame : Game1
 
     protected override void Draw(GameTime gameTime)
     {
-        if (_framesRemaining <= 0 && !_screenshotTaken)
+        try
         {
-            // Render to texture
-            GraphicsDevice.SetRenderTarget(_renderTarget);
-            DrawWorld(GraphicsDevice);
-            GraphicsDevice.SetRenderTarget(null);
-            
-            // Save screenshot to memory
-            _screenshotData = new Color[_renderTarget.Width * _renderTarget.Height];
-            _renderTarget.GetData(_screenshotData);
-            
-            // Save screenshot to disk
-            using (var stream = File.Create(_screenshotPath))
+            if (_framesRemaining <= 0 && !_screenshotTaken)
             {
-                _renderTarget.SaveAsPng(stream, _renderTarget.Width, _renderTarget.Height);
+                // Render to texture
+                GraphicsDevice.SetRenderTarget(_renderTarget);
+                DrawWorld(GraphicsDevice);
+                GraphicsDevice.SetRenderTarget(null);
+                
+                // Save screenshot to memory
+                _screenshotData = new Color[_renderTarget.Width * _renderTarget.Height];
+                _renderTarget.GetData(_screenshotData);
+                
+                // Save screenshot to disk
+                using (var stream = File.Create(_screenshotPath))
+                {
+                    _renderTarget.SaveAsPng(stream, _renderTarget.Width, _renderTarget.Height);
+                }
+                
+                _screenshotTaken = true;
+                Console.WriteLine($"Screenshot saved to: {_screenshotPath}");
             }
-            
-            _screenshotTaken = true;
-            Console.WriteLine($"Screenshot saved to: {_screenshotPath}");
+            else
+            {
+                // draw nothing
+            }
         }
-        else
+        catch (Exception ex)
         {
-            // draw nothing
+            _testFailureMessage = $"Exception during draw: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+            Exit();
         }
     }
 

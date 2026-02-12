@@ -10,7 +10,7 @@ The Light Spirit (abbreviated as LS in this document) has the following attribut
 
 # BEHAVIOR
 
-1. Absent Phase
+1. Absent Phase (DONE)
 	- LS does not move and remains fixed at a location far underneath the play area
 	- LS health slowly increments until it reaches 100
 	- this phase lasts a minimum of 60 seconds, but will not end until the health reaches 100
