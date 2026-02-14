@@ -33,5 +33,11 @@ public class FullPresencePhaseHandler : IPhaseHandler
     {
         return string.Empty;
     }
+
+    public void ForceNextPhase()
+    {
+        // Already at final phase - no next phase to advance to
+        // Could potentially cycle back to Absent or do nothing
+    }
 }
 

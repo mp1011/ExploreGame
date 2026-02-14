@@ -67,6 +67,13 @@ public class AbsentPhaseHandler : IPhaseHandler
         return string.Empty;
     }
 
+    public void ForceNextPhase()
+    {
+        // Set health to 100 and mark transition check as ready
+        _lightSpirit.Health = 100;
+        _phaseTransitionCheck.ForceReady();
+    }
+
     private void SetUndergroundPosition()
     {
         _lightSpirit.Position = new Vector3(0, UndergroundY, 0);

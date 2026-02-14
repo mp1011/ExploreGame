@@ -27,5 +27,11 @@ public interface IPhaseHandler
     /// Returns debug information about the current phase state
     /// </summary>
     string DebugDescribe();
+
+    /// <summary>
+    /// Forces the phase to transition to the next phase by setting up the state
+    /// as if the phase transition conditions were met naturally
+    /// </summary>
+    void ForceNextPhase();
 }
 

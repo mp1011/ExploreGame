@@ -33,5 +33,11 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     {
         return string.Empty;
     }
+
+    public void ForceNextPhase()
+    {
+        // Force transition to FullPresence
+        _lightSpirit.Phase = LightSpiritPhase.FullPresence;
+    }
 }
 

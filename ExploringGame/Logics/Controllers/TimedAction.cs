@@ -56,5 +56,13 @@ public class TimedAction
     {
         _elapsed = TimeSpan.Zero;
     }
+
+    /// <summary>
+    /// Forces the timer to be ready (for debugging/testing)
+    /// </summary>
+    public void ForceReady()
+    {
+        _elapsed = _interval;
+    }
 }
 

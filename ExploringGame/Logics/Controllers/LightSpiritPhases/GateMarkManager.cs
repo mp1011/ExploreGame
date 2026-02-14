@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Rendering;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -158,13 +159,12 @@ public class GateMarkManager
         // Remove this quad so it's not used again
         _availableQuads.Remove(quad);
 
-        // Calculate random position within the quad
-        var placement = CalculatePlacementInQuad(quad);
-
         // Create the gatemark
-        var gateMark = new GateMark(quad.Room, quad.Side, placement, _pointLights);
+        var gateMark = new GateMark(quad.Room, quad.Side, null, _pointLights);
         quad.Room.AddChild(gateMark);
         _gateMarks.Add(gateMark);
+
+        gateMark.Place().OnQuad(quad, _random);
 
         // Add to rendering system as a stamped shape
         var levelData = _loadedLevelData.FindLevelDataForWorldSegment(_worldSegment);
@@ -175,50 +175,6 @@ public class GateMarkManager
 
         return gateMark;
     }
-
-    private Placement2D CalculatePlacementInQuad(WallQuad quad)
-    {
-        // EXPERIMENT: Always place at 0,0 relative to quad to test if quads are correct
-        var minX = quad.Vertices.Min(v => v.X);
-        var minY = quad.Vertices.Min(v => v.Y);
-        var minZ = quad.Vertices.Min(v => v.Z);
-
-        float wallLeft, wallBottom;
-
-        // Calculate wall-space coordinates based on side
-        if (quad.Side == Side.North || quad.Side == Side.South)
-        {
-            wallLeft = minX - quad.Room.GetSide(Side.West);
-            wallBottom = minY - quad.Room.GetSide(Side.Bottom);
-        }
-        else // East or West
-        {
-            wallLeft = minZ - quad.Room.GetSide(Side.North);
-            wallBottom = minY - quad.Room.GetSide(Side.Bottom);
-        }
-
-        // DEBUG OUTPUT
-        System.Console.WriteLine($"=== GATEMARK PLACEMENT DEBUG ===");
-        System.Console.WriteLine($"Room: {quad.Room.Tag ?? quad.Room.ToString()}");
-        System.Console.WriteLine($"Side: {quad.Side}");
-        System.Console.WriteLine($"Quad vertices:");
-        for (int i = 0; i < quad.Vertices.Length; i++)
-        {
-            System.Console.WriteLine($"  V{i}: {quad.Vertices[i]}");
-        }
-        System.Console.WriteLine($"Quad bounds: minX={minX:F2}, minY={minY:F2}, minZ={minZ:F2}");
-        System.Console.WriteLine($"Room.West={quad.Room.GetSide(Side.West):F2}, Room.Bottom={quad.Room.GetSide(Side.Bottom):F2}, Room.North={quad.Room.GetSide(Side.North):F2}");
-        System.Console.WriteLine($"Calculated: wallLeft={wallLeft:F2}, wallBottom={wallBottom:F2}");
-        System.Console.WriteLine($"Placement2D: ({wallLeft:F2}, {wallBottom + 0.5f:F2}, {wallLeft + 0.5f:F2}, {wallBottom:F2})");
-        System.Console.WriteLine($"================================");
-
-        // Always place at bottom-left corner of quad (0,0 relative position)
-        return new Placement2D(wallLeft, wallBottom + 0.5f, wallLeft + 0.5f, wallBottom);
-    }
-
-
-
-
 
     public void ActivateRandomGateMark()
     {

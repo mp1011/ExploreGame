@@ -117,6 +117,12 @@ public class BreakInPhaseHandler : IPhaseHandler
         return $"GateMarks: {count} | Recent: {roomName} {mostRecent.WallSide}";
     }
 
+    public void ForceNextPhase()
+    {
+        // Force transition to HalfPresence by setting the phase directly
+        _lightSpirit.Phase = LightSpiritPhase.HalfPresence;
+    }
+
     private void SetUndergroundPosition()
     {
         // Keep the sphere underground so it's invisible and has no collision

@@ -113,14 +113,9 @@ public class WallDecalShapePlacer : ShapePlacer
         float wallTop = decalCenterY + (decalHeight / 2f) - quad.Room.GetSide(Side.Bottom);
 
         var placement = new Placement2D(wallLeft, wallTop, wallRight, wallBottom);
-        _wallDecal.Placement = placement;
         _wallDecal.WallSide = quad.Side;
+        _wallDecal.Placement = placement;
         
-        // Recalculate transform with new placement
-        var calculateTransform = _wallDecal.GetType().GetMethod("CalculateTransform", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        calculateTransform?.Invoke(_wallDecal, new object[] { quad.Room });
-
         return this;
     }
 }

@@ -90,5 +90,13 @@ public class LightSpiritController : IActiveObject
         // Update current phase handler
         _phaseHandlers[_currentPhase].Update(gameTime);
     }
+
+    /// <summary>
+    /// Forces the LightSpirit to advance to the next phase (debug feature)
+    /// </summary>
+    public void ForceAdvancePhase()
+    {
+        _phaseHandlers[_currentPhase].ForceNextPhase();
+    }
 }
 

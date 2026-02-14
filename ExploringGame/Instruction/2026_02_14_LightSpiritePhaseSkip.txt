@@ -1,0 +1,34 @@
+# GOAL
+Add debug keys to force the LightSpirit to move to a later phase
+
+# TASKS
+1. In DebugController, when the user presses the PageDown key, the LightSpirit should advance to the next phase
+2. To handle this, in IPhaseHandler create a method ForceNextPhase() that sets the state of the LS to pretend as though it reached the next phase naturally
+
+# IMPLEMENTATION COMPLETE ?
+
+## Changes Made:
+
+### 1. IPhaseHandler Interface
+- Added `ForceNextPhase()` method to force phase transitions
+
+### 2. Phase Handler Implementations
+All phase handlers now implement `ForceNextPhase()`:
+
+- **AbsentPhaseHandler**: Sets health to 100 and forces the transition timer to be ready, triggering transition to BreakIn
+- **BreakInPhaseHandler**: Directly transitions to HalfPresence phase
+- **HalfPresencePhaseHandler**: Directly transitions to FullPresence phase  
+- **FullPresencePhaseHandler**: Does nothing (already at final phase)
+
+### 3. LightSpiritController
+- Added `ForceAdvancePhase()` method that delegates to current phase handler's `ForceNextPhase()`
+
+### 4. DebugController
+- Added `LightSpiritController` dependency
+- Added PageDown key handler that calls `ForceAdvancePhase()`
+
+### 5. TimedAction
+- Added `ForceReady()` method to set elapsed time to interval (makes timer instantly ready)
+
+## Usage:
+Press **PageDown** during gameplay to force the LightSpirit to advance to the next phase immediately.

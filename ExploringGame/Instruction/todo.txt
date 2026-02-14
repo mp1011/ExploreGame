@@ -109,14 +109,7 @@ unit testing improvements
 	[x] fake GameTime to tests act like game is running at a normal framerate
 
 
-[ ] implement decals
+[x] implement decals
 
 
-
-
- // Determine if this needs depth bias (for wall decals)
-        Microsoft.Xna.Framework.Graphics.RasterizerState rasterizerState = null;
-        if (stampedShape is GeometryBuilder.Shapes.Decals.WallDecal)
-        {
-            rasterizerState = 
-        }
+NOTE - use new placement method for gatemarkmanager
