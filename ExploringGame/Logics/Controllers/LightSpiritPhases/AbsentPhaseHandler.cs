@@ -13,6 +13,8 @@ public class AbsentPhaseHandler : IPhaseHandler
     
     private const float UndergroundY = -100f;
     private const int HealthRegenPerSecond = 2;
+    
+    private readonly TimeSpan TransitionCheckTime = TimeSpan.FromSeconds(60);
 
     public AbsentPhaseHandler(LightSpirit lightSpirit)
     {
@@ -25,7 +27,7 @@ public class AbsentPhaseHandler : IPhaseHandler
             _lightSpirit.Health = Math.Min(100, _lightSpirit.Health + HealthRegenPerSecond);
         });
 
-        _phaseTransitionCheck = new TimedAction(TimeSpan.FromSeconds(60), () => { }, false);
+        _phaseTransitionCheck = new TimedAction(TransitionCheckTime, () => { }, false);
     }
 
     public void OnEnter()
@@ -58,6 +60,11 @@ public class AbsentPhaseHandler : IPhaseHandler
     public void OnExit()
     {
         // Clean up if needed
+    }
+
+    public string DebugDescribe()
+    {
+        return string.Empty;
     }
 
     private void SetUndergroundPosition()

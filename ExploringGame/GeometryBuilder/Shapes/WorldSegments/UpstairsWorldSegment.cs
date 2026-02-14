@@ -1,5 +1,8 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Decals;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.Services;
+using Microsoft.Xna.Framework;
 using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -49,7 +52,14 @@ public class UpstairsWorldSegment : WorldSegment
 
         Transitions = Array.Empty<WorldSegmentTransition>();
 
-       // Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
+        AddChild(new WallDecalStamp());
+
+        // Add the Light Spirit
+        var lightSpirit = new LightSpirit();
+        lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
+        AddChild(lightSpirit);
+
+        // Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }
 
 }

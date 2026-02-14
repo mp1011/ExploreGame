@@ -28,4 +28,10 @@ public class FullPresencePhaseHandler : IPhaseHandler
     {
         // Clean up if needed
     }
+
+    public string DebugDescribe()
+    {
+        return string.Empty;
+    }
 }
+

@@ -22,4 +22,10 @@ public interface IPhaseHandler
     /// Called when exiting this phase
     /// </summary>
     void OnExit();
+
+    /// <summary>
+    /// Returns debug information about the current phase state
+    /// </summary>
+    string DebugDescribe();
 }
+

@@ -1,0 +1,8 @@
+# GOAL
+Emit more helpful debug information to the screen to better show how each phase is unfolding
+
+# TASKS
+1. Create a new method in IPhaseHandler called DebugDescribe which returns a string
+2. Add this string to the message we show in Debug2
+3. In AbsentPhase there is no new information, so DebugDescribe returns empty string
+4. In BreakinPhase, show the number of gatemarks and the room+side of the most recent gatemark (if any)

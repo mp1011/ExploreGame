@@ -1,0 +1,34 @@
+﻿# PROBLEM
+We were not successful in finding a way to place a wall decal such that it never hands over an edge or appears on an empty space.
+Several attempts were made to solve this problem to no avail.
+
+# NEW APPROACH
+- Generate a test map where the North wall has a gap in the middle
+- Write a test controller to try to place WallDecals at random spots on this wall, such that they never appear over that gap
+- Write a unit test to run the game with this test controller and assert that no decals are placed over the gap
+	- the test can check this by simply comparing the X coordinate of the decal's left and right edge to the X coordinate of the known gap
+
+# RULES
+- add this new test controller directly to the Tests project rather than the main project
+- in addition, create the testing world segment entirely in the Tests project as well (rather than adding it to the main project as we've done in the past)
+
+# QUESTIONS AND ANSWERS
+Q:	How many decals should the controller try to place? (e.g., 10? 20?)
+A: 20 sounds good.
+
+Q: What placement method should the controller use?
+A: Start with the quad-based approach that GateMarkManager uses
+
+Q: Gap creation - which approach:
+A: Use a RoomConnection to create a gap
+
+Q: Should the test be a pass/fail assertion, or should it output statistics? (e.g., "Placed 18/20 decals successfully, 2 failed")
+A: Pass/Fail is enough
+
+# TEST RESULTS
+The placement algorithm used by WallDecalTestController->CalculatePlacementInQuad succeeds whereas the method use by GatemarkManager does not.
+
+# NEXT STEPS
+- lets add this logic to ShapePlacer with a method called OnQuad(...), using the same code we currently have in WallDecalTestController->CalculatePlacementInQuad
+- refactor WallDecalTestController->CalculatePlacementInQuad to use this via decal.Place().OnQuad(...)
+

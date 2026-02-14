@@ -12,6 +12,8 @@ namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 
 public class BreakInPhaseHandler : IPhaseHandler
 {
+    private readonly TimeSpan GatemarkSpawnTime = TimeSpan.FromSeconds(30);
+   
     private readonly LightSpirit _lightSpirit;
     private readonly WorldSegment _worldSegment;
     private readonly LoadedLevelData _loadedLevelData;
@@ -37,7 +39,7 @@ public class BreakInPhaseHandler : IPhaseHandler
         // Initialize GateMark manager
         _gateMarkManager = new GateMarkManager(_worldSegment, _loadedLevelData, _pointLights);
         
-        _gateMarkSpawnAction = new TimedAction(TimeSpan.FromSeconds(30), () =>
+        _gateMarkSpawnAction = new TimedAction(GatemarkSpawnTime, () =>
         {
             _gateMarkManager.ActivateRandomGateMark();
             _gateMarkManager.SpawnGateMark();            
@@ -95,6 +97,24 @@ public class BreakInPhaseHandler : IPhaseHandler
         {
             _gateMarkManager.RemoveGateMark(mark);
         }
+    }
+
+    public string DebugDescribe()
+    {
+        if (_gateMarkManager == null)
+            return string.Empty;
+
+        var count = _gateMarkManager.GateMarks.Count;
+        var mostRecent = _gateMarkManager.GateMarks.LastOrDefault();
+
+        if (mostRecent == null)
+            return $"GateMarks: {count}";
+
+        // Get the parent room
+        var room = mostRecent.FindFirstAncestor<GeometryBuilder.Shapes.Room>();
+        var roomName = room?.Tag ?? room?.ToString() ?? "Unknown";
+
+        return $"GateMarks: {count} | Recent: {roomName} {mostRecent.WallSide}";
     }
 
     private void SetUndergroundPosition()

@@ -1,0 +1,73 @@
+# PROBLEM
+We want Gatemarks to only appear on walls, but we aren't checking if the wall is present at the location of the Gatemark. 
+This results in Gatemarks sometimes appearing over room boundaries or over windows.
+
+# CURRENT APPROACH (which does not work)
+- we treated "walls" as a combination of Room + Side and assumed if there was geometry on that side, there was a wall
+- however this didn't account for a wall having holes, such as windows or doorways 
+
+# SOLUTION
+- the Gatemark Manager will take into account the actual geometry of a room by building a simpler copy of the room
+- this will occur once upon initialization
+
+# TASKS (all within the GatemarkManager class)
+1. On initialization, go through each Room in the world segment and call Build with QualityLevel.Basic
+	- this is enough to know where the windows and doorways would be, but doesn't waste time building complex geometry
+	- store these triangles for later use
+2. When placing a gatemark, check that all vertices of the gatemark are within the triangles of the wall
+	- if there aren't, try a new position
+	- try at most 5 times before giving up
+
+
+# QUESTIONS AND ANSWERS
+Q. Placement2D to 3D Coordinates
+How do I convert a Placement2D (Left, Top, Right, Bottom) into actual 3D world coordinates for the gatemark's 4 corners?
+•	Do I need to use the Room's position, size, and side orientation?
+•	Is there existing helper logic for this conversion?
+A. WallDecal already has a method to convert to world coordinates. At that point, you can just do a check to see if those points overlap any of the triangles of the room
+
+Q. Point-in-Triangle Test
+For checking if a gatemark corner is "within wall triangles":
+•	Should I project the 3D triangles and point onto a 2D plane aligned with the wall?
+•	Or is there a simpler approach given that walls are axis-aligned?
+•	Should a point be considered "in" if it's in ANY triangle on that side?
+A. No need. As stated in the previous answer, the WallDecal's "CalculateTransform" tells you where it is in 3D Space
+
+Q. Alternative Position Generation
+When retrying placement (up to 5 times):
+•	Should I try random positions on the same wall?
+•	Or use a systematic grid (e.g., 9 positions: center + 8 around it)?
+•	What's a reasonable spacing/offset for attempts?
+A. Let's just try a new random position on a new random wall.
+
+Q. Failure Handling
+After 5 failed attempts:
+•	Return null from SpawnGateMark() and continue?
+•	Or mark that wall as unusable and remove it from eligible walls?
+A.	Don't mark the wall as unusable, just don't produce a Gatemark
+
+Q. Triangle Storage Structure
+Should I store:
+•	Dictionary<Room, Triangle[]> (all triangles per room)?
+•	Dictionary<(Room, Side), Triangle[]> (filtered by side)?
+•	Something else?
+A. Filtered by side is good.
+
+Q. After creating a GateMark (which extends WallDecal), how do I get the 4 corner positions in 3D space?
+A. Calculate this from Position, Size, and Rotation
+
+Q. For the point-in-triangle test - since walls are axis-aligned, should I:
+•	Project everything to 2D (remove one axis based on the Side)?
+•	Or do a full 3D point-in-triangle test?
+A. Do full 3D as walls may not always be axis aligned later in development
+
+# ROUND 2 REFACTOR
+- the "try randomly and check overlap" doesn't seem to be working, so let's try something else
+- let's compute the "quads" of each wall out of the triangles
+	- a quad here is just a 4-vertex polygon made up of the triangles of the wall. 
+	- most of the time this will be two triangles
+	- to find quads, first separate the triangles by side (we only want to group triangles of the same side)
+	- find which triangles are joined together by shared vertices, and this will define our quads
+- store these quads, as opposed to the Room+side combo we are currently using
+- keep only the quads big enough to fit a Gatemark
+- when we want to place a Gatemark, pick a random quad and place the Gatemark in a random position within that quad

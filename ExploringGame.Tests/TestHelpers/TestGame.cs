@@ -206,18 +206,10 @@ public class TestGame : Game1
         {
             _renderTarget?.Dispose();
 
-            // Check test results if a test assertion was provided
-            if (_testAssertion != null)
-            {
-                if (_testFailureMessage != null)
-                {
-                    Assert.Fail(_testFailureMessage);
-                }
-                else if (!_testPassed)
-                {
-                    Assert.Fail("Test did not pass before game simulation ended");
-                }
-            }
+            if (_testFailureMessage != null)
+                Assert.Fail(_testFailureMessage);
+            else if (_testAssertion != null && !_testPassed)
+                Assert.Fail("Test did not pass before game simulation ended");
         }
         base.Dispose(disposing);
     }

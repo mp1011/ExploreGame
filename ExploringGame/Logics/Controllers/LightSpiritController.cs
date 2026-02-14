@@ -76,8 +76,16 @@ public class LightSpiritController : IActiveObject
             _phaseHandlers[_currentPhase].OnEnter();
         }
 
-        // Update debug display
-        GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health}";
+        // Update debug display with phase info
+        var phaseDebug = _phaseHandlers[_currentPhase].DebugDescribe();
+        if (string.IsNullOrEmpty(phaseDebug))
+        {
+            GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health}";
+        }
+        else
+        {
+            GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health} | {phaseDebug}";
+        }
 
         // Update current phase handler
         _phaseHandlers[_currentPhase].Update(gameTime);
