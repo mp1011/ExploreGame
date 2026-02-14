@@ -85,4 +85,8 @@ public class AbsentPhaseHandler : IPhaseHandler
             _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Position.ToJVector();
         }
     }
+
+    public void DebugUpdate(IPlayerInput playerInput)
+    {
+    }
 }

@@ -8,15 +8,18 @@ public class WallDecal : StampedShape<WallDecalStamp>
 {
     public Side WallSide { get; set; }
 
-    private Placement2D _placement;
-    public Placement2D Placement
+    private Vector2 _centerUV;
+    /// <summary>
+    /// Position of the decal's center in wall-space UV coordinates.
+    /// (0, 0) = center of wall, U = horizontal axis, V = vertical axis
+    /// </summary>
+    public Vector2 CenterUV
     {
-        get => _placement;
+        get => _centerUV;
         set
         {
-            _placement = value;
-            if(value != null)
-                CalculateTransform();
+            _centerUV = value;
+            CalculateTransform();
         }
     }
 
@@ -25,11 +28,12 @@ public class WallDecal : StampedShape<WallDecalStamp>
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
-    public WallDecal(Room parentRoom, Side wallSide, Placement2D placement)
+    public WallDecal(Room parentRoom, Side wallSide, Vector2 centerUV)
     {
         parentRoom.AddChild(this);
         WallSide = wallSide;
-        Placement = placement;
+        _centerUV = centerUV;
+        CalculateTransform();
     }
 
     private void CalculateTransform()
@@ -37,47 +41,42 @@ public class WallDecal : StampedShape<WallDecalStamp>
         var roomPos = Parent.Position;
         var roomSize = Parent.Size;
 
-        // Calculate dimensions from Placement
-        float width = Placement.Right - Placement.Left;
-        float height = Placement.Top - Placement.Bottom;
-        float centerLeft = Placement.Left + width / 2;
-        float centerBottom = Placement.Bottom + height / 2;
-
-        // Start with decal position at room center
+        // CenterUV is relative to wall center, in UV coordinates
+        // U = horizontal axis of wall, V = vertical (always Y)
         Vector3 position = roomPos;
         float yaw = 0;
 
         switch (WallSide)
         {
             case Side.North:
-                // North wall is at -Z
+                // North wall: U=X, V=Y
                 position.Z = Parent.GetSide(Side.North);
-                position.X = roomPos.X - (roomSize.X / 2) + centerLeft;
-                position.Y = Parent.GetSide(Side.Bottom) + centerBottom;
+                position.X = roomPos.X + _centerUV.X;
+                position.Y = roomPos.Y + _centerUV.Y;
                 yaw = 0; // Face +Z (into room)
                 break;
 
             case Side.South:
-                // South wall is at +Z
+                // South wall: U=X (but mirrored), V=Y
                 position.Z = Parent.GetSide(Side.South);
-                position.X = roomPos.X + (roomSize.X / 2) - centerLeft;
-                position.Y = Parent.GetSide(Side.Bottom) + centerBottom;
+                position.X = roomPos.X - _centerUV.X; // Mirror X for south
+                position.Y = roomPos.Y + _centerUV.Y;
                 yaw = (float)Math.PI; // Face -Z (into room)
                 break;
 
             case Side.East:
-                // East wall is at +X
+                // East wall: U=Z, V=Y
                 position.X = Parent.GetSide(Side.East);
-                position.Z = roomPos.Z - (roomSize.Z / 2) + centerLeft;
-                position.Y = Parent.GetSide(Side.Bottom) + centerBottom;
+                position.Z = roomPos.Z + _centerUV.X;
+                position.Y = roomPos.Y + _centerUV.Y;
                 yaw = (float)Math.PI * 1.5f; // Face -X (into room)
                 break;
 
             case Side.West:
-                // West wall is at -X
+                // West wall: U=Z (but mirrored), V=Y
                 position.X = Parent.GetSide(Side.West);
-                position.Z = roomPos.Z + (roomSize.Z / 2) - centerLeft;
-                position.Y = Parent.GetSide(Side.Bottom) + centerBottom;
+                position.Z = roomPos.Z - _centerUV.X; // Mirror Z for west
+                position.Y = roomPos.Y + _centerUV.Y;
                 yaw = (float)Math.PI * 0.5f; // Face +X (into room)
                 break;
 
@@ -88,9 +87,7 @@ public class WallDecal : StampedShape<WallDecalStamp>
         Position = position;
         Rotation = new Rotation(yaw, 0, 0);
         
-        // Scale to match placement size
-        Width = width;
-        Height = height;
+        // Depth stays constant
         Depth = 0.01f;
     }
 }

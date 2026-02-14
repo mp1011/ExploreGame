@@ -1,10 +1,13 @@
 using ExploringGame.Entities;
+using ExploringGame.GameDebug;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics.Controllers.LightSpiritPhases;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.Logics.Controllers;
 
@@ -16,7 +19,7 @@ public enum LightSpiritPhase
     FullPresence
 }
 
-public class LightSpiritController : IActiveObject
+public class LightSpiritController : IActiveObject, IDebugControllable
 {
     private readonly Player _player;
     private readonly Physics _physics;
@@ -91,12 +94,12 @@ public class LightSpiritController : IActiveObject
         _phaseHandlers[_currentPhase].Update(gameTime);
     }
 
-    /// <summary>
-    /// Forces the LightSpirit to advance to the next phase (debug feature)
-    /// </summary>
-    public void ForceAdvancePhase()
+    public void DebugUpdate(IPlayerInput playerInput)
     {
-        _phaseHandlers[_currentPhase].ForceNextPhase();
+        if (playerInput.IsKeyPressed(Keys.PageDown))
+            _phaseHandlers[_currentPhase].ForceNextPhase(); 
+
+        _phaseHandlers[_currentPhase].DebugUpdate(playerInput);
     }
 }
 

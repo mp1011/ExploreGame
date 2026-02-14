@@ -41,15 +41,12 @@ public class DebugController
         {
             Debug.NoDepthStencil = !Debug.NoDepthStencil;
         }
-        else if (_playerInput.IsKeyPressed(Keys.PageDown))
-        {
-            // Find LightSpiritController from loaded level data
-            var lightSpiritController = _loadedLevelData.LoadedSegments
-                .SelectMany(segment => segment.ActiveObjects)
-                .OfType<LightSpiritController>()
-                .FirstOrDefault();
 
-            lightSpiritController?.ForceAdvancePhase();
-        }
+        foreach(var debugControllable in _loadedLevelData.LoadedSegments
+            .SelectMany(s=>s.ActiveObjects)
+            .OfType<IDebugControllable>())
+        {
+            debugControllable.DebugUpdate(_playerInput);
+        }       
     }
 }

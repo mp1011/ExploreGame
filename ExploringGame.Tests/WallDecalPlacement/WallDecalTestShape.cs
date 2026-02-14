@@ -1,5 +1,6 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Rendering;
@@ -9,11 +10,21 @@ using Microsoft.Xna.Framework;
 namespace ExploringGame.Tests.WallDecalPlacement;
 
 /// <summary>
+/// Interface for world segments that have a gap and need decal testing
+/// </summary>
+public interface IGapWorldSegment
+{
+    Room MainRoom { get; }
+    float GapStartX { get; }
+    float GapEndX { get; }
+}
+
+/// <summary>
 /// Invisible shape that exists only to host the WallDecalTestController
 /// </summary>
 public class WallDecalTestShape : PlaceableShape, IControllable
 {
-    private readonly WallWithGapWorldSegment _worldSegment;
+    private readonly IGapWorldSegment _worldSegment;
 
     public WallDecalTestController Controller { get; private set; }
 
@@ -21,7 +32,7 @@ public class WallDecalTestShape : PlaceableShape, IControllable
     public override CollisionGroup CollidesWithGroups => CollisionGroup.None;
     public override ViewFrom ViewFrom => ViewFrom.None;
 
-    public WallDecalTestShape(WallWithGapWorldSegment worldSegment)
+    public WallDecalTestShape(IGapWorldSegment worldSegment)
     {
         _worldSegment = worldSegment;
     }

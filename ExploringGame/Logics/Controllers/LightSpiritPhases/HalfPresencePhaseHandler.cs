@@ -24,6 +24,10 @@ public class HalfPresencePhaseHandler : IPhaseHandler
         // TODO: Implement half-presence phase logic
     }
 
+    public void DebugUpdate(IPlayerInput playerInput)
+    {
+    }
+
     public void OnExit()
     {
         // Clean up if needed

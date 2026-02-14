@@ -1,5 +1,6 @@
 using ExploringGame.Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 
@@ -24,6 +25,9 @@ public class FullPresencePhaseHandler : IPhaseHandler
         // TODO: Implement full-presence phase logic
     }
 
+    public void DebugUpdate(IPlayerInput playerInput)
+    {     
+    }
     public void OnExit()
     {
         // Clean up if needed

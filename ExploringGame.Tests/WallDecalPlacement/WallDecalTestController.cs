@@ -2,6 +2,7 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Rendering;
@@ -19,7 +20,8 @@ namespace ExploringGame.Tests.WallDecalPlacement;
 /// </summary>
 public class WallDecalTestController : IActiveObject
 {
-    private readonly WallWithGapWorldSegment _worldSegment;
+    private readonly IGapWorldSegment _gapWorldSegment;
+    private readonly WorldSegment _worldSegment;
     private readonly PointLights _pointLights;
     private readonly List<TestWallDecal> _placedDecals = new();
     private readonly Random _random = new(42); // Fixed seed for deterministic tests
@@ -30,9 +32,10 @@ public class WallDecalTestController : IActiveObject
 
     public IReadOnlyList<TestWallDecal> PlacedDecals => _placedDecals;
 
-    public WallDecalTestController(WallWithGapWorldSegment worldSegment, PointLights pointLights, LoadedLevelData loadedLevelData)
+    public WallDecalTestController(IGapWorldSegment gapWorldSegment, PointLights pointLights, LoadedLevelData loadedLevelData)
     {
-        _worldSegment = worldSegment;
+        _gapWorldSegment = gapWorldSegment;
+        _worldSegment = gapWorldSegment as WorldSegment;
         _pointLights = pointLights;
         _loadedLevelData = loadedLevelData;
     }
@@ -46,8 +49,8 @@ public class WallDecalTestController : IActiveObject
     {
         const float epsilon = 0.0001f; // Tolerance for floating point precision
         
-        var gapStart = _worldSegment.GapStartX;
-        var gapEnd = _worldSegment.GapEndX;
+        var gapStart = _gapWorldSegment.GapStartX;
+        var gapEnd = _gapWorldSegment.GapEndX;
 
         var decalLeftX = decal.Position.X - (decal.Width / 2f);
         var decalRightX = decal.Position.X + (decal.Width / 2f);
@@ -95,7 +98,7 @@ public class WallDecalTestController : IActiveObject
         var quads = ExtractQuadsFromNorthWall();
 
         System.Console.WriteLine($"Extracted {quads.Count} quads from north wall");
-        System.Console.WriteLine($"Gap boundaries: X=[{_worldSegment.GapStartX:F2} to {_worldSegment.GapEndX:F2}]");
+        System.Console.WriteLine($"Gap boundaries: X=[{_gapWorldSegment.GapStartX:F2} to {_gapWorldSegment.GapEndX:F2}]");
 
         // Try to place decals
         for (int i = 0; i < _decalsToPlace && quads.Count > 0; i++)
@@ -110,14 +113,14 @@ public class WallDecalTestController : IActiveObject
             }
             System.Console.WriteLine($"Quad X range: [{quad.Vertices.Min(v => v.X):F2} to {quad.Vertices.Max(v => v.X):F2}]");
 
-            // Create decal with dummy placement, then use OnQuad to set actual position
-            var decal = new TestWallDecal(_worldSegment.MainRoom, Side.North, new Placement2D(0, 0, 0, 0), _pointLights);
+            // Create decal with dummy center position, then use OnQuad to set actual position
+            var decal = new TestWallDecal(_gapWorldSegment.MainRoom, Side.North, Vector2.Zero, _pointLights);
             decal.Place().OnQuad(quad, _random);
 
             // IMMEDIATE VALIDATION - throw exception if decal overlaps gap
             ValidateDecalPosition(decal, quad);
 
-            _worldSegment.MainRoom.AddChild(decal);
+            _gapWorldSegment.MainRoom.AddChild(decal);
             _placedDecals.Add(decal);
 
             // Add to rendering system as a stamped shape
@@ -136,79 +139,14 @@ public class WallDecalTestController : IActiveObject
         var quads = new List<WallQuad>();
         
         // Build room to get triangles
-        var shapesAndTriangles = _worldSegment.MainRoom.Build(QualityLevel.Basic);
-        if (!shapesAndTriangles.TryGetValue(_worldSegment.MainRoom, out var triangles))
+        var shapesAndTriangles = _gapWorldSegment.MainRoom.Build(QualityLevel.Basic);
+        if (!shapesAndTriangles.TryGetValue(_gapWorldSegment.MainRoom, out var triangles))
             return quads;
 
         var northTriangles = triangles.Where(t => t.Side == Side.North).ToArray();
-        var processedTriangles = new HashSet<Triangle>();
 
-        foreach (var triangle in northTriangles)
-        {
-            if (processedTriangles.Contains(triangle))
-                continue;
-
-            // Find connected triangle
-            var connectedTriangle = northTriangles.FirstOrDefault(t =>
-                t != triangle &&
-                !processedTriangles.Contains(t) &&
-                SharedVertexCount(triangle, t) >= 2);
-
-            if (connectedTriangle != null)
-            {
-                var quadVertices = GetQuadVertices(triangle, connectedTriangle);
-                if (quadVertices != null && quadVertices.Length == 4)
-                {
-                    var quad = new WallQuad(_worldSegment.MainRoom, Side.North, quadVertices);
-                    
-                    // Filter out quads that are too small or too close to gap edges
-                    if (quad.Width >= 0.5f && quad.Height >= 0.5f)
-                    {
-                        quads.Add(quad);
-                    }
-                    processedTriangles.Add(triangle);
-                    processedTriangles.Add(connectedTriangle);
-                }
-            }
-        }
-
-        return quads;
-    }
-
-    private int SharedVertexCount(Triangle t1, Triangle t2)
-    {
-        int count = 0;
-        foreach (var v1 in t1.Vertices)
-        {
-            if (t2.Vertices.Any(v2 => Vector3.Distance(v1, v2) < 0.001f))
-                count++;
-        }
-        return count;
-    }
-
-    private Vector3[] GetQuadVertices(Triangle t1, Triangle t2)
-    {
-        var allVertices = t1.Vertices.Concat(t2.Vertices).ToList();
-        var uniqueVertices = new List<Vector3>();
-
-        foreach (var vertex in allVertices)
-        {
-            if (!uniqueVertices.Any(v => Vector3.Distance(v, vertex) < 0.001f))
-            {
-                uniqueVertices.Add(vertex);
-            }
-        }
-
-        if (uniqueVertices.Count != 4)
-            return null;
-
-        // Order vertices
-        var center = uniqueVertices.Aggregate(Vector3.Zero, (sum, v) => sum + v) / 4f;
-        return uniqueVertices.OrderBy(v =>
-        {
-            var dir = v - center;
-            return Math.Atan2(dir.Y, dir.X);
-        }).ToArray();
+        return new QuadExtractor().ExtractQuadsFromTriangles(_gapWorldSegment.MainRoom, Side.North, northTriangles)
+            .Where(p => p.Width >= 1.0f && p.Height >= 1.0f).ToList();      
     }
 }
 
@@ -217,8 +155,8 @@ public class WallDecalTestController : IActiveObject
 /// </summary>
 public class TestWallDecal : WallDecal
 {
-    public TestWallDecal(Room parentRoom, Side wallSide, Placement2D placement, PointLights pointLights)
-        : base(parentRoom, wallSide, placement)
+    public TestWallDecal(Room parentRoom, Side wallSide, Vector2 centerUV, PointLights pointLights)
+        : base(parentRoom, wallSide, centerUV)
     {
         Width = 0.5f;
         Height = 0.5f;

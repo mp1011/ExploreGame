@@ -45,8 +45,8 @@ public class GateMark : WallDecal
 
     public PointLight ActivationLight { get; private set; }
 
-    public GateMark(Room parentRoom, Side wallSide, Placement2D placement, PointLights pointLights) 
-        : base(parentRoom, wallSide, placement)
+    public GateMark(Room parentRoom, Side wallSide, Vector2 centerUV, PointLights pointLights) 
+        : base(parentRoom, wallSide, centerUV)
     {
         _pointLights = pointLights;
         MainTexture = new TextureInfo(Color.Red, TextureKey.Wall);

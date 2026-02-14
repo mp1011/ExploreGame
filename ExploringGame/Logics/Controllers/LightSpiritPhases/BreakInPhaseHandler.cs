@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Rendering;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -133,6 +134,12 @@ public class BreakInPhaseHandler : IPhaseHandler
         {
             _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.Position.ToJVector();
         }
+    }
+
+    public void DebugUpdate(IPlayerInput playerInput)
+    {
+        if (playerInput.IsKeyPressed(Keys.OemComma))
+            _gateMarkSpawnAction.ForceReady();
     }
 }
 

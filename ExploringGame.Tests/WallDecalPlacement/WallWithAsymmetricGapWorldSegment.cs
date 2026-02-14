@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework;
 namespace ExploringGame.Tests.WallDecalPlacement;
 
 /// <summary>
-/// Test world with a single room that has a gap in the north wall
+/// Test world with a gap positioned closer to the east side, making the east quad too small for decals
 /// </summary>
-public class WallWithGapWorldSegment : WorldSegment, IGapWorldSegment
+public class WallWithAsymmetricGapWorldSegment : WorldSegment, IGapWorldSegment
 {
     public Room MainRoom { get; }
     public Room ConnectedRoom { get; }
@@ -22,7 +22,7 @@ public class WallWithGapWorldSegment : WorldSegment, IGapWorldSegment
 
     public override Theme Theme => new UpstairsHallTheme();
 
-    public WallWithGapWorldSegment()
+    public WallWithAsymmetricGapWorldSegment()
     {
         // Main room: 10x3x10
         MainRoom = new Room(this, width: 10f, height: 3f, depth: 10f, theme: Theme);
@@ -33,18 +33,12 @@ public class WallWithGapWorldSegment : WorldSegment, IGapWorldSegment
         ConnectedRoom = new Room(this, width: 2f, height: 3f, depth: 2f, theme: Theme);
         ConnectedRoom.Tag = "ConnectedRoom";
 
-        // Connect rooms - this creates a gap in the north wall
-        MainRoom.AddConnectingRoom(ConnectedRoom, Side.North, placement: 0.5f);
+        // this will leave the east side with not enough space for a decal
+        MainRoom.AddConnectingRoom(new RoomConnection(MainRoom, ConnectedRoom, Side.North, HAlign.Right, -0.3f));
 
-        // Calculate gap boundaries (where the connection is)
-        // The connection is centered at 50% of the wall (placement: 0.5f)
-        // ConnectedRoom is 2 units wide
-        var roomWestEdge = MainRoom.GetSide(Side.West);
-        var roomWidth = MainRoom.Width;
-        var centerX = roomWestEdge + (roomWidth * 0.5f);
-        
-        GapStartX = centerX - 1.0f; // Half of ConnectedRoom width
-        GapEndX = centerX + 1.0f;   // Half of ConnectedRoom width
+        var roomEastEdge = MainRoom.GetSide(Side.East);
+        GapStartX = roomEastEdge - 0.3f - 2f;
+        GapEndX = roomEastEdge - 0.3f;
 
         AddChild(new WallDecalStamp());
 

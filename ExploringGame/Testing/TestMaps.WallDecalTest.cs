@@ -25,21 +25,31 @@ public static partial class TestMaps
         var decalStamp = new WallDecalStamp();
         worldSegment.AddChild(decalStamp);
 
-        // Create wall decals on each wall (using Left, Top, Right, Bottom)
-        // North wall (facing into room from -Z)
-        var northDecal = new WallDecal(room, Side.North, new Placement2D(1, 1.5f, 3, 0.5f)); // 2 wide, 1 tall
+        // Create wall decals on each wall using center UV positions
+        // (0,0) = center of wall, positive U = right, positive V = up
+        
+        // North wall - decal at UV (0, 0.5) - center horizontally, slightly up
+        var northDecal = new WallDecal(room, Side.North, new Vector2(0, 0.5f));
+        northDecal.Width = 2f;
+        northDecal.Height = 1f;
         room.AddChild(northDecal);
 
-        // South wall
-        var southDecal = new WallDecal(room, Side.South, new Placement2D(2, 2.5f, 3.5f, 1.0f)); // 1.5 wide, 1.5 tall
+        // South wall - decal at UV (-1, 1) - left side, upper region
+        var southDecal = new WallDecal(room, Side.South, new Vector2(-1, 1));
+        southDecal.Width = 1.5f;
+        southDecal.Height = 1.5f;
         room.AddChild(southDecal);
 
-        // East wall
-        var eastDecal = new WallDecal(room, Side.East, new Placement2D(3, 2.5f, 5, 0.5f)); // 2 wide, 2 tall
+        // East wall - decal at UV (0, -0.5) - center horizontally, lower region
+        var eastDecal = new WallDecal(room, Side.East, new Vector2(0, -0.5f));
+        eastDecal.Width = 2f;
+        eastDecal.Height = 2f;
         room.AddChild(eastDecal);
 
-        // West wall
-        var westDecal = new WallDecal(room, Side.West, new Placement2D(1, 2.5f, 4, 1.5f)); // 3 wide, 1 tall
+        // West wall - decal at UV (1.5, 0) - right side, centered vertically
+        var westDecal = new WallDecal(room, Side.West, new Vector2(1.5f, 0));
+        westDecal.Width = 3f;
+        westDecal.Height = 1f;
         room.AddChild(westDecal);
 
         return worldSegment;

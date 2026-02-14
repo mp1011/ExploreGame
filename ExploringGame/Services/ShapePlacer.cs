@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
 using Microsoft.Xna.Framework;
@@ -86,36 +87,36 @@ public class WallDecalShapePlacer : ShapePlacer
     {
         random ??= new Random();
         
-        // Get quad bounds in world space
-        var quadMinX = quad.Vertices.Min(v => v.X);
-        var quadMaxX = quad.Vertices.Max(v => v.X);
-        var quadMinY = quad.Vertices.Min(v => v.Y);
-        var quadMaxY = quad.Vertices.Max(v => v.Y);
+        // Get the U and V axes for this wall orientation
+        var (axisU, axisV) = quad.Side.GetAxisUV();
+        
+        // Get quad bounds in world space along the U and V axes
+        var quadMinU = quad.Vertices.Min(v => v.AxisValue(axisU));
+        var quadMaxU = quad.Vertices.Max(v => v.AxisValue(axisU));
+        var quadMinV = quad.Vertices.Min(v => v.AxisValue(axisV));
+        var quadMaxV = quad.Vertices.Max(v => v.AxisValue(axisV));
         
         // Get decal dimensions
         float decalWidth = _wallDecal.Width;
         float decalHeight = _wallDecal.Height;
         
         // Calculate valid placement area (with padding from edges)
-        float xMin = quadMinX + (decalWidth / 2f) + padding;
-        float xMax = quadMaxX - (decalWidth / 2f) - padding;
-        float yMin = quadMinY + (decalHeight / 2f) + padding;
-        float yMax = quadMaxY - (decalHeight / 2f) - padding;
+        float uMin = quadMinU + (decalWidth / 2f) + padding;
+        float uMax = quadMaxU - (decalWidth / 2f) - padding;
+        float vMin = quadMinV + (decalHeight / 2f) + padding;
+        float vMax = quadMaxV - (decalHeight / 2f) - padding;
 
-        // Random position within quad
-        float decalCenterX = (float)(xMin + random.NextDouble() * (xMax - xMin));
-        float decalCenterY = (float)(yMin + random.NextDouble() * (yMax - yMin));
+        // Random position within quad along U and V axes (world space)
+        float decalWorldU = (float)(uMin + random.NextDouble() * (uMax - uMin));
+        float decalWorldV = (float)(vMin + random.NextDouble() * (vMax - vMin));
 
-        // Convert to wall-relative coordinates (relative to room's west and bottom sides)
-        float wallLeft = decalCenterX - (decalWidth / 2f) - quad.Room.GetSide(Side.West);
-        float wallRight = decalCenterX + (decalWidth / 2f) - quad.Room.GetSide(Side.West);
-        float wallBottom = decalCenterY - (decalHeight / 2f) - quad.Room.GetSide(Side.Bottom);
-        float wallTop = decalCenterY + (decalHeight / 2f) - quad.Room.GetSide(Side.Bottom);
+        // Convert from world space to wall-space UV (relative to room center)
+        float centerU = decalWorldU - quad.Room.Position.AxisValue(axisU);
+        float centerV = decalWorldV - quad.Room.Position.Y; // V is always Y axis
 
-        var placement = new Placement2D(wallLeft, wallTop, wallRight, wallBottom);
         _wallDecal.WallSide = quad.Side;
-        _wallDecal.Placement = placement;
-        
+        //  _wallDecal.CenterUV = new Vector2(centerU, centerV);
+        _wallDecal.CenterUV = new Vector2(0, 0); // running an experiment where decal is always in the center of the quad
         return this;
     }
 }

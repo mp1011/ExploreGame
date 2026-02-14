@@ -1,3 +1,4 @@
+using ExploringGame.GameDebug;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
@@ -5,7 +6,7 @@ namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 /// <summary>
 /// Interface for Light Spirit phase behavior handlers
 /// </summary>
-public interface IPhaseHandler
+public interface IPhaseHandler : IDebugControllable
 {
     /// <summary>
     /// Updates the phase behavior
