@@ -59,7 +59,9 @@ public class WallDecal : StampedShape<WallDecalStamp>
             case Side.South:
                 // South wall: U=X (but mirrored), V=Y
                 position.Z = Parent.GetSide(Side.South);
-                position.X = roomPos.X - _centerUV.X; // Mirror X for south
+                //   position.X = roomPos.X - _centerUV.X; // Mirror X for south
+                // do we want to mirror, or should the signs of U,V match the original axis?
+                position.X = roomPos.X + _centerUV.X; 
                 position.Y = roomPos.Y + _centerUV.Y;
                 yaw = (float)Math.PI; // Face -Z (into room)
                 break;
@@ -75,7 +77,9 @@ public class WallDecal : StampedShape<WallDecalStamp>
             case Side.West:
                 // West wall: U=Z (but mirrored), V=Y
                 position.X = Parent.GetSide(Side.West);
-                position.Z = roomPos.Z - _centerUV.X; // Mirror Z for west
+                // position.Z = roomPos.Z - _centerUV.X; // Mirror Z for west
+                // see mirroring comment above
+                position.Z = roomPos.Z + _centerUV.X;
                 position.Y = roomPos.Y + _centerUV.Y;
                 yaw = (float)Math.PI * 0.5f; // Face +X (into room)
                 break;
@@ -85,9 +89,6 @@ public class WallDecal : StampedShape<WallDecalStamp>
         }
 
         Position = position;
-        Rotation = new Rotation(yaw, 0, 0);
-        
-        // Depth stays constant
-        Depth = 0.01f;
+        Rotation = new Rotation(yaw, 0, 0);      
     }
 }

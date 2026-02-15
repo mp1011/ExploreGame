@@ -50,5 +50,6 @@ public class GateMark : WallDecal
     {
         _pointLights = pointLights;
         MainTexture = new TextureInfo(Color.Red, TextureKey.Wall);
+        Size = new Vector3(1.0f, 0.1f, 1.0f);
     }
 }

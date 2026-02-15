@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
@@ -26,18 +27,20 @@ public class WallDecalTestController : IActiveObject
     private readonly List<TestWallDecal> _placedDecals = new();
     private readonly Random _random = new(42); // Fixed seed for deterministic tests
     private readonly LoadedLevelData _loadedLevelData;
+    private readonly Side _testWallSide;
 
     private int _decalsToPlace = 100;
     private bool _initialized = false;
 
     public IReadOnlyList<TestWallDecal> PlacedDecals => _placedDecals;
 
-    public WallDecalTestController(IGapWorldSegment gapWorldSegment, PointLights pointLights, LoadedLevelData loadedLevelData)
+    public WallDecalTestController(IGapWorldSegment gapWorldSegment, PointLights pointLights, LoadedLevelData loadedLevelData, Side testWallSide = Side.North)
     {
         _gapWorldSegment = gapWorldSegment;
         _worldSegment = gapWorldSegment as WorldSegment;
         _pointLights = pointLights;
         _loadedLevelData = loadedLevelData;
+        _testWallSide = testWallSide;
     }
 
     public void Initialize()
@@ -52,14 +55,17 @@ public class WallDecalTestController : IActiveObject
         var gapStart = _gapWorldSegment.GapStartX;
         var gapEnd = _gapWorldSegment.GapEndX;
 
-        var decalLeftX = decal.Position.X - (decal.Width / 2f);
-        var decalRightX = decal.Position.X + (decal.Width / 2f);
+        // Determine which axis to check based on wall orientation
+        var (axisU, _) = sourceQuad.Side.GetAxisUV();
+        float decalCenterU = decal.Position.AxisValue(axisU);
+        float decalLeftU = decalCenterU - (decal.Width / 2f);
+        float decalRightU = decalCenterU + (decal.Width / 2f);
 
         // Calculate actual overlap amount
         float overlapAmount = 0f;
-        if (decalRightX > gapStart && decalLeftX < gapEnd)
+        if (decalRightU > gapStart && decalLeftU < gapEnd)
         {
-            overlapAmount = Math.Min(decalRightX, gapEnd) - Math.Max(decalLeftX, gapStart);
+            overlapAmount = Math.Min(decalRightU, gapEnd) - Math.Max(decalLeftU, gapStart);
         }
 
         // Only fail if overlap exceeds epsilon tolerance
@@ -67,9 +73,9 @@ public class WallDecalTestController : IActiveObject
         {
             // DECAL OVERLAPS GAP - throw detailed exception
             var errorMsg = $"❌ INVALID DECAL PLACEMENT DETECTED!\n" +
-                $"Decal Position: X={decal.Position.X:F2}, Y={decal.Position.Y:F2}, Z={decal.Position.Z:F2}\n" +
-                $"Decal X bounds: [{decalLeftX:F2} to {decalRightX:F2}]\n" +
-                $"Gap X bounds: [{gapStart:F2} to {gapEnd:F2}]\n" +
+                $"Decal Position: {decal.Position}\n" +
+                $"Decal U bounds: [{decalLeftU:F2} to {decalRightU:F2}] (axis: {axisU})\n" +
+                $"Gap U bounds: [{gapStart:F2} to {gapEnd:F2}]\n" +
                 $"Overlap amount: {overlapAmount:F4} (tolerance: {epsilon:F4})\n" +
                 $"Source Quad vertices:\n";
             
@@ -78,7 +84,7 @@ public class WallDecalTestController : IActiveObject
                 errorMsg += $"  V{i}: {sourceQuad.Vertices[i]}\n";
             }
             
-            errorMsg += $"Source Quad X range: [{sourceQuad.Vertices.Min(v => v.X):F2} to {sourceQuad.Vertices.Max(v => v.X):F2}]\n";
+            errorMsg += $"Source Quad U range: [{sourceQuad.Vertices.Min(v => v.AxisValue(axisU)):F2} to {sourceQuad.Vertices.Max(v => v.AxisValue(axisU)):F2}]\n";
             errorMsg += $"Source Quad dimensions: {sourceQuad.Width:F2} x {sourceQuad.Height:F2}";
 
             throw new InvalidOperationException(errorMsg);
@@ -94,11 +100,11 @@ public class WallDecalTestController : IActiveObject
         if (_placedDecals.Any())
             return;
 
-        // Extract quads from north wall
-        var quads = ExtractQuadsFromNorthWall();
+        // Extract quads from test wall
+        var quads = ExtractQuadsFromWall(_testWallSide);
 
-        System.Console.WriteLine($"Extracted {quads.Count} quads from north wall");
-        System.Console.WriteLine($"Gap boundaries: X=[{_gapWorldSegment.GapStartX:F2} to {_gapWorldSegment.GapEndX:F2}]");
+        System.Console.WriteLine($"Extracted {quads.Count} quads from {_testWallSide} wall");
+        System.Console.WriteLine($"Gap boundaries: U=[{_gapWorldSegment.GapStartX:F2} to {_gapWorldSegment.GapEndX:F2}]");
 
         // Try to place decals
         for (int i = 0; i < _decalsToPlace && quads.Count > 0; i++)
@@ -111,10 +117,11 @@ public class WallDecalTestController : IActiveObject
             {
                 System.Console.WriteLine($"  V{v}: {quad.Vertices[v]}");
             }
-            System.Console.WriteLine($"Quad X range: [{quad.Vertices.Min(v => v.X):F2} to {quad.Vertices.Max(v => v.X):F2}]");
+            var (axisU, _) = _testWallSide.GetAxisUV();
+            System.Console.WriteLine($"Quad U range: [{quad.Vertices.Min(v => v.AxisValue(axisU)):F2} to {quad.Vertices.Max(v => v.AxisValue(axisU)):F2}] (axis: {axisU})");
 
             // Create decal with dummy center position, then use OnQuad to set actual position
-            var decal = new TestWallDecal(_gapWorldSegment.MainRoom, Side.North, Vector2.Zero, _pointLights);
+            var decal = new TestWallDecal(_gapWorldSegment.MainRoom, _testWallSide, Vector2.Zero, _pointLights);
             decal.Place().OnQuad(quad, _random);
 
             // IMMEDIATE VALIDATION - throw exception if decal overlaps gap
@@ -127,14 +134,14 @@ public class WallDecalTestController : IActiveObject
             var levelData = _loadedLevelData.FindLevelDataForWorldSegment(_worldSegment);
             _loadedLevelData.AddWallDecal(_worldSegment, decal);
 
-
-            System.Console.WriteLine($"✓ Decal placed at X={decal.Position.X:F2}");
+            var (checkAxisU, _) = _testWallSide.GetAxisUV();
+            System.Console.WriteLine($"✓ Decal placed at U={decal.Position.AxisValue(checkAxisU):F2} (axis: {checkAxisU})");
         }
 
         _initialized = true;
     }
 
-    private List<WallQuad> ExtractQuadsFromNorthWall()
+    private List<WallQuad> ExtractQuadsFromWall(Side wallSide)
     {
         var quads = new List<WallQuad>();
         
@@ -143,10 +150,10 @@ public class WallDecalTestController : IActiveObject
         if (!shapesAndTriangles.TryGetValue(_gapWorldSegment.MainRoom, out var triangles))
             return quads;
 
-        var northTriangles = triangles.Where(t => t.Side == Side.North).ToArray();
+        var wallTriangles = triangles.Where(t => t.Side == wallSide).ToArray();
 
-        return new QuadExtractor().ExtractQuadsFromTriangles(_gapWorldSegment.MainRoom, Side.North, northTriangles)
-            .Where(p => p.Width >= 1.0f && p.Height >= 1.0f).ToList();      
+        return new QuadExtractor().ExtractQuadsFromTriangles(_gapWorldSegment.MainRoom, wallSide, wallTriangles)
+            .Where(p => p.Width >= 0.6f && p.Height >= 0.6f).ToList();      
     }
 }
 

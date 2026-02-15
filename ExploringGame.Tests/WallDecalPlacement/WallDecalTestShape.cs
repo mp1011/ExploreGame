@@ -17,6 +17,7 @@ public interface IGapWorldSegment
     Room MainRoom { get; }
     float GapStartX { get; }
     float GapEndX { get; }
+    Side TestWallSide { get; }
 }
 
 /// <summary>
@@ -39,7 +40,11 @@ public class WallDecalTestShape : PlaceableShape, IControllable
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        Controller = new WallDecalTestController(_worldSegment, serviceContainer.Get<PointLights>(), serviceContainer.Get<LoadedLevelData>());
+        Controller = new WallDecalTestController(
+            _worldSegment, 
+            serviceContainer.Get<PointLights>(), 
+            serviceContainer.Get<LoadedLevelData>(),
+            _worldSegment.TestWallSide);
         return Controller;
     }
 

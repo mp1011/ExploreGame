@@ -110,13 +110,12 @@ public class WallDecalShapePlacer : ShapePlacer
         float decalWorldU = (float)(uMin + random.NextDouble() * (uMax - uMin));
         float decalWorldV = (float)(vMin + random.NextDouble() * (vMax - vMin));
 
-        // Convert from world space to wall-space UV (relative to room center)
-        float centerU = decalWorldU - quad.Room.Position.AxisValue(axisU);
-        float centerV = decalWorldV - quad.Room.Position.Y; // V is always Y axis
-
+        var decalWorldPosition = new Vector2(decalWorldU, decalWorldV);
+        var wallCenter = new Vector2(quad.Room.Position.AxisValue(axisU), quad.Room.Position.AxisValue(axisV));
+       
         _wallDecal.WallSide = quad.Side;
-        //  _wallDecal.CenterUV = new Vector2(centerU, centerV);
-        _wallDecal.CenterUV = new Vector2(0, 0); // running an experiment where decal is always in the center of the quad
+        _wallDecal.CenterUV = decalWorldPosition - wallCenter;
+
         return this;
     }
 }

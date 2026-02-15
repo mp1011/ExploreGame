@@ -16,6 +16,7 @@ public class WallWithGapWorldSegment : WorldSegment, IGapWorldSegment
     public Room ConnectedRoom { get; }
     public float GapStartX { get; }
     public float GapEndX { get; }
+    public Side TestWallSide => Side.North;
     public WallDecalTestShape TestShape { get; }
 
     public override Vector3 DefaultPlayerStart => new Vector3(0, 0f, 0);
