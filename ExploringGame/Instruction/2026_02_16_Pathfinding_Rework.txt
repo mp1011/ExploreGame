@@ -1,0 +1,57 @@
+# GOAL
+To make our existing pathfinding code more generally usable, specifically for tracing the "path" of light through rooms.
+
+# CONTEXT
+- copilot, please give a quick summary of each of these files and add it to this document
+- Logics\Pathfinding\PathFinder.cs
+	- A service used by entities to navigate through the world. 
+	- It takes a physics service, waypoint graph, and a collidable entity. 
+	- It maintains a primary target and current target, and uses A* pathfinding through waypoints to navigate around obstacles when direct line-of-sight isn't available. 
+	- Includes stuck detection and random walk behavior when the entity gets stuck.
+- Logics\Pathfinding\Waypoint.cs
+	- Represents a single node in the pathfinding graph. 
+	- Each waypoint is associated with a Room and stores its own list of neighbor waypoints. 
+	- Contains an IsTargeted boolean for visualization/debugging. 
+	- Inherits from PlaceableShape but renders nothing (empty triangle array). 
+	- Waypoints form the graph structure by each maintaining their own neighbor list.
+- Logics\Pathfinding\WaypointGraph.cs
+	- Builds and manages the waypoint graph for a WorldSegment. 
+	- Creates one waypoint per room and connects them based on room connections. 
+	- Provides pathfinding via A* algorithm and helper methods to find waypoints by position. 
+	- Currently owns the graph structure through a dictionary of rooms to waypoints.
+
+# ACCEPTANCE CRITERIA
+1. The concept of a "Room Graph", independent of waypoints or physics entities, is available from LoadedLevelData
+2. The existing "Waypoint" and "WaypointGraph" classes are refactored to make use of this graph
+3. All existing unit tests pass
+4. Placeholder classes are put in place for future lighting work (details of the classes to be determined)
+
+# TECHNICAL DETAILS
+1. room graph knows which Rooms are connected to which other Room
+2. the class can also have methods for finding a path between two rooms
+3. RoomGraph should be initialized in the LoadSegment method of LoadedLevelData
+4. The resulting RoomGraph should be exposed as a property of LoadedLevelData
+4. RoomGraph will encompass ALL loaded WorldSegments, so there will only be a single instance available at a time
+
+# QUESTIONS AND ANSWERS
+1.	Room Connections: I see RoomConnections is used to build the graph. Does this already contain the information we'll need for lighting (connection size, doors)? Can I see the Room and RoomConnection classes?
+	- it does not contain all the information we need. A Room Graph will only tell us what rooms are connected to what other rooms. 
+	- we will need a new data structure for the fields specifically needed for lighting or for physical pathfinding
+2.	RoomGraph vs WaypointGraph: Should the new RoomGraph be:
+•	A completely separate class that WaypointGraph will reference?
+•	Or should we rename/refactor WaypointGraph to be the RoomGraph (since it already has room-to-room mapping)?
+	- the only hard requirement is RoomGraph be a separate class. WaypointGraph could become a class that uses RoomGraph, or you may choose another approach.
+3.	LoadedLevelData: Where does this class exist? Should the RoomGraph be created there and passed to WaypointGraph, or should WaypointGraph create it internally?
+	- this class can be dependency injected
+	- its definition is in LevelControl\LoadedLevelData.cs
+4.	Backwards Compatibility: Do you want the existing PathFinder API to remain unchanged (so existing entity navigation code doesn't break), with only the internal implementation being refactored?
+	- as long as the unit tests pass, take whatever approach you think is best
+5.	IsTargeted: This appears to be for debug visualization. Should this remain on Waypoint or move elsewhere?
+	- this is specific to Waypoints and shouldn't be part of the general RoomGraph
+
+# ROUND 2 REFACTORS
+- although improved, there is still too much logic in WaypointGraph and Waypoint.
+- the solution is for us to create a new class called AnnotatedGraph<T> where T is a generic type representing that data to "annotate" the graph
+- this new class create a dictionary between Room and T, relying on the RoomGraph for the graph structure without having to replicate it
+- two AnnotatedGraphs will be needed, one for waypoints and one for lighting information.
+- don't worry about the lighting one, just the one for waypoints

@@ -59,7 +59,6 @@ public class GateMarkManager
                 var quads = new QuadExtractor().ExtractQuadsFromTriangles(room, side, sideTriangles)
                     .Where(q => q.Width >= 1.0f && q.Height >= 1.0f);
 
-                // quads = quads.Where(q => q.Room is LivingRoom && q.Side == Side.South).ToArray();
                 _availableQuads.AddRange(quads);
             }
         }

@@ -14,23 +14,30 @@ The Light Spirit (abbreviated as LS in this document) has the following attribut
 	- LS does not move and remains fixed at a location far underneath the play area
 	- LS health slowly increments until it reaches 100
 	- this phase lasts a minimum of 60 seconds, but will not end until the health reaches 100
-2. Break-in Phase
+2. Break-in Phase  (DONE)
 	- once every 30 seconds, a "GateMark" will appear on a random wall (see "GateMark" section below for details)
 	- at this same interval, any existing Gatemark (besides the one recently created) will have a 10% chance to become "Active"
 	- once a Gatemark is active, the entity will slowly move in a straight line toward the closest Active Gatemark
 	- in this phase, the entity has no collision with the world and cannot be seen by the player
 	- when the entity reaches an Active Gatemark, the gatemark vanishes and the LS enters the Half-Presence phase
 3. Half-Presence Phase
-	- the entity is invisible but does collide with the world and player, although it will only push the player
-	- in this phase, the entity seeks out the player using the PathFindger logic that we tested on the TestEntity
-	- the entities speed matches the player's walking speed, but the player is able to run faster
-	- although mostly invisible, the entity's presence can be noted by the fact that any active lights will become slightly brighter in its presence
-	- the LS will lose health proportional to the amount of light it is exposted to (less light means more damage)
-		- this is calculated by comparing its distance to the PointLights in the world, taking into account the range limits
-	- the player will slowly lose health proportional to the distance to LS, but it will be small enough that the player will be able to escape
-	- this phase ends when either of the following occurs
-		- its health gets below 10
-		- every 60 seconds there will be a 40% chance of entering the next phase
+	- note: pick reasonable defaults for all values. We'll tweak them later.
+	3.a - Visibility and Collision
+		- the LS is positioned in front of the Active Gatemark from the last phase, so it will be within the room.
+		- the entity is invisible but does collide with the world and player, although it will only push the player
+		- to improve debugging, let the user toggle visibility of of the LS in this phase using DebugUpdate. Bind this to the PgDown key
+	3.b - influence on lights
+		- PointLights should get brighter in proportion to how close they are to the LS.
+	3.c - pathfinding
+		- start with the same pathfinding logic we used for the TestEntity.
+	3.d - harm from darkness
+		- to be determined
+	3.e - harm to player
+		- to be determined
+	3.f - transition
+		- this phase ends when either of the following occurs
+			- its health gets below 10
+			- every 60 seconds there will be a 40% chance of entering the next phase
 4. Full-Presence Phase
 	- the entity is now visible
 	- it still hunts the player as in the previous phase, but its speed is now faster than even the player's running speed

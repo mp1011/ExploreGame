@@ -3,14 +3,12 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using System;
-using System.Collections.Generic;
 
 namespace ExploringGame.Logics.Pathfinding;
 
 public class Waypoint : PlaceableShape
 {
     public Room Room { get; }
-    public List<Waypoint> Neighbors { get; } = new();
 
     public bool IsTargeted { get; set; }
 
@@ -21,14 +19,6 @@ public class Waypoint : PlaceableShape
         Width = 0.2f;
         Height = 0.2f;
         Depth = 0.2f;
-    }
-
-    public void AddNeighbor(Waypoint neighbor)
-    {
-        if (!Neighbors.Contains(neighbor))
-        {
-            Neighbors.Add(neighbor);
-        }
     }
 
     public override ViewFrom ViewFrom => ViewFrom.None;

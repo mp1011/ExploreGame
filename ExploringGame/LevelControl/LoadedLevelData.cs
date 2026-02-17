@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
+using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -21,6 +22,7 @@ public class LoadedLevelData
     private readonly LoadedTextureSheets _loadedTextureSheets;
 
     public List<LevelData> LoadedSegments { get; } = new();
+    public RoomGraph RoomGraph { get; private set; }
 
     public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
         LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer)
@@ -51,11 +53,13 @@ public class LoadedLevelData
             _serviceContainer.BindSingleton(nextSegment, nextSegment.GetType());
         }
 
+        BuildRoomGraph(addedSegments);
+
         foreach (var addedSegment in addedSegments)
         {
             // Create waypoint graph before building so DebugMarkers are included
-            addedSegment.WaypointGraph = new Logics.Pathfinding.WaypointGraph(addedSegment);
-            
+            addedSegment.WaypointGraph = new WaypointGraph(addedSegment, RoomGraph);
+
             var triangles = addedSegment.Build((QualityLevel)8); //todo, quality level
             var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
             var activeObjects = _serviceContainer.CreateControllers(addedSegment.TraverseAllChildren());
@@ -66,6 +70,33 @@ public class LoadedLevelData
 
             LoadedSegments.Add(newLevelData);
         }       
+    }
+
+    private void BuildRoomGraph(List<WorldSegment> segments)
+    {
+        if (RoomGraph == null)
+        {
+            RoomGraph = new RoomGraph();
+        }
+
+        foreach (var segment in segments)
+        {
+            var rooms = segment.TraverseAllChildren().OfType<Room>().ToList();
+
+            foreach (var room in rooms)
+            {
+                RoomGraph.AddRoom(room);
+
+                foreach (var connection in room.RoomConnections)
+                {
+                    var connectedRoom = connection.GetOtherRoom(room);
+                    if (connectedRoom != null)
+                    {
+                        RoomGraph.AddConnection(room, connectedRoom);
+                    }
+                }
+            }
+        }
     }
     
     public void SwapActive()

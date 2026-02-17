@@ -1,0 +1,71 @@
+# GOAL
+- create a simple, non-realistic lighting system that solves these two purposes:
+	1. Used by the pixel shaders to create an atmospheric user experience
+	2. Used by the "Light Spirit" to approximate the brightness/darkness of its location
+
+# WANTS
+- favor an indie aesthetic over realism, going for an "entry-level" indie game look.
+- realistic shadows are not required, if we want shadows at all we can try some approaches to fake them, but they will not be handled by the light directly
+- in other words, no ray-tracing
+
+# HIGH-LEVEL CONCEPT
+1. Room-based lighting, where each Room has a calculated "Light" value
+	- rooms that contain light sources will get this value the light sources directly (precise algorithm to be determined, simple addition may be too much)
+	- using the connections between rooms, we contribute some light value to neighboring rooms, with some decay
+		- decay value can be a property of the size of the connection compared to the size of the wall
+		- light propogation thus "fans out" until the contribution reaches some minimum
+		- this can also be modified by doors, so a closed door will block most light and and open will block less, interopolating based on the door's position
+2. The pixel shaders will use this information to light the scene
+	- the room's own light level will contribute to the ambient light level of the room, using MonoGame's BasicEffect
+	- a room with light sources(or sufficiently close to a light source) will have an additional shader pass to add extra light
+		- this can use a similar approach as we're currently doing for PointLightEffect
+3. The Light Spirit will get its light value by taking the light level of the room its in. If it has direct line of sight with a light source, we can also use its straight line distance
+
+# TECHNICAL TASKS (high-level)
+1. Make the Waypoint and Pathfinding more generally usable (DONE)
+2. Write a function to compute the light level for a room
+3. Write code to determine when to recalculate a room's light value
+4. Adjust the renderer so each room gets its own shader pass
+5. Adjust the shaders to handle ambient and point lights
+6. Add code to the LightSpiritController to estimate the amount of light in its location
+
+## Write a function to compute the light level for a room
+- this has two main parts:
+	1. calculate the light contribution from each light source
+	2. combine those results together into a single light value
+- to get the light contribution from a light source:
+	1. find the shortest path in the RoomGraph between the room and the light source's room
+	2. start at the room of the light source, using the "Intensity" of the light as the initial value
+	3. walk through the path. For each edge, compute how large the connection is compared to the size of the wall and use that to form a decay value
+	4. if the room contains a door, scale this drop based on the door's position
+		- if fully open, scale * 1.0 (no change)
+		- if fully closed, scale * 0.1 (large drop)
+		- otherwise interpolate between these values based on the door's position
+	5. if the contribution drops below some minimum threshold, then we know this light does not contribute anything to this room so we can stop
+- to combine the contributions from multiple light sources
+	- i don't know what algorithm we should use here. Simply adding all the contributions together could be too bright. 
+	- however a simple average could be too dim
+	- ideally, the brightness should increase as there are more lights, but less than simply summing up all the contributions
+
+## Write code to determine when to recalculate a room's light value
+- we need to recalculate the lights in the following scenarios:
+	1. when a WorldSegment is loaded
+	2. when a light is turned on or off
+	3. when a door is opened or closed
+- currently these are the only actions that will recalculate light
+- to avoid having to recalculate ALL lights, each room should separately keep track of the light contribution from each light source
+
+## Adjust the renderer so each room gets its own shader pass
+- we currently do one rendering pass for all static shapes
+- but now that we want per-room lighting, we need each room to get its own pass, similar to what we do with dynamic shapes
+- this means we have to be more careful about setting shader variables, since that is now being called many times every frame
+	
+
+## Adjust the shaders to handle ambient and point lights
+TBD
+
+# DEFINITIONS
+1. What is a "light value"?
+	- each light has a float "Intensity" as well as a color. The meaning of this number is not yet defined. 
+	Q for copilot: is a range of 0.0 to 1.0 sufficient, or should we go for a larger range between "total darkness" and "blindingly bright"?
+	- lights DO have color which does get passed into the shader for each PointLight
