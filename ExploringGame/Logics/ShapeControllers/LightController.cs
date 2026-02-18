@@ -26,11 +26,17 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
         set
         {
             if (value && !_light.On)
+            {
+                // Use default range (will be handled by room-based lighting instead)
+                var defaultRangeMin = LightPosition + new Vector3(-50f, -10f, -50f);
+                var defaultRangeMax = LightPosition + new Vector3(50f, 10f, 50f);
+
                 _light = _pointLights.AddLight(LightPosition,
                     color: Color.White,
                     intensity: Shape.Intensity,
-                    rangeMin: Shape.RangeMin,
-                    rangeMax: Shape.RangeMax);
+                    rangeMin: defaultRangeMin,
+                    rangeMax: defaultRangeMax);
+            }
             else if (!value && _light.On)
             {
                 _pointLights.RemoveLight(_light.Index);

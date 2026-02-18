@@ -1,6 +1,7 @@
 using ExploringGame.Entities;
 using ExploringGame.GameDebug;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Controllers.LightSpiritPhases;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
@@ -73,25 +74,63 @@ public class LightSpiritController : IActiveObject, IDebugControllable
         {
             // Exit old phase
             _phaseHandlers[_currentPhase].OnExit();
-            
+
             // Enter new phase
             _currentPhase = LightSpirit.Phase;
             _phaseHandlers[_currentPhase].OnEnter();
         }
 
-        // Update debug display with phase info
+        // Calculate light level at Light Spirit's location
+        float lightLevel = CalculateLightLevel();
+
+        // Update debug display with phase info and light level
         var phaseDebug = _phaseHandlers[_currentPhase].DebugDescribe();
         if (string.IsNullOrEmpty(phaseDebug))
         {
-            GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health}";
+            GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health} | Light: {lightLevel:F2}";
         }
         else
         {
-            GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health} | {phaseDebug}";
+            GameDebug.Debug.Watch2 = $"LS Phase: {LightSpirit.Phase} | Health: {LightSpirit.Health} | Light: {lightLevel:F2} | {phaseDebug}";
         }
 
         // Update current phase handler
         _phaseHandlers[_currentPhase].Update(gameTime);
+    }
+
+    /// <summary>
+    /// Calculate the light level at the Light Spirit's current position
+    /// </summary>
+    private float CalculateLightLevel()
+    {
+        // Get the room the Light Spirit is in
+        var room = _loadedLevelData.RoomGraph?.GetAllRooms()
+            .FirstOrDefault(r => r.ContainsPoint(LightSpirit.Position));
+
+        if (room == null || _loadedLevelData.LightingCalculator == null)
+            return 0f;
+
+        // Get the room's base light level
+        if (!_loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
+            return 0f;
+
+        float roomLight = lightData.GetTotalLight();
+
+        // Check for direct line of sight to any light sources
+        var lightSources = lightData.GetLightSources().Where(ls => ls.On);
+        foreach (var light in lightSources)
+        {
+            // Simple ray check - could use physics if needed
+            // For now, just use distance-based bonus for lights in same room
+            float distance = Vector3.Distance(LightSpirit.Position, light.LightPosition);
+            if (distance < 10f) // Within 10 units
+            {
+                float directBonus = light.Intensity / System.Math.Max(1f, distance / 5f);
+                roomLight = System.Math.Max(roomLight, directBonus);
+            }
+        }
+
+        return roomLight;
     }
 
     public void DebugUpdate(IPlayerInput playerInput)

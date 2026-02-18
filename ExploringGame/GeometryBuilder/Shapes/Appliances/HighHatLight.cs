@@ -4,29 +4,34 @@ using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
-public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>, IOnOff
+public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>, IOnOff, ILightSource
 {
-    private bool _initialState;
 
     public override Theme Theme => new Theme(Color.White);
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
     public Side ParentCutoutSide => Side.Top;
 
-    public float Intensity => 0.6f;
+    public float Intensity => LightIntensity.IndoorLight;
+
+    public Color Color => Color.White;
+
+    public Room Room { get; }
+
+    public Vector3 LightPosition => Position + new Vector3(0, -Height / 2f, 0);
+
+    public event EventHandler<LightStateChangedEventArgs> StateChanged;
 
     Triangle[] ICutoutShape.Build() => BuildInternal(QualityLevel.Basic);
 
-    public Vector3 RangeMin => new Vector3(Position.X - 50f, Position.Y - Parent.Height - 0.5f, Position.Z - 50f);
-
-    public Vector3 RangeMax => new Vector3(Position.X + 50f, Position.Y + 0.5f, Position.Z + 50f);
-
     public HighHatLight(Room room, float x, float z, bool initialState=false)
     {
-        _initialState = initialState;
+        Room = room;
+        _on = initialState;
         X = room.X + x;
         Y = room.Y;
         Z = room.Z + z;
@@ -43,9 +48,26 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
     {
         return TriangleMaker.BuildCylinder(this, detail: 20, Axis.Y);
     }
-    
+
     public LightController Controller { get; private set; }
-    public bool On { get => Controller.On; set => Controller.On = value; }
+
+
+    private bool _on;
+    public bool On 
+    { 
+        get => Controller?.On ?? _on; 
+        set 
+        {
+            var oldValue = On;
+            _on = value;
+
+            if (Controller != null)
+                Controller.On = value;
+
+            if (oldValue != value)
+                StateChanged?.Invoke(this, new LightStateChangedEventArgs(value));
+        } 
+    }
 
     public StateKey StateKey => StateKey.None;
 
@@ -54,7 +76,7 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
         var controller = serviceContainer.Get<LightController>();
         controller.Shape = this;
         Controller = controller;
-        On = _initialState;
+        On = _on; // Apply the stored state
         return controller;
     }
 }

@@ -1,0 +1,190 @@
+using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
+using ExploringGame.Logics;
+using ExploringGame.Tests.TestHelpers;
+using System.Linq;
+using Xunit;
+
+namespace ExploringGame.Tests;
+
+public class RoomLightingTests
+{
+    private void SetAllLights(LoadedLevelData loadedLevelData, Func<ILightSource,bool> shouldTurnOn)
+    {
+        var allLights = loadedLevelData.LoadedSegments
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+            .OfType<ILightSource>()
+            .ToArray();
+
+        foreach (var light in allLights)
+            light.On = shouldTurnOn(light);
+    }
+
+    [Fact]
+    public void AllRoomsHaveMinimalLightWithNoLightsOn()
+    {
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+
+        // Act - Run game and turn off lights after initialization
+        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        {
+            // On first update after initialization, turn off all lights in ALL segments
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                SetAllLights(g.GetService<LoadedLevelData>(), light => false);
+                return TestResult.CONTINUE;
+            }
+
+            // After a few frames, check the light levels
+            if (gameTime.TotalGameTime.TotalMilliseconds > 200)
+            {
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+                var rooms = loadedLevelData.RoomGraph.GetAllRooms().ToList();
+
+                // All rooms should have minimal light level (0.0)
+                foreach (var room in rooms)
+                {
+                    if (loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
+                    {
+                        var lightLevel = lightData.GetTotalLight();
+                        Assert.Equal(0.0f, lightLevel);
+                    }
+                }
+
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
+
+        // Additional assertion after game completes
+        var loadedLevelData = game.GetService<LoadedLevelData>();
+        Assert.NotNull(loadedLevelData);
+        Assert.NotNull(loadedLevelData.LightingCalculator);
+    }
+
+    [Fact]
+    public void RoomWithLightSourceHasFullIntensity()
+    {
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+
+        // Act - Turn off all lights, then turn on only BasementOffice lights
+        bool lightsConfigured = false;
+        Room basementOffice = null;
+
+        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        {
+            var loadedLevelData = g.GetService<LoadedLevelData>();
+            basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
+
+            // On first update, configure lights
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                SetAllLights(loadedLevelData, l=> l.Room is BasementOffice);
+
+                lightsConfigured = true;
+                return TestResult.CONTINUE;
+            }
+
+            // After lights are configured, check the levels
+            if (lightsConfigured && gameTime.TotalGameTime.TotalMilliseconds > 200)
+            {
+                if (loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(basementOffice, out var lightData))
+                {
+                    var lightLevel = lightData.GetTotalLight();
+
+                    // BasementOffice should have light from its sources
+                    Assert.True(lightLevel > 0.0f, $"Expected BasementOffice light level > 0, got {lightLevel}");
+                }
+
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
+    }
+
+    [Fact]
+    public void LightDecreasesAcrossConnectedRoomChain()
+    {
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+
+        // Act - Test light propagation through: BasementOffice -> Basement -> UpstairsHall -> Kitchen -> LivingRoom
+        bool lightsConfigured = false;
+        Room[] roomChain = null;
+
+        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        {
+            // On first update, configure lights
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+
+                SetAllLights(loadedLevelData, l => l.Room is BasementOffice);
+
+                // Find rooms in the chain by type
+                var allRooms = loadedLevelData.LoadedSegments
+                    .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+                    .OfType<Room>()
+                    .ToList();
+
+                roomChain = new Room[]
+                {
+                    allRooms.OfType<BasementOffice>().First(),
+                    allRooms.OfType<Basement>().First(),
+                    allRooms.OfType<UpstairsHall>().First(),
+                    allRooms.OfType<Kitchen>().First(),
+                    allRooms.OfType<LivingRoom>().First()
+                };
+
+                lightsConfigured = true;
+                return TestResult.CONTINUE;
+            }
+
+            // After lights are configured, check the light propagation
+            if (lightsConfigured && gameTime.TotalGameTime.TotalMilliseconds > 200)
+            {
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+                var lightCalc = loadedLevelData.LightingCalculator;
+
+                // Get light levels for each room in the chain
+                var lightLevels = roomChain.Select(room =>
+                {
+                    lightCalc.RoomLightGraph.TryGet(room, out var lightData);
+                    return lightData?.GetTotalLight() ?? 0f;
+                }).ToArray();
+
+                // Assert: Each room should have less light than the previous room
+                for (int i = 0; i < lightLevels.Length - 1; i++)
+                {
+                    var currentRoom = roomChain[i].GetType().Name;
+                    var nextRoom = roomChain[i + 1].GetType().Name;
+                    var currentLight = lightLevels[i];
+                    var nextLight = lightLevels[i + 1];
+
+                    Assert.True(currentLight >= nextLight,
+                        $"{currentRoom} ({currentLight:F2}) should be >= {nextRoom} ({nextLight:F2})");
+                }
+
+                // BasementOffice should have light
+                Assert.True(lightLevels[0] > 0.0f, $"BasementOffice should have light, got {lightLevels[0]}");
+
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
+    }
+}

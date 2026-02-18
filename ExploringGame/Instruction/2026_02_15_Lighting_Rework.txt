@@ -23,11 +23,11 @@
 
 # TECHNICAL TASKS (high-level)
 1. Make the Waypoint and Pathfinding more generally usable (DONE)
-2. Write a function to compute the light level for a room
-3. Write code to determine when to recalculate a room's light value
-4. Adjust the renderer so each room gets its own shader pass
-5. Adjust the shaders to handle ambient and point lights
-6. Add code to the LightSpiritController to estimate the amount of light in its location
+2. Write a function to compute the light level for a room (DO NOW)
+3. Write code to determine when to recalculate a room's light value (DO NOW)
+4. Adjust the renderer so each room gets its own shader pass (DO LATER)
+5. Adjust the shaders to handle ambient and point lights (DO LATER)
+6. Add code to the LightSpiritController to estimate the amount of light in its location (DO NOW)
 
 ## Write a function to compute the light level for a room
 - this has two main parts:
@@ -43,9 +43,7 @@
 		- otherwise interpolate between these values based on the door's position
 	5. if the contribution drops below some minimum threshold, then we know this light does not contribute anything to this room so we can stop
 - to combine the contributions from multiple light sources
-	- i don't know what algorithm we should use here. Simply adding all the contributions together could be too bright. 
-	- however a simple average could be too dim
-	- ideally, the brightness should increase as there are more lights, but less than simply summing up all the contributions
+	- use an "Additive Blending" technique, sorted by intensity
 
 ## Write code to determine when to recalculate a room's light value
 - we need to recalculate the lights in the following scenarios:
@@ -69,3 +67,35 @@ TBD
 	- each light has a float "Intensity" as well as a color. The meaning of this number is not yet defined. 
 	Q for copilot: is a range of 0.0 to 1.0 sufficient, or should we go for a larger range between "total darkness" and "blindingly bright"?
 	- lights DO have color which does get passed into the shader for each PointLight
+
+# TASK QUESTIONS
+Task: Write a function to compute the light level for a room
+Questions:
+1.	Light Source API: What class/interface represents a light source? How do we find all lights in the world? Is there a LightSource class or similar?
+	- Currently, the only light source class is HighHatLight
+	- we'd actually like to make an interface for light sources, capturing Intensity, Color, LightPosition, and On (or off)
+2.	Connection/Wall Size: How do we measure "connection size compared to wall size"? Is this data in RoomConnection? Do we need to add fields to RoomGraphEdge?
+	- measure the axis length of that wall, compared to the axis length of the connection.
+	- rooms can be assumed to be axis aligned
+3.	Minimum Threshold: What's the specific cutoff value? (e.g., 0.01?)
+	- specific value isn't important but make sure its a constant so we can tweak it
+4.	Intensity Range: Your question - 0.0-1.0 or larger? I'd suggest 0.0-10.0 for flexibility (1.0 = normal, >1.0 = bright, <1.0 = dim)
+	- this is good. Let's scale it like so:
+	0 - complete darkness
+	5.0 - normal light level
+	10.0 - extremely bright room
+
+Task: Write code to determine when to recalculate a room's light value
+1.	Light On/Off Events: Is there an event system? Do lights have an OnStateChanged event? Or do we poll?
+	- we don't have events, but that would be ideal for this situation. Polling is not ideal.
+2.	Door Events: Same question - is there a Door class with events/callbacks?
+	- let's use events for this as well
+3.	Where to store: Should RoomLightData live in the AnnotatedGraph<RoomLightData> we mentioned, or somewhere else?
+	- yes, let's store it in the AnnotatedGraph<RoomLightData> for easy access during rendering and by the Light Spirit
+
+Task: Add code to the LightSpiritController to estimate the amount of light in its location
+Questions:
+1.	LightSpiritController: Can I see this class to understand its current structure?
+	- Logics\Controllers\LightSpiritController.cs
+2.	Line of Sight: How to implement? Use the existing HasLineOfSight(ICollidable, ICollidable)? Check against walls? What about doors?
+	- use the existing HasLineOfSight function, doors are not treated differently.

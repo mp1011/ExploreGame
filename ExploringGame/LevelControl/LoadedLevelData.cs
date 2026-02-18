@@ -1,7 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
-using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;
@@ -20,18 +19,22 @@ public class LoadedLevelData
     private readonly SetupColliderBodies _setupColliderBodies;
     private readonly Physics _physics;
     private readonly LoadedTextureSheets _loadedTextureSheets;
+    private readonly RoomLightingCalculator _lightingCalculator;
 
     public List<LevelData> LoadedSegments { get; } = new();
     public RoomGraph RoomGraph { get; private set; }
+    public RoomLightingCalculator LightingCalculator => _lightingCalculator;
 
     public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
-        LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer)
+        LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer, 
+        RoomLightingCalculator lightingCalculator)
     {
         _game = game;
         _physics = physics;
         _loadedTextureSheets = loadedTextureSheets;
         _serviceContainer = serviceContainer;
         _setupColliderBodies = setupColliderBodies;
+        _lightingCalculator = lightingCalculator;
     }
 
     public void Update(GameTime gameTime)
@@ -54,6 +57,10 @@ public class LoadedLevelData
         }
 
         BuildRoomGraph(addedSegments);
+
+        // Initialize lighting with the room graph and segments
+        _lightingCalculator.SetRoomGraph(RoomGraph);
+        _lightingCalculator.AddSegments(addedSegments);
 
         foreach (var addedSegment in addedSegments)
         {
@@ -98,7 +105,7 @@ public class LoadedLevelData
             }
         }
     }
-    
+
     public void SwapActive()
     {
         //if (Next == null)

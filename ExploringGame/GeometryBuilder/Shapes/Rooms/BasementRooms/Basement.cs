@@ -7,7 +7,7 @@ using ExploringGame.Texture;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 {
-    internal class Basement : Room
+    public class Basement : Room
     {
         private BasementOffice _office;
 

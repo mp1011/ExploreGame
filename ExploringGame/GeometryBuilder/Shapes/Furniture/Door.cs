@@ -6,6 +6,7 @@ using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
@@ -25,9 +26,27 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
     public override IColliderMaker ColliderMaker => new DoorColliderMaker(this);
     public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
     public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
-    public bool Open { get; set; }
+
+    private bool _open;
+    public bool Open 
+    { 
+        get => _open;
+        set
+        {
+            if (_open != value)
+            {
+                _open = value;
+                PositionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
 
     public StateKey StateKey { get; }
+
+    /// <summary>
+    /// Raised when the door's open/closed position changes
+    /// </summary>
+    public event EventHandler PositionChanged;
 
     public Door(Shape parent, Side wallSide, HAlign hingePosition, DoorDirection doorDirection, StateKey stateKey)
     {

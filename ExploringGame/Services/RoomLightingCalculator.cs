@@ -1,0 +1,243 @@
+using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
+using ExploringGame.Logics.Pathfinding;
+using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ExploringGame.Services;
+
+/// <summary>
+/// Calculates room lighting based on light sources and room connectivity
+/// </summary>
+public class RoomLightingCalculator
+{
+    private const float MinimumContribution = 0.01f;
+    private const float DoorClosedScale = 0.1f;
+    private const float DoorOpenScale = 1.0f;
+
+    private RoomGraph _roomGraph;
+    private AnnotatedGraph<RoomLightData> _roomLightGraph;
+    private readonly List<ILightSource> _allLightSources = new();
+
+    public RoomLightingCalculator()
+    {
+    }
+
+    public AnnotatedGraph<RoomLightData> RoomLightGraph => _roomLightGraph;
+
+    /// <summary>
+    /// Set the room graph and initialize the lighting data
+    /// </summary>
+    public void SetRoomGraph(RoomGraph roomGraph)
+    {
+        _roomGraph = roomGraph;
+        _roomLightGraph = new AnnotatedGraph<RoomLightData>(roomGraph);
+
+        // Initialize lighting data for all rooms
+        foreach (var room in _roomGraph.GetAllRooms())
+        {
+            _roomLightGraph.Add(room, new RoomLightData(room));
+        }
+    }
+
+    /// <summary>
+    /// Add segments to the lighting system and calculate initial lighting
+    /// </summary>
+    public void AddSegments(List<WorldSegment> segments)
+    {
+        // Find all light sources in the segments
+        foreach (var segment in segments)
+        {
+            var lightSources = segment.TraverseAllChildren().OfType<ILightSource>().ToList();
+
+            foreach (var light in lightSources)
+            {
+                if (!_allLightSources.Contains(light))
+                {
+                    _allLightSources.Add(light);
+
+                    // Subscribe to state changes
+                    light.StateChanged += OnLightStateChanged;
+                }
+            }
+
+            // Find all doors and subscribe to position changes
+            var doors = segment.TraverseAllChildren().OfType<Door>().ToList();
+            foreach (var door in doors)
+            {
+                door.PositionChanged += OnDoorPositionChanged;
+            }
+        }
+
+        // Calculate initial lighting for all rooms
+        foreach (var room in _roomGraph.GetAllRooms())
+        {
+            RecalculateRoomLight(room, _allLightSources);
+        }
+    }
+
+    private void OnLightStateChanged(object sender, LightStateChangedEventArgs e)
+    {
+        if (sender is ILightSource lightSource)
+        {
+            RecalculateLightSource(lightSource);
+        }
+    }
+
+    private void OnDoorPositionChanged(object sender, EventArgs e)
+    {
+        // When a door changes position, recalculate all rooms
+        // (Could be optimized to only recalculate affected rooms)
+        foreach (var room in _roomGraph.GetAllRooms())
+        {
+            RecalculateRoomLight(room, _allLightSources);
+        }
+    }
+
+    /// <summary>
+    /// Calculate light contribution from a specific light source to a specific room
+    /// </summary>
+    public float CalculateLightContribution(ILightSource lightSource, Room targetRoom)
+    {
+        if (!lightSource.On)
+            return 0f;
+
+        // Find the room containing this light
+        var lightRoom = FindRoomContainingPoint(lightSource.LightPosition);
+        if (lightRoom == null)
+            return 0f;
+
+        // If light is in the same room, full contribution
+        if (lightRoom == targetRoom)
+            return lightSource.Intensity;
+
+        // Find path from light's room to target room
+        var roomPath = _roomGraph.FindPath(lightRoom, targetRoom);
+        if (roomPath == null || roomPath.Count == 0)
+            return 0f;
+
+        // Walk the path and calculate decay
+        float contribution = lightSource.Intensity;
+
+        for (int i = 0; i < roomPath.Count - 1; i++)
+        {
+            var currentRoom = roomPath[i];
+            var nextRoom = roomPath[i + 1];
+
+            // Find the connection between these rooms
+            var connection = FindConnection(currentRoom, nextRoom);
+            if (connection == null)
+                continue;
+
+            // Calculate decay based on connection size vs wall size
+            float decayFactor = CalculateDecayFactor(currentRoom, nextRoom, connection);
+            contribution *= decayFactor;
+
+            // Check for door and apply door scaling
+            var door = FindDoorBetweenRooms(currentRoom, nextRoom);
+            if (door != null)
+            {
+                float doorScale = door.Open ? DoorOpenScale : DoorClosedScale;
+                contribution *= doorScale;
+            }
+
+            // Stop if contribution is too small
+            if (contribution < MinimumContribution)
+                return 0f;
+        }
+
+        return contribution;
+    }
+
+    /// <summary>
+    /// Recalculate lighting for a specific room based on all light sources
+    /// </summary>
+    public void RecalculateRoomLight(Room room, IEnumerable<ILightSource> allLights)
+    {
+        if (!_roomLightGraph.TryGet(room, out var lightData))
+            return;
+
+        foreach (var light in allLights)
+        {
+            float contribution = CalculateLightContribution(light, room);
+            if (contribution > 0)
+            {
+                lightData.SetLightContribution(light, contribution);
+            }
+            else
+            {
+                lightData.RemoveLightContribution(light);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Recalculate all rooms affected by a specific light source
+    /// </summary>
+    public void RecalculateLightSource(ILightSource lightSource)
+    {
+        foreach (var room in _roomGraph.GetAllRooms())
+        {
+            if (_roomLightGraph.TryGet(room, out var lightData))
+            {
+                float contribution = CalculateLightContribution(lightSource, room);
+                if (contribution > 0)
+                {
+                    lightData.SetLightContribution(lightSource, contribution);
+                }
+                else
+                {
+                    lightData.RemoveLightContribution(lightSource);
+                }
+            }
+        }
+    }
+
+    private float CalculateDecayFactor(Room from, Room to, RoomConnection connection)
+    {
+        // Calculate the size of the connection compared to the wall size
+        var wallLength = from.SideLength(connection.Side);
+        var connectionSize = to.SideLength(connection.Side.Opposite());
+
+        // Use the smaller of the two rooms' dimensions for the connection
+        var effectiveConnectionSize = System.Math.Min(connectionSize, to.SideLength(connection.Side.Opposite()));
+
+        // Ratio of connection to wall (larger opening = less decay)
+        float ratio = effectiveConnectionSize / wallLength;
+
+        // Decay inversely proportional to ratio (bigger opening = less decay)
+        // This gives values between ~0.5 and 1.0 for typical connections
+        return System.Math.Max(0.5f, ratio);
+    }
+
+    private RoomConnection FindConnection(Room room1, Room room2)
+    {
+        return room1.RoomConnections.FirstOrDefault(rc =>
+            rc.GetOtherRoom(room1) == room2);
+    }
+
+    private Door FindDoorBetweenRooms(Room room1, Room room2)
+    {
+        // Search for a door that is a child of either room
+        var doorsInRoom1 = room1.TraverseAllChildren().OfType<Door>();
+        var doorsInRoom2 = room2.TraverseAllChildren().OfType<Door>();
+
+        // Check if any door connects these rooms (simplified - may need refinement)
+        return doorsInRoom1.Concat(doorsInRoom2).FirstOrDefault();
+    }
+
+    private Room FindRoomContainingPoint(Vector3 position)
+    {
+        foreach (var room in _roomGraph.GetAllRooms())
+        {
+            if (room.ContainsPoint(position))
+                return room;
+        }
+        return null;
+    }
+}

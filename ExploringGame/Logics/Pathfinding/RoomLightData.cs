@@ -1,20 +1,18 @@
 using ExploringGame.GeometryBuilder.Shapes;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.Logics.Pathfinding;
 
 /// <summary>
-/// Placeholder for future lighting work.
-/// Will store lighting information for a room, including
+/// Stores lighting information for a room, including
 /// light contributions from various light sources.
 /// </summary>
 public class RoomLightData
 {
     public Room Room { get; }
 
-    // TODO: Add light intensity, contributions from each light source, etc.
-
-    private Dictionary<object, float> _lightContributions = new();
+    private Dictionary<ILightSource, float> _lightContributions = new();
 
     public RoomLightData(Room room)
     {
@@ -22,19 +20,45 @@ public class RoomLightData
     }
 
     /// <summary>
-    /// Placeholder method for storing light contribution from a specific source
+    /// Stores light contribution from a specific source
     /// </summary>
-    public void SetLightContribution(object lightSource, float contribution)
+    public void SetLightContribution(ILightSource lightSource, float contribution)
     {
         _lightContributions[lightSource] = contribution;
     }
 
     /// <summary>
-    /// Placeholder method for getting total light value for this room
+    /// Removes a light source's contribution
     /// </summary>
-    public float GetTotalLight()
+    public void RemoveLightContribution(ILightSource lightSource)
     {
-        // TODO: Implement proper light combination algorithm
-        return 0f;
+        _lightContributions.Remove(lightSource);
+    }
+
+    /// <summary>
+    /// Gets total light value for this room using additive blending
+    /// </summary>
+    public float GetTotalLight(float maxBrightness = 10.0f)
+    {
+        if (!_lightContributions.Any())
+            return 0f;
+
+        var sortedContributions = _lightContributions.Values.OrderByDescending(x => x);
+        float brightness = 0f;
+
+        foreach (var contribution in sortedContributions)
+        {
+            brightness += contribution * (1 - brightness / maxBrightness);
+        }
+
+        return brightness;
+    }
+
+    /// <summary>
+    /// Gets all light sources contributing to this room
+    /// </summary>
+    public IEnumerable<ILightSource> GetLightSources()
+    {
+        return _lightContributions.Keys;
     }
 }
