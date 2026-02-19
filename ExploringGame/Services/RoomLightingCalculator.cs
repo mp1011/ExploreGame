@@ -240,4 +240,22 @@ public class RoomLightingCalculator
         }
         return null;
     }
+
+    /// <summary>
+    /// Gets all distinct lighting groups from rooms. TODO: Implement in Task 1
+    /// </summary>
+    public IEnumerable<Room> GetDistinctLightingGroups()
+    {
+        // TODO: Implement in Task 1 - get distinct LightingGroup values from all rooms
+        return Enumerable.Empty<Room>();
+    }
+
+    /// <summary>
+    /// Gets RoomLightData for a specific lighting group. TODO: Implement in Task 1
+    /// </summary>
+    public RoomLightData GetLightDataForGroup(Room lightingGroup)
+    {
+        // TODO: Implement in Task 1 - return light data based on LightingGroup rather than individual room
+        return null;
+    }
 }

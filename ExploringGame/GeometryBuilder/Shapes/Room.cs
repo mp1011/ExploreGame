@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
@@ -47,6 +48,8 @@ public class Room : Shape
         WorldSegment = worldSegment;
         worldSegment.AddChild(this);
     }
+
+    public virtual Room LightingGroup => this;
 
     public virtual void LoadChildren()
     {
@@ -124,21 +127,7 @@ public class Room : Shape
 
     public Room Copy(float? height = null, float? width = null, float? depth = null)
     {
-        var room = new Room(WorldSegment);
-        room._theme = Theme;
-        room.Position = Position;
-        room.Size = Size;
-
-        if(height.HasValue)
-            room.Height = height.Value;
-
-        if (width.HasValue)
-            room.Width = width.Value;
-
-        if (depth.HasValue)
-            room.Depth = depth.Value;
-
-        return room;
+        return new RoomPart(this, height, width, depth);
     }
 
     public override string ToString() => Tag ?? GetType().Name;

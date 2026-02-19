@@ -1,0 +1,25 @@
+# GOAL
+Update the rendering and shader to take into account the computer light levels of each room
+
+# EXISTING IMPLEMENTATION
+- Content\PointLightEffect.fx
+	- shader with support for PointLights
+- Rendering\PointLights.cs
+	- managed a list of lights to be given to the shader
+- Rendering\RenderEffect.cs
+	- has two implementations of a shader, one using BasicEffect and one using the custom shader
+- Rendering\ShapeBuffer.cs
+	- contains the vertex buffers for a single call to the shader
+- Services\ShapeBufferCreator.cs
+	- responsible for deciding which ShapeBuffers to create from a WorldSegment
+
+# FIRST PHASE TASKS
+1. Change RoomLightingCalculator to light is calculated based on "LightingGroup" rather than Room
+	- this is done by using the LightingGroup property of Room and taking all distinct values
+2. In ShapeBufferCreator, we want one ShapeBuffer per LightingGroup and Texture Sheet
+	- the shapes in this group are the Room itself, and Room that has it as its "LightingGroup", and all of their children
+	- in addition, we'll want one final ShapeBuffer for any remaining static shapes that aren't already in a group
+3. To ShapeBufferCreator, add RoomLightData
+4. Change RoomLightData so the total light level is a property in memory, which can be updated by explicitly calling a "RecalculateLightLevel()" method
+	- RecalculateLightLevel should only be called when a light is turned on or off, a door is opened or closed
+

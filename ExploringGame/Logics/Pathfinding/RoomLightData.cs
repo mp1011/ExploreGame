@@ -55,6 +55,19 @@ public class RoomLightData
     }
 
     /// <summary>
+    /// Gets cached total light value. TODO: Implement caching in Task 4
+    /// </summary>
+    public float TotalLight => GetTotalLight();
+
+    /// <summary>
+    /// Recalculates and updates the cached total light level. TODO: Implement in Task 4
+    /// </summary>
+    public void RecalculateLightLevel()
+    {
+        // TODO: Implement caching logic in Task 4
+    }
+
+    /// <summary>
     /// Gets all light sources contributing to this room
     /// </summary>
     public IEnumerable<ILightSource> GetLightSources()
