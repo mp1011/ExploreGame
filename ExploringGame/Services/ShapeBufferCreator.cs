@@ -1,6 +1,8 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Rendering;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,13 +17,16 @@ internal class ShapeBufferCreator
     private readonly LoadedTextureSheets _textureSheets;
     private GraphicsDevice _graphicsDevice;
     private Dictionary<Shape, Triangle[]> _shapeTriangles;
+    private AnnotatedGraph<RoomLightData> _roomLightGraph;
 
     public ShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles,
-        LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice)
+        LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice,
+        AnnotatedGraph<RoomLightData> roomLightGraph = null)
     {
         _textureSheets = loadedTextureSheets;
         _graphicsDevice = graphicsDevice;
         _shapeTriangles = shapeTriangles;
+        _roomLightGraph = roomLightGraph;
     }
 
     private readonly VertexBufferBuilder _vertexBufferBuilder = new VertexBufferBuilder();
@@ -37,7 +42,7 @@ internal class ShapeBufferCreator
     {
         var activeObjects = worldSegment.TraverseAllChildren().OfType<IPlaceableObject>().ToArray();
         var activeObjectShapes = activeObjects.SelectMany(p => p.Children).ToArray();
-        
+
         // Get all shapes except active object children
         var allShapes = worldSegment.TraverseAllChildren()
             .Except(activeObjectShapes)
@@ -45,18 +50,82 @@ internal class ShapeBufferCreator
             .ToArray();
 
         // Separate ShapeStamps and StampedShapes from regular static shapes
-        // StampedShapes are handled at runtime by LevelData.AddStampedShape()
         var shapeStamps = allShapes.OfType<ShapeStamp>().ToArray();
         var stampedShapes = allShapes.OfType<StampedShape>().ToArray();
-        var staticShapes = allShapes.Except(shapeStamps).Except(stampedShapes);
-        
-        // Group regular static shapes by texture
-        var staticShapeGroups = staticShapes.GroupBy(p => p.Theme.TextureSheetKey);
+        var staticShapes = allShapes.Except(shapeStamps).Except(stampedShapes).ToArray();
 
-        // Create buffers for grouped static shapes
-        foreach (var shapeGroup in staticShapeGroups)
+        // Get all rooms in the world segment
+        var allRooms = worldSegment.TraverseAllChildren().OfType<Room>().ToArray();
+
+        // Group static shapes by LightingGroup and Texture
+        // Only group Room shapes and their direct static children (not StampedShapes, ShapeStamps, or active objects)
+        var shapesGroupedByLightingGroup = new Dictionary<(Room LightingGroup, TextureSheetKey Texture), List<Shape>>();
+        var remainingStaticShapes = new List<Shape>();
+
+        foreach (var shape in staticShapes)
         {
-            yield return CreateShapeBuffer(worldSegment, shapeGroup.ToArray(), shapeGroup.Key);
+            // Only group Room shapes and their immediate furniture/fixture children
+            // Exclude dynamic shapes, stamped shapes, and shapes with special placement logic
+            Room parentRoom = shape as Room;
+            bool shouldGroup = false;
+
+            if (parentRoom != null)
+            {
+                // The shape itself is a Room, so group it
+                shouldGroup = true;
+            }
+            else
+            {
+                // Check if this is a simple child of a room (like furniture)
+                var parent = shape.Parent as Room;
+                if (parent != null)
+                {
+                    // Only group if it's a direct child of a room and not a special type
+                    // Exclude PlaceableObjects and their children (they're handled separately)
+                    var isActiveObjectChild = activeObjects.Any(ao => ao.Self == shape || ao.Children.Contains(shape));
+                    shouldGroup = !isActiveObjectChild;
+                }
+            }
+
+            if (shouldGroup && parentRoom == null)
+            {
+                parentRoom = shape.Parent as Room;
+            }
+
+            if (shouldGroup && parentRoom != null)
+            {
+                var lightingGroup = parentRoom.LightingGroup;
+                var textureKey = shape.Theme.TextureSheetKey;
+                var key = (lightingGroup, textureKey);
+
+                if (!shapesGroupedByLightingGroup.ContainsKey(key))
+                {
+                    shapesGroupedByLightingGroup[key] = new List<Shape>();
+                }
+                shapesGroupedByLightingGroup[key].Add(shape);
+            }
+            else
+            {
+                // Shape is not part of any room or shouldn't be grouped
+                remainingStaticShapes.Add(shape);
+            }
+        }
+
+        // Create buffers for shapes grouped by LightingGroup and Texture
+        foreach (var group in shapesGroupedByLightingGroup)
+        {
+            var lightingGroup = group.Key.LightingGroup;
+            var textureKey = group.Key.Texture;
+            var shapes = group.Value.ToArray();
+
+            yield return CreateShapeBuffer(worldSegment, shapes, textureKey, lightingGroup);
+        }
+
+        // Create buffers for remaining static shapes grouped by texture only
+        var remainingShapeGroups = remainingStaticShapes.GroupBy(p => p.Theme.TextureSheetKey);
+        foreach (var shapeGroup in remainingShapeGroups)
+        {
+            yield return CreateShapeBuffer(worldSegment, shapeGroup.ToArray(), shapeGroup.Key, lightingGroup: null);
         }
 
         Dictionary<Type, ShapeBuffer> shapeStampBuffers = new();
@@ -87,19 +156,20 @@ internal class ShapeBufferCreator
     private ShapeBuffer CreateStampShapeBuffer(StampedShape stampedShape, Dictionary<Type, ShapeBuffer> shapeStampBuffers)
     {
         var buffer = stampedShape.GetStampBuffer(shapeStampBuffers);
-        return new ShapeBuffer(stampedShape, buffer.VertexBuffer, buffer.IndexBuffer, buffer.TriangleCount, buffer.Texture, buffer.RasterizerState);
+        return new ShapeBuffer(stampedShape, buffer.VertexBuffer, buffer.IndexBuffer, buffer.TriangleCount, buffer.Texture, buffer.RasterizerState, buffer.LightingGroup);
     }
 
     private ShapeBuffer CreateShapeBuffer(
         Shape shape,
         Shape[] children,
-        TextureSheetKey key)
+        TextureSheetKey key,
+        Room lightingGroup = null)
     {
         var worldSegmentTriangles = new Dictionary<Shape, Triangle[]>();
         foreach (var child in children)
             worldSegmentTriangles[child] = _shapeTriangles[child];
 
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
-        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState);
+        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup);
     }
 }

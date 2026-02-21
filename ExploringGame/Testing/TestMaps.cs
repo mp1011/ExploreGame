@@ -27,10 +27,8 @@ public static partial class TestMaps
 
     public static WorldSegment RaycastTest()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var world = new WorldSegment();
+        var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var pillar = simpleRoom.AddChild(new Box(simpleRoom.Theme));
@@ -45,9 +43,6 @@ public static partial class TestMaps
         testEntity.MoveSpeed = 0f;
         testEntity.Z -= 3.0f;
         testEntity.X -= 3.0f;
-
-        var world = new WorldSegment();
-        world.AddChild(simpleRoom);
 
         return world;
     }
@@ -210,10 +205,8 @@ public static partial class TestMaps
 
     private static WorldSegment ComplexShapeTest(Func<Shape, Shape> createShape)
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var world = new WorldSegment();
+        var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var shape = simpleRoom.AddChild(createShape(simpleRoom));
@@ -221,15 +214,13 @@ public static partial class TestMaps
         shape.Place().OnFloor();
         shape.Z += 2.0f;
 
-        return new WorldSegment(simpleRoom);
+        return world;
     }
 
     private static WorldSegment PhysicsTest()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 10f;
-        simpleRoom.Height = 8f;
-        simpleRoom.Depth = 10f;
+        var world = new WorldSegment();
+        var simpleRoom = new Room(world, width: 10f, depth: 10f, height: 8f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var test = new PhysicsTestShape();
@@ -238,33 +229,25 @@ public static partial class TestMaps
 
         simpleRoom.AddChild(test);
 
-        var world = new WorldSegment();
-        world.AddChild(simpleRoom);
-
         return world;
     }
 
     private static WorldSegment MotionTest()
     {
-
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var world = new WorldSegment();
+        var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2.0f;
 
         var box = new TestMover();
         simpleRoom.AddChild(box);
 
-        return new WorldSegment(simpleRoom);
+        return world;
     }
 
     private static WorldSegment FurnitureRotateTest()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var ws = new WorldSegment();
+        var simpleRoom = new Room(ws, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var officeDesk = new OfficeDesk(simpleRoom);
@@ -279,8 +262,6 @@ public static partial class TestMaps
 
         officeDesk2.Rotation = new Rotation(0.5f, 0.2f, 0f);
 
-        var ws = new WorldSegment();
-        ws.AddChild(simpleRoom);
         return ws;
     }
 
@@ -294,14 +275,8 @@ public static partial class TestMaps
 
     public static WorldSegment EmptyRoom()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
-        simpleRoom.Y = 2;
-
         var world = new WorldSegment();
-        world.AddChild(simpleRoom);
+        var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 6f, theme: new BasementRoomTheme());
 
         return world;
     }
@@ -375,10 +350,8 @@ public static partial class TestMaps
 
     private static WorldSegment RoomWithFireplace()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var ws = new WorldSegment();
+        var simpleRoom = new Room(ws, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var officeDesk = new OfficeDesk(simpleRoom);
@@ -388,18 +361,13 @@ public static partial class TestMaps
         var fireplace = new ElectricFireplace(simpleRoom);
         fireplace.Place().OnFloor();
         fireplace.Place().OnSideInner(Side.North);
-
-        var ws = new WorldSegment();
-        ws.AddChild(simpleRoom);
         return ws;
     }
 
     private static WorldSegment RoomWithDesk()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var ws = new WorldSegment();
+        var simpleRoom = new Room(ws, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var officeDesk = new OfficeDesk(simpleRoom);
@@ -407,17 +375,13 @@ public static partial class TestMaps
         officeDesk.Place().OnSideInner(Side.North);
         officeDesk.Z += 0.1f;
 
-        var ws = new WorldSegment();
-        ws.AddChild(simpleRoom);
         return ws;
     }
 
     private static WorldSegment FaceCutoutTestRoom()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var world = new WorldSegment();
+        var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var testShape = new FaceCutoutTest();
@@ -426,15 +390,13 @@ public static partial class TestMaps
         testShape.Place().OnFloor();
         testShape.Y += 1.0f;
 
-        return new WorldSegment(simpleRoom);
+        return world;
     }
 
     private static Shape MengerSpongeRoom()
     {
-        var simpleRoom = new SimpleRoom(new BasementRoomTheme());
-        simpleRoom.Width = 16f;
-        simpleRoom.Height = 4f;
-        simpleRoom.Depth = 8f;
+        var world = new WorldSegment();
+        var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
         simpleRoom.Y = 2;
 
         var sponge = new MengerSponge(new ShapeSplitter());

@@ -22,6 +22,7 @@ public class RoomLightingCalculator
 
     private RoomGraph _roomGraph;
     private AnnotatedGraph<RoomLightData> _roomLightGraph;
+    private Dictionary<Room, RoomLightData> _lightingGroupData = new();
     private readonly List<ILightSource> _allLightSources = new();
 
     public RoomLightingCalculator()
@@ -38,10 +39,24 @@ public class RoomLightingCalculator
         _roomGraph = roomGraph;
         _roomLightGraph = new AnnotatedGraph<RoomLightData>(roomGraph);
 
-        // Initialize lighting data for all rooms
+        // Initialize lighting data grouped by LightingGroup
+        _lightingGroupData.Clear();
         foreach (var room in _roomGraph.GetAllRooms())
         {
-            _roomLightGraph.Add(room, new RoomLightData(room));
+            var lightingGroup = room.LightingGroup;
+
+            // Skip rooms with null lighting groups
+            if (lightingGroup == null)
+                continue;
+
+            // Create one RoomLightData per LightingGroup
+            if (!_lightingGroupData.ContainsKey(lightingGroup))
+            {
+                _lightingGroupData[lightingGroup] = new RoomLightData(lightingGroup);
+            }
+
+            // Still add to the room light graph for backward compatibility
+            _roomLightGraph.Add(room, _lightingGroupData[lightingGroup]);
         }
     }
 
@@ -79,6 +94,15 @@ public class RoomLightingCalculator
         {
             RecalculateRoomLight(room, _allLightSources);
         }
+
+        // Recalculate cached light levels for all lighting groups
+        foreach (var lightingGroup in _lightingGroupData.Keys)
+        {
+            if (_lightingGroupData.TryGetValue(lightingGroup, out var lightData))
+            {
+                lightData.RecalculateLightLevel();
+            }
+        }
     }
 
     private void OnLightStateChanged(object sender, LightStateChangedEventArgs e)
@@ -86,6 +110,15 @@ public class RoomLightingCalculator
         if (sender is ILightSource lightSource)
         {
             RecalculateLightSource(lightSource);
+
+            // Recalculate cached light levels for all affected lighting groups
+            foreach (var lightingGroup in _lightingGroupData.Keys)
+            {
+                if (_lightingGroupData.TryGetValue(lightingGroup, out var lightData))
+                {
+                    lightData.RecalculateLightLevel();
+                }
+            }
         }
     }
 
@@ -96,6 +129,15 @@ public class RoomLightingCalculator
         foreach (var room in _roomGraph.GetAllRooms())
         {
             RecalculateRoomLight(room, _allLightSources);
+        }
+
+        // Recalculate cached light levels for all lighting groups
+        foreach (var lightingGroup in _lightingGroupData.Keys)
+        {
+            if (_lightingGroupData.TryGetValue(lightingGroup, out var lightData))
+            {
+                lightData.RecalculateLightLevel();
+            }
         }
     }
 
@@ -242,20 +284,21 @@ public class RoomLightingCalculator
     }
 
     /// <summary>
-    /// Gets all distinct lighting groups from rooms. TODO: Implement in Task 1
+    /// Gets all distinct lighting groups from rooms.
     /// </summary>
     public IEnumerable<Room> GetDistinctLightingGroups()
     {
-        // TODO: Implement in Task 1 - get distinct LightingGroup values from all rooms
-        return Enumerable.Empty<Room>();
+        return _lightingGroupData.Keys;
     }
 
     /// <summary>
-    /// Gets RoomLightData for a specific lighting group. TODO: Implement in Task 1
+    /// Gets RoomLightData for a specific lighting group.
     /// </summary>
     public RoomLightData GetLightDataForGroup(Room lightingGroup)
     {
-        // TODO: Implement in Task 1 - return light data based on LightingGroup rather than individual room
-        return null;
+        if (lightingGroup == null)
+            return null;
+
+        return _lightingGroupData.TryGetValue(lightingGroup, out var lightData) ? lightData : null;
     }
 }

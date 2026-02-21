@@ -13,6 +13,7 @@ public class RoomLightData
     public Room Room { get; }
 
     private Dictionary<ILightSource, float> _lightContributions = new();
+    private float _cachedTotalLight = 0f;
 
     public RoomLightData(Room room)
     {
@@ -55,16 +56,16 @@ public class RoomLightData
     }
 
     /// <summary>
-    /// Gets cached total light value. TODO: Implement caching in Task 4
+    /// Gets cached total light value.
     /// </summary>
-    public float TotalLight => GetTotalLight();
+    public float TotalLight => _cachedTotalLight;
 
     /// <summary>
-    /// Recalculates and updates the cached total light level. TODO: Implement in Task 4
+    /// Recalculates and updates the cached total light level.
     /// </summary>
     public void RecalculateLightLevel()
     {
-        // TODO: Implement caching logic in Task 4
+        _cachedTotalLight = GetTotalLight();
     }
 
     /// <summary>
