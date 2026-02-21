@@ -28,7 +28,7 @@ public class QuadExtractor
             if (connectedTriangle != null)
             {
                 // Two triangles form a quad
-                var quadVertices = GetQuadVertices(triangle, connectedTriangle);
+                var quadVertices = GetQuadVertices(triangle, connectedTriangle, side);
                 if (quadVertices != null)
                 {
                     quads.Add(new WallQuad(room, side, quadVertices));
@@ -56,7 +56,7 @@ public class QuadExtractor
         return count;
     }
 
-    private Vector3[] GetQuadVertices(Triangle t1, Triangle t2)
+    private Vector3[] GetQuadVertices(Triangle t1, Triangle t2, Side side)
     {
         // Find the 4 unique vertices that form the quad
         var allVertices = t1.Vertices.Concat(t2.Vertices).ToList();
@@ -74,19 +74,26 @@ public class QuadExtractor
             return null; // Not a valid quad
 
         // Order vertices to form a proper quad (clockwise or counter-clockwise)
-        return OrderQuadVertices(uniqueVertices.ToArray());
+        return OrderQuadVertices(uniqueVertices.ToArray(), side);
     }
 
-    private Vector3[] OrderQuadVertices(Vector3[] vertices)
+    private Vector3[] OrderQuadVertices(Vector3[] vertices, Side side)
     {
         // Find center
         var center = (vertices[0] + vertices[1] + vertices[2] + vertices[3]) / 4f;
 
         // Sort vertices by angle around center
+        // Use the correct plane based on wall orientation
         var ordered = vertices.OrderBy(v =>
         {
             var dir = v - center;
-            return Math.Atan2(dir.Y + dir.Z, dir.X + dir.Z);
+            return side switch
+            {
+                Side.North or Side.South => Math.Atan2(dir.Y, dir.X),  // X-Y plane
+                Side.East or Side.West => Math.Atan2(dir.Y, dir.Z),    // Z-Y plane
+                Side.Top or Side.Bottom => Math.Atan2(dir.Z, dir.X),   // X-Z plane
+                _ => Math.Atan2(dir.Y, dir.X)
+            };
         }).ToArray();
 
         return ordered;

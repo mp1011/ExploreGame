@@ -84,12 +84,12 @@ public class TestGame : Game1
                 {
                     case TestResult.PASS:
                         _testPassed = true;
-                        Exit();
+                        _framesRemaining = 0;
                         break;
 
                     case TestResult.FAIL:
                         _testFailureMessage = "Test assertion failed during game execution";
-                        Exit();
+                        _framesRemaining = 0;
                         break;
 
                     case TestResult.CONTINUE:
@@ -101,7 +101,7 @@ public class TestGame : Game1
         catch (Exception ex)
         {
             _testFailureMessage = $"Exception during test execution: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
-            Exit();
+            _framesRemaining = 0;
         }
     }
 

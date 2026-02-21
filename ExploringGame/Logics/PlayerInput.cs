@@ -6,6 +6,7 @@ namespace ExploringGame.Logics;
 
 public enum GameKey
 {
+    None,
     Crouch,
     Run,
     Jump,

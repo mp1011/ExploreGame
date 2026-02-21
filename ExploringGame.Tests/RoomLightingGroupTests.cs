@@ -365,26 +365,30 @@ public class RoomLightingGroupTests
                 {
                     // Get initial cached value
                     var initialLight = lightData.TotalLight;
-                    
-                    // Manually add a light contribution (this would normally happen through calculator)
-                    var lights = loadedLevelData.LoadedSegments
-                        .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
-                        .OfType<ILightSource>()
-                        .FirstOrDefault();
-                    
-                    if (lights != null)
+
+                    // Find a light source that contributes to this room
+                    var lightSources = lightData.GetLightSources().ToList();
+
+                    if (lightSources.Any())
                     {
-                        lightData.SetLightContribution(lights, 5.0f);
-                        
+                        var lightToRemove = lightSources.First();
+
+                        // Remove a light contribution - this changes the underlying data
+                        // but should NOT update the cached value yet
+                        lightData.RemoveLightContribution(lightToRemove);
+
                         // Before recalculation, TotalLight should still be the old cached value
                         var beforeRecalc = lightData.TotalLight;
-                        
+                        Assert.Equal(initialLight, beforeRecalc);
+
                         // After calling RecalculateLightLevel, the cache should update
                         lightData.RecalculateLightLevel();
                         var afterRecalc = lightData.TotalLight;
-                        
-                        // The value should have changed
+
+                        // The value should have changed (should be less now that we removed a light)
                         Assert.NotEqual(beforeRecalc, afterRecalc);
+                        Assert.True(afterRecalc < beforeRecalc, 
+                            $"After removing a light, total light should decrease. Before: {beforeRecalc}, After: {afterRecalc}");
                     }
                 }
                 

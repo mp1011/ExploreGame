@@ -21,6 +21,14 @@ public class MockPlayerInput : IPlayerInput
         _events.Add(new InputEvent(frame, key, true, null));
     }
 
+    public void AddMouseDeltas(int startFrame, int numFrames, Vector2 deltaPerFrame)
+    {
+        for (int i = 0; i < numFrames; i++)
+        {
+            _events.Add(new InputEvent(startFrame + i, GameKey.None, false, deltaPerFrame));
+        }
+    }
+
     public void Update(GameWindow window)
     {
         _currentFrame++;

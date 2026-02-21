@@ -144,7 +144,7 @@ public class WallDecalTestController : IActiveObject
     private List<WallQuad> ExtractQuadsFromWall(Side wallSide)
     {
         var quads = new List<WallQuad>();
-        
+
         // Build room to get triangles
         var shapesAndTriangles = _gapWorldSegment.MainRoom.Build(QualityLevel.Basic);
         if (!shapesAndTriangles.TryGetValue(_gapWorldSegment.MainRoom, out var triangles))
@@ -152,8 +152,46 @@ public class WallDecalTestController : IActiveObject
 
         var wallTriangles = triangles.Where(t => t.Side == wallSide).ToArray();
 
-        return new QuadExtractor().ExtractQuadsFromTriangles(_gapWorldSegment.MainRoom, wallSide, wallTriangles)
-            .Where(p => p.Width >= 0.6f && p.Height >= 0.6f).ToList();      
+        System.Console.WriteLine($"Wall {wallSide} has {wallTriangles.Length} triangles");
+
+        var allQuads = new QuadExtractor().ExtractQuadsFromTriangles(_gapWorldSegment.MainRoom, wallSide, wallTriangles);
+
+        System.Console.WriteLine($"Extracted {allQuads.Count} raw quads from {wallSide} wall");
+
+        // Filter quads by size and gap overlap
+        var gapStart = _gapWorldSegment.GapStartX;
+        var gapEnd = _gapWorldSegment.GapEndX;
+        var (axisU, _) = wallSide.GetAxisUV();
+
+        foreach (var quad in allQuads)
+        {
+            var quadMinU = quad.Vertices.Min(v => v.AxisValue(axisU));
+            var quadMaxU = quad.Vertices.Max(v => v.AxisValue(axisU));
+            bool overlaps = QuadOverlapsGap(quad, gapStart, gapEnd, axisU);
+            System.Console.WriteLine($"  Quad: Width={quad.Width:F2}, Height={quad.Height:F2}, U=[{quadMinU:F2} to {quadMaxU:F2}], Overlaps={overlaps}");
+        }
+
+        var sizeFiltered = allQuads.Where(p => p.Width >= 0.6f && p.Height >= 0.6f).ToList();
+        System.Console.WriteLine($"After size filtering: {sizeFiltered.Count} quads");
+
+        var gapFiltered = sizeFiltered.Where(p => !QuadOverlapsGap(p, gapStart, gapEnd, axisU)).ToList();
+        System.Console.WriteLine($"After gap filtering: {gapFiltered.Count} quads");
+
+        return gapFiltered;
+    }
+
+    private bool QuadOverlapsGap(WallQuad quad, float gapStart, float gapEnd, Axis axisU)
+    {
+        const float epsilon = 0.0001f;
+
+        var quadMinU = quad.Vertices.Min(v => v.AxisValue(axisU));
+        var quadMaxU = quad.Vertices.Max(v => v.AxisValue(axisU));
+
+        // Check if quad overlaps with gap (with tolerance)
+        // Quad overlaps if: quad's max > gap's min AND quad's min < gap's max
+        bool overlaps = (quadMaxU > gapStart + epsilon) && (quadMinU < gapEnd - epsilon);
+
+        return overlaps;
     }
 }
 
