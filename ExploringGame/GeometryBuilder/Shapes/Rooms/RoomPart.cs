@@ -7,6 +7,7 @@ public class RoomPart : Room
     public RoomPart(Room main, float? height = null, float? width = null, float? depth = null)
         : base(main.WorldSegment, theme: main.Theme)
     {
+        Main = main;
         Position = main.Position;
         Size = main.Size;
 

@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
@@ -43,5 +44,10 @@ public class DoorJunction : Room
 
         var hingePosition = Position.SetAxis(hingeSide.GetAxis(), GetSide(hingeSide));
         _door.SetHingePosition(hingePosition);
+    }
+
+    public override string ToString()
+    {
+        return "Junction: " + string.Join(" - ", RoomConnections.Select(p => p.GetOtherRoom(this).ToString()).ToArray());
     }
 }

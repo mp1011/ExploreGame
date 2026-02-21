@@ -80,7 +80,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
             BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             BasementStairsDoor.SetSide(Side.North, GetSide(Side.South));
-         
+
             Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: BasementStairsDoor));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
 
@@ -88,6 +88,9 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
 
             AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
+
+            // Add room graph connections for stairs (without affecting positioning)
+            AddConnectingRoom(new RoomConnection(this, Stairs, Side.South, 0.5f), adjustPlacement: false);
 
             BasementStairsDoor.AddConnectingRoom(new RoomConnection(BasementStairsDoor, Stairs, Side.North), adjustPlacement: false);
 

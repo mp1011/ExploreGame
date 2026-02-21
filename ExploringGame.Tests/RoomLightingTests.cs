@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Tests.TestHelpers;
 using System.Linq;
 using Xunit;
@@ -101,8 +102,63 @@ public class RoomLightingTests
                     var lightLevel = lightData.GetTotalLight();
 
                     // BasementOffice should have light from its sources
-                    Assert.True(lightLevel > 0.0f, $"Expected BasementOffice light level > 0, got {lightLevel}");
+                    Assert.True(lightLevel >= LightIntensity.IndoorLight, $"Expected BasementOffice light level >= {LightIntensity.IndoorLight}, got {lightLevel}");
                 }
+
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
+    }
+
+    [Fact]
+    public void AdjacentRoomReceivesDecayedLight()
+    {
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+
+        // Act - Turn on only BasementOffice lights, check Basement receives light
+        bool lightsConfigured = false;
+        Room basementOffice = null;
+        Room basementRoom = null;
+
+        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        {
+            var loadedLevelData = g.GetService<LoadedLevelData>();
+
+            // On first update, configure lights
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                SetAllLights(loadedLevelData, l => l.Room is BasementOffice);
+
+                basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
+                basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
+
+                lightsConfigured = true;
+                return TestResult.CONTINUE;
+            }
+
+            // After lights are configured, check the light levels
+            if (lightsConfigured && gameTime.TotalGameTime.TotalMilliseconds > 200)
+            {
+                var lightCalc = loadedLevelData.LightingCalculator;
+
+                lightCalc.RoomLightGraph.TryGet(basementOffice, out var officeLightData);
+                lightCalc.RoomLightGraph.TryGet(basementRoom, out var basementLightData);
+
+                var officeLight = officeLightData?.GetTotalLight() ?? 0f;
+                var basementLight = basementLightData?.GetTotalLight() ?? 0f;
+
+                // Basement should have significant light from BasementOffice (at least 1.0)
+                Assert.True(basementLight > 1.0f, 
+                    $"Expected Basement light level > 1.0, got {basementLight:F3}");
+
+                // Basement should have LESS light than BasementOffice (decay should occur)
+                Assert.True(basementLight < officeLight, 
+                    $"Expected Basement light ({basementLight:F2}) < BasementOffice light ({officeLight:F2})");
 
                 return TestResult.PASS;
             }
@@ -142,9 +198,7 @@ public class RoomLightingTests
                 {
                     allRooms.OfType<BasementOffice>().First(),
                     allRooms.OfType<Basement>().First(),
-                    allRooms.OfType<UpstairsHall>().First(),
-                    allRooms.OfType<Kitchen>().First(),
-                    allRooms.OfType<LivingRoom>().First()
+                    allRooms.OfType<BasementStairs>().First()
                 };
 
                 lightsConfigured = true;
@@ -174,6 +228,10 @@ public class RoomLightingTests
 
                     Assert.True(currentLight >= nextLight,
                         $"{currentRoom} ({currentLight:F2}) should be >= {nextRoom} ({nextLight:F2})");
+
+
+                    Assert.True(currentLight > 0,
+                        $"{currentRoom} ({currentLight:F2}) should be > 0");
                 }
 
                 // BasementOffice should have light
@@ -186,5 +244,54 @@ public class RoomLightingTests
         });
 
         game.Run();
+    }
+
+    [Fact]
+    public void RoomGraphHasExpectedStructure()
+    {
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+
+        using var game = new TestGame(basement, framesToRun: 10, testAssertion: (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds > 50)
+            {
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+                var basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
+
+                var treeView = BuildRoomGraphTree(basementOffice, loadedLevelData.RoomGraph);
+
+                var expected = File.ReadAllText("Fixtures\\ExpectedRoomGraph.txt").Trim();
+                File.WriteAllText("Fixtures\\ActualRoomGraph.txt", treeView);
+                Assert.Equal(expected.Trim(), treeView.Trim());
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
+    }
+
+    private string BuildRoomGraphTree(Room startRoom, RoomGraph roomGraph, int indent = 0, HashSet<Room> visited = null)
+    {
+        visited ??= new HashSet<Room>();
+
+        if (visited.Contains(startRoom))
+            return "";
+
+        visited.Add(startRoom);
+
+        var indentation = new string(' ', indent * 2);
+        var lightingGroupName = startRoom?.ToString() ?? "null";
+        var result = $"{indentation}{startRoom} (LightingGroup: {lightingGroupName})\n";
+
+        var neighbors = roomGraph.GetNeighbors(startRoom);
+        foreach (var neighbor in neighbors)
+        {
+            result += BuildRoomGraphTree(neighbor, roomGraph, indent + 1, visited);
+        }
+
+        return result;
     }
 }

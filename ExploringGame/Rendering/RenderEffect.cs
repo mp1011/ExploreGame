@@ -107,7 +107,7 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
         var lightingGroup = shapeBuffer.LightingGroup;
         if (lightingGroup != null && _roomLightingCalculator.RoomLightGraph.TryGet(lightingGroup, out var lightData))
         {
-            float brightness = lightData.TotalLight / 10.0f;
+            float brightness = 0.05f + (lightData.TotalLight / 10.0f);
             return new Vector3(brightness, brightness, brightness);
         }
         return new Vector3(0.3f, 0.3f, 0.3f);

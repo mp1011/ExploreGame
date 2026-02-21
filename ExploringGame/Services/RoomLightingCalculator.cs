@@ -156,8 +156,8 @@ public class RoomLightingCalculator
         if (lightRoom == null)
             return 0f;
 
-        // If light is in the same room, full contribution
-        if (lightRoom == targetRoom)
+        // If light is in the same lighting group, full contribution
+        if (lightRoom.LightingGroup == targetRoom.LightingGroup)
             return lightSource.Intensity;
 
         // Find path from light's room to target room
@@ -166,33 +166,42 @@ public class RoomLightingCalculator
             return 0f;
 
         // Walk the path and calculate decay
+        // Only apply decay when crossing between different lighting groups
         float contribution = lightSource.Intensity;
+        Room currentLightingGroup = lightRoom.LightingGroup;
 
         for (int i = 0; i < roomPath.Count - 1; i++)
         {
             var currentRoom = roomPath[i];
             var nextRoom = roomPath[i + 1];
+            var nextLightingGroup = nextRoom.LightingGroup;
 
-            // Find the connection between these rooms
-            var connection = FindConnection(currentRoom, nextRoom);
-            if (connection == null)
-                continue;
-
-            // Calculate decay based on connection size vs wall size
-            float decayFactor = CalculateDecayFactor(currentRoom, nextRoom, connection);
-            contribution *= decayFactor;
-
-            // Check for door and apply door scaling
-            var door = FindDoorBetweenRooms(currentRoom, nextRoom);
-            if (door != null)
+            // Only apply decay if we're moving to a NEW lighting group
+            if (nextLightingGroup != currentLightingGroup)
             {
-                float doorScale = door.Open ? DoorOpenScale : DoorClosedScale;
-                contribution *= doorScale;
-            }
+                // Find the connection between these rooms
+                var connection = FindConnection(currentRoom, nextRoom);
+                if (connection == null)
+                    continue;
 
-            // Stop if contribution is too small
-            if (contribution < MinimumContribution)
-                return 0f;
+                // Calculate decay based on connection size vs wall size
+                float decayFactor = CalculateDecayFactor(currentRoom, nextRoom, connection);
+                contribution *= decayFactor;
+
+                // Check for door and apply door scaling
+                var door = FindDoor(currentRoom);
+                if (door != null)
+                {
+                    float doorScale = door.Open ? DoorOpenScale : DoorClosedScale;
+                    contribution *= doorScale;
+                }
+
+                // Stop if contribution is too small
+                if (contribution < MinimumContribution)
+                    return 0f;
+
+                currentLightingGroup = nextLightingGroup;
+            }
         }
 
         return contribution;
@@ -244,19 +253,22 @@ public class RoomLightingCalculator
 
     private float CalculateDecayFactor(Room from, Room to, RoomConnection connection)
     {
-        // Calculate the size of the connection compared to the wall size
-        var wallLength = from.SideLength(connection.Side);
-        var connectionSize = to.SideLength(connection.Side.Opposite());
+        // Calculate the size of the opening compared to both walls
+        var fromWallLength = from.SideLength(connection.Side);
+        var toWallLength = to.SideLength(connection.Side.Opposite());
 
-        // Use the smaller of the two rooms' dimensions for the connection
-        var effectiveConnectionSize = System.Math.Min(connectionSize, to.SideLength(connection.Side.Opposite()));
+        // The effective opening is constrained by the smaller wall
+        var effectiveOpeningSize = System.Math.Min(fromWallLength, toWallLength);
 
-        // Ratio of connection to wall (larger opening = less decay)
-        float ratio = effectiveConnectionSize / wallLength;
+        // Calculate ratio from both perspectives and use the minimum (the bottleneck)
+        // A small opening in a large wall creates high decay
+        float fromRatio = effectiveOpeningSize / fromWallLength;
+        float toRatio = effectiveOpeningSize / toWallLength;
+        float minRatio = System.Math.Min(fromRatio, toRatio);
 
-        // Decay inversely proportional to ratio (bigger opening = less decay)
-        // This gives values between ~0.5 and 1.0 for typical connections
-        return System.Math.Max(0.5f, ratio);
+        // Apply minimum decay threshold to avoid too-dark rooms
+        // Returns values between 0.3 and 1.0
+        return System.Math.Max(0.3f, minRatio);
     }
 
     private RoomConnection FindConnection(Room room1, Room room2)
@@ -265,16 +277,9 @@ public class RoomLightingCalculator
             rc.GetOtherRoom(room1) == room2);
     }
 
-    private Door FindDoorBetweenRooms(Room room1, Room room2)
-    {
-        // Search for a door that is a child of either room
-        var doorsInRoom1 = room1.TraverseAllChildren().OfType<Door>();
-        var doorsInRoom2 = room2.TraverseAllChildren().OfType<Door>();
-
-        // Check if any door connects these rooms (simplified - may need refinement)
-        return doorsInRoom1.Concat(doorsInRoom2).FirstOrDefault();
-    }
-
+    private Door FindDoor(Room room) =>    
+        room.TraverseAllChildren().OfType<Door>().FirstOrDefault();
+    
     private Room FindRoomContainingPoint(Vector3 position)
     {
         foreach (var room in _roomGraph.GetAllRooms())
