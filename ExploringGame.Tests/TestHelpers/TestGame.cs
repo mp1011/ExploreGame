@@ -29,7 +29,8 @@ public class TestGame : Game1
         this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion)
     {}
 
-    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null) : base(worldSegment, useTestRenderer: true)
+    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null) 
+        : base(worldSegment)
     {
         MockPlayerInput = new MockPlayerInput();
         _framesRemaining = framesToRun;
@@ -51,8 +52,7 @@ public class TestGame : Game1
     protected override void LoadContent()
     {
         base.LoadContent();
-        _renderEffect = _basicEffect;
-        
+
         // Create render target with same size as back buffer
         _renderTarget = new RenderTarget2D(
             GraphicsDevice,

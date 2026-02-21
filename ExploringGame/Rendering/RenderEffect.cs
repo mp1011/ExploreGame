@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 namespace ExploringGame.Rendering;
 
 public interface IRenderEffect
@@ -132,5 +131,27 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         effect.Parameters["World"].SetValue(world);
         effect.Parameters["View"].SetValue(view);
         effect.Parameters["Projection"].SetValue(projection);
+    }
+}
+
+public class TwoPassRenderEffect : IRenderEffect
+{
+    private readonly BasicRenderEffect _firstPassEffect;
+    private readonly PointLightRenderEffect _secondPassEffect;
+
+    public TwoPassRenderEffect(BasicRenderEffect firstPassEffect, PointLightRenderEffect secondPassEffect)
+    {
+        _firstPassEffect = firstPassEffect;
+        _secondPassEffect = secondPassEffect;
+    }
+    public void SetTextures(LoadedTextureSheets textureSheets)
+    {
+        _firstPassEffect.SetTextures(textureSheets);
+        _secondPassEffect.SetTextures(textureSheets);
+    }
+    public void Draw(GraphicsDevice graphicsDevice, IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
+    {       
+        _firstPassEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
+        // temporarily disabled _secondPassEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
     }
 }

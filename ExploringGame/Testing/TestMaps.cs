@@ -104,7 +104,7 @@ public static partial class TestMaps
 
     }
 
-    private static WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
+    public static WorldSegment JunctionTest(HAlign doorAlign, DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
         var room = new Room(ws, theme: new BasementRoomTheme());
@@ -281,7 +281,7 @@ public static partial class TestMaps
         return world;
     }
 
-    private static WorldSegment ConnectingRoomsTest()
+    public static WorldSegment ConnectingRoomsTest()
     {
         var world = new WorldSegment();
         var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.Tile, TileSize: 50.0f);
@@ -290,7 +290,7 @@ public static partial class TestMaps
 
         var room = new Room(world);
         room.Width = 16f;
-        room.Height = 4f;
+        room.Height = 6f;
         room.Depth = 12f;
         room.Y = 2;
 

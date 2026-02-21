@@ -7,7 +7,6 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
-using ExploringGame.Testing;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,8 +16,6 @@ namespace ExploringGame;
 
 public class Game1 : Game
 {
-    private bool _useTestRenderer = false;
-
     protected ServiceContainer _serviceContainer;
     private Player _player;
     protected CameraService _cameraService;
@@ -31,10 +28,7 @@ public class Game1 : Game
 
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
-    protected PointLightRenderEffect _pointLightEffect;
-    protected BasicRenderEffect _basicEffect;
-    protected IRenderEffect _renderEffect;
+    private IRenderEffect _renderEffect;
 
 
     private SpriteFont _debugFont;
@@ -42,15 +36,13 @@ public class Game1 : Game
     private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
 
-    public Game1(WorldSegment mainWorldSegment, bool useTestRenderer)
+    public Game1(WorldSegment mainWorldSegment)
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = false;
         _graphics.IsFullScreen = false;
         _mainShape = mainWorldSegment;
-        _useTestRenderer = useTestRenderer;
-
     }
 
     protected virtual IPlayerInput CreatePlayerInput() => new PlayerInput();
@@ -110,18 +102,17 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        _basicEffect = new BasicRenderEffect(this);
-        _pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), this);
+        var basicEffect = new BasicRenderEffect(this);
+        var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), this);
+        var dualEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
 
         var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();
         loadedTextures.AddTexture(new BasementTextureSheet(Content));
         loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
 
-        // todo - need better way to load textures
-        _basicEffect.SetTextures(loadedTextures);
-        _pointLightEffect.SetTextures(loadedTextures);
+        dualEffect.SetTextures(loadedTextures);
 
-        _renderEffect = _useTestRenderer ? _basicEffect : _pointLightEffect;
+        _renderEffect = dualEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
@@ -150,13 +141,6 @@ public class Game1 : Game
         if (_playerInput.IsKeyDown(GameKey.DebugKey))
         {
             _debugController.Update();
-            if (_playerInput.IsKeyDown(GameKey.DebugKey) && _playerInput.IsKeyPressed(Keys.S))
-            {
-                if (_renderEffect == _basicEffect)
-                    _renderEffect = _pointLightEffect;
-                else
-                    _renderEffect = _basicEffect;
-            }
         }
         else
         {

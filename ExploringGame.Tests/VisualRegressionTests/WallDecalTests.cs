@@ -2,7 +2,7 @@ using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Xunit;
 
-namespace ExploringGame.Tests;
+namespace ExploringGame.Tests.VisualRegressionTests;
 
 public class WallDecalTests
 {
