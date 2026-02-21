@@ -58,10 +58,11 @@ public class Game1 : Game
 
         _serviceContainer.BindSingleton<GameState>();
         _serviceContainer.BindSingleton<LoadedTextureSheets>();  
+        _serviceContainer.BindSingleton<PointLights>();
+        _serviceContainer.BindSingleton<RoomLightingCalculator>();
         _serviceContainer.BindSingleton<LoadedLevelData>();
         _loadedLevelData = _serviceContainer.Get<LoadedLevelData>();
 
-        _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();
         _serviceContainer.BindSingleton<AudioService>();
@@ -102,7 +103,7 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        var basicEffect = new BasicRenderEffect(this);
+        var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
         var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), this);
         var dualEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
 

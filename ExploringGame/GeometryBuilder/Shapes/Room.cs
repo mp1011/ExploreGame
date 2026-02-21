@@ -185,16 +185,18 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         switch(Side)
         {
             case Side.South:
-                left = Other.GetSide(Side.West) - wallWest;
-                right = wallEast - Other.GetSide(Side.East);
+                // South faces opposite direction from North, so left/right are swapped
+                left = wallEast - Other.GetSide(Side.East);
+                right = Other.GetSide(Side.West) - wallWest;
                 break;
             case Side.North:
                 left = Other.GetSide(Side.West) - wallWest;
                 right = wallEast - Other.GetSide(Side.East);
                 break;
             case Side.West:
-                left = Other.GetSide(Side.North) - wallNorth;
-                right = wallSouth - Other.GetSide(Side.South);
+                // West faces opposite direction from East, so left/right are swapped
+                left = wallSouth - Other.GetSide(Side.South);
+                right = Other.GetSide(Side.North) - wallNorth;
                 break;
             case Side.East:
                 left = Other.GetSide(Side.North) - wallNorth;

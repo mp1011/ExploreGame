@@ -27,6 +27,8 @@ public class RoomLightingCalculator
 
     public RoomLightingCalculator()
     {
+        _roomGraph = new RoomGraph();
+        _roomLightGraph = new AnnotatedGraph<RoomLightData>(_roomGraph);
     }
 
     public AnnotatedGraph<RoomLightData> RoomLightGraph => _roomLightGraph;

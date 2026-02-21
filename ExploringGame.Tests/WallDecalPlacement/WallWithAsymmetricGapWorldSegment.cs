@@ -43,21 +43,37 @@ public class WallWithAsymmetricGapWorldSegment : WorldSegment, IGapWorldSegment
         MainRoom.AddConnectingRoom(new RoomConnection(MainRoom, ConnectedRoom, wallSide, HAlign.Right, -0.3f));
 
         // Calculate gap boundaries based on wall orientation
+        // NOTE: Room.AddConnectingRoom inverts position for South/West walls (line 82-83 in Room.cs)
+        // So HAlign.Right actually places the gap on the LEFT side for South/West!
         var (axisU, _) = wallSide.GetAxisUV();
-        
-        if (wallSide == Side.North || wallSide == Side.South)
+
+        if (wallSide == Side.North)
         {
-            // For North/South walls, gap is near East edge (X axis)
+            // North: right = East
             var roomEastEdge = MainRoom.GetSide(Side.East);
-            GapStartX = roomEastEdge - 0.3f - 2f; // 2f = ConnectedRoom width
+            GapStartX = roomEastEdge - 0.3f - 2f;
             GapEndX = roomEastEdge - 0.3f;
         }
-        else // East or West
+        else if (wallSide == Side.South)
         {
-            // For East/West walls, gap is near South edge (Z axis)
+            // South: position inverted, so HAlign.Right puts gap on West (left in 2D space)
+            var roomWestEdge = MainRoom.GetSide(Side.West);
+            GapStartX = roomWestEdge + 0.3f;
+            GapEndX = roomWestEdge + 0.3f + 2f;
+        }
+        else if (wallSide == Side.East)
+        {
+            // East: right = South
             var roomSouthEdge = MainRoom.GetSide(Side.South);
-            GapStartX = roomSouthEdge - 0.3f - 2f; // 2f = ConnectedRoom depth
+            GapStartX = roomSouthEdge - 0.3f - 2f;
             GapEndX = roomSouthEdge - 0.3f;
+        }
+        else // West
+        {
+            // West: position inverted, so HAlign.Right puts gap on North (left in 2D space)
+            var roomNorthEdge = MainRoom.GetSide(Side.North);
+            GapStartX = roomNorthEdge + 0.3f;
+            GapEndX = roomNorthEdge + 0.3f + 2f;
         }
 
         AddChild(new WallDecalStamp());

@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Fixtures\ConnectingRooms_CameraLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Fixtures\WallDecalTest.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

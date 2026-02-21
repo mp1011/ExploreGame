@@ -1,8 +1,10 @@
-﻿using ExploringGame.Texture;
+﻿using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 namespace ExploringGame.Rendering;
 
 public interface IRenderEffect
@@ -34,14 +36,14 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
 
     protected abstract TEffect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture);
 
-    public abstract void SetParameters(TEffect effect, Matrix world, Matrix view, Matrix projection);
+    public abstract void SetParameters(TEffect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection);
     
     public void Draw(GraphicsDevice graphicsDevice, IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
         foreach (var shapeBuffer in shapeBuffers)
         {
             var effect = _effects[shapeBuffer.Texture];
-            SetParameters(effect, shapeBuffer.Shape.GetWorldMatrix(), view, projection);
+            SetParameters(effect, shapeBuffer, view, projection);
 
             // Apply custom RasterizerState if present (e.g., for wall decals with depth bias)
             var previousRasterizerState = graphicsDevice.RasterizerState;
@@ -70,8 +72,11 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
 
 public class BasicRenderEffect : RenderEffect<BasicEffect>
 {
-    public BasicRenderEffect(Game game) : base(game)
+    private readonly RoomLightingCalculator _roomLightingCalculator;
+
+    public BasicRenderEffect(RoomLightingCalculator roomLightingCalculator, Game game) : base(game)
     {
+        _roomLightingCalculator = roomLightingCalculator;
     }
 
     protected override BasicEffect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
@@ -83,17 +88,29 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
             LightingEnabled = true,
             PreferPerPixelLighting = true
         };
-        effect.AmbientLightColor = new Vector3(0.38f, 0.38f, 0.38f); // Very low ambient
         effect.DirectionalLight0.Enabled = false;
         effect.Texture = texture;
         return effect;
     }
 
-    public override void SetParameters(BasicEffect effect, Matrix world, Matrix view, Matrix projection)
+    public override void SetParameters(BasicEffect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
     {
+        var world = shapeBuffer.Shape.GetWorldMatrix();
         effect.World = world;
         effect.View = view;
         effect.Projection = projection;
+        effect.AmbientLightColor = AmbientLight(shapeBuffer);
+    }
+
+    private Vector3 AmbientLight(ShapeBuffer shapeBuffer)
+    {
+        var lightingGroup = shapeBuffer.LightingGroup;
+        if (lightingGroup != null && _roomLightingCalculator.RoomLightGraph.TryGet(lightingGroup, out var lightData))
+        {
+            float brightness = lightData.TotalLight / 10.0f;
+            return new Vector3(brightness, brightness, brightness);
+        }
+        return new Vector3(0.3f, 0.3f, 0.3f);
     }
 }   
 
@@ -115,8 +132,9 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         return pointLightEffect;
     }
 
-    public override void SetParameters(Effect effect, Matrix world, Matrix view, Matrix projection)
+    public override void SetParameters(Effect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
     {
+        var world = shapeBuffer.Shape.GetWorldMatrix();
         Vector3 lightPos = new Vector3(0, 4, 0); // Center of ceiling
         effect.Parameters["LightPositions"].SetValue(_pointLights.Positions);
         effect.Parameters["LightColors"].SetValue(_pointLights.Colors);

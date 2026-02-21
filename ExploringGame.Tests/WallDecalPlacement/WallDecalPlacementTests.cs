@@ -46,7 +46,7 @@ public class WallDecalPlacementTests
     }
 
     [Fact]
-    public void WallDecals_OnlyAppearOnWestSide_WhenEastQuadTooSmall_SouthWall()
+    public void WallDecals_OnlyAppearOnEastSide_WhenWestQuadTooSmall_SouthWall()
     {
         var worldSegment = new WallWithAsymmetricGapWorldSegment(Side.South);
 
@@ -57,12 +57,14 @@ public class WallDecalPlacementTests
         var placedDecals = testController.PlacedDecals;
 
         Assert.True(placedDecals.Any(), "Expected at least one decal to be placed");
-        
+
+        // For South wall, HAlign.Right with position inversion places gap on West side
+        // So decals should appear on the East side (larger quad)
         foreach (var decal in placedDecals)
         {
             var decalX = decal.Position.X;
-            Assert.True(decalX < worldSegment.GapStartX, 
-                $"Decal at X={decalX:F2} should be west of gap (gap starts at {worldSegment.GapStartX:F2})");
+            Assert.True(decalX > worldSegment.GapEndX, 
+                $"Decal at X={decalX:F2} should be east of gap (gap ends at {worldSegment.GapEndX:F2})");
         }
     }
 
@@ -88,7 +90,7 @@ public class WallDecalPlacementTests
     }
 
     [Fact]
-    public void WallDecals_OnlyAppearOnNorthSide_WhenSouthQuadTooSmall_WestWall()
+    public void WallDecals_OnlyAppearOnSouthSide_WhenNorthQuadTooSmall_WestWall()
     {
         var worldSegment = new WallWithAsymmetricGapWorldSegment(Side.West);
 
@@ -99,12 +101,14 @@ public class WallDecalPlacementTests
         var placedDecals = testController.PlacedDecals;
 
         Assert.True(placedDecals.Any(), "Expected at least one decal to be placed");
-        
+
+        // For West wall, HAlign.Right with position inversion places gap on North side
+        // So decals should appear on the South side (larger quad)
         foreach (var decal in placedDecals)
         {
             var decalZ = decal.Position.Z;
-            Assert.True(decalZ < worldSegment.GapStartX, 
-                $"Decal at Z={decalZ:F2} should be north of gap (gap starts at {worldSegment.GapStartX:F2})");
+            Assert.True(decalZ > worldSegment.GapEndX, 
+                $"Decal at Z={decalZ:F2} should be south of gap (gap ends at {worldSegment.GapEndX:F2})");
         }
     }
 }
