@@ -63,9 +63,10 @@ public class RoomLightData
     /// <summary>
     /// Recalculates and updates the cached total light level.
     /// </summary>
-    public void RecalculateLightLevel()
+    public float RecalculateLightLevel()
     {
         _cachedTotalLight = GetTotalLight();
+        return _cachedTotalLight;
     }
 
     /// <summary>
@@ -75,4 +76,6 @@ public class RoomLightData
     {
         return _lightContributions.Keys;
     }
+
+    public override string ToString() => $"Light Data ({Room}) = {TotalLight}";  
 }

@@ -34,7 +34,10 @@ public class RoomLightingGroupTests
 
                 // Get all rooms and distinct lighting groups
                 var allRooms = loadedLevelData.RoomGraph.GetAllRooms().ToList();
-                var lightingGroups = calculator.GetDistinctLightingGroups().ToList();
+                var lightingGroups = calculator.RoomLightGraph
+                    .GetAllAnnotations()
+                    .Select(p=>p.Room)
+                    .ToList();
 
                 Assert.NotNull(lightingGroups);
                 Assert.NotEmpty(lightingGroups);
@@ -476,18 +479,20 @@ public class RoomLightingGroupTests
 
                 Assert.NotNull(door);
 
-                var allRooms = loadedLevelData.RoomGraph.GetAllRooms().ToList();
 
+                var allRooms = loadedLevelData.RoomGraph.GetAllRooms().ToList();
                 var upstairsHall = allRooms.OfType<UpstairsHall>().Single();
-                var originalLight = loadedLevelData.LightingCalculator.RoomLightGraph.Get(upstairsHall);
+
+                var originalLight = loadedLevelData.LightingCalculator.RecalculateRoomLight(upstairsHall);
+
                 var beforeDoorState = door.Open;
 
                 // Open the door (this should trigger recalculation)
                 door.Open = true;
 
-                var changedLight = loadedLevelData.LightingCalculator.RoomLightGraph.Get(upstairsHall);
-                Assert.True(changedLight.TotalLight > originalLight.TotalLight, 
-                    $"Opening the door should increase light in the upstairs hall. Before: {originalLight.TotalLight}, After: {changedLight.TotalLight}");
+                var changedLight = loadedLevelData.LightingCalculator.RecalculateRoomLight(upstairsHall);
+                Assert.True(changedLight > originalLight, 
+                    $"Opening the door should increase light in the upstairs hall. Before: {originalLight}, After: {changedLight}");
 
                 return TestResult.PASS;
             }

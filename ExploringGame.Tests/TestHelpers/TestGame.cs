@@ -80,7 +80,7 @@ public class TestGame : Game1
             base.Update(fakeTime);
 
             // Execute test assertion if provided
-            if (_testAssertion != null)
+            if (_testAssertion != null && !_testPassed && _testFailureMessage == null)
             {
                 var result = _testAssertion(this, fakeTime);
 
