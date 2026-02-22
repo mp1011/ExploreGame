@@ -24,7 +24,45 @@ Update the rendering and shader to take into account the computed light levels o
 	- RecalculateLightLevel should only be called when a light is turned on or off, a door is opened or closed
 
 # SECOND PHASE TASKS
-- two-pass light 
+1. Create a "TwoPassRenderEffect" which first applies a BasicEffect and then applies the PointLightEffect (DONE)
+	- until we start the third phase, the PointLightEffect will be commented out
+2. Apply the lighting data from RoomLightingCalculator to the BasicEffect to get the ambient light for the room (DONE)
+3. Determine the light level for dynamic objects and stamped shapes by determining what room they are in
+
+## CONTEXT FOR SECOND PHASE
+- ShapeBufferCreator (`Services\ShapeBufferCreator.cs`) is responsible for creating shape buffers for stamped shapes and active objects
+- each dynamic object or stamped shape gets its own ShapeBuffer, meaning it gets its own rendering pass
+- once within a ShapeBuffer, the rendering code makes no distinction between static or active shapes, as all it sees are triangles and vertices
+- the interface IPlaceableObject currently describes any kind of dynamic object, however it does not have a Room property
+	- we should actually expose a settable "Room" property, which fits logically in that interface as it defines "a shape that can be placed somewhere"
+- "Stamped Shapes" may be created at runtime or at level build time
+	- when added at runtime, the method `AddStampedShape` of LoadedLevelData is used to add a new entry to the list of shape buffers
+	- these are the only kinds of shapes that can be added at runtime, anything else is loaded with the level
+- any kind of IPlaceableObject should be lit according to the room its in
+	- note that StampedShapes are immobile so they will never change rooms.
+	- however, any other kind of object could be mobile and therefor we need a way to recompute what room they're in
+- there is currently some code to detect what room an object is in, used by PathFinder. you may be able to reuse it.
+
+## QUESTIONS AND ANSWERS FOR SECOND PHASE
+Q. How frequently should we update the Room property for mobile objects?
+	- unless we find that performance is a concern, we can try to update each frame
+	- since its highly likely a shape is in the same room it was in, we can do a quick check to see if the shape is still in the same room 
+		before we scan for what room its in now
+Q. Is there a central movement/update system I should hook into, or should each object update its own room location?
+	- this is something we need to research before we get to coding
+Q. How does PathFinder determine what room an entity is in?
+	- technically, it finds the closest Waypoint through basic distance comparison (see FindNearestWaypoint)
+	- such an approach will actually work for lighting as well, since we have a graph of room lights
+	- therefor, all we need to know is which room is closest to the entity
+	- at this time we won't worry about edge cases and will naively assume that the closet room is the correct one
+Q. When AddStampedShape<TStamp>(StampedShape<TStamp>) is called at runtime, should it automatically detect and assign the Room property?
+	- that would be ideal since a stamped shape will never change rooms
+Q. For dynamic objects, should I set ShapeBuffer.LightingGroup = dynamicObject.Room.LightingGroup when creating the buffer?
+	- basically yes. We want to set the LightingGroup property based on the room the object is in
+Q. If we're creating one ShapeBuffer per dynamic object, and each has potentially many triangles, do we need to worry about recreating vertex buffers frequently, or are these cached/reused?
+	- triangles are never created at runtime. We calculate them when the level loads. Even StampedShapes, the only entities that can be added
+	at runtime, will use precomputed triangles (we call those the "Shape Stamps")
+
 
 # THIRD PHASE TASKS
 - refactor PointLights
