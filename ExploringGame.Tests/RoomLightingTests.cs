@@ -13,17 +13,6 @@ namespace ExploringGame.Tests;
 
 public class RoomLightingTests
 {
-    private void SetAllLights(LoadedLevelData loadedLevelData, Func<ILightSource,bool> shouldTurnOn)
-    {
-        var allLights = loadedLevelData.LoadedSegments
-            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
-            .OfType<ILightSource>()
-            .ToArray();
-
-        foreach (var light in allLights)
-            light.On = shouldTurnOn(light);
-    }
-
     [Fact]
     public void AllRoomsHaveMinimalLightWithNoLightsOn()
     {
@@ -36,7 +25,7 @@ public class RoomLightingTests
             // On first update after initialization, turn off all lights in ALL segments
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
-                SetAllLights(g.GetService<LoadedLevelData>(), light => false);
+                g.SetAllLights(light => false);
                 return TestResult.CONTINUE;
             }
 
@@ -88,7 +77,7 @@ public class RoomLightingTests
             // On first update, configure lights
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
-                SetAllLights(loadedLevelData, l=> l.Room is BasementOffice);
+                g.SetAllLights(l=> l.Room is BasementOffice);
 
                 lightsConfigured = true;
                 return TestResult.CONTINUE;
@@ -132,7 +121,7 @@ public class RoomLightingTests
             // On first update, configure lights
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
-                SetAllLights(loadedLevelData, l => l.Room is BasementOffice);
+                g.SetAllLights(l => l.Room is BasementOffice);
 
                 basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
                 basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
@@ -186,7 +175,7 @@ public class RoomLightingTests
             {
                 var loadedLevelData = g.GetService<LoadedLevelData>();
 
-                SetAllLights(loadedLevelData, l => l.Room is BasementOffice);
+                g.SetAllLights(l => l.Room is BasementOffice);
 
                 // Find rooms in the chain by type
                 var allRooms = loadedLevelData.LoadedSegments

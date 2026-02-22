@@ -45,4 +45,9 @@ public static class LightIntensity
     /// Extremely bright - blindingly bright (10.0)
     /// </summary>
     public const float ExtremelyBright = 10f;
+
+    /// <summary>
+    /// Default ambient light level for rooms without lighting data.
+    /// </summary>
+    public static float DefaultAmbientLight { get; set; } = Darkness;
 }

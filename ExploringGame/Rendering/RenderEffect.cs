@@ -1,4 +1,5 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.Logics;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -104,13 +105,16 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
 
     private Vector3 AmbientLight(ShapeBuffer shapeBuffer)
     {
+
+        var brightness = LightIntensity.DefaultAmbientLight; 
         var lightingGroup = shapeBuffer.LightingGroup;
         if (lightingGroup != null && _roomLightingCalculator.RoomLightGraph.TryGet(lightingGroup, out var lightData))
         {
-            float brightness = 0.05f + (lightData.TotalLight / 10.0f);
-            return new Vector3(brightness, brightness, brightness);
+            brightness += lightData.TotalLight;
         }
-        return new Vector3(0.3f, 0.3f, 0.3f);
+
+        brightness /= 10f;
+        return new Vector3(brightness, brightness, brightness);
     }
 }   
 

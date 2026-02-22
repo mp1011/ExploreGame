@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,6 +33,9 @@ public class TestGame : Game1
     public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null) 
         : base(worldSegment)
     {
+        // Set higher default ambient light for visual tests (so rooms without lighting data are visible)
+        LightIntensity.DefaultAmbientLight = LightIntensity.IndoorLight;
+
         MockPlayerInput = new MockPlayerInput();
         _framesRemaining = framesToRun;
         _testAssertion = testAssertion;
@@ -213,4 +217,17 @@ public class TestGame : Game1
         }
         base.Dispose(disposing);
     }
+
+    public void SetAllLights(Func<ILightSource, bool> shouldTurnOn)
+    {
+        var loadedLevelData = GetService<LoadedLevelData>();
+        var allLights = loadedLevelData.LoadedSegments
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+            .OfType<ILightSource>()
+            .ToArray();
+
+        foreach (var light in allLights)
+            light.On = shouldTurnOn(light);
+    }
+
 }

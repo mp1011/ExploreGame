@@ -1,5 +1,7 @@
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
@@ -452,61 +454,47 @@ public class RoomLightingGroupTests
     {
         // Arrange
         var basement = new BasementWorldSegment(null);
-        
+
         using var game = new TestGame(basement, framesToRun: 200, testAssertion: (g, gameTime) =>
         {
+            // Turn on only Basement light initially
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                g.SetAllLights(l => l.Room is Basement);
+                return TestResult.CONTINUE;
+            }
+
             if (gameTime.TotalGameTime.TotalMilliseconds > 100 && gameTime.TotalGameTime.TotalMilliseconds < 150)
             {
                 var loadedLevelData = g.GetService<LoadedLevelData>();
-                
-                // Find a door
+
+                // Find the door between basement stairs and upstairs hall
                 var door = loadedLevelData.LoadedSegments
                     .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
                     .OfType<Door>()
-                    .FirstOrDefault();
-                
-                if (door != null)
-                {
-                    var allRooms = loadedLevelData.RoomGraph.GetAllRooms();
-                    
-                    // Get light data before door state change
-                    var lightDataBefore = allRooms
-                        .Where(r => loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(r, out _))
-                        .Select(r =>
-                        {
-                            loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(r, out var ld);
-                            return new { Room = r, Light = ld.TotalLight };
-                        })
-                        .ToList();
-                    
-                    // Toggle door (this should trigger recalculation)
-                    door.Open = !door.Open;
-                    
-                    // The calculator should have called RecalculateLightLevel on affected rooms
-                    // Verify at least one room's cached light value changed
-                    bool anyChanged = false;
-                    foreach (var item in lightDataBefore)
-                    {
-                        if (loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(item.Room, out var lightData))
-                        {
-                            if (lightData.TotalLight != item.Light)
-                            {
-                                anyChanged = true;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    // At least one room should have changed light levels
-                    Assert.True(anyChanged, "Door state change should trigger light recalculation");
-                }
-                
+                    .FirstOrDefault(d => d.StateKey == StateKey.BasementStairsDoorOpen);
+
+                Assert.NotNull(door);
+
+                var allRooms = loadedLevelData.RoomGraph.GetAllRooms().ToList();
+
+                var upstairsHall = allRooms.OfType<UpstairsHall>().Single();
+                var originalLight = loadedLevelData.LightingCalculator.RoomLightGraph.Get(upstairsHall);
+                var beforeDoorState = door.Open;
+
+                // Open the door (this should trigger recalculation)
+                door.Open = true;
+
+                var changedLight = loadedLevelData.LightingCalculator.RoomLightGraph.Get(upstairsHall);
+                Assert.True(changedLight.TotalLight > originalLight.TotalLight, 
+                    $"Opening the door should increase light in the upstairs hall. Before: {originalLight.TotalLight}, After: {changedLight.TotalLight}");
+
                 return TestResult.PASS;
             }
-            
+
             return TestResult.CONTINUE;
         });
-        
+
         game.Run();
     }
     
