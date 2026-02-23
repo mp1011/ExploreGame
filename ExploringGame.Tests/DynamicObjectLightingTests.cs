@@ -172,18 +172,91 @@ public class DynamicObjectLightingTests
         game.Run();
     }
 
-    [Fact(Skip = "Waiting for automatic room tracking system to be implemented")]
+    [Fact]
     public void DynamicObject_MovingToNewRoom_UpdatesRoomProperty()
     {
-        // This test will be enabled once we implement the automatic room tracking system
-        // in LevelData.Update that detects when dynamic objects move between rooms
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+        var testEntity = new TestEntity();
+        testEntity.Position = new Vector3(0, 1.5f, 0);
+
+        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds > 50)
+            {
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+                var roomFinder = g.GetService<EntityRoomFinder>();
+
+                var basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
+                var basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
+
+                // Place entity in BasementOffice
+                testEntity.Position = basementOffice.Position + new Vector3(0, 1.5f, 0);
+                roomFinder.UpdateRoom(testEntity);
+
+                // Verify entity is in BasementOffice
+                Assert.NotNull(testEntity.Room);
+                Assert.Equal(basementOffice.LightingGroup, testEntity.Room.LightingGroup);
+
+                // Move entity to Basement
+                testEntity.Position = basementRoom.Position + new Vector3(0, 1.5f, 0);
+                roomFinder.UpdateRoom(testEntity);
+
+                // Verify entity's room changed to Basement
+                Assert.NotNull(testEntity.Room);
+                Assert.Equal(basementRoom.LightingGroup, testEntity.Room.LightingGroup);
+
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
     }
 
-    [Fact(Skip = "Waiting for automatic room tracking system to be implemented")]
+    [Fact]
     public void DynamicObject_StayingInSameRoom_RoomPropertyRemainsStable()
     {
-        // This test will be enabled once we implement the automatic room tracking system
-        // that efficiently checks if objects are still in their current room before scanning
+        // Arrange
+        var basement = new BasementWorldSegment(null);
+        var testEntity = new TestEntity();
+        testEntity.Position = new Vector3(0, 1.5f, 0);
+
+        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds > 50)
+            {
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+                var roomFinder = g.GetService<EntityRoomFinder>();
+
+                var basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
+
+                // Place entity in BasementOffice
+                testEntity.Position = basementOffice.Position + new Vector3(0, 1.5f, 0);
+                roomFinder.UpdateRoom(testEntity);
+
+                // Verify entity is in BasementOffice
+                Assert.NotNull(testEntity.Room);
+                var initialRoom = testEntity.Room;
+                Assert.Equal(basementOffice.LightingGroup, initialRoom.LightingGroup);
+
+                // Move entity slightly within the same room
+                testEntity.Position += new Vector3(0.1f, 0, 0.1f);
+                roomFinder.UpdateRoom(testEntity);
+
+                // Room should still be BasementOffice (optimization: no room change detected)
+                Assert.NotNull(testEntity.Room);
+                Assert.Equal(basementOffice.LightingGroup, testEntity.Room.LightingGroup);
+                Assert.Same(initialRoom, testEntity.Room); // Should be the exact same object (not re-assigned)
+
+                return TestResult.PASS;
+            }
+
+            return TestResult.CONTINUE;
+        });
+
+        game.Run();
     }
 
     #endregion

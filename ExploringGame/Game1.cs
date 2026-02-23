@@ -62,6 +62,7 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<RoomLightingCalculator>();
         _serviceContainer.BindSingleton<LoadedLevelData>();
         _loadedLevelData = _serviceContainer.Get<LoadedLevelData>();
+        _serviceContainer.BindSingleton<EntityRoomFinder>();
 
         _serviceContainer.BindSingleton<Player>();
         _serviceContainer.BindTransient<SetupColliderBodies>();

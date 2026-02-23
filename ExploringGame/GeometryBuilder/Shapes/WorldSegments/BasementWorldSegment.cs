@@ -27,7 +27,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             var upstairsHall = upstairsWorldSegment?.FindChild<UpstairsHall>() ?? new UpstairsHall(this);
             upstairsHall.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South, 0.5f);
-         
+
             Transitions = new[] { new WorldSegmentTransition<UpstairsWorldSegment>(basement.Stairs, Side.South) };
         }
     }

@@ -18,16 +18,18 @@ public class TestEntityController : IShapeController<TestEntity>
 
     private readonly Player _player;
     private readonly Physics _physics;
+    private readonly EntityRoomFinder _roomFinder;
     private EntityMover _entityMover;
     private PathFinder _pathFinder;
 
     public TestEntity Shape { get; set; }
     public WorldSegment WorldSegment { get; set; }
 
-    public TestEntityController(Player player, Physics physics)
+    public TestEntityController(Player player, Physics physics, EntityRoomFinder roomFinder)
     {
         _player = player;
         _physics = physics;
+        _roomFinder = roomFinder;
     }
 
     public void Initialize()
@@ -80,6 +82,9 @@ public class TestEntityController : IShapeController<TestEntity>
         }
 
         // Update motion and physics
-        _entityMover.Update(gameTime);       
+        _entityMover.Update(gameTime);
+
+        // Update room assignment after movement
+        _roomFinder.UpdateRoom(Shape);
     }
 }
