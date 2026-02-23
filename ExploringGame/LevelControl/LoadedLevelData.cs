@@ -62,6 +62,9 @@ public class LoadedLevelData
         _lightingCalculator.SetRoomGraph(RoomGraph);
         _lightingCalculator.AddSegments(addedSegments);
 
+        // Assign room to all PlaceableShapes based on their position
+        AssignRoomsToPlaceableShapes(addedSegments);
+
         foreach (var addedSegment in addedSegments)
         {
             // Create waypoint graph before building so DebugMarkers are included
@@ -106,6 +109,50 @@ public class LoadedLevelData
         }
     }
 
+    private void AssignRoomsToPlaceableShapes(List<WorldSegment> segments)
+    {
+        // Find all PlaceableShapes in the segments
+        var placeableShapes = segments
+            .SelectMany(segment => segment.TraverseAllChildren())
+            .OfType<PlaceableShape>()
+            .ToList();
+
+        foreach (var shape in placeableShapes)
+        {
+            // Use the same logic as AddStampedShape to find the room containing this shape
+            var room = FindRoomContainingPosition(shape.Position, RoomGraph);
+
+            // Use the LightingGroup for consistency (RoomParts point to their parent room)
+            shape.Room = room?.LightingGroup;
+        }
+    }
+
+    private Room FindRoomContainingPosition(Vector3 position, RoomGraph roomGraph)
+    {
+        // Check each room to see if it contains the position
+        foreach (var room in roomGraph.GetAllRooms())
+        {
+            if (room.ContainsPoint(position))
+                return room;
+        }
+
+        // If no room contains the point, find the nearest room
+        Room nearestRoom = null;
+        float nearestDistance = float.MaxValue;
+
+        foreach (var room in roomGraph.GetAllRooms())
+        {
+            var distance = Vector3.DistanceSquared(position, room.Position);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestRoom = room;
+            }
+        }
+
+        return nearestRoom;
+    }
+
     public void SwapActive()
     {
         //if (Next == null)
@@ -145,7 +192,7 @@ public class LoadedLevelData
             throw new InvalidOperationException($"WorldSegment not found in loaded segments");
         }
 
-        levelData.AddStampedShape(stampedShape);
+        levelData.AddStampedShape(stampedShape, RoomGraph, _lightingCalculator);
     }
 
     public void AddWallDecal(WorldSegment worldSegment, GeometryBuilder.Shapes.Decals.WallDecal wallDecal)

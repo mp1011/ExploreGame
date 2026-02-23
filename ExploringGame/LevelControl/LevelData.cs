@@ -2,8 +2,10 @@
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -67,15 +69,29 @@ public class LevelData
             obj.Update(gameTime);
     }
 
-    public void AddStampedShape<TStamp>(StampedShape<TStamp> stampedShape) 
+    public void AddStampedShape<TStamp>(StampedShape<TStamp> stampedShape, 
+        RoomGraph roomGraph = null, 
+        RoomLightingCalculator lightingCalculator = null) 
         where TStamp : ShapeStamp
     {
         var stampType = typeof(TStamp);
-        
+
         if (!StampShapeBuffers.TryGetValue(stampType, out var stampBuffer))
         {
             throw new InvalidOperationException($"No ShapeStamp of type {stampType.Name} found in this WorldSegment");
-        }       
+        }
+
+        // Detect which room the stamped shape is in
+        Room room = null;
+        if (roomGraph != null && stampedShape is IPlaceableObject placeableShape)
+        {
+            // Find the room containing this position
+            room = FindRoomContainingPosition(stampedShape.Position, roomGraph);
+            placeableShape.Room = room;
+        }
+
+        // Determine the lighting group for this shape buffer
+        Room lightingGroup = room?.LightingGroup;
 
         // Create a new ShapeBuffer that points to the stamped shape
         // but uses the vertex/index buffers from the stamp
@@ -85,9 +101,36 @@ public class LevelData
             stampBuffer.IndexBuffer,
             stampBuffer.TriangleCount,
             stampBuffer.Texture,
-            stampBuffer.RasterizerState
+            stampBuffer.RasterizerState,
+            lightingGroup
         );
 
         StampedShapeBuffers.Add(stampedBuffer);
+    }
+
+    private Room FindRoomContainingPosition(Vector3 position, RoomGraph roomGraph)
+    {
+        // Check each room to see if it contains the position
+        foreach (var room in roomGraph.GetAllRooms())
+        {
+            if (room.ContainsPoint(position))
+                return room;
+        }
+
+        // If no room contains the point, find the nearest room
+        Room nearestRoom = null;
+        float nearestDistance = float.MaxValue;
+
+        foreach (var room in roomGraph.GetAllRooms())
+        {
+            var distance = Vector3.DistanceSquared(position, room.Position);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestRoom = room;
+            }
+        }
+
+        return nearestRoom;
     }
 }

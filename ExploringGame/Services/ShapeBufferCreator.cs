@@ -143,7 +143,11 @@ internal class ShapeBufferCreator
             if (activeObject.Self is StampedShape ss)
                 yield return CreateStampShapeBuffer(ss, shapeStampBuffers);
             else
-                yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey);
+            {
+                // Use the Room's LightingGroup if the active object has a room assigned
+                Room lightingGroup = activeObject.Room?.LightingGroup;
+                yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey, lightingGroup);
+            }
         }
 
         // create buffers for stamped shapes

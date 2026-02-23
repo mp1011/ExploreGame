@@ -21,6 +21,8 @@ public class PhysicsTestShape : Shape, IPlaceableObject, IControllable, ICollida
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
+    public Room Room { get; set; }
+
     public CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;
 
     public CollisionGroup CollidesWithGroups => CollisionGroup.Environment;

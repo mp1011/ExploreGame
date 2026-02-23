@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using Microsoft.Xna.Framework;
 namespace ExploringGame.Logics;
 
@@ -7,6 +8,7 @@ public interface IPlaceableObject
 {
     Shape Self { get; }
     Shape[] Children { get; }
+    Room Room { get; set; }
 }
 
 public interface IControllable

@@ -14,6 +14,8 @@ public abstract class PlaceableShape : Shape, IPlaceableObject, ICollidable
 
     Shape[] IPlaceableObject.Children => TraverseAllChildren();
 
+    public Room Room { get; set; }
+
     public abstract CollisionGroup CollisionGroup { get; }
     public abstract CollisionGroup CollidesWithGroups { get; }
 

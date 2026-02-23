@@ -153,14 +153,17 @@ public class RoomLightingGroupTests
                 var shapeBuffers = loadedLevelData.LoadedSegments
                     .SelectMany(ld => ld.ShapeBuffers)
                     .ToArray();
-                
+
                 // Group buffers by their lighting group and texture sheet
+                // Exclude PlaceableObject buffers as they are individual (can move/be added/removed)
                 var groupedBuffers = shapeBuffers
                     .Where(sb => sb.LightingGroup != null) // Exclude non-grouped buffers
+                    .Where(sb => sb.Shape is not PlaceableShape) // Exclude PlaceableObjects (they get individual buffers)
                     .GroupBy(sb => new { sb.LightingGroup, sb.Texture })
                     .ToArray();
-                
+
                 // Each combination of LightingGroup and TextureSheet should have exactly one buffer
+                // (for static room geometry)
                 foreach (var group in groupedBuffers)
                 {
                     Assert.Single(group);

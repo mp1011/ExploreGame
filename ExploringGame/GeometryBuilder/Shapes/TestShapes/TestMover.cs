@@ -19,7 +19,9 @@ public class TestMover : Box, IPlaceableObject
 
     Shape[] IPlaceableObject.Children => TraverseAllChildren();
 
-    
+    public Room Room { get; set; }
+
+
 }
 
 public class TestMoverController : IShapeController<TestMover>
