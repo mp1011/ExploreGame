@@ -20,7 +20,8 @@ public class LightSpiritSphere : PlaceableShape, ICollidable
     public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.Environment;
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
-    public RigidBody[] ColliderBodies { get; private set; }
+    public RigidBody[] 
+        ColliderBodies { get; private set; }
 
     public LightSpiritSphere(LightSpirit parent)
     {

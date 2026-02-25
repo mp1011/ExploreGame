@@ -23,7 +23,7 @@ Update the rendering and shader to take into account the computed light levels o
 4. Change RoomLightData so the total light level is a property in memory, which can be updated by explicitly calling a "RecalculateLightLevel()" method
 	- RecalculateLightLevel should only be called when a light is turned on or off, a door is opened or closed
 
-# SECOND PHASE TASKS
+# SECOND PHASE TASKS (completed)
 1. Create a "TwoPassRenderEffect" which first applies a BasicEffect and then applies the PointLightEffect (DONE)
 	- until we start the third phase, the PointLightEffect will be commented out
 2. Apply the lighting data from RoomLightingCalculator to the BasicEffect to get the ambient light for the room (DONE)
@@ -65,7 +65,29 @@ Q. If we're creating one ShapeBuffer per dynamic object, and each has potentiall
 
 
 # THIRD PHASE TASKS
-- refactor PointLights
+GOAL: rework the PointLightEffect shader to work as a second-pass lighting effect, adding additional brightness around point lights
+
+## CONTEXT FOR THIRD PHASE
+- The shader definition is in `Content\PointLightEffect.fx`
+- originally, this was meant to be the sole shader
+- the lighting logic has two parts: one which only cared about the distance from each pixel to a light, and one that took into account the angle of the light relative to the normal
+	- this two-part approach was needed because only using normal-based lighting resulted in some surfaces being completely dark
+- the shader also had a "range" parameters which was an early attempt to prevent lights in one room from lighting up another
+
+## PARTS WE DON'T NEED
+- we don't need the "range" parameters anymore
+- we don't need the distance-based lighting, since the ambient light will be handled by the BasicEffect and the point light effect will only be responsible for adding brightness around point lights
+
+## DESIRED GOAL
+- the shader should serve only to brighten and color pixels around light sources
+	- we are not doing shadows
+- the scene has already been rendered with the BasicEffect, so this shader should only modify pixels if it will make them brighter
+
+## CHALLENGES
+- originally we assumed a single list of PointLights would be used for the whole scene
+	- however, now each lighted room is rendered with its own shader pass
+	- therefor, we need a very efficient way of passing the PointLights for the current room to the shader
+	- the lighting calculation does gather all light contributions, but I don't know if it remembers the actual light itself
 
 # FOURTH PHASE TASKS
 - shader work
