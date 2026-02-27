@@ -89,5 +89,10 @@ GOAL: rework the PointLightEffect shader to work as a second-pass lighting effec
 	- therefor, we need a very efficient way of passing the PointLights for the current room to the shader
 	- the lighting calculation does gather all light contributions, but I don't know if it remembers the actual light itself
 
+## TESTING
+- we've set up the test Basement_PointLightVisual, which will let me manually verify if the rendered screenshot looks correct.
+- to verify, run this test and then I will tell you if the screenshot it produced is correct or not
+- until we get this test to pass, don't bother running any other tests
+
 # FOURTH PHASE TASKS
 - shader work

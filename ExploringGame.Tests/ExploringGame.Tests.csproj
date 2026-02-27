@@ -23,6 +23,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Fixtures\Basement_PointLightVisual_Bright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\Basement_PointLightVisual_Dim.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\Basement_PointLightVisual_ExtremelyBright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\Basement_PointLightVisual_IndoorLight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\Basement_PointLightVisual_VeryDim.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Fixtures\ConnectingRooms_CameraLeft.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

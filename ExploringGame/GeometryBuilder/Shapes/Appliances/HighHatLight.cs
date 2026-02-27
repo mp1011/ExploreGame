@@ -16,7 +16,7 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
 
     public Side ParentCutoutSide => Side.Top;
 
-    public float Intensity => LightIntensity.IndoorLight;
+    public float Intensity { get; set; } = LightIntensity.IndoorLight;
 
     public Color Color => Color.White;
 

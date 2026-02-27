@@ -25,15 +25,12 @@ public class GateMark : WallDecal
                 _isActive = true;
 
                 // Add a faint red point light at the gatemark location
-                // Range covers a small area around the gatemark
-                var rangeMin = Position - new Vector3(2f, 2f, 2f);
-                var rangeMax = Position + new Vector3(2f, 2f, 2f);
-                ActivationLight = _pointLights.AddLight(Position, Color.Red, 0.3f, rangeMin, rangeMax);
+                ActivationLight = _pointLights.AddLight(Position, Color.Red, 0.3f);
             }
             else if(!value && _isActive)
             {
                 _isActive = false;
-                
+
                 if (ActivationLight != null)
                 {
                     _pointLights.RemoveLight(ActivationLight.Index);

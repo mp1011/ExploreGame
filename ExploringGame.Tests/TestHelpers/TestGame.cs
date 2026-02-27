@@ -4,8 +4,11 @@ using ExploringGame.Logics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using Xunit;
 
 namespace ExploringGame.Tests.TestHelpers;
@@ -26,11 +29,11 @@ public class TestGame : Game1
     public MockPlayerInput MockPlayerInput { get; }
 
 
-    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null) : 
-        this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion)
+    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null, string screenshotName = null) : 
+        this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion, screenshotName)
     {}
 
-    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null) 
+    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null, string screenshotName = null) 
         : base(worldSegment)
     {
         // Set higher default ambient light for visual tests (so rooms without lighting data are visible)
@@ -39,14 +42,67 @@ public class TestGame : Game1
         MockPlayerInput = new MockPlayerInput();
         _framesRemaining = framesToRun;
         _testAssertion = testAssertion;
-        
+
         // Create screenshots directory in test output
         var screenshotDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Screenshots");
         Directory.CreateDirectory(screenshotDir);
-        _screenshotPath = Path.Combine(screenshotDir, $"test_{DateTime.Now:yyyyMMdd_HHmmss}.png");
+
+        // Use provided screenshot name or auto-detect from call stack
+        var filename = !string.IsNullOrEmpty(screenshotName) 
+            ? $"{screenshotName}.png"
+            : $"{GetTestNameFromCallStack()}.png";
+        _screenshotPath = Path.Combine(screenshotDir, filename);
 
         _graphics.SynchronizeWithVerticalRetrace = false;
         IsFixedTimeStep = false;
+    }
+
+    private static string GetTestNameFromCallStack()
+    {
+        try
+        {
+            var stackTrace = new StackTrace();
+
+            // Look through the stack for a test method (has [Fact] or [Theory] attribute)
+            for (int i = 0; i < stackTrace.FrameCount; i++)
+            {
+                var frame = stackTrace.GetFrame(i);
+                var method = frame?.GetMethod();
+
+                if (method == null)
+                    continue;
+
+                // Check if this method has [Fact] or [Theory] attribute
+                var isTestMethod = method.GetCustomAttributes(typeof(Xunit.FactAttribute), true).Any() ||
+                                   method.GetCustomAttributes(typeof(Xunit.TheoryAttribute), true).Any();
+
+                if (isTestMethod)
+                {
+                    var testName = new StringBuilder(method.Name);
+
+                    // Try to get parameter values from the current frame's local variables
+                    // This is a best-effort approach
+                    var parameters = method.GetParameters();
+                    if (parameters.Length > 0)
+                    {
+                        // For Theory tests, append parameter info
+                        // Note: We can't easily get actual runtime values, but we can indicate it's parameterized
+                        testName.Append("_");
+
+                        // Generate a timestamp-based suffix for parameterized tests
+                        testName.Append(DateTime.Now.ToString("HHmmss_fff"));
+                    }
+
+                    return testName.ToString();
+                }
+            }
+        }
+        catch
+        {
+            // Fall back to timestamp if we can't determine test name
+        }
+
+        return $"test_{DateTime.Now:yyyyMMdd_HHmmss}";
     }
 
     public T GetService<T>() => _serviceContainer.Get<T>();

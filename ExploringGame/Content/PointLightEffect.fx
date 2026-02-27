@@ -1,4 +1,4 @@
-// Minimal point light effect for MonoGame
+// Point light effect for MonoGame - Second pass additive lighting
 #define MAX_LIGHTS 20
 
 float4x4 World;
@@ -8,17 +8,8 @@ float4x4 Projection;
 float3 LightPositions[MAX_LIGHTS];
 float3 LightColors[MAX_LIGHTS];
 float LightIntensities[MAX_LIGHTS];
-float3 LightRangeMin[MAX_LIGHTS];
-float3 LightRangeMax[MAX_LIGHTS];
 
 int LightCount;
-float3 AmbientColor;
-
-Texture2D Texture : register(t0);
-sampler TextureSampler = sampler_state
-{
-    Texture = <Texture>;
-};
 
 struct VSInput
 {
@@ -54,41 +45,27 @@ PSInput VSMain(VSInput input)
 float4 PSMain(PSInput input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
-    float3 texColor = tex2D(TextureSampler, input.TexCoord).rgb;
-    float3 baseColor = texColor * input.Color.rgb;
-    float3 diffuse = float3(0, 0, 0);
-    float attenuation = 1.0;
-    
+    float3 additionalLight = float3(0, 0, 0);
+
     for (int i = 0; i < LightCount; ++i)
     {
-        float3 rangeMin = LightRangeMin[i];
-        float3 rangeMax = LightRangeMax[i];
-        
-        float3 wp = input.WorldPos;
-        if (wp.x < rangeMin.x || wp.x > rangeMax.x ||
-           wp.y < rangeMin.y || wp.y > rangeMax.y ||
-           wp.z < rangeMin.z || wp.z > rangeMax.z)
-            continue;
-                           
         float3 toLight = LightPositions[i] - input.WorldPos;
         float dist = length(toLight);
         float3 toLightDir = normalize(toLight);
-        float NdotL = dot(normal, toLightDir);
-        float lightFactor;
-        if (NdotL > 0.1)
-        {
-            lightFactor = NdotL;
-            attenuation = (1.0 / (1.0 + dist * dist)) * 10.0;
-        }
-        else
-        {
-            lightFactor = 1.0 / (1.0 + dist * dist * 0.1);
-            attenuation = 1.0;
-        }
-        diffuse += baseColor * LightColors[i] * lightFactor * LightIntensities[i] * attenuation;
+
+        // Calculate lighting based on normal angle
+        float NdotL = max(dot(normal, toLightDir), 0.0);
+
+        // Strong attenuation - lights fall off very quickly with distance
+        float attenuation = 1.0 / (1.0 + dist * dist);
+
+        // Add light contribution
+        additionalLight += LightColors[i] * NdotL * LightIntensities[i] * attenuation;
     }
-    float3 ambient = baseColor * AmbientColor;
-    return float4(diffuse + ambient, 1);
+
+    // Second pass - only return the additional light, not the base color
+    // The base color was already rendered in the first pass (BasicEffect)
+    return float4(additionalLight, 1);
 }
 
 technique PointLight

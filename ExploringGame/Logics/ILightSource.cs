@@ -12,7 +12,7 @@ public interface ILightSource
     /// <summary>
     /// Light intensity on a scale of 0-10 (5.0 = normal, 10.0 = extremely bright)
     /// </summary>
-    float Intensity { get; }
+    float Intensity { get; set; }
 
     /// <summary>
     /// Color of the light

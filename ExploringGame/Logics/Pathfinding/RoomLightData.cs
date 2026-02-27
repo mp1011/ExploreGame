@@ -77,5 +77,15 @@ public class RoomLightData
         return _lightContributions.Keys;
     }
 
+    /// <summary>
+    /// Gets only light sources that are physically located in this room's lighting group.
+    /// This is different from GetLightSources() which includes lights from neighboring rooms
+    /// that contribute to ambient lighting.
+    /// </summary>
+    public IEnumerable<ILightSource> GetLightSourcesInRoom()
+    {
+        return _lightContributions.Keys.Where(light => light.Room?.LightingGroup == Room);
+    }
+
     public override string ToString() => $"Light Data ({Room}) = {TotalLight}";  
 }

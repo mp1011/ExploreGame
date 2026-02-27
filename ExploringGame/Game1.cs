@@ -105,7 +105,7 @@ public class Game1 : Game
         _debugFont = Content.Load<SpriteFont>("Font");
 
         var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
-        var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), this);
+        var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
         var dualEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
 
         var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();

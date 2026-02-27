@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
@@ -16,27 +17,47 @@ namespace ExploringGame.Tests.VisualTests;
 /// </summary>
 public class LightingVisualTests
 {
-    [Fact]
-    public void Basement_PointLightVisual()
+    [Theory]
+    [InlineData(LightIntensity.VeryDim)]
+    [InlineData(LightIntensity.Dim)]
+    [InlineData(LightIntensity.IndoorLight)]
+    [InlineData(LightIntensity.Bright)]
+    [InlineData(LightIntensity.ExtremelyBright)]
+    public void Basement_PointLightVisual(double lightIntensity)
     {
         var basement = new BasementWorldSegment(null);
 
-        using var game = new TestGame(basement, simulationTime: TimeSpan.FromSeconds(1), testAssertion: (g, gameTime) =>
+        // Generate screenshot name from test name and parameters
+        var testName = nameof(Basement_PointLightVisual);
+        var intensityName = GetIntensityName(lightIntensity);
+        var screenshotName = $"{testName}_{intensityName}";
+
+        using var game = new TestGame(basement, 
+            simulationTime: TimeSpan.FromSeconds(1),
+            screenshotName: screenshotName,
+            testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
+                LightIntensity.DefaultAmbientLight = LightIntensity.Darkness;
                 var basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
+                var basementLight = basementRoom.TraverseAllChildren().OfType<HighHatLight>().First();
+
+                // Turn off all lights except the basement light
+                g.SetAllLights(light => light == basementLight);
+
+                // Set the light's intensity for this test
+                basementLight.Intensity = (float)lightIntensity;
 
                 // Create a fixed camera positioned to view the point light
                 var cameraPosition = basementRoom.Position + new Vector3(3f, 0f, 4f);
-                var lightPosition = basementRoom.TraverseAllChildren().OfType<HighHatLight>().First().Position;
+                var lightPosition = basementLight.Position;
 
                 var camera = new DebugFixedCamera(cameraPosition, new Rotation(0, 0, 0));
-               
+
                 // Replace the default camera with our fixed one
                 var cameraService = g.GetService<CameraService>();
                 cameraService.SetCamera(camera);
-
                 return TestResult.PASS;
             }
 
@@ -45,8 +66,22 @@ public class LightingVisualTests
 
         game.Run();
 
+        game.AssertScreenshot($"Fixtures/{screenshotName}.png");
+    }
 
-        game.AssertScreenshot("Fixtures/Basement_PointLightVisual.png");
-
+    private static string GetIntensityName(double intensity)
+    {
+        return intensity switch
+        {
+            LightIntensity.Darkness => "Darkness",
+            LightIntensity.VeryDim => "VeryDim",
+            LightIntensity.Dim => "Dim",
+            LightIntensity.IndoorLight => "IndoorLight",
+            LightIntensity.Normal => "Normal",
+            LightIntensity.Bright => "Bright",
+            LightIntensity.VeryBright => "VeryBright",
+            LightIntensity.ExtremelyBright => "ExtremelyBright",
+            _ => intensity.ToString("F1")
+        };
     }
 }
