@@ -29,6 +29,9 @@ public class Den : Room
         EastPart = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
         AddConnectingRoom(new RoomConnection(this, EastPart, Side.East, HAlign.Right));
 
+        // Place window on south wall
+        var windowSouth = new Furniture.Window(this, Side.South, Measure.Feet(4), Measure.Feet(4));
+
         var closet = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
 
         AddConnectingRoomWithJunction(new DoorJunction(closet, Side.East, HAlign.Left, DoorDirection.Pull, StateKey.DenClosetDoorOpen), closet, Side.East, HAlign.Left, offset: 0.5f);

@@ -22,6 +22,9 @@ public class Kitchen : Room
         _upstairsHall.AddConnectingRoom(new RoomConnection(_upstairsHall, this, Side.East, HAlign.Right));
         SetSideUnanchored(Side.North, _upstairsHall.NorthHall.GetSide(Side.North));
 
+        // Place window on east wall
+        var windowEast = new Furniture.Window(this, Side.East, Measure.Feet(4), Measure.Feet(4));
+
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);
         lightSwitch.ControlledObjects.Add(light);

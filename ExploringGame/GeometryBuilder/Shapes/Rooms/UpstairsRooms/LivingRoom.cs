@@ -27,6 +27,9 @@ public class LivingRoom : Room
         AddConnectingRoom(new RoomConnection(this, _kitchen, Side.South), adjustPlacement: false);
         AddConnectingRoom(new RoomConnection(this, _upstairsHall.NorthHall, Side.South), adjustPlacement: false);
 
+        // Place large window on west wall
+        var windowWest = new Furniture.Window(this, Side.West, Measure.Feet(6), Measure.Feet(4));
+
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.East, StateKey.LivingRoomLightOn);
         lightSwitch.ControlledObjects.Add(light);

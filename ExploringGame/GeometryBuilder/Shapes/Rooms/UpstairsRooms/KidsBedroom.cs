@@ -24,6 +24,10 @@ public class KidsBedroom : Room
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Pull, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left,
             adjustPlacement: false);
+
+        // Place windows on south and east walls
+        var windowSouth = new Furniture.Window(this, Side.South, Measure.Feet(3), Measure.Feet(4));
+        var windowEast = new Furniture.Window(this, Side.East, Measure.Feet(3), Measure.Feet(4));
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();
