@@ -125,6 +125,8 @@ public class PointLightRenderEffect : RenderEffect<Effect>
     private PointLights _pointLights;
     private RoomLightingCalculator _roomLightingCalculator;
     private BlendState _additiveBlendState;
+    private DepthStencilState _depthStencilState;
+    private RasterizerState _rasterizerState;
 
     public PointLightRenderEffect(PointLights pointLights, RoomLightingCalculator roomLightingCalculator, Game game) : base(game)
     {
@@ -140,6 +142,26 @@ public class PointLightRenderEffect : RenderEffect<Effect>
             AlphaSourceBlend = Blend.One,
             AlphaDestinationBlend = Blend.One,
             AlphaBlendFunction = BlendFunction.Add
+        };
+
+        // Configure depth-stencil for second pass:
+        // - Enable depth testing (don't render behind geometry)
+        // - Disable depth writing (we're not changing geometry)
+        // - Use LessEqual comparison (allow rendering at same depth as first pass)
+        _depthStencilState = new DepthStencilState
+        {
+            DepthBufferEnable = true,
+            DepthBufferWriteEnable = false,
+            DepthBufferFunction = CompareFunction.LessEqual
+        };
+
+        // Apply a small depth bias to push the second pass slightly forward
+        // This prevents z-fighting due to floating-point precision issues
+        _rasterizerState = new RasterizerState
+        {
+            CullMode = CullMode.CullCounterClockwiseFace,
+            DepthBias = -0.00001f,
+            SlopeScaleDepthBias = -1f
         };
     }
 
@@ -216,25 +238,18 @@ public class PointLightRenderEffect : RenderEffect<Effect>
     {
         var previousBlendState = graphicsDevice.BlendState;
         var previousDepthStencilState = graphicsDevice.DepthStencilState;
+        var previousRasterizerState = graphicsDevice.RasterizerState;
 
         // Set up for second pass additive rendering
         graphicsDevice.BlendState = _additiveBlendState;
-
-        // Configure depth-stencil for second pass:
-        // - Enable depth testing (don't render behind geometry)
-        // - Disable depth writing (we're not changing geometry)
-        // - Use LessEqual comparison (allow rendering at same depth as first pass)
-        graphicsDevice.DepthStencilState = new DepthStencilState
-        {
-            DepthBufferEnable = true,
-            DepthBufferWriteEnable = false,
-            DepthBufferFunction = CompareFunction.LessEqual
-        };
+        graphicsDevice.DepthStencilState = _depthStencilState;
+        graphicsDevice.RasterizerState = _rasterizerState;
 
         base.Draw(graphicsDevice, shapeBuffers, view, projection);
 
         graphicsDevice.BlendState = previousBlendState;
         graphicsDevice.DepthStencilState = previousDepthStencilState;
+        graphicsDevice.RasterizerState = previousRasterizerState;
     }
 }
 

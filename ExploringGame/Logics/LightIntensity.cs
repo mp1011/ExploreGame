@@ -49,5 +49,5 @@ public static class LightIntensity
     /// <summary>
     /// Default ambient light level for rooms without lighting data.
     /// </summary>
-    public static float DefaultAmbientLight { get; set; } = Darkness;
+    public static float DefaultAmbientLight { get; set; } = VeryDim;
 }
