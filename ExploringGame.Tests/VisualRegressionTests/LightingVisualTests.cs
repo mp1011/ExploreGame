@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 using System.Linq;
 using Xunit;
 
-namespace ExploringGame.Tests.VisualTests;
+namespace ExploringGame.Tests.VisualRegressionTests;
 
 /// <summary>
 /// Visual test for the lighting system - captures a screenshot for manual inspection.

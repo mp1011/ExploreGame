@@ -1,0 +1,10 @@
+# GOAL
+We want some rooms to have their ambient light set to a specific value, despite not having any point lights
+
+# NOTES
+- Currently, we base ambient light level on the light sources of the room
+- however there's some areas where we just want the room to have a certain base brightness
+- we still want to use the existing room-based light calculations 
+	- this room can get additional brightness from surrounding rooms
+	- and this room can add brightness to surrounding rooms
+- the only difference is the room doesn't get any point lights

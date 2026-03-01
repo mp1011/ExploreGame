@@ -19,6 +19,11 @@ public class Room : Shape
     private List<RoomConnection> _roomConnections = new List<RoomConnection>();
     public IEnumerable<RoomConnection> RoomConnections => _roomConnections;
 
+    /// <summary>
+    /// If set, this value is used as the room's default ambient light instead of LightIntensity.DefaultAmbientLight
+    /// </summary>
+    public float? FixedAmbientLight { get; set; }
+
     public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
 
     public override ViewFrom ViewFrom => ViewFrom.Inside;

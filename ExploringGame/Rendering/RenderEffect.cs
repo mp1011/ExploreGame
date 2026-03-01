@@ -108,8 +108,13 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
     private Vector3 AmbientLight(ShapeBuffer shapeBuffer)
     {
 
-        var brightness = LightIntensity.DefaultAmbientLight; 
+        float brightness = LightIntensity.DefaultAmbientLight;
         var lightingGroup = shapeBuffer.LightingGroup;
+        if (lightingGroup != null && lightingGroup.FixedAmbientLight.HasValue)
+        {
+            brightness = lightingGroup.FixedAmbientLight.Value;
+        }
+
         if (lightingGroup != null && _roomLightingCalculator.RoomLightGraph.TryGet(lightingGroup, out var lightData))
         {
             brightness += lightData.TotalLight;
