@@ -1,5 +1,6 @@
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -65,7 +66,8 @@ public class Window : Room
         }
 
         _exteriorRoom = new Room(room.WorldSegment, exteriorRoomWidth, exteriorRoomDepth, exteriorRoomHeight);
-        _exteriorRoom.MainTexture = new TextureInfo(Color.White, TextureKey.Wall);
+        _exteriorRoom.MainTexture = new TextureInfo(Color.White);
+        _exteriorRoom.FixedAmbientLight = LightIntensity.VeryBright;
 
         // Placement and connection logic
         Position = _parentRoom.Position;

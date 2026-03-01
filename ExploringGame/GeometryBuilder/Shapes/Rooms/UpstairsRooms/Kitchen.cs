@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
@@ -23,7 +24,7 @@ public class Kitchen : Room
         SetSideUnanchored(Side.North, _upstairsHall.NorthHall.GetSide(Side.North));
 
         // Place window on east wall
-        var windowEast = new Furniture.Window(this, Side.East, Measure.Feet(4), Measure.Feet(4));
+        var windowEast = new Window(this, Side.East, Measure.Feet(4), Measure.Feet(4));
 
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);
@@ -32,5 +33,4 @@ public class Kitchen : Room
         lightSwitch.Position = Position;
         lightSwitch.Place().OnSideInner(Side.West);
     }
-
 }

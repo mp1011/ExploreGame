@@ -4,13 +4,12 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
-using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class UpstairsHall : Room
 {
-    public override Theme Theme => new TestTheme(); //> new UpstairsHallTheme();
+    public override Theme Theme => new UpstairsHallTheme();
 
     public Room SouthHall { get; private set; }
     public Room NorthHall { get; private set; }

@@ -13,6 +13,7 @@ public enum StateKey
     BasementStairsDoorOpen,
     BedroomDoorOpen,
     KidsBedroomDoorOpen,
+    KidsBedroomLightOn,
     LinenClosetDoorOpen,
     SpareRoomDoorOpen,
     HallLightOn,

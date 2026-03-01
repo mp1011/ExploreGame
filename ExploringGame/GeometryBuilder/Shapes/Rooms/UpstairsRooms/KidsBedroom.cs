@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
@@ -28,6 +29,15 @@ public class KidsBedroom : Room
         // Place windows on south and east walls
         var windowSouth = new Furniture.Window(this, Side.South, Measure.Feet(3), Measure.Feet(4));
         var windowEast = new Furniture.Window(this, Side.East, Measure.Feet(3), Measure.Feet(4));
+
+        // Add a high hat light to the kids bedroom
+        var kidsLight = new HighHatLight(this, 0f, 0f);
+
+        // Add a light switch on the east wall
+        var lightSwitch = new LightSwitch(this, Side.North, StateKey.KidsBedroomLightOn);
+        lightSwitch.ControlledObjects.Add(kidsLight);
+        lightSwitch.Position = Position;
+        lightSwitch.Place().OnSideInner(Side.North);
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();

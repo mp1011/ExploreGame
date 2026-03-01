@@ -21,6 +21,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
     public Angle OpenAngle { get; }
     public HAlign HingePosition { get; }
 
+
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => new DoorColliderMaker(this);
@@ -53,8 +54,9 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 
         Angle doorOpen, doorClose;
 
-        var openMod = doorDirection == DoorDirection.Pull ? 1 : -1;
 
+        // Prevent doors from being pushed: force Pull direction
+        var openMod = 1;
         if (hingePosition == HAlign.Left)
         {
             doorClose = new Angle(wallSide).RotateClockwise(90);

@@ -1,0 +1,20 @@
+GROUP 1
+1. high hat light in basement office should be moved to not be placed over room boundaries (FIXED)
+2. doors not illuminated
+3. texture on oil tank doesn't look right
+4. oil tank should be have slightly less depth (FIXED)
+5. basement stairs door not wide enough (FIXED)
+6. doors can be pushed	
+7. kitchen light switch shouldn't be pressable from other side of wall
+8. need a light added to kids bedroom (FIXED)
+9. outdoor placeholders need max brightness and pure color walls (FIXED)
+10. upstairs hall has placeholder theme instead of proper theme (FIXED)
+11. window on kitchen should be placed closer to right side
+	- windows need custom placement
+12. window in den should be placed closer to the left side
+	- windows need custom placement
+--
+GROUP 2
+1. door light should interopolate
+2. basement door acts like a "Pull" door regardless of its settings
+3. odd flickering effect on upstairs hall

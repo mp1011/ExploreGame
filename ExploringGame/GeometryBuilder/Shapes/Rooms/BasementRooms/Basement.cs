@@ -76,15 +76,37 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
             BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
-                { Depth =0.5f, Width = Measure.Feet(3) };
+                { Depth =0.5f };
 
             BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             BasementStairsDoor.SetSide(Side.North, GetSide(Side.South));
 
             Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: BasementStairsDoor));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
+            
+            BasementStairsDoor.SetSide(Side.East, Stairs.GetSide(Side.East) - 0.1f);
 
-            BasementStairsDoor.SetSide(Side.East, Stairs.GetSide(Side.East));
+            // unsure why we need these
+            var basementStairsDoorLeft = AddChild(new Box(TextureKey.Wall));
+            var basementStairsDoorRight = AddChild(new Box(TextureKey.Wall));
+            basementStairsDoorLeft.OmitSides = Side.West | Side.South | Side.East;
+            basementStairsDoorRight.OmitSides = Side.West | Side.South | Side.East;
+
+            basementStairsDoorLeft.Position = BasementStairsDoor.Position;
+            basementStairsDoorLeft.Size = BasementStairsDoor.Size;
+            basementStairsDoorLeft.SetSide(Side.Bottom, BasementStairsDoor.GetSide(Side.Bottom));
+            basementStairsDoorLeft.SetSideUnanchored(Side.Top, BasementStairsDoor.GetSide(Side.Top));
+            basementStairsDoorLeft.SetSide(Side.East, Stairs.GetSide(Side.East));
+            basementStairsDoorLeft.SetSideUnanchored(Side.West, BasementStairsDoor.GetSide(Side.East));
+            basementStairsDoorLeft.SetSideUnanchored(Side.South, BasementStairsDoor.GetSide(Side.North) + 0.5f);
+
+            basementStairsDoorRight.Position = BasementStairsDoor.Position;
+            basementStairsDoorRight.Size = BasementStairsDoor.Size;
+            basementStairsDoorRight.SetSide(Side.Bottom, BasementStairsDoor.GetSide(Side.Bottom));
+            basementStairsDoorRight.SetSideUnanchored(Side.Top, BasementStairsDoor.GetSide(Side.Top));
+            basementStairsDoorRight.SetSide(Side.West, Stairs.GetSide(Side.West));
+            basementStairsDoorRight.SetSideUnanchored(Side.East, BasementStairsDoor.GetSide(Side.West));
+            basementStairsDoorRight.SetSideUnanchored(Side.South, BasementStairsDoor.GetSide(Side.North) + 0.5f);
 
 
             AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
