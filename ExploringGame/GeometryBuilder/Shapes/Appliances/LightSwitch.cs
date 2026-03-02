@@ -1,16 +1,21 @@
 ﻿using ExploringGame.LevelControl;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Collision;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
-public class LightSwitch : Shape, IControllable<LightSwitchController>
+public class LightSwitch : Shape, IControllable<LightSwitchController>, ICollidable
 {
     public override Theme Theme => new Theme(Color.Red);
     public override ViewFrom ViewFrom => ViewFrom.Outside;
+
+    public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
 
     public StateKey StateKey { get; }
 
@@ -43,6 +48,10 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>
     }
 
     public LightSwitchController Controller { get; private set; }
+
+    public CollisionGroup CollisionGroup => CollisionGroup.Environment;
+
+    public CollisionGroup CollidesWithGroups => CollisionGroup.None;
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {

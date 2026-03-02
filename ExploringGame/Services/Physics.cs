@@ -38,8 +38,6 @@ public record RaycastResult(IDynamicTreeProxy HitObject, Vector3 Normal, float L
 
 public class Physics
 {
-    public static bool DebugDrawHinge = false;
-
     public const float WallColliderThickness = 0.5f;
 
     private World _world;
@@ -58,7 +56,18 @@ public class Physics
         JVector normal;
         float lambda;
 
-        if (_world.DynamicTree.RayCast(origin.Position.ToJVector(), direction, pre: p => !p.BelongsTo(origin), post: null, proxy: out proxy, normal: out normal, lambda: out lambda))
+        if (_world.DynamicTree.RayCast(origin.Position.ToJVector(), direction, 
+            pre: p => {
+                if (p.BelongsTo(origin))
+                    return false;
+                if (p.CollisionInfo().MyGroup == CollisionGroup.None)
+                    return false;
+                return true;
+                },
+            post: null, 
+            proxy: out proxy, 
+            normal: out normal, 
+            lambda: out lambda))
         {
             return new RaycastResult(proxy, normal.ToVector3(), lambda);
         }
@@ -237,17 +246,10 @@ public class Physics
             hinge.X += 0.01f;
         }
 
-        if (DebugDrawHinge)
-        {
-            throw new Exception("this needs to be redone");
-            hinge.MainTexture = new Texture.TextureInfo(Color.Pink);
-            door.Parent.AddChild(hinge);
-        }
-        
         var doorBody = CreateDynamicBody(door);
         var hingeBody = CreateStaticBody(hinge, CollisionGroup.Environment, CollisionGroup.None);
         InitPhysics(doorBody);
-        doorBody.SetMassInertia(10.0f);
+        doorBody.SetMassInertia(10000.0f);
 
         var minAngle = MathHelper.Min(door.OpenAngle.Degrees, door.ClosedAngle.Degrees);
         var maxAngle = MathHelper.Max(door.OpenAngle.Degrees, door.ClosedAngle.Degrees);

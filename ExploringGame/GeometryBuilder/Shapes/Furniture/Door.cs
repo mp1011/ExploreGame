@@ -7,6 +7,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
 
@@ -20,7 +21,6 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
     public Angle ClosedAngle { get; }
     public Angle OpenAngle { get; }
     public HAlign HingePosition { get; }
-
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
@@ -37,7 +37,10 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
             if (_open != value)
             {
                 _open = value;
-                PositionChanged?.Invoke(this, EventArgs.Empty);
+                if (_open != value)
+                {
+                    PositionChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
     }
@@ -54,9 +57,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 
         Angle doorOpen, doorClose;
 
+        var openMod = doorDirection == DoorDirection.Pull ? 1 : -1;
 
-        // Prevent doors from being pushed: force Pull direction
-        var openMod = 1;
         if (hingePosition == HAlign.Left)
         {
             doorClose = new Angle(wallSide).RotateClockwise(90);

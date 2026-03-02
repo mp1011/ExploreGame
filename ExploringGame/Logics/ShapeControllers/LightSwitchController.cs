@@ -3,6 +3,8 @@ using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics.Collision;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Logics.ShapeControllers;
@@ -12,11 +14,13 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPla
     private readonly IPlayerInput _playerInput;
     private readonly Player _player;
     private readonly GameState _gameState;
+    private readonly Physics _physics;
 
     public StateKey StateKey => Shape.StateKey;
 
-    public LightSwitchController(IPlayerInput playerInput, Player player, GameState gameState)
+    public LightSwitchController(IPlayerInput playerInput, Player player, GameState gameState, Physics physics)
     {
+        _physics = physics;
         _playerInput = playerInput;
         _player = player;
         _gameState = gameState;
@@ -43,7 +47,7 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPla
 
     Player IPlayerActivated.Player => _player;
 
-    Shape IPlayerActivated.Shape => Shape;
+    ICollidable IPlayerActivated.Shape => Shape;
     #endregion
 
     public void Initialize()
@@ -58,7 +62,7 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPla
 
     public void Update(GameTime gameTime)
     {
-        if(this.CheckPlayerActivation())
+        if(this.CheckPlayerActivation(_physics))
             On = !On;
     }
 }

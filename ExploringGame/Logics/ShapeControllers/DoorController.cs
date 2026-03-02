@@ -3,6 +3,7 @@ using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
@@ -21,7 +22,7 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
     #region IPlayerActivated
     IPlayerInput IPlayerActivated.PlayerInput => _playerInput;
     Player IPlayerActivated.Player => _player;
-    Shape IPlayerActivated.Shape => Shape;
+    ICollidable IPlayerActivated.Shape => Shape;
     #endregion
 
     private readonly IPlayerInput _playerInput;
@@ -81,7 +82,7 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
         Shape.Position = _rigidBody.Position.ToVector3();
         Shape.Rotation = Rotation.FromJQuaternion(_rigidBody.Orientation);
 
-        if (this.CheckPlayerActivation())
+        if (this.CheckPlayerActivation(_physics))
         {
             Shape.Open = !Shape.Open;
             if(Shape.Open)

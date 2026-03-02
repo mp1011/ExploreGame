@@ -19,12 +19,12 @@ public class OilTank : PlaceableShape
         room.AddChild(this);
         Width = 3.0f;
         Height = 2.0f;
-        Depth = 1.0f; // slightly less depth
+        Depth = 1.0f;
         Position = room.Position;
         MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.DarkRed);
 
-        SideTextures[Side.West] = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.LightGray);
-        SideTextures[Side.East] = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.LightBlue);
+        SideTextures[Side.West] = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.White);
+        SideTextures[Side.East] = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.White);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

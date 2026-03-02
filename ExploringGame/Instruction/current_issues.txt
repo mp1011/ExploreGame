@@ -1,11 +1,12 @@
 GROUP 1
 1. high hat light in basement office should be moved to not be placed over room boundaries (FIXED)
-2. doors not illuminated
+2. doors not illuminated (FIXED)
 3. texture on oil tank doesn't look right
 4. oil tank should be have slightly less depth (FIXED)
 5. basement stairs door not wide enough (FIXED)
-6. doors can be pushed	
-7. kitchen light switch shouldn't be pressable from other side of wall
+	- basement door sometimes "stuck" (FIXED)
+6. doors can be pushed (FIXED)	
+7. kitchen light switch shouldn't be pressable from other side of wall (FIXED)
 8. need a light added to kids bedroom (FIXED)
 9. outdoor placeholders need max brightness and pure color walls (FIXED)
 10. upstairs hall has placeholder theme instead of proper theme (FIXED)

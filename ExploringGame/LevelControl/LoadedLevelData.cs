@@ -62,15 +62,16 @@ public class LoadedLevelData
         _lightingCalculator.SetRoomGraph(RoomGraph);
         _lightingCalculator.AddSegments(addedSegments);
 
-        // Assign room to all PlaceableShapes based on their position
-        AssignRoomsToPlaceableShapes(addedSegments);
-
+      
         foreach (var addedSegment in addedSegments)
         {
             // Create waypoint graph before building so DebugMarkers are included
             addedSegment.WaypointGraph = new WaypointGraph(addedSegment, RoomGraph);
 
             var triangles = addedSegment.Build((QualityLevel)8); //todo, quality level
+
+            AssignRoomsToPlaceableShapes(addedSegment);
+
             var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
             var activeObjects = _serviceContainer.CreateControllers(addedSegment.TraverseAllChildren());
 
@@ -79,7 +80,7 @@ public class LoadedLevelData
             newLevelData.Initialize();
 
             LoadedSegments.Add(newLevelData);
-        }       
+        }
     }
 
     private void BuildRoomGraph(List<WorldSegment> segments)
@@ -109,11 +110,10 @@ public class LoadedLevelData
         }
     }
 
-    private void AssignRoomsToPlaceableShapes(List<WorldSegment> segments)
+    private void AssignRoomsToPlaceableShapes(WorldSegment segment)
     {
         // Find all PlaceableShapes in the segments
-        var placeableShapes = segments
-            .SelectMany(segment => segment.TraverseAllChildren())
+        var placeableShapes = segment.TraverseAllChildren()
             .OfType<PlaceableShape>()
             .ToList();
 
