@@ -185,7 +185,7 @@ public static partial class TestMaps
         return ws;
     }
 
-    private static WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
+    public static WorldSegment OilTankTest() => ComplexShapeTest(room => new OilTank(room));
 
     private static WorldSegment CircleCutoutTest()
     {

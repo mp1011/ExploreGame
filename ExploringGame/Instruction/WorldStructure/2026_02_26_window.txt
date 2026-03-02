@@ -1,7 +1,8 @@
 # GOAL
 Create a "Window" Shape class to render a window to a room, with a mocked "exterior"
 
-# NOTES
+# PHASE 1 (DONE)
+## NOTES
 - use "AddConnectingRoomWithJunction" to place the window
 	- the windowsill itself is the "Junction" with the parent room being the room we look out from.
 	- the other room is a mocked "exterior"
@@ -9,16 +10,24 @@ Create a "Window" Shape class to render a window to a room, with a mocked "exter
 - the shape does not need to be a PlaceableShape
 
 
-# MOCKED EXTERIOR
+## MOCKED EXTERIOR
 	- until we have outdoor areas implemented, the "outside" room will be a basic room with a pure white texture on all surfaces
 
-# WHERE TO PLACE
+## WHERE TO PLACE
 - LivingRoom, on the west wall (should be a large window)
 - Bedroom, on the West and South walls
 - KidsBedroom, on the South and East Walls
 - Kitchen, on the East Wall
 - Den, on the South Wall
 
-# APPEARENCE
+## APPEARENCE
 - at first, the window will be an empty rectangle
 - once I confirm placement, I'll add instructions for extra detail
+
+# PHASE 2
+- we need more control over where the window gets placed
+- include a HAlign and Offset and pass into AddConnectingRoomWithJunction. This will let us place the window anywhere we want
+- adjust the existing windows as follows:
+	- Kitchen, align to the right, 2 feet from the wall
+	- Den, align to the left, 2 feet from the wall
+	- LivingRoom, align to the right, 4 feet from the wall

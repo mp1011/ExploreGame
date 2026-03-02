@@ -102,6 +102,7 @@ public class VertexBufferBuilder
 
         var coordinates = position2d.RelativeUnitPosition(topLeftCorner2d, bottomRightCorner2d);
         return coordinates;
+        // return new Vector2(coordinates.X.NMod(1.0f), coordinates.Y.NMod(1.0f));
     }
 
     private Vector2 CalcTextureCoordinates_Tile(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)

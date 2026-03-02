@@ -18,7 +18,7 @@ public class Window : Room
     private Room _parentRoom;
     private Room _exteriorRoom;
 
-    public Window(Room room, Side wallSide, float width, float height) : base(room.WorldSegment)
+    public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f) : base(room.WorldSegment)
     {
         _parentRoom = room;
         _wallSide = wallSide;
@@ -80,7 +80,7 @@ public class Window : Room
         _exteriorRoom.Place().OnSideOuter(_wallSide, this);
 
         // Connect parent room, window, and exterior
-        _parentRoom.AddConnectingRoomWithJunction(this, _exteriorRoom, _wallSide);
+        _parentRoom.AddConnectingRoomWithJunction(this, _exteriorRoom, _wallSide, align, offset);
 
         // Ensure window sits above the floor
         float parentBottom = _parentRoom.GetSide(Side.Bottom);

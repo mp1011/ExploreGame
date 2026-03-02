@@ -48,7 +48,7 @@ public class Physics
         _world.NarrowPhaseFilter = new CollisionModifier(_world.NarrowPhaseFilter);
     }
 
-    public RaycastResult Raycast(ICollidable origin, IWithPosition target)
+    public RaycastResult Raycast(ICollidable origin, ICollidable target)
     {
         var direction = Vector3.Normalize(target.Position - origin.Position).ToJVector();
 
@@ -60,8 +60,11 @@ public class Physics
             pre: p => {
                 if (p.BelongsTo(origin))
                     return false;
-                if (p.CollisionInfo().MyGroup == CollisionGroup.None)
+
+                // prevent hitting non-colliding objects, unless that's what we're trying to do
+                if (target.CollisionGroup != CollisionGroup.None && p.CollisionInfo().MyGroup == CollisionGroup.None)
                     return false;
+
                 return true;
                 },
             post: null, 

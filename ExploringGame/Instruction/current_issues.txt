@@ -2,6 +2,10 @@ GROUP 1
 1. high hat light in basement office should be moved to not be placed over room boundaries (FIXED)
 2. doors not illuminated (FIXED)
 3. texture on oil tank doesn't look right
+	- textures on the end caps don't show the correct region of the texture sheet
+	- the code to create a cylinder shape is BuildCylinder in `Services\TriangleMaker.cs`
+	- the code to find texture coordinates is CalcTextureCoordinates of `Rendering\VertexBufferBuilder.cs`
+	- the texture style is "FillSide" for the oil tank
 4. oil tank should be have slightly less depth (FIXED)
 5. basement stairs door not wide enough (FIXED)
 	- basement door sometimes "stuck" (FIXED)
@@ -10,12 +14,11 @@ GROUP 1
 8. need a light added to kids bedroom (FIXED)
 9. outdoor placeholders need max brightness and pure color walls (FIXED)
 10. upstairs hall has placeholder theme instead of proper theme (FIXED)
-11. window on kitchen should be placed closer to right side
-	- windows need custom placement
-12. window in den should be placed closer to the left side
-	- windows need custom placement
+11. window on kitchen should be placed closer to right side (FIXED)
+12. window in den should be placed closer to the left side (FIXED)
 --
 GROUP 2
 1. door light should interopolate
 2. basement door acts like a "Pull" door regardless of its settings
 3. odd flickering effect on upstairs hall
+4. texture on oil tank doesn't look right
