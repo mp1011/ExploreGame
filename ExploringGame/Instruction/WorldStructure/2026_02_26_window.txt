@@ -24,10 +24,22 @@ Create a "Window" Shape class to render a window to a room, with a mocked "exter
 - at first, the window will be an empty rectangle
 - once I confirm placement, I'll add instructions for extra detail
 
-# PHASE 2
+# PHASE 2 (DONE)
 - we need more control over where the window gets placed
 - include a HAlign and Offset and pass into AddConnectingRoomWithJunction. This will let us place the window anywhere we want
 - adjust the existing windows as follows:
 	- Kitchen, align to the right, 2 feet from the wall
 	- Den, align to the left, 2 feet from the wall
 	- LivingRoom, align to the right, 4 feet from the wall
+
+# PHASE 3
+- now we want to add some more detail
+- hard code all of the sizes, pick reasonable defaults to start
+
+1. Add a windowsill
+	- this is just a thin box shape that juts slightly into the room
+2. Add a curtain rod
+	- this is a thin cylinder above the window. 
+	- it should  be attached to the wall with thin box shapes
+3. Add curtains
+	- this will just be triangle quads hanging off the edge of the window

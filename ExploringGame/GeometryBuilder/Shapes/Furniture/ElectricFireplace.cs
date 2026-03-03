@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics.Collision.ColliderMakers;
+﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;

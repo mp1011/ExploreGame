@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics;
+﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.Logics;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 

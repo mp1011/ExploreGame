@@ -3,7 +3,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.VisualBasic;
 
-namespace ExploringGame.GeometryBuilder.Shapes;
+namespace ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 
 public class Box : Shape
 {

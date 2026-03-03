@@ -4,6 +4,7 @@ using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.Logics.Collision;
 using Jitter2;
 using Jitter2.Collision;
