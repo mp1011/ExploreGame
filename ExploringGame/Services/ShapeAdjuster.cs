@@ -186,4 +186,30 @@ public class ShapeAdjuster
 
         return this;
     }
+
+    /// <summary>
+    /// Sets the given axis size, preserving the center
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="add"></param>
+    /// <returns></returns>
+    public ShapeAdjuster SetAxis(Axis axis, float value)
+    {
+        if (axis.HasFlag(Axis.X))
+        {
+            _shape.Width = value;
+        }
+
+        if (axis.HasFlag(Axis.Y))
+        {
+            _shape.Height = value;
+        }
+
+        if (axis.HasFlag(Axis.Z))
+        {
+            _shape.Depth = value;
+        }
+
+        return this;
+    }
 }

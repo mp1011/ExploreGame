@@ -42,6 +42,6 @@ public class LightSpiritSphere : PlaceableShape, ICollidable
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return BuildSphere(16, 16);
+        return TriangleMaker.BuildEllipsoid(this, 16);
     }
 }

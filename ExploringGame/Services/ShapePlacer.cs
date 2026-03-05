@@ -30,18 +30,30 @@ public class ShapePlacer
         _shape = shape;
     }
 
+    public ShapePlacer AtParent()
+    {
+        _shape.Position = _shape.Parent.Position;
+        return this;
+    }
+
+    public ShapePlacer At(Shape other)
+    {
+        _shape.Position = other.Position;
+        return this;
+    }
+
     public ShapePlacer OnFloor(Shape other = null)
     {
         _shape.BottomAnchored = (other ?? _shape.Parent).BottomAnchored;
         return this;
     }
 
-    public ShapePlacer OnSideInner(Side side, Shape other = null)
+    public ShapePlacer OnSideInner(Side side, Shape other = null, float offset = 0f)
     {
         other = other ?? _shape.Parent;
         foreach(var s in side.Decompose())
         {
-            _shape.SetSide(s, other.GetSide(s));
+            _shape.SetSide(s, other.GetSide(s) + offset);
         }
         return this;
     }

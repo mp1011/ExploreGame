@@ -6,96 +6,46 @@ This file describes how to build complex Shapes out of several parts
 - we can refer to West, East, South, North, Top and Bottom Sides
 - Shapes have a Place() method with several helper methods for placing shapes relative to eachother
 
-# Basic Shapes
+# BASIC SHAPES
 - Box - `GeometryBuilder\Shapes\SimpleShapes\Box.cs' 
 	- basic cuboid
 - Cylinder - `GeometryBuilder\Shapes\SimpleShapes\Cylinder.cs' 
 	- basic cylinder
-- if we need other basic geometric shapes, they should also go in this same folder
+- ComplexShapePart - `GeometryBuilder\Shapes\ComplexShapePart.cs`
+	- this acts like a box, until it is given children
+	- think of these like a placeholder for the next level of detail
 
-# ComplexShapePart
-- `GeometryBuilder\Shapes\ComplexShapePart.cs`
-- this is a useful class for building complex shapes. This shape only renders itself if it has no children.
-- you can think of this class as a placeholder, as in "there will be something almost cuboid shaped here"
+# ADDING CHILD SHAPES
+- always add a shape as a child of this project. 
+	- The "AddChild" method returns the added object, so you can create the object and make it a child in the same line
+	- never just create a shape. Always wrap a new shape in "AddChild" so it is automatically added to the parent.
 
-# Parent/Child relation
-- shapes form a heirarchy. Any shape that makes up the detail of another shape should be added as a child
-- the AddChild method returns the shape itself, providing a convenient way to create a child of the current shape
+# MEASUREMENTS
+- use Measure.Feet for larger distances and Measure.Inches for smaller
+	- avoid using raw distances
+- place all measurements as readonly class fields and place them at the top of the class
+	- avoid hard-coding any measurments
 
+# SIDE-BASED PLACEMENT
+- when a shape has a wall side, use side.GetAxis() to get the axis that moves into or out of that wall
+- use side.GetPerpendicularAxis() to get the axis that moves left and right along the wall
 
-# Using "Place"
-- typically, before using Place it helps to set the shape's position to match it's parent, and then use "Place" to move it
-- Place() is an extension method used like `this.Place().OnSide()`.
+# SIZING AND POSITIONING
+- there are numerous ways to size and position shapes, each has its own benefits. Prefer the approaches in this order,
+most to least.
+1. using Place()
+	- this assumes you have set the object size already
+	- this lets you place an object on a side of its parent (inner or outer)
+2. using Adjust()
+	- you can start by matching another object's size and position with From()
+	- then you can create "slices" from each axis
+	- you can also add, or set, any of the axis, which is useful for stretching and shrinking
+3. directly setting Sides
+	- any side can be set as anchored (default) or unanchored
+	- when "anchored", the whole shape moves as one
+	- when "unanchored", you move the side, but the rest of the shape stays where it is, thus changing the size
+4. directly setting Position and Size
 
-## OnFloor(Shape other = null)
-Aligns the shape's bottom with the floor of its parent (or another shape if specified).
-
-## OnSideInner(Side side, Shape other = null)
-Aligns the specified side(s) of the shape flush with the same side(s) of its parent (or another shape if specified).
-
-## OnSideOuter(Side side, Shape other = null, float offset = 0f)
-Places the shape so its specified side(s) are flush with the outside of another shape’s side(s), with an optional offset.
-
-## FromNorth(float amount), FromSouth(float amount), FromEast(float amount), FromWest(float amount)
-Offsets the shape inward from the specified side of its parent by the given amount. These are shortcuts for FromSide.
-
-## FromSide(Side side, float amount)
-Offsets the shape inward from the specified side of its parent by the given amount. Negative values move the shape outward for South, East, or Top.
-
-# Using GetSide and SetSide
-- manipulating individual sides is a common way to get precise positioning
-- GetSide(Side side) return the position of that side along the relevant axis. 
-	- For example, GetSide(Side.West) returns the X coordinate of the west side of the shape.
-- SetSide(Side side, float value) sets the position of that side along the relevant axis.
-	- importantly, this preserves the size of the shape, so it will drag the entire shape along with the side
-- SideSideUnanchored can reposition a side, but leaves all other sides alone.
-	- this results in the shape now having a different size
-
-
-# Using AdjustShape
-- this is another extension method, providing several helpful methods for manipulating shapes.
-
-## Methods
-- **From(Shape other)**  
-  Sets the current shape’s size and position to match another shape.
-
-- **WithInnerOffset(Placement2D placement, Side face)**  
-  Offsets the shape’s sides inward (left, right, top, bottom) from a given face, using a `Placement2D` struct.
-
-- **AddSideLeft(Side face, float amount)**  
-  Moves the left edge of the given face inward by the specified amount (unanchored).
-
-- **AddSideRight(Side face, float amount)**  
-  Moves the right edge of the given face inward by the specified amount (unanchored).
-
-- **AddSideTop(Side face, float amount)**  
-  Moves the top edge of the given face inward by the specified amount (unanchored).
-
-- **AddSideBottom(Side face, float amount)**  
-  Moves the bottom edge of the given face inward by the specified amount (unanchored).
-
-- **SliceFromTop(float fromTop, float height)**  
-  Slices a region from the top of the shape, starting `fromTop` units down, with the given height.
-
-- **SliceFromBottom(float fromBottom, float height)**  
-  Slices a region from the bottom of the shape, starting `fromBottom` units up, with the given height.
-
-- **SliceFromWest(float fromWest, float width)**  
-  Slices a region from the west side, starting `fromWest` units in, with the given width.
-
-- **SliceFromEast(float fromEast, float width)**  
-  Slices a region from the east side, starting `fromEast` units in, with the given width.
-
-- **SliceFromNorth(float fromNorth, float depth)**  
-  Slices a region from the north side, starting `fromNorth` units in, with the given depth.
-
-- **SliceFromSouth(float fromSouth, float depth)**  
-  Slices a region from the south side, starting `fromSouth` units in, with the given depth.
-
-- **AxisStretch(Axis axis, float add)**  
-  Stretches the shape along the specified axis (or axes), increasing its size by `add` units while preserving the center.
-
-# Using ShapeBuilder
-- `Services\ShapeBuilder.cs`
-- this is a shorthand way of defining a shape by specifying transformer function
-- these transformer functions can be chained together to get the shape in exactly the right configuration
+## How to choose the best placement method
+- use "Place()" if you know the size of the object
+- use "Adjust()" with Slicing if this shape is a subset of the parent bounding box, for example, a left side

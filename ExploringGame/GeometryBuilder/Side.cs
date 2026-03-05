@@ -29,6 +29,20 @@ public enum Side
 
 public static class SideExtensions
 {
+    public static float Sign(this Side side)
+    {
+        return side switch
+        {
+            Side.North => -1,
+            Side.South => 1,
+            Side.West => -1,
+            Side.East => 1,
+            Side.Bottom => -1,
+            Side.Top => 1,
+            _ => throw new System.ArgumentException("invalid side")
+        };
+    }
+
     public static Axis GetAxis(this Side side) =>
         side switch
         {
@@ -40,6 +54,9 @@ public static class SideExtensions
             Side.Top => Axis.Y,
             _ => throw new System.ArgumentException("invalid side")
         };
+
+    
+    public static Axis GetPerpendicularAxis(this Side side) => side.ClockwiseTurn().GetAxis();  
 
     public static (Axis,Axis) GetAxisUV(this Side side) =>
        side switch

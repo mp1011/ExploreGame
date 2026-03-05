@@ -1,0 +1,12 @@
+# GOAL
+To determine how to best express to Copilot the way to create complex shapes.
+
+# CONTEXT
+- use the skill `.copilot\skills\build_shapes.skill`
+- place changes in `GeometryBuilder\Shapes\Furniture\WindowJunction.cs`
+
+# PROMPT
+- Given what you have seen in the project, please alter the WindowJunction Shape to add a curtain rod. 
+- This should be placed just above the window, being slightly wider than the window 
+- the curtain rod should come out very slight into the room
+
