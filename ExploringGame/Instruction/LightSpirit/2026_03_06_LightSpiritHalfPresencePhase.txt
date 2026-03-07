@@ -1,0 +1,52 @@
+# SUMMARY
+Implement the "Half Presence" Phase of the Light Spirit (aka LS) as described below.
+
+# PHASE CHARACTERISTICS
+- the LS is not visible, but it is physically present in the world
+	- the LS collides with obstacles and the floor, it is treated as a normal solid object
+- the LS will seek out the player
+- the LS will turn on any light switch it comes across
+- the LS will open doors if needed to leave a room
+- lights will pulsate brighter when the LS is near
+
+# CONTEXT
+ - define this behavior in HalfPresencePhaseHandler, located at `Logics\Controllers\LightSpiritPhases\HalfPresencePhaseHandler.cs`
+ - pathfinding module can be found at `Logics\Pathfinding\PathFinder.cs`
+
+# QUESTIONS AND ANSWERS
+1.	Collision/Physics: Should the LS use the same collision/physics system as the player and other solid objects, or does it have any special collision rules (e.g., can it push objects, or is it stopped by all obstacles)?
+	- use the same collision system
+	- the LS's shape can be a sphere
+	- the LS collides with the world and player
+2.	Pathfinding: Should the LS use the same pathfinding logic as the player (e.g., A* via PathFinder.cs), or does it have any special movement (e.g., can it jump, float, or ignore certain obstacles)?
+	- use the same pathfinding logic as TestEntity (Logics\TestEntityController.cs)
+3a.	Light Switch Interaction: Should the LS turn on every light switch it passes?
+	- if the LS is in a room with a light switch, and the switch is not on, the LS will turn it on
+3b. How does the LS “activate” a light switch—does it simulate a player pressing it, or is there a special method to call?
+	- this can be done by finding the LightSwitchController and setting its "On" property
+4a.	Light Pulsation: How is “near” defined for the pulsating effect (distance, room, line of sight)?
+	- "near" means the LS is in the same Room as the light
+4b.	Should all lights in the area pulsate, or only those in the same room as the LS?
+	- only lights in the same room as the LS should pulsate
+4c.	What is the desired pulsation effect (intensity range, speed, etc.)?
+	- pick reasonable defaults
+5.	Visibility/Feedback: Should there be any visual or audio feedback for the player when the LS is in “Half Presence” (e.g., sound cues, subtle visual effects), or is it completely invisible and silent?
+	- the visual indicators are the lights changing and the LS opening doors and turning on lights
+6.	Phase Transitions: What triggers the LS to enter or exit the “Half Presence” phase (timer, player action, event)?
+	- this was previously implemented and isn't important for this task
+7.	Performance: Are there any performance considerations for checking proximity to lights or switches (e.g., should this be optimized for large maps)?
+	- don't worry about performance at this time
+
+# TESTS TO CREATE
+
+1. LS can open doors
+	- use the map JunctionTest
+	- use a fixed Random so the LS will always spawn in the same location
+	- assert that at least one door is open after 5 minutes of simulation
+2. LS can turn on light switches
+	- use BasementWorldSegment
+	- turn all lights off
+	- assert that at least one light is turned on after 5 minutes of simulation
+3. LS can seek player
+	- use BasementWorldSegment
+	- assert that after 5 minutes of simulation, the LS has moved close to the player

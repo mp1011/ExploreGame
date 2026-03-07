@@ -25,6 +25,7 @@ public class UpstairsHall : Room
         AddConnectingRoom(new RoomConnection(this, SouthHall, Side.South, HAlign.Right));
 
         NorthHall = Copy(width: Measure.Feet(4), depth: Measure.Feet(14));
+        NorthHall.MainTexture = new TextureInfo(Microsoft.Xna.Framework.Color.White, TextureKey.Plain);
         AddConnectingRoom(new RoomConnection(this, NorthHall, Side.North, HAlign.Left));
 
         var linenCloset = Copy(width: Measure.Feet(1), depth: Door.StandardWidth);

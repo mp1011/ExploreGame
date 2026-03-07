@@ -19,6 +19,6 @@ GROUP 1
 --
 GROUP 2
 1. door light should interopolate
-2. basement door acts like a "Pull" door regardless of its settings
+2. basement door acts like a "Pull" door regardless of its settings (FIXED)
 3. odd flickering effect on upstairs hall
 4. texture on oil tank doesn't look right

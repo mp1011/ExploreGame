@@ -2,7 +2,9 @@ using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Controllers;
+using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
 using System;
@@ -171,6 +173,68 @@ public class LightSpiritTests
         game.Run();
     }
 
+    [Fact]
+    public void LightSpirit_CanOpenDoors_JunctionTest()
+    {
+        var worldSegment = TestMaps.JunctionTest(GeometryBuilder.HAlign.Left, GeometryBuilder.DoorDirection.Pull);
+
+        // Act: Run simulation for 5 minutes
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5));
+        game.Run();
+
+        // Assert: At least one door is open
+        var loadedLevelData = game.GetService<LoadedLevelData>();
+        var anyOpenDoor = loadedLevelData.LoadedSegments
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+            .OfType<ExploringGame.GeometryBuilder.Shapes.Furniture.Door>()
+            .Any(door => door.Open);
+        Assert.True(anyOpenDoor, "Expected at least one door to be open after 5 minutes.");
+    }
+
+    [Fact]
+    public void LightSpirit_CanTurnOnLightSwitches_Basement()
+    {
+        // Arrange: Use BasementWorldSegment and turn all lights off
+        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5), (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                g.SetAllLights(light => false);
+                return TestResult.CONTINUE;
+            }
+            return TestResult.CONTINUE;
+        });
+        game.Run();
+
+        // Assert: At least one light is on
+        var loadedLevelData = game.GetService<LoadedLevelData>();
+        var anyLightOn = loadedLevelData.LoadedSegments
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+            .OfType<ILightSource>()
+            .Any(light => light.On);
+        Assert.True(anyLightOn, "Expected at least one light to be on after 5 minutes.");
+    }
+
+    [Fact]
+    public void LightSpirit_CanSeekPlayer_Basement()
+    {
+        // Arrange: Use BasementWorldSegment
+        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5));
+        game.Run();
+
+        // Assert: LS is close to the player
+        var loadedLevelData = game.GetService<LoadedLevelData>();
+        var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
+        var player = levelData?.ActiveObjects.OfType<Player>().FirstOrDefault();
+        var lightSpirit = levelData?.ActiveObjects.OfType<LightSpiritController>().FirstOrDefault()?.LightSpirit;
+        Assert.NotNull(player);
+        Assert.NotNull(lightSpirit);
+        var distance = Vector3.Distance(player.Position, lightSpirit.Position);
+        Assert.True(distance < 5.0f, $"Expected LS to be close to player (distance < 5), but got {distance}");
+    }
+
     private WorldSegment CreateTestWorldWithLightSpirit()
     {
         var worldSegment = new TestWorldSegment(new Vector3(0, 1.5f, 5));
@@ -194,4 +258,6 @@ public class LightSpiritTests
 
         return worldSegment;
     }
+
+
 }
