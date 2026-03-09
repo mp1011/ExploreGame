@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using Microsoft.Xna.Framework;
@@ -284,6 +285,18 @@ public class TestGame : Game1
 
         foreach (var light in allLights)
             light.On = shouldTurnOn(light);
+    }
+
+    public void SetAllDoors(Func<Door, bool> shouldOpen)
+    {
+        var loadedLevelData = GetService<LoadedLevelData>();
+        var allDoors = loadedLevelData.LoadedSegments
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+            .OfType<Door>()
+            .ToArray();
+
+        foreach (var door in allDoors)
+            door.Open = shouldOpen(door);
     }
 
 }

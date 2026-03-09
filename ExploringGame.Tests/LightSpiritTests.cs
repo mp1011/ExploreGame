@@ -221,14 +221,23 @@ public class LightSpiritTests
     {
         // Arrange: Use BasementWorldSegment
         var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5));
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5), (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)       
+                g.SetAllDoors(_ => true);
+
+            return TestResult.CONTINUE;
+        });
         game.Run();
 
         // Assert: LS is close to the player
         var loadedLevelData = game.GetService<LoadedLevelData>();
-        var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
-        var player = levelData?.ActiveObjects.OfType<Player>().FirstOrDefault();
-        var lightSpirit = levelData?.ActiveObjects.OfType<LightSpiritController>().FirstOrDefault()?.LightSpirit;
+        var player = game.GetService<Player>();
+        var lightSpirit = loadedLevelData.LoadedSegments
+            .SelectMany(p=>p.ActiveObjects)
+            .OfType<LightSpiritController>()
+            .FirstOrDefault()?.LightSpirit;
+
         Assert.NotNull(player);
         Assert.NotNull(lightSpirit);
         var distance = Vector3.Distance(player.Position, lightSpirit.Position);
