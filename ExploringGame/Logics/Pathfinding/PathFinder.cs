@@ -11,6 +11,7 @@ public class PathFinder
     private readonly Physics _physics;
     private readonly WaypointGraph _waypointGraph;
     private readonly ICollidable _entity;
+    private readonly Random _random;
     private const float _maxStuckMS = 500f;
     private float _randomWalkDuration;
     private Vector3 _randomWalk;
@@ -18,11 +19,12 @@ public class PathFinder
     public PathFinderTarget PrimaryTarget { get; set; }
     public PathFinderTarget CurrentTarget { get; set; }
 
-    public PathFinder(Physics physics, WaypointGraph waypointGraph, ICollidable entity)
+    public PathFinder(Physics physics, WaypointGraph waypointGraph, ICollidable entity, Random random)
     {
         _physics = physics;
         _waypointGraph = waypointGraph;
         _entity = entity;
+        _random = random;
     }
 
     public Vector3 GetTargetDirection(GameTime gameTime)
@@ -41,11 +43,10 @@ public class PathFinder
         if (CurrentTarget.StuckTime > _maxStuckMS)
         {
             _randomWalkDuration = 1000f;
-            var rng = new Random();
             _randomWalk = Vector3.Normalize(new Vector3(
-                (float)(rng.NextDouble() * 2 - 1),
+                (float)(_random.NextDouble() * 2 - 1),
                 0,
-                (float)(rng.NextDouble() * 2 - 1)));
+                (float)(_random.NextDouble() * 2 - 1)));
 
             CurrentTarget.ResetStuckTime();
         }

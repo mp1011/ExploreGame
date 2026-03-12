@@ -9,19 +9,14 @@ using Microsoft.Xna.Framework;
 namespace ExploringGame.Entities;
 
 /// <summary>
-/// Spherical child shape of the Light Spirit. Used for collision and visual appearance.
+/// Spherical child shape of the Light Spirit. Used solely for visual appearance (not for collision or physics).
 /// </summary>
-public class LightSpiritSphere : PlaceableShape, ICollidable
+public class LightSpiritSphere : Shape
 {
     private readonly LightSpirit _parent;
     private const float Radius = 0.5f;
 
-    public override CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;
-    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.Environment;
     public override ViewFrom ViewFrom => ViewFrom.Outside;
-
-    public RigidBody[] 
-        ColliderBodies { get; private set; }
 
     public LightSpiritSphere(LightSpirit parent)
     {
@@ -29,15 +24,8 @@ public class LightSpiritSphere : PlaceableShape, ICollidable
         Width = Radius * 2;
         Height = Radius * 2;
         Depth = Radius * 2;
-        
         // Glowing white/light appearance
         MainTexture = new TextureInfo(Color.White, TextureKey.Wall);
-    }
-
-    public void InitializePhysics(Physics physics)
-    {
-        var body = physics.CreateSphere(this, Radius);
-        ColliderBodies = new[] { body };
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

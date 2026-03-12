@@ -7,6 +7,7 @@ using ExploringGame.Rendering;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +23,7 @@ public enum LightSpiritPhase
 
 public class LightSpiritController : IActiveObject, IDebugControllable
 {
+    private readonly Random _random;
     private readonly Player _player;
     private readonly Physics _physics;
     private readonly LoadedLevelData _loadedLevelData;
@@ -32,8 +34,9 @@ public class LightSpiritController : IActiveObject, IDebugControllable
     
     public LightSpirit LightSpirit { get; set; }
 
-    public LightSpiritController(Player player, Physics physics, LoadedLevelData loadedLevelData, PointLights pointLights)
+    public LightSpiritController(Player player, Physics physics, LoadedLevelData loadedLevelData, PointLights pointLights, Random random)
     {
+        _random = random;
         _player = player;
         _physics = physics;
         _loadedLevelData = loadedLevelData;
@@ -43,17 +46,14 @@ public class LightSpiritController : IActiveObject, IDebugControllable
     }
 
     public void Initialize()
-    {
-        // Initialize physics for the sphere
-        LightSpirit.Sphere.InitializePhysics(_physics);
-        
+    {        
         // Find the world segment this light spirit belongs to
         var worldSegment = LightSpirit.FindFirstAncestor<GeometryBuilder.Shapes.WorldSegments.WorldSegment>();
         
         // Create phase handlers
         _phaseHandlers[LightSpiritPhase.Absent] = new AbsentPhaseHandler(LightSpirit);
-        _phaseHandlers[LightSpiritPhase.BreakIn] = new BreakInPhaseHandler(LightSpirit, worldSegment, _loadedLevelData, _pointLights);
-        _phaseHandlers[LightSpiritPhase.HalfPresence] = new HalfPresencePhaseHandler(LightSpirit, _player);
+        _phaseHandlers[LightSpiritPhase.BreakIn] = new BreakInPhaseHandler(LightSpirit, worldSegment, _loadedLevelData, _pointLights, _random);
+        _phaseHandlers[LightSpiritPhase.HalfPresence] = new HalfPresencePhaseHandler(LightSpirit, _player, _physics, _loadedLevelData, _random);
         _phaseHandlers[LightSpiritPhase.FullPresence] = new FullPresencePhaseHandler(LightSpirit, _player);
         
         // Start in Absent phase

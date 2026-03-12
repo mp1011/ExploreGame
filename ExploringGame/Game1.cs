@@ -11,6 +11,7 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace ExploringGame;
 
@@ -36,6 +37,8 @@ public class Game1 : Game
     private SetupColliderBodies _setupColliderBodies;
     private Physics _physics;
 
+    public virtual Random Random { get; }  = new Random();
+
     public Game1(WorldSegment mainWorldSegment)
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -56,6 +59,7 @@ public class Game1 : Game
         _physics = new Physics();
         _serviceContainer.Bind(_physics);
 
+        _serviceContainer.Bind(Random);
         _serviceContainer.BindSingleton<GameState>();
         _serviceContainer.BindSingleton<LoadedTextureSheets>();  
         _serviceContainer.BindSingleton<PointLights>();

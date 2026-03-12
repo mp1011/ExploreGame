@@ -16,6 +16,7 @@ namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 /// <summary>
 /// Manages spawning and tracking of GateMarks
 /// </summary>
+
 public class GateMarkManager
 {
     private readonly WorldSegment _worldSegment;
@@ -23,16 +24,16 @@ public class GateMarkManager
     private readonly PointLights _pointLights;
     private readonly List<GateMark> _gateMarks = new();
     private readonly List<WallQuad> _availableQuads = new();
-    private readonly Random _random = new();
+    private readonly Random _random;
 
     public IReadOnlyList<GateMark> GateMarks => _gateMarks;
 
-    public GateMarkManager(WorldSegment worldSegment, LoadedLevelData loadedLevelData, PointLights pointLights)
+    public GateMarkManager(WorldSegment worldSegment, LoadedLevelData loadedLevelData, PointLights pointLights, Random random)
     {
         _worldSegment = worldSegment;
         _loadedLevelData = loadedLevelData;
         _pointLights = pointLights;
-        
+        _random = random;
         // Build and extract wall quads for validation
         InitializeWallQuads();
     }

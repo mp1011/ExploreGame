@@ -14,7 +14,8 @@ namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 public class BreakInPhaseHandler : IPhaseHandler
 {
     private readonly TimeSpan GatemarkSpawnTime = TimeSpan.FromSeconds(30);
-   
+
+    private readonly Random _random;
     private readonly LightSpirit _lightSpirit;
     private readonly WorldSegment _worldSegment;
     private readonly LoadedLevelData _loadedLevelData;
@@ -27,18 +28,19 @@ public class BreakInPhaseHandler : IPhaseHandler
     private const float ArrivalThreshold = 0.5f;
 
     public BreakInPhaseHandler(LightSpirit lightSpirit, WorldSegment worldSegment, 
-        LoadedLevelData loadedLevelData, PointLights pointLights)
+        LoadedLevelData loadedLevelData, PointLights pointLights, Random random)
     {
         _lightSpirit = lightSpirit;
         _worldSegment = worldSegment;
         _loadedLevelData = loadedLevelData;
         _pointLights = pointLights;
+        _random = random;
     }
 
     public void OnEnter()
     {
         // Initialize GateMark manager
-        _gateMarkManager = new GateMarkManager(_worldSegment, _loadedLevelData, _pointLights);
+        _gateMarkManager = new GateMarkManager(_worldSegment, _loadedLevelData, _pointLights, _random);
         
         _gateMarkSpawnAction = new TimedAction(GatemarkSpawnTime, () =>
         {

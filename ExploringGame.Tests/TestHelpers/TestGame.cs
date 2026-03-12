@@ -29,6 +29,7 @@ public class TestGame : Game1
 
     public MockPlayerInput MockPlayerInput { get; }
 
+    public override Random Random => new Random(12345);
 
     public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null, string screenshotName = null) : 
         this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion, screenshotName)
