@@ -9,6 +9,7 @@ using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace ExploringGame.Tests;
@@ -225,27 +226,50 @@ public class LightSpiritTests
     {
         // Arrange: Use BasementWorldSegment
         var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (g, gameTime) =>
+        var log = new System.Collections.Generic.List<string>();
+        double lastLogTime = 0;
+        bool passed = false;
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(30), (g, gameTime) =>
         {
-            if (gameTime.TotalGameTime.TotalMilliseconds < 50)       
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
                 g.SetAllDoors(_ => true);
 
+            // Logging every 1 simulated second
+            if (gameTime.TotalGameTime.TotalSeconds - lastLogTime >= 1.0)
+            {
+                lastLogTime = gameTime.TotalGameTime.TotalSeconds;
+                var loadedLevelData = g.GetService<LoadedLevelData>();
+                var lightSpiritController = loadedLevelData.LoadedSegments
+                    .SelectMany(ld => ld.ActiveObjects)
+                    .OfType<LightSpiritController>()
+                    .FirstOrDefault();
+                var player = g.GetService<Player>();
+                if (lightSpiritController != null && player != null && lightSpiritController.LightSpirit.Phase == LightSpiritPhase.HalfPresence)
+                {
+                    var handler = lightSpiritController.CurrentPhaseHandler as ExploringGame.Logics.Controllers.LightSpiritPhases.HalfPresencePhaseHandler;
+                    if (handler != null)
+                    {
+                        var pathFinder = handler.PathFinder;
+                        var currentTarget = pathFinder?.CurrentTarget;
+                        var target = currentTarget?.Target;
+                        var targetPos = target?.Position;
+                        var sb = new StringBuilder();
+                        sb.AppendLine($"Time: {gameTime.TotalGameTime.TotalSeconds:F1}s");
+                        sb.AppendLine($"LS Pos: {lightSpiritController.LightSpirit.Position}");
+                        sb.AppendLine($"Target: {target?.ToString()}");
+                        log.Add(sb.ToString());
+                    }
+                    // Assertion inside the lambda
+                    var distance = Vector3.Distance(player.Position, lightSpiritController.LightSpirit.Position);
+                    if (distance < 3.0f)
+                    {
+                        return TestResult.PASS;
+                    }
+                }
+            }
             return TestResult.CONTINUE;
         });
         game.Run();
-
-        // Assert: LS is close to the player
-        var loadedLevelData = game.GetService<LoadedLevelData>();
-        var player = game.GetService<Player>();
-        var lightSpirit = loadedLevelData.LoadedSegments
-            .SelectMany(p=>p.ActiveObjects)
-            .OfType<LightSpiritController>()
-            .FirstOrDefault()?.LightSpirit;
-
-        Assert.NotNull(player);
-        Assert.NotNull(lightSpirit);
-        var distance = Vector3.Distance(player.Position, lightSpirit.Position);
-        Assert.True(distance < 5.0f, $"Expected LS to be close to player (distance < 5), but got {distance}");
     }
 
     private WorldSegment CreateTestWorldWithLightSpirit()

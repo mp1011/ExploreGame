@@ -1,6 +1,7 @@
 using ExploringGame.Entities;
 using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -21,12 +22,14 @@ public class TestEntityController : IShapeController<TestEntity>
     private readonly EntityRoomFinder _roomFinder;
     private EntityMover _entityMover;
     private PathFinder _pathFinder;
+    private LoadedLevelData _loadedLevelData;
 
     public TestEntity Shape { get; set; }
     public WorldSegment WorldSegment { get; set; }
 
-    public TestEntityController(Player player, Physics physics, EntityRoomFinder roomFinder)
+    public TestEntityController(Player player, Physics physics, EntityRoomFinder roomFinder, LoadedLevelData loadedLevelData)
     {
+        _loadedLevelData = loadedLevelData;
         _player = player;
         _physics = physics;
         _roomFinder = roomFinder;
@@ -43,7 +46,7 @@ public class TestEntityController : IShapeController<TestEntity>
         _entityMover.Motion.Gravity = GravityAccel;
 
         var primaryTarget = new PathFinderTarget(_player);
-        _pathFinder = new PathFinder(_physics, WorldSegment.WaypointGraph, Shape, new System.Random(), primaryTarget);
+        _pathFinder = new PathFinder(_physics, _loadedLevelData.WaypointGraph, Shape, new System.Random(), primaryTarget);
     }
 
     public void Stop()

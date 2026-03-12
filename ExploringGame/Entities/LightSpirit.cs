@@ -29,7 +29,7 @@ public class LightSpirit : PlaceableShape, IControllable, ICollidable
     public LightSpirit()
     {
         // Set size so collider is created
-        Size = new Vector3(1.0f, 1.0f, 1.0f);
+        Size = new Vector3(0.2f, 0.2f, 0.2f);
         // Create the spherical child shape
         Sphere = new LightSpiritSphere(this);
         AddChild(Sphere);

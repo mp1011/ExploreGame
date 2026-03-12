@@ -16,7 +16,6 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
 
     public virtual WorldSegmentTransition[] Transitions { get; } = Array.Empty<WorldSegmentTransition>();
 
-    public WaypointGraph WaypointGraph { get; set; }
 
     public SegmentTransitionController Controller => throw new NotImplementedException();
 

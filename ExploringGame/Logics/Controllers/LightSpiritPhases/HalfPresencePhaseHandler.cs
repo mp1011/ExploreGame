@@ -19,6 +19,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     private PathFinder _pathFinder;
     private PathFinderTarget _target;
     private const float MovementSpeed = 2.5f;
+    public PathFinder PathFinder => _pathFinder;
 
     public HalfPresencePhaseHandler(LightSpirit lightSpirit, Player player, Physics physics, LoadedLevelData loadedLevelData, Random random)
     {
@@ -31,9 +32,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
     public void OnEnter()
     {
-        // Use the canonical WaypointGraph from the WorldSegment
-        var worldSegment = _lightSpirit.FindFirstAncestor<ExploringGame.GeometryBuilder.Shapes.WorldSegments.WorldSegment>();
-        _waypointGraph = worldSegment.WaypointGraph;
+        _waypointGraph = _loadedLevelData.WaypointGraph;
         _target = new PathFinderTarget(_player);
         _pathFinder = new PathFinder(_physics, _waypointGraph, _lightSpirit, _random, _target);
     }
@@ -62,6 +61,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
                 _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.Position.ToJVector();
             }
         }
+
     }
 
     public void DebugUpdate(IPlayerInput playerInput) { }

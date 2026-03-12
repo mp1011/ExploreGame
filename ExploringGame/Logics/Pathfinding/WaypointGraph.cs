@@ -7,34 +7,40 @@ using System.Linq;
 
 namespace ExploringGame.Logics.Pathfinding;
 
+
 public class WaypointGraph
 {
     private AnnotatedGraph<Waypoint> _annotatedGraph;
-    private WorldSegment _worldSegment;
 
-    public WaypointGraph(WorldSegment worldSegment, RoomGraph roomGraph)
+    public WaypointGraph(RoomGraph roomGraph)
     {
-        _worldSegment = worldSegment;
         _annotatedGraph = new AnnotatedGraph<Waypoint>(roomGraph);
-        BuildGraph(worldSegment);
     }
 
-    private void BuildGraph(WorldSegment worldSegment)
+    public void AddRoomAndWaypoint(Room room, WorldSegment segment)
     {
-        var rooms = worldSegment.TraverseAllChildren().OfType<Room>().ToList();
-
-        foreach (var room in rooms)
+        if (_annotatedGraph.Get(room) == null)
         {
             var waypoint = new Waypoint(room);
             _annotatedGraph.Add(room, waypoint);
-            worldSegment.AddChild(waypoint);
+            segment.AddChild(waypoint);
         }
     }
+
+    public void AddRoomsAndWaypoints(IEnumerable<Room> rooms, WorldSegment segment)
+    {
+        foreach (var room in rooms)
+        {
+            AddRoomAndWaypoint(room, segment);
+        }
+    }
+
 
     public Waypoint GetWaypointForRoom(Room room)
     {
         return _annotatedGraph.Get(room);
     }
+
 
     public Room GetRoomContaining(Vector3 position)
     {

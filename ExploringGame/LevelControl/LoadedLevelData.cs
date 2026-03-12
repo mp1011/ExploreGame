@@ -23,6 +23,7 @@ public class LoadedLevelData
 
     public List<LevelData> LoadedSegments { get; } = new();
     public RoomGraph RoomGraph { get; private set; }
+    public WaypointGraph WaypointGraph { get; private set; }
     public RoomLightingCalculator LightingCalculator => _lightingCalculator;
 
     public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
@@ -58,16 +59,22 @@ public class LoadedLevelData
 
         BuildRoomGraph(addedSegments);
 
+        // Initialize or update the shared WaypointGraph
+        if (WaypointGraph == null)
+            WaypointGraph = new WaypointGraph(RoomGraph);
+
+        foreach (var addedSegment in addedSegments)
+        {
+            var rooms = addedSegment.TraverseAllChildren().OfType<Room>().ToList();
+            WaypointGraph.AddRoomsAndWaypoints(rooms, addedSegment);
+        }
+
         // Initialize lighting with the room graph and segments
         _lightingCalculator.SetRoomGraph(RoomGraph);
         _lightingCalculator.AddSegments(addedSegments);
 
-      
         foreach (var addedSegment in addedSegments)
         {
-            // Create waypoint graph before building so DebugMarkers are included
-            addedSegment.WaypointGraph = new WaypointGraph(addedSegment, RoomGraph);
-
             var triangles = addedSegment.Build((QualityLevel)8); //todo, quality level
 
             AssignRoomsToPlaceableShapes(addedSegment);

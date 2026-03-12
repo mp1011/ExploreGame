@@ -23,6 +23,8 @@ public enum LightSpiritPhase
 
 public class LightSpiritController : IActiveObject, IDebugControllable
 {
+    public IPhaseHandler CurrentPhaseHandler => _phaseHandlers.TryGetValue(_currentPhase, out var handler) ? handler : null;
+
     private readonly Random _random;
     private readonly Player _player;
     private readonly Physics _physics;
