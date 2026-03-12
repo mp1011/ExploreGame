@@ -21,9 +21,9 @@ public class LightSpiritSphere : Shape
     public LightSpiritSphere(LightSpirit parent)
     {
         _parent = parent;
-        Width = Radius * 2;
-        Height = Radius * 2;
-        Depth = Radius * 2;
+        Width = parent.Size.X;
+        Height = parent.Size.Y;
+        Depth = parent.Size.Z;
         // Glowing white/light appearance
         MainTexture = new TextureInfo(Color.White, TextureKey.Wall);
     }

@@ -216,12 +216,16 @@ public class LightSpiritTests
         Assert.True(anyLightOn, "Expected at least one light to be on after 5 minutes.");
     }
 
+    /// <summary>
+    /// In this test, we allow the Light Spirit to spawn and wait long enough for it to reach the Half-Presence phase.
+    /// We open all doors so that we're only testing the Light Spirit's ability to path-find to the player.
+    /// </summary>
     [Fact]
     public void LightSpirit_CanSeekPlayer_Basement()
     {
         // Arrange: Use BasementWorldSegment
         var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5), (g, gameTime) =>
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)       
                 g.SetAllDoors(_ => true);

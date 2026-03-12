@@ -3,6 +3,8 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Controllers;
 using ExploringGame.Services;
+
+using Microsoft.Xna.Framework;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 
@@ -26,6 +28,8 @@ public class LightSpirit : PlaceableShape, IControllable, ICollidable
 
     public LightSpirit()
     {
+        // Set size so collider is created
+        Size = new Vector3(1.0f, 1.0f, 1.0f);
         // Create the spherical child shape
         Sphere = new LightSpiritSphere(this);
         AddChild(Sphere);

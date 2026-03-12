@@ -31,19 +31,18 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
     public void OnEnter()
     {
-        // Build waypoint graph if not already built
+        // Use the canonical WaypointGraph from the WorldSegment
         var worldSegment = _lightSpirit.FindFirstAncestor<ExploringGame.GeometryBuilder.Shapes.WorldSegments.WorldSegment>();
-        _waypointGraph = new WaypointGraph(worldSegment, _loadedLevelData.RoomGraph);
+        _waypointGraph = worldSegment.WaypointGraph;
         _target = new PathFinderTarget(_player);
-        _pathFinder = new PathFinder(_physics, _waypointGraph, _lightSpirit, _random);
-        _pathFinder.PrimaryTarget = _target;
+        _pathFinder = new PathFinder(_physics, _waypointGraph, _lightSpirit, _random, _target);
     }
 
     public void Update(GameTime gameTime)
     {
         // Update target to player's current position
         _target = new PathFinderTarget(_player);
-        _pathFinder.PrimaryTarget = _target;
+        // _pathFinder.PrimaryTarget cannot be changed (enforced non-null)
 
         // Get direction from pathfinder
         var direction = _pathFinder.GetTargetDirection(gameTime);

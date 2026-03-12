@@ -42,9 +42,8 @@ public class TestEntityController : IShapeController<TestEntity>
         _entityMover.Motion.Acceleration = Acceleration;
         _entityMover.Motion.Gravity = GravityAccel;
 
-        _pathFinder = new PathFinder(_physics, WorldSegment.WaypointGraph, Shape, new System.Random());
-        _pathFinder.PrimaryTarget = new PathFinderTarget(_player);
-        _pathFinder.CurrentTarget = _pathFinder.PrimaryTarget;
+        var primaryTarget = new PathFinderTarget(_player);
+        _pathFinder = new PathFinder(_physics, WorldSegment.WaypointGraph, Shape, new System.Random(), primaryTarget);
     }
 
     public void Stop()

@@ -16,15 +16,17 @@ public class PathFinder
     private float _randomWalkDuration;
     private Vector3 _randomWalk;
 
-    public PathFinderTarget PrimaryTarget { get; set; }
-    public PathFinderTarget CurrentTarget { get; set; }
+    public PathFinderTarget PrimaryTarget { get; }
+    public PathFinderTarget CurrentTarget { get; private set; }
 
-    public PathFinder(Physics physics, WaypointGraph waypointGraph, ICollidable entity, Random random)
+    public PathFinder(Physics physics, WaypointGraph waypointGraph, ICollidable entity, Random random, PathFinderTarget primaryTarget)
     {
         _physics = physics;
         _waypointGraph = waypointGraph;
         _entity = entity;
         _random = random;
+        PrimaryTarget = primaryTarget ?? throw new ArgumentNullException(nameof(primaryTarget));
+        CurrentTarget = PrimaryTarget;
     }
 
     public Vector3 GetTargetDirection(GameTime gameTime)
