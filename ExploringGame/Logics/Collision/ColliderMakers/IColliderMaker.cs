@@ -35,8 +35,8 @@ public class BoundingBoxColliderMaker : IColliderMaker
     }
 
     public IEnumerable<RigidBody> CreateColliders(Physics physics)
-    {        
-        yield return physics.CreateStaticBody(_shape);        
+    {
+        yield return physics.CreateStaticBody(_shape, _shape.CollisionGroup, _shape.CollisionGroup);
     }
 }
 

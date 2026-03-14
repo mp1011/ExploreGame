@@ -34,7 +34,7 @@ public enum CollisionGroup
     All = Player | Environment | Doors | Steps | SolidEntity
 }
 
-public record CollisionInfo(CollisionGroup MyGroup, CollisionGroup CollidesWithGroups);
+public record CollisionInfo(CollisionGroup MyGroup, CollisionGroup CollidesWithGroups, ICollidable Shape = null);
 
 public record RaycastResult(IDynamicTreeProxy HitObject, Vector3 Normal, float Lambda);
 
@@ -106,7 +106,7 @@ public class Physics
         var mesh = new TriangleMesh(jTriangles);
         body.AddShape(Enumerable.Range(0, mesh.Indices.Length).Select(i => new TriangleShape(mesh, i)), setMassInertia: false);
         body.MotionType = MotionType.Static;
-        body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity);
+        body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity, null);
         return body;
     }
 
@@ -188,16 +188,16 @@ public class Physics
         InitPhysics(body);
 
         body.MotionType = MotionType.Dynamic;
-        body.Tag = new CollisionInfo(entity.CollisionGroup, entity.CollidesWithGroups);
+        body.Tag = new CollisionInfo(entity.CollisionGroup, entity.CollidesWithGroups, entity);
         return body;
     }
 
-    public RigidBody CreateCapsule(IWithPosition entity)
+    public RigidBody CreateCapsule(ICollidable entity)
     {
         return CreateCapsule(entity, CollisionGroup.Player, CollisionGroup.Environment | CollisionGroup.Doors | CollisionGroup.Steps | CollisionGroup.SolidEntity);
     }
 
-    public RigidBody CreateCapsule(IWithPosition entity, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
+    public RigidBody CreateCapsule(ICollidable entity, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new CapsuleShape(0.4f, 2.0f)); //todo
@@ -209,11 +209,11 @@ public class Physics
         var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
         upright.Initialize(JVector.UnitY, AngularLimit.Full);
 
-        body.Tag = new CollisionInfo(myGroup, collidesWithGroups);
+        body.Tag = new CollisionInfo(myGroup, collidesWithGroups, entity);
         return body;
     }
 
-    public RigidBody CreateSphere(IWithPosition entity, float radius, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
+    public RigidBody CreateSphere(ICollidable entity, float radius, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new SphereShape(radius));
@@ -222,7 +222,7 @@ public class Physics
 
         InitPhysics(body);
 
-        body.Tag = new CollisionInfo(myGroup, collidesWithGroups);
+        body.Tag = new CollisionInfo(myGroup, collidesWithGroups, entity);
         return body;
     }
 
@@ -267,7 +267,7 @@ public class Physics
 
         var rotationQ = door.Rotation.AsQuaternion();
         doorBody.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
-        doorBody.Tag = new CollisionInfo(CollisionGroup.Doors, CollisionGroup.Player);
+        doorBody.Tag = new CollisionInfo(door.CollisionGroup, door.CollidesWithGroups, door);
 
         //  h.Motor.IsEnabled = true;
         //   h.Motor.TargetVelocity = 20.0f;
@@ -303,7 +303,7 @@ public class Physics
                 
                 if (infoA == null || infoB == null)
                     return false;
-                
+
                 return IsCollisionAllowed(infoA, infoB);
             }
 

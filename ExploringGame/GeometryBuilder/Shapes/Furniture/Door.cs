@@ -25,8 +25,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => new DoorColliderMaker(this);
-    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
-    public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
+    public override CollisionGroup CollisionGroup => CollisionGroup.Doors;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
     private bool _open;
     public bool Open 

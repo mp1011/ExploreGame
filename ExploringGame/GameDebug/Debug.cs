@@ -7,4 +7,7 @@ public static class Debug
 
     public static bool FlyMode = false;
     public static bool NoDepthStencil = false;
+    public static bool LightSpiritVisible = true;
+    public static bool WaypointsVisible = true;
+
 }

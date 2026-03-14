@@ -112,4 +112,6 @@ unit testing improvements
 [x] implement decals
 
 
-NOTE - use new placement method for gatemarkmanager
+Current Todo
+- run all tests, identify which fail
+- add time logging to console for tests

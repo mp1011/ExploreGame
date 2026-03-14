@@ -122,7 +122,22 @@ public class BreakInPhaseHandler : IPhaseHandler
 
     public void ForceNextPhase()
     {
-        // Force transition to HalfPresence by setting the phase directly
+        // If there are any GateMarks, move LS to the nearest one
+        GateMark target = null;
+        if (_gateMarkManager.GateMarks.Any())
+            target = _gateMarkManager.GetClosestActiveGateMark(_lightSpirit.Position);
+        else
+        {
+            _gateMarkManager.SpawnGateMark();
+            target = _gateMarkManager.GateMarks.FirstOrDefault();
+        }
+
+        if (target != null)
+        {
+            _lightSpirit.Position = target.Position;
+            SetUndergroundPosition();
+        }
+
         _lightSpirit.Phase = LightSpiritPhase.HalfPresence;
     }
 

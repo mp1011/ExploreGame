@@ -48,6 +48,8 @@ public class Game1 : Game
         _mainShape = mainWorldSegment;
     }
 
+    protected virtual bool AlwaysActive => false;
+
     protected virtual IPlayerInput CreatePlayerInput() => new PlayerInput();
     
     protected override void Initialize()
@@ -127,7 +129,7 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        if (!IsActive)
+        if (!IsActive && !AlwaysActive)
             return;
 
         _physics.Update(gameTime);

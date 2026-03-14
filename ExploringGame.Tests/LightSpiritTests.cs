@@ -1,5 +1,6 @@
 using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
@@ -177,19 +178,26 @@ public class LightSpiritTests
     [Fact]
     public void LightSpirit_CanOpenDoors_JunctionTest()
     {
-        var worldSegment = TestMaps.JunctionTest(GeometryBuilder.HAlign.Left, GeometryBuilder.DoorDirection.Pull);
+        var worldSegment = new BasementWorldSegment(null);
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(20), (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+                g.SetAllDoors(_ => false);
 
-        // Act: Run simulation for 5 minutes
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5));
+
+            if (gameTime.TotalGameTime.TotalMinutes > 10)
+            {
+                var openDoor = g.GetService<LoadedLevelData>().LoadedSegments.SelectMany(p => p.WorldSegment.TraverseAllChildren())
+                .OfType<Door>()
+                .FirstOrDefault(p => p.Open);
+
+                if (openDoor != null)
+                    return TestResult.PASS;
+            }
+            
+            return TestResult.CONTINUE;
+        });
         game.Run();
-
-        // Assert: At least one door is open
-        var loadedLevelData = game.GetService<LoadedLevelData>();
-        var anyOpenDoor = loadedLevelData.LoadedSegments
-            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
-            .OfType<ExploringGame.GeometryBuilder.Shapes.Furniture.Door>()
-            .Any(door => door.Open);
-        Assert.True(anyOpenDoor, "Expected at least one door to be open after 5 minutes.");
     }
 
     [Fact]
@@ -224,18 +232,17 @@ public class LightSpiritTests
     [Fact]
     public void LightSpirit_CanSeekPlayer_Basement()
     {
-        // Arrange: Use BasementWorldSegment
-        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
-        var log = new System.Collections.Generic.List<string>();
+        var worldSegment = new BasementWorldSegment(null);
+        var log = new List<string>();
         double lastLogTime = 0;
-        bool passed = false;
+
         using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(30), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
                 g.SetAllDoors(_ => true);
 
-            // Logging every 1 simulated second
-            if (gameTime.TotalGameTime.TotalSeconds - lastLogTime >= 1.0)
+            // check once every simulated minute
+            if (gameTime.TotalGameTime.TotalSeconds - lastLogTime >= 60f)
             {
                 lastLogTime = gameTime.TotalGameTime.TotalSeconds;
                 var loadedLevelData = g.GetService<LoadedLevelData>();
@@ -246,25 +253,9 @@ public class LightSpiritTests
                 var player = g.GetService<Player>();
                 if (lightSpiritController != null && player != null && lightSpiritController.LightSpirit.Phase == LightSpiritPhase.HalfPresence)
                 {
-                    var handler = lightSpiritController.CurrentPhaseHandler as ExploringGame.Logics.Controllers.LightSpiritPhases.HalfPresencePhaseHandler;
-                    if (handler != null)
-                    {
-                        var pathFinder = handler.PathFinder;
-                        var currentTarget = pathFinder?.CurrentTarget;
-                        var target = currentTarget?.Target;
-                        var targetPos = target?.Position;
-                        var sb = new StringBuilder();
-                        sb.AppendLine($"Time: {gameTime.TotalGameTime.TotalSeconds:F1}s");
-                        sb.AppendLine($"LS Pos: {lightSpiritController.LightSpirit.Position}");
-                        sb.AppendLine($"Target: {target?.ToString()}");
-                        log.Add(sb.ToString());
-                    }
-                    // Assertion inside the lambda
                     var distance = Vector3.Distance(player.Position, lightSpiritController.LightSpirit.Position);
-                    if (distance < 3.0f)
-                    {
+                    if (distance < 1.5f)
                         return TestResult.PASS;
-                    }
                 }
             }
             return TestResult.CONTINUE;

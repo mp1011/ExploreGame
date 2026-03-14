@@ -7,6 +7,8 @@ using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.GameDebug;
+using System;
 
 namespace ExploringGame.Entities;
 
@@ -20,9 +22,9 @@ public class LightSpirit : PlaceableShape, IControllable, ICollidable
     public LightSpiritPhase Phase { get; set; } = LightSpiritPhase.Absent;
     public LightSpiritSphere Sphere { get; private set; }
 
-    public override CollisionGroup CollisionGroup => CollisionGroup.MovingObjects;
-    public override CollisionGroup CollidesWithGroups => CollisionGroup.Environment;
-    public override ViewFrom ViewFrom => ViewFrom.None;
+    public override CollisionGroup CollisionGroup => CollisionGroup.SolidEntity;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.Environment | CollisionGroup.Doors;
+    public override ViewFrom ViewFrom => GameDebug.Debug.LightSpiritVisible ? ViewFrom.Outside : ViewFrom.None;
 
     public override IColliderMaker ColliderMaker => new SphereColliderMaker(this);
 
@@ -44,7 +46,9 @@ public class LightSpirit : PlaceableShape, IControllable, ICollidable
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        // Primary shape has no geometry
-        return System.Array.Empty<Triangle>();
+        if (Debug.LightSpiritVisible)
+            return TriangleMaker.BuildEllipsoid(this);
+        else
+            return Array.Empty<Triangle>();
     }
 }

@@ -1,3 +1,4 @@
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics.Collision.ColliderMakers;
@@ -21,7 +22,7 @@ public class Waypoint : PlaceableShape
         Depth = 0.2f;
     }
 
-    public override ViewFrom ViewFrom => ViewFrom.None;
+    public override ViewFrom ViewFrom => Debug.WaypointsVisible ? ViewFrom.Outside : ViewFrom.None;
 
     public override CollisionGroup CollisionGroup => CollisionGroup.None;
 
@@ -31,7 +32,10 @@ public class Waypoint : PlaceableShape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return Array.Empty<Triangle>();
+        if (Debug.WaypointsVisible)
+            return BuildCuboid();
+        else 
+            return Array.Empty<Triangle>();
     }
 
     public override string ToString() => $"Waypoint ({Room})";

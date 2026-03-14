@@ -1,0 +1,19 @@
+# GOAL
+While in the HalfPresence phase, the LightSpirit needs the ability to open doors to reach the player
+
+# ACCEPTANCE CRITERIA
+- Run the test LightSpirit_CanOpenDoors_JunctionTest, which will assert that any doors are opened
+- Do not modify the test itself
+
+# CONTEXT
+- `Logics\ShapeControllers\DoorController.cs`
+	- this controller handles the player opening and closing a door
+- `GeometryBuilder\Shapes\Furniture\Door.cs`
+	- actual Door object which can be opened and closed
+- `Logics\Controllers\LightSpiritPhases\HalfPresencePhaseHandler.cs`
+	- controller for the Light Spirit
+
+# TECHNICAL APPROACH
+- we will manipulate the door from HalfPresencePhaseHandler rather than from DoorController
+- the "Open" property on the Door class can be set directly
+- we'll use collision as the trigger. If the LS collides with a Door, and the Door is closed, we will open it

@@ -27,6 +27,7 @@ public class TestGame : Game1
     private bool _testPassed = false;
     private string _testFailureMessage;
 
+    protected override bool AlwaysActive => true;
     public MockPlayerInput MockPlayerInput { get; }
 
     public override Random Random => new Random(12345);
@@ -123,7 +124,11 @@ public class TestGame : Game1
             false,
             SurfaceFormat.Color,
             DepthFormat.Depth24);
+
+        Console.WriteLine("TEST BEGIN");
     }
+
+    private TimeSpan _lastLogTime = TimeSpan.Zero;
 
     protected override void Update(GameTime gameTime)
     {
@@ -135,6 +140,12 @@ public class TestGame : Game1
             }
 
             var fakeTime = FakeFrameTime();
+            if((fakeTime.TotalGameTime - _lastLogTime) > TimeSpan.FromMinutes(1))
+            {
+                _lastLogTime = fakeTime.TotalGameTime;
+                Console.Write("*");
+            }
+
             base.Update(fakeTime);
 
             // Execute test assertion if provided
