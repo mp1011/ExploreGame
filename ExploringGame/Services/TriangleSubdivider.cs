@@ -16,7 +16,9 @@ public static class TriangleSubdivider
         var result = subDivided.Select(p => new Triangle(p.A, p.B, p.C, t.TextureInfo, t.Side)).ToArray();
 
         var r2 = result.Select(p => p.As2D(t.Vertices.Center(), ViewFrom.Inside)).ToArray();
-        PolygonVisualizer.SavePolygonImage("subdivided", r2);
+
+        if(Debug.SavePolygonImages)
+            PolygonVisualizer.SavePolygonImage("subdivided", r2);
 
         return result;
     }
@@ -319,7 +321,8 @@ public class GridTriangleSubdivider_v1
         // 4. Triangulate in 2D
         var triangles2D = Triangulate(tri2D, vertices);
 
-        PolygonVisualizer.SavePolygonImage("gridSplit", triangles2D.Select(p => new BasicPolygon(p)).ToArray());
+        if (Debug.SavePolygonImages)
+            PolygonVisualizer.SavePolygonImage("gridSplit", triangles2D.Select(p => new BasicPolygon(p)).ToArray());
 
         // 5. Lift back to 3D
         var result = new List<Triangle3D>();

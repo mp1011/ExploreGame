@@ -1,0 +1,40 @@
+# GOAL
+Improve the Pathfinding so that entities do not get stuck when there is some obstacle between them and their goal
+
+# CONTEXT
+- main Pathfinding Class: `Logics\Pathfinding\PathFinder.cs`
+- Physics class, for doing line of site tests: `Services\Physics.cs`
+
+# TESTING
+- rely on the test 'LightSpirit_CanSeekPlayer_Basement' to determine when pathfinding works. 
+- we may make additional tests if specific needs arise
+
+# CONCEPTS
+
+1. Entity - the moving entity that is doing the pathfinding
+2. Primary Target - where the Entity would like to move
+3. Current Target - immediate goal of the Entity which may be an intermediate step on the way to reach the Primary Target
+4. Random Walk Timer - when set, causes the Entity to move in a random direction until the timer runs outs
+5. Line of Sight - uses the Physics engine to determine if there is a line of sight between two points
+
+# PATHFINDING ALGORITHM
+1. Does Entity have a Line of Sight to Primary Target?
+	- move toward Primary Target and halt
+2. Does Entity have a Line of Sight to its Current Target?
+	- move toward Current Target and halt
+3. Has Entity reached its Current Target?
+	- recompute the path to Primary Target, take the next node along the path as the Current Target and halt
+4. Is the Random Walk Timer > 0?
+	- continue moving in the Entity's current direction and decrement the timer
+5. Try to compute a new path.
+	- if we find a different target than the one we were already trying to follow, halt
+6. Pick a valid Random Sample Point (see next section)
+	- if we found any valid Random Sample Points, pick the closest one to the Entity
+7. Set the Random Walk timer to a value between 500 and 2000 milliseconds. Then pick a random direction by taking the vector to Current Target and randomly add +- 45 degrees
+
+
+# RANDOM POINT SAMPLING
+- this strategy picks random points to see if any could serve as an intermediate between the Entity and Current Target
+- generate $NumSample random points, between $MinSampleDistance and $MaxSampleDistance from Entity
+- keep all points that have a Line of Sight to both the Entity and to the Current Target
+- if we kept any points, take the one closest to the Entity

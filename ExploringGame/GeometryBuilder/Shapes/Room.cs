@@ -32,6 +32,8 @@ public class Room : Shape
 
     protected virtual Side OmitSides { get; }
 
+    public virtual bool HasPathfindingWaypoint => true;
+
     public string Tag { get; set; }
 
     public Room(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null,

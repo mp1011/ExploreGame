@@ -113,5 +113,6 @@ unit testing improvements
 
 
 Current Todo
-- run all tests, identify which fail
-- add time logging to console for tests
+- pathfinding doesn't always work, LS can get stuck
+- temporarily turned off random walk to more easily diagnose problem
+- issue lies when there's no clear line of sight between waypoints

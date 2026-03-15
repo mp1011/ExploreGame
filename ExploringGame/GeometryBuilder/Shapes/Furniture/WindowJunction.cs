@@ -35,6 +35,8 @@ public class Window : Room
     private Room _parentRoom;
     private Room _exteriorRoom;
 
+    public override bool HasPathfindingWaypoint => false;
+
     public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f) : base(room.WorldSegment)
     {
         room.AddChild(this);
@@ -123,10 +125,20 @@ public class Window : Room
             exteriorRoomHeight = exteriorOpeningHeight + exteriorExtra;
         }
 
-        var exteriorRoom = new Room(_parentRoom.WorldSegment, exteriorRoomWidth, exteriorRoomDepth, exteriorRoomHeight);
+        var exteriorRoom = new WindowExterior(_parentRoom.WorldSegment, exteriorRoomWidth, exteriorRoomDepth, exteriorRoomHeight);
         exteriorRoom.MainTexture = new TextureInfo(Color.White);
         exteriorRoom.FixedAmbientLight = LightIntensity.VeryBright;
         return exteriorRoom;
+    }
+
+    private class WindowExterior : Room
+    {
+        public override bool HasPathfindingWaypoint => false;
+
+        public WindowExterior(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null)
+            : base(worldSegment, width, depth, height)
+        {
+        }
     }
 
     public override string ToString()

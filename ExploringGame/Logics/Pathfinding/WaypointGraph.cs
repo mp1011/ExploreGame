@@ -19,7 +19,7 @@ public class WaypointGraph
 
     public void AddRoomAndWaypoint(Room room, WorldSegment segment)
     {
-        if (_annotatedGraph.Get(room) == null)
+        if (room.HasPathfindingWaypoint && _annotatedGraph.Get(room) == null)
         {
             var waypoint = new Waypoint(room);
             _annotatedGraph.Add(room, waypoint);

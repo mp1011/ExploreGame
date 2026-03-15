@@ -14,11 +14,10 @@ internal class TriangleSubtracter
 {
     private const int mult = 100000;
 
-    public static bool DebugVisualize = false;
 
     public Triangle2D[] Subtract(Triangle2D triangle, ConvexHull cutout)
     {        
-        if(DebugVisualize)
+        if(Debug.SavePolygonImages)
             PolygonVisualizer.SavePolygonImage("subtract_before", triangle, cutout);
 
         if (CutoutEntirelyInsideTriangle(triangle, cutout))
@@ -47,7 +46,7 @@ internal class TriangleSubtracter
         
         var resultTriangles = result.SelectMany(p=> PolygonToTriangles(p, triangle)).ToArray();
 
-        if (DebugVisualize)
+        if (Debug.SavePolygonImages)
             PolygonVisualizer.SavePolygonImage("subtract_result", resultTriangles);
 
         return resultTriangles;
@@ -96,7 +95,7 @@ internal class TriangleSubtracter
             triangles.Add(new Triangle2D(a, b, c, triangle.Original));
         }
 
-        if (DebugVisualize)
+        if (Debug.SavePolygonImages)
             PolygonVisualizer.SavePolygonImage("subtract_result_tess", triangles.ToArray());
         return triangles.ToArray(); ;
     }

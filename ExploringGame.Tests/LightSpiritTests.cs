@@ -239,7 +239,7 @@ public class LightSpiritTests
         using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(30), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
-                g.SetAllDoors(_ => true);
+                g.SetAllDoors(d => d.StateKey != StateKey.LinenClosetDoorOpen);
 
             // check once every simulated minute
             if (gameTime.TotalGameTime.TotalSeconds - lastLogTime >= 60f)
@@ -254,6 +254,7 @@ public class LightSpiritTests
                 if (lightSpiritController != null && player != null && lightSpiritController.LightSpirit.Phase == LightSpiritPhase.HalfPresence)
                 {
                     var distance = Vector3.Distance(player.Position, lightSpiritController.LightSpirit.Position);
+                    Console.WriteLine($"D = {distance}");
                     if (distance < 1.5f)
                         return TestResult.PASS;
                 }

@@ -14,6 +14,7 @@ namespace ExploringGame.Logics;
 public class EntityMover : IActiveObject
 {
     private readonly Physics _physics;
+    private readonly bool _ignoreY;
 
     public AcceleratedMotion Motion { get; }
     private ICollidable _entity;
@@ -22,11 +23,12 @@ public class EntityMover : IActiveObject
 
     public CollisionResponder CollisionResponder { get; }
 
-    public EntityMover(ICollidable entity, Physics physics)
+    public EntityMover(ICollidable entity, Physics physics, bool ignoreY = true)
     {
         Motion = new AcceleratedMotion();
         _entity = entity;
         _physics = physics;
+        _ignoreY = ignoreY;
         CollisionResponder = new CollisionResponder(this);
     }
 
@@ -49,8 +51,10 @@ public class EntityMover : IActiveObject
 
         Motion.Update();
 
-        // handling Y separately (also note Jitter2 has up as +Y
-        _body.Velocity = new JVector(Motion.CurrentMotion.X, -Motion.CurrentY, Motion.CurrentMotion.Z);
+        if (_ignoreY)
+            _body.Velocity = new JVector(Motion.CurrentMotion.X, -Motion.CurrentY, Motion.CurrentMotion.Z);
+        else
+            _body.Velocity = new JVector(Motion.CurrentMotion.X, Motion.CurrentMotion.Y, Motion.CurrentMotion.Z);
 
         _entity.Position = _body.Position.ToVector3();
 

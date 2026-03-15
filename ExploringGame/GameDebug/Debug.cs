@@ -10,4 +10,7 @@ public static class Debug
     public static bool LightSpiritVisible = true;
     public static bool WaypointsVisible = true;
 
+    public static bool SavePolygonImages = false;
+
+    public static MovingEntityDebugger MovingEntityDebugger;
 }

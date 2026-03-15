@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Xunit;
@@ -22,5 +23,4 @@ public class PathfinderTest
         var player = g.GetService<Player>();       
         Assert.True(player.Position.DistanceTo(testEntity.Position) < 3.0f);
     }
-
 }

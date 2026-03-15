@@ -73,8 +73,14 @@ public class BreakInPhaseHandler : IPhaseHandler
             if (distance <= ArrivalThreshold)
             {
                 // Reached the gatemark!
+                var room = _targetGateMark.FindFirstAncestor<GeometryBuilder.Shapes.Room>();
+
                 _gateMarkManager.RemoveGateMark(_targetGateMark);
                 _targetGateMark = null;
+
+                // Reposition LS to center of room to avoid being stuck near wall
+                if (room != null)
+                    _lightSpirit.Position = room.Position;
 
                 // Transition to Half-Presence Phase
                 _lightSpirit.Phase = LightSpiritPhase.HalfPresence;

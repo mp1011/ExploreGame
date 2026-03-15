@@ -27,10 +27,17 @@ public class MovingEntityDebugger
 
     public List<LogEntry> Logs = new List<LogEntry>();
 
+    public LogEntry[] LatestLogs(int count)
+    {
+        return Logs.Skip(Logs.Count - count).ToArray();
+    }
+
     public MovingEntityDebugger(IWithPosition entity, PathFinder pathfinder)
     {
         _entity = entity;
         _pathFinder = pathfinder;
+
+        Debug.MovingEntityDebugger = this;
     }
 
     public void Update(GameTime gameTime)

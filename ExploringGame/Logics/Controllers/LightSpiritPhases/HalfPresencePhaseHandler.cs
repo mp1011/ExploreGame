@@ -21,9 +21,9 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     private readonly Random _random;
     private WaypointGraph _waypointGraph;
     private PathFinder _pathFinder;
-    private PathFinderTarget _target;
     private const float MovementSpeed = 2.5f;
     private Logics.EntityMover _entityMover;
+    private bool _debugPause = false;
     public PathFinder PathFinder => _pathFinder;
 
     public HalfPresencePhaseHandler(LightSpirit lightSpirit, Player player, Physics physics, LoadedLevelData loadedLevelData, Random random)
@@ -41,9 +41,8 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     public void OnEnter()
     {
         _waypointGraph = _loadedLevelData.WaypointGraph;
-        _target = new PathFinderTarget(_player);
-        _pathFinder = new PathFinder(_physics, _waypointGraph, _lightSpirit, _random, _target);
-        _entityMover = new Logics.EntityMover(_lightSpirit, _physics);
+        _pathFinder = new PathFinder(_physics, _waypointGraph, _lightSpirit, _random, new PathFinderTarget(_player));
+        _entityMover = new Logics.EntityMover(_lightSpirit, _physics, ignoreY: false);
         _entityMover.Initialize();
         _entityMover.CollisionResponder.AddResponse(new DoorOpenCollisionResponse());
         _entityMover.Motion.Acceleration = MovementSpeed;
@@ -54,11 +53,10 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
     public void Update(GameTime gameTime)
     {
-        _med.Update(gameTime);
+        if (_debugPause)
+            return;
 
-        // Update target to player's current position
-        _target = new PathFinderTarget(_player);
-        // _pathFinder.PrimaryTarget cannot be changed (enforced non-null)
+        _med.Update(gameTime);
 
         // Get direction from pathfinder
         var direction = _pathFinder.GetTargetDirection(gameTime);
@@ -93,7 +91,21 @@ public class HalfPresencePhaseHandler : IPhaseHandler
         }
     }
 
-    public void DebugUpdate(IPlayerInput playerInput) { }
+    public void DebugUpdate(IPlayerInput playerInput) 
+    {
+        if (playerInput.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad7))
+        {
+            _lightSpirit.Position = new Vector3(-7.92f, 6.1600003f, 13.22f);
+            _lightSpirit.ColliderBodies[0].Position = _lightSpirit.Position.ToJVector();
+        }
+
+        if (playerInput.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad8))
+        {
+            _debugPause = !_debugPause;
+            if (_debugPause)
+                _lightSpirit.ColliderBodies[0].Velocity = new Jitter2.LinearMath.JVector(0f, 0f, 0f);
+        }
+    }
 
     public void OnExit() { }
 

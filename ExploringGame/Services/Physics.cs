@@ -83,7 +83,7 @@ public class Physics
     public bool HasLineOfSight(ICollidable origin, ICollidable target)
     {
         var result = Raycast(origin, target);
-        
+
         return result.HitObject != null && result.HitObject.BelongsTo(target);
     }
 
