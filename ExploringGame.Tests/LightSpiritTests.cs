@@ -212,17 +212,20 @@ public class LightSpiritTests
                 g.SetAllLights(light => false);
                 return TestResult.CONTINUE;
             }
+
+            // Check if any light is on
+            var loadedLevelData = g.GetService<LoadedLevelData>();
+            var anyLightOn = loadedLevelData.LoadedSegments
+                .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+                .OfType<ILightSource>()
+                .Any(light => light.On);
+
+            if (anyLightOn)
+                return TestResult.PASS;
+
             return TestResult.CONTINUE;
         });
         game.Run();
-
-        // Assert: At least one light is on
-        var loadedLevelData = game.GetService<LoadedLevelData>();
-        var anyLightOn = loadedLevelData.LoadedSegments
-            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
-            .OfType<ILightSource>()
-            .Any(light => light.On);
-        Assert.True(anyLightOn, "Expected at least one light to be on after 5 minutes.");
     }
 
     /// <summary>
@@ -254,7 +257,6 @@ public class LightSpiritTests
                 if (lightSpiritController != null && player != null && lightSpiritController.LightSpirit.Phase == LightSpiritPhase.HalfPresence)
                 {
                     var distance = Vector3.Distance(player.Position, lightSpiritController.LightSpirit.Position);
-                    Console.WriteLine($"D = {distance}");
                     if (distance < 1.5f)
                         return TestResult.PASS;
                 }

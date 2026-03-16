@@ -1,0 +1,16 @@
+# GOAL
+Give the Light Spirit (LS) the ability to turn on light switches as it hunts the player while in the HalfPresence Phase
+
+# CONTEXT
+- LightSwitch class
+	- GeometryBuilder\Shapes\Appliances\LightSwitch.cs
+	- exposes an "On" property that the LS will manipulate
+- HalfPresencePhaseHandler class 
+	- Logics\Controllers\LightSpiritPhases\HalfPresencePhaseHandler.cs
+	- controller for Light Spirit 
+
+
+# BEHAVIOR
+- look for any LightSwitch objects in the same Room as the LightSpirit
+- if any are found that are off, change the CurrentTarget of its PathFinder to the switch
+- when the LS is "close enough" to the switch (4 feet), it will turn the switch On and then reset the CurrentTarget back to the Player

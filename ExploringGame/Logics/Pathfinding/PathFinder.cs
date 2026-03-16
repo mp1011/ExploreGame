@@ -35,20 +35,24 @@ public class PathFinder
     private static readonly TimeSpan MaxSamplePointSeekTime = TimeSpan.FromSeconds(3);
 
     public PathFinderTarget PrimaryTarget { get; }
-    public PathFinderTarget CurrentTarget { get; private set; }
 
-    private void SetCurrentTarget(PathFinderTarget target)
-    {
-        if (target.Target != CurrentTarget?.Target)
+    private PathFinderTarget _currentTarget;
+    public PathFinderTarget CurrentTarget 
+    { 
+        get => _currentTarget;
+        set
         {
-            CurrentTarget = target;
-            _previousDirectionToTarget = null;
-            _previousDistanceToTarget = float.MaxValue;
-            _timeSeekingSamplePoint = TimeSpan.Zero;
-        }
+            if (value.Target != _currentTarget?.Target)
+            {
+                _currentTarget = value;
+                _previousDirectionToTarget = null;
+                _previousDistanceToTarget = float.MaxValue;
+                _timeSeekingSamplePoint = TimeSpan.Zero;
+            }
 
-        if (target.Target is Waypoint w)
-            _lastWaypointTarget = w;
+            if (value.Target is Waypoint w)
+                _lastWaypointTarget = w;
+        }
     }
 
     public PathFinder(Physics physics, WaypointGraph waypointGraph, ICollidable entity, Random random, PathFinderTarget primaryTarget)
@@ -73,7 +77,7 @@ public class PathFinder
 
             if (_timeSeekingSamplePoint >= MaxSamplePointSeekTime && _lastWaypointTarget != null)
             {
-                SetCurrentTarget(new PathFinderTarget(_lastWaypointTarget));
+                CurrentTarget = new PathFinderTarget(_lastWaypointTarget);
                 _timeSinceLastDirectionComputation = DirectionComputationInterval;
             }
         }
@@ -95,7 +99,7 @@ public class PathFinder
         // Step 1: Does Entity have a Line of Sight to Primary Target?
         if (_physics.HasLineOfSight(_entity, PrimaryTarget.Target))
         {
-            SetCurrentTarget(PrimaryTarget);
+            CurrentTarget = PrimaryTarget;
             return Vector3.Normalize(PrimaryTarget.Target.Position - _entity.Position);
         }
 
@@ -107,7 +111,7 @@ public class PathFinder
                 ? new PathFinderTarget(_lastWaypointTarget) 
                 : PickNextTargetAfterCurrent();
 
-            SetCurrentTarget(recomputedTarget);
+            CurrentTarget = recomputedTarget;
             return Vector3.Normalize(CurrentTarget.Target.Position - _entity.Position);
         }
 
@@ -131,7 +135,7 @@ public class PathFinder
 
         if(!path.Contains(CurrentTarget.Target))
         {
-            SetCurrentTarget(new PathFinderTarget(path.First()));
+            CurrentTarget = new PathFinderTarget(path.First());
             return Vector3.Normalize(CurrentTarget.Target.Position - _entity.Position);
         }
 
@@ -140,7 +144,7 @@ public class PathFinder
         if (samplePoint.HasValue)
         {
             _samplePoint.Position = samplePoint.Value;
-            SetCurrentTarget(new PathFinderTarget(_samplePoint));
+            CurrentTarget = new PathFinderTarget(_samplePoint);
             return Vector3.Normalize(CurrentTarget.Target.Position - _entity.Position);
         }
 

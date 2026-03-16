@@ -6,9 +6,11 @@ using ExploringGame.Services;
 using ExploringGame.Extensions;
 using System;
 using System.Linq;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 
 namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 
@@ -24,6 +26,9 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     private const float MovementSpeed = 2.5f;
     private Logics.EntityMover _entityMover;
     private bool _debugPause = false;
+    private TimedAction _lightSwitchCheck;
+    private const float LightSwitchActivationDistance = 4.0f;
+    private EntityRoomFinder _entityRoomFinder;
     public PathFinder PathFinder => _pathFinder;
 
     public HalfPresencePhaseHandler(LightSpirit lightSpirit, Player player, Physics physics, LoadedLevelData loadedLevelData, Random random)
@@ -47,6 +52,9 @@ public class HalfPresencePhaseHandler : IPhaseHandler
         _entityMover.CollisionResponder.AddResponse(new DoorOpenCollisionResponse());
         _entityMover.Motion.Acceleration = MovementSpeed;
         _entityMover.Motion.Gravity = 0f;
+        _entityRoomFinder = new EntityRoomFinder(_loadedLevelData);
+
+        _lightSwitchCheck = new TimedAction(TimeSpan.FromSeconds(1), CheckForLightSwitches);
 
         _med = new MovingEntityDebugger(_lightSpirit, _pathFinder);
     }
@@ -57,6 +65,34 @@ public class HalfPresencePhaseHandler : IPhaseHandler
             return;
 
         _med.Update(gameTime);
+
+        // Update the Light Spirit's room
+        _entityRoomFinder.UpdateRoom(_lightSpirit);
+
+        // Check for light switches to turn on (once per second, priority for LS)
+        bool isTargetingLightSwitch = _pathFinder.CurrentTarget?.Target is LightSwitch;
+        if (!isTargetingLightSwitch)
+        {
+            _lightSwitchCheck.Update(gameTime);
+        }
+
+        // If targeting a light switch, check if close enough to turn it on
+        if (isTargetingLightSwitch)
+        {
+            var targetSwitch = _pathFinder.CurrentTarget.Target as LightSwitch;
+            var distanceToSwitch = Vector3.Distance(_lightSpirit.Position, targetSwitch.Position);
+
+            if (distanceToSwitch <= Measure.Feet(LightSwitchActivationDistance))
+            {
+                if (targetSwitch.Controller != null)
+                {
+                    targetSwitch.Controller.On = true;
+                }
+
+                // Reset target back to player
+                _pathFinder.CurrentTarget = _pathFinder.PrimaryTarget;
+            }
+        }
 
         // Get direction from pathfinder
         var direction = _pathFinder.GetTargetDirection(gameTime);
@@ -75,6 +111,22 @@ public class HalfPresencePhaseHandler : IPhaseHandler
             if (_lightSpirit.Sphere.ColliderBodies != null && _lightSpirit.Sphere.ColliderBodies.Length > 0)
             {
                 _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.Position.ToJVector();
+            }
+        }
+    }
+
+    private void CheckForLightSwitches()
+    {
+        var room = _lightSpirit.Room;
+        if (room != null)
+        {
+            var offLightSwitch = room.TraverseAllChildren()
+                .OfType<LightSwitch>()
+                .FirstOrDefault(ls => ls.Controller != null && !ls.Controller.On);
+
+            if (offLightSwitch != null)
+            {
+                _pathFinder.CurrentTarget = new PathFinderTarget(offLightSwitch);
             }
         }
     }
