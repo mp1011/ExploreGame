@@ -160,7 +160,8 @@ public class PathFinder
     private bool HasReachedTarget()
     {
         var directionToTarget = CurrentTarget.Target.Position - _entity.Position;
-        var currentDistance = directionToTarget.Length();
+        var directionToTargetXZ = new Vector3(directionToTarget.X, 0, directionToTarget.Z);
+        var currentDistance = directionToTargetXZ.Length();
         var threshold = Measure.Feet(1);
 
         // Check if within threshold
@@ -175,8 +176,9 @@ public class PathFinder
         // we've passed the target
         if (_previousDirectionToTarget.HasValue && currentDistance < Measure.Feet(5))
         {
-            var previousDir = Vector3.Normalize(_previousDirectionToTarget.Value);
-            var currentDir = Vector3.Normalize(directionToTarget);
+            var previousDirXZ = new Vector3(_previousDirectionToTarget.Value.X, 0, _previousDirectionToTarget.Value.Z);
+            var previousDir = Vector3.Normalize(previousDirXZ);
+            var currentDir = Vector3.Normalize(directionToTargetXZ);
             var dotProduct = Vector3.Dot(previousDir, currentDir);
 
             // Dot product < 0 means angle > 90 degrees (we've passed the target)

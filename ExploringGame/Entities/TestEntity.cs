@@ -23,7 +23,7 @@ public class TestEntity : PlaceableShape, IWithPosition, IControllable
     public TestEntity()
     {
         Width = 0.5f;
-        Height = 1.0f;
+        Height = 2.0f;
         Depth = 1.0f;
         
         MainTexture = new TextureInfo(Color.Red, TextureKey.Wall);

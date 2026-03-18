@@ -5,6 +5,7 @@ using ExploringGame.LevelControl;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace ExploringGame.Logics;
 
@@ -37,8 +38,8 @@ public class TestEntityController : IShapeController<TestEntity>
 
     public void Initialize()
     {
-        _entityMover = new EntityMover(Shape, _physics);
-        _entityMover.CollisionResponder.AddResponse(new Collision.DetectFloorCollision(_entityMover));
+        _entityMover = new EntityMover(Shape, _physics, ignoreY: false);
+      //  _entityMover.CollisionResponder.AddResponse(new Collision.DetectFloorCollision(_entityMover));
         _entityMover.Initialize();
         
         // Set up motion parameters
@@ -47,6 +48,8 @@ public class TestEntityController : IShapeController<TestEntity>
 
         var primaryTarget = new PathFinderTarget(_player);
         _pathFinder = new PathFinder(_physics, _loadedLevelData.WaypointGraph, Shape, new System.Random(), primaryTarget);
+
+        _debugger = new MovingEntityDebugger(Shape, _pathFinder);
     }
 
     public void Stop()
@@ -55,8 +58,14 @@ public class TestEntityController : IShapeController<TestEntity>
         _entityMover = null;
     }
 
+    private MovingEntityDebugger _debugger;
+
     public void Update(GameTime gameTime)
     {
+        if (gameTime.TotalGameTime.TotalMinutes >= 3)
+            Console.Write("*");
+
+        _debugger.Update(gameTime);
         Vector3 targetDirection = _pathFinder.GetTargetDirection(gameTime);
 
         // Apply speed and movement
