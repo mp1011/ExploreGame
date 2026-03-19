@@ -111,3 +111,15 @@ public class LivingRoomTheme : UpstairsHallTheme
         SideTextures[Side.North] = new TextureInfo(TextureKey.Wood);
     }
 }
+
+public class ExteriorTheme : Theme
+{
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
+
+    public ExteriorTheme()
+    {
+        SideTextures[Side.Top] = new TextureInfo(Color.SkyBlue);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.Green);
+        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
+    }
+}

@@ -112,7 +112,3 @@ unit testing improvements
 [x] implement decals
 
 
-Current Todo
-- pathfinding doesn't always work, LS can get stuck
-- temporarily turned off random walk to more easily diagnose problem
-- issue lies when there's no clear line of sight between waypoints

@@ -1,0 +1,13 @@
+﻿MAIN GOALS:
+- create Outdoor WorldSegment (placeholder)
+	- skybox
+	- world segment loading
+	- dummy segment replacement
+	
+- semi-transparent windows
+- sliding door
+
+CURRENT:
+- create door and dummy exterior for front door
+- need some way to align
+	- outside segment 

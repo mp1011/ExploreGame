@@ -138,7 +138,6 @@ public class Game1 : Game
         {
             _player.Position = _mainShape.DefaultPlayerStart;
             _loadedLevelData.LoadSegment(_mainShape);
-            _loadedLevelData.SwapActive();
             _playerMover.Initialize();
         }
 

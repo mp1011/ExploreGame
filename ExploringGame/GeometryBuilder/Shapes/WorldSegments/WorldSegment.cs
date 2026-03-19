@@ -8,16 +8,12 @@ using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
-public class WorldSegment : Shape, IControllable<SegmentTransitionController>
+public class WorldSegment : Shape
 {
     public override ViewFrom ViewFrom => ViewFrom.None;
 
     public virtual Vector3 DefaultPlayerStart { get; }
 
-    public virtual WorldSegmentTransition[] Transitions { get; } = Array.Empty<WorldSegmentTransition>();
-
-
-    public SegmentTransitionController Controller => throw new NotImplementedException();
 
     public WorldSegment(params Shape[] contents)
     {
@@ -28,13 +24,6 @@ public class WorldSegment : Shape, IControllable<SegmentTransitionController>
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         return Array.Empty<Triangle>();
-    }
-
-    public IActiveObject CreateController(ServiceContainer serviceContainer)
-    {
-        return new SegmentTransitionController(this, 
-            serviceContainer.Get<Player>(), 
-            serviceContainer.Get<LoadedLevelData>());
     }
 
     public override Matrix GetWorldMatrix()

@@ -23,7 +23,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
         {
             _office = office;
 
-            Width = Measure.Feet(20);
+            Width = Measure.Feet(25);
             Height = Measure.Feet(8);
             Depth = Measure.Feet(28);
             SetSide(Side.Bottom, 0f);
@@ -57,10 +57,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             var ceilingBar = AddChild(new Box(TextureKey.Ceiling) { Width = Measure.Inches(12), Height = Measure.Inches(9), Depth = Depth });
             ceilingBar.Place().OnSideInner(Side.Top);
             ceilingBar.SetSide(Side.West, wall5.GetSide(Side.West));
-
-            var pillar = AddChild(new Box(TextureKey.Ceiling) { Width = Measure.Inches(7), Depth = Measure.Inches(7), Height = Height - ceilingBar.Height });
-            pillar.Place().OnFloor().OnSideInner(Side.East, ceilingBar);
-
+         
             // stair sides
             var wall6 = AddChild(new Box(TextureKey.Wall) { Depth = Measure.Feet(8), Height = Height, Width = InnerWallWidth * 2, OmitSides = Side.West });
             wall6.Place().OnFloor().OnSideInner(Side.South);
@@ -86,6 +83,10 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
             
             BasementStairsDoor.SetSide(Side.East, Stairs.GetSide(Side.East) - 0.1f);
+
+            var pillar = AddChild(new Box(TextureKey.Ceiling) { Width = Measure.Inches(7), Depth = Measure.Inches(7), Height = Height - ceilingBar.Height });
+            pillar.Place().At(ceilingBar).OnFloor().OnSideInner(Side.East, ceilingBar);
+
 
             // unsure why we need these
             var basementStairsDoorLeft = AddChild(new Box(TextureKey.Wall));

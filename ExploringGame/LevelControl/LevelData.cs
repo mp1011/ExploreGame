@@ -27,7 +27,7 @@ public class LevelData
     public LevelData(WorldSegment worldSegment, ShapeBuffer[] allShapeBuffers, IActiveObject[] activeObjects)
     {
         WorldSegment = worldSegment;
-        ActiveObjects = activeObjects.OrderBy(p => p is SegmentTransitionController ? 1 : 0).ToArray();
+        ActiveObjects = activeObjects.ToArray();
         Initialized = false;
         
         // Separate stamp buffers from regular buffers

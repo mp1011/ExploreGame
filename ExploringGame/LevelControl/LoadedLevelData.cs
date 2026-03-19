@@ -50,12 +50,13 @@ public class LoadedLevelData
         addedSegments.Add(worldSegment);
         _serviceContainer.BindSingleton(worldSegment, worldSegment.GetType());
 
-        foreach (var transition in worldSegment.Transitions)
-        {
-            var nextSegment = _serviceContainer.Get(transition.WorldSegmentType) as WorldSegment;
-            addedSegments.Add(nextSegment);
-            _serviceContainer.BindSingleton(nextSegment, nextSegment.GetType());
-        }
+        // hint for copilot, uncomment this block when you've created WorldSegment transitions
+        //foreach (var transition in worldSegment.Transitions)
+        //{
+        //    var nextSegment = _serviceContainer.Get(transition.WorldSegmentType) as WorldSegment;
+        //    addedSegments.Add(nextSegment);
+        //    _serviceContainer.BindSingleton(nextSegment, nextSegment.GetType());
+        //}
 
         BuildRoomGraph(addedSegments);
 
@@ -158,31 +159,6 @@ public class LoadedLevelData
         }
 
         return nearestRoom;
-    }
-
-    public void SwapActive()
-    {
-        //if (Next == null)
-        //    return;
-
-        //if (Current != null)
-        //{
-        //    Current.Stop();
-
-        //    foreach (var body in Current.WorldSegment.TraverseAllChildren()
-        //                                             .Where(p=>p.ColliderBodies != null)
-        //                                             .SelectMany(p=>p.ColliderBodies))
-        //    {                                                      
-        //        _physics.Remove(body);
-        //    }
-        //}
-
-        //Current = Next;
-
-        //_setupColliderBodies.Execute(Current.WorldSegment);
-        //Current.Initialize();
-
-        //Next = null;
     }
 
     public LevelData FindLevelDataForWorldSegment(WorldSegment worldSegment)

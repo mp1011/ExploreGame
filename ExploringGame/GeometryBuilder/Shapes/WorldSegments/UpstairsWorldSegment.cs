@@ -11,8 +11,6 @@ public class UpstairsWorldSegment : WorldSegment
 {
     public static readonly float FloorY = Measure.Feet(10);
 
-    public override WorldSegmentTransition[] Transitions { get; }
-
     public UpstairsWorldSegment(BasementWorldSegment basement)
     {
         Depth = Measure.Feet(53);
@@ -50,16 +48,12 @@ public class UpstairsWorldSegment : WorldSegment
         den.LoadChildren();
         halfBath.LoadChildren();
 
-        Transitions = Array.Empty<WorldSegmentTransition>();
-
         AddChild(new WallDecalStamp());
 
         // Add the Light Spirit
         var lightSpirit = new LightSpirit();
         lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
         AddChild(lightSpirit);
-
-        // Transitions = new[] { new WorldSegmentTransition<BasementWorldSegment>(basement.Stairs, Side.North) };
     }
 
 }

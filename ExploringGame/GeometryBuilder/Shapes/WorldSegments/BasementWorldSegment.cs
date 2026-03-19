@@ -7,8 +7,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
     public class BasementWorldSegment : WorldSegment
     {
 
-        public override WorldSegmentTransition[] Transitions { get; }
-
         public override Vector3 DefaultPlayerStart => new Vector3(7.4f, 1.4f, -7.0f);
 
         public BasementWorldSegment(UpstairsWorldSegment upstairsWorldSegment) : base()
@@ -28,7 +26,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             upstairsHall.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South, 0.5f);
 
-            Transitions = new[] { new WorldSegmentTransition<UpstairsWorldSegment>(basement.Stairs, Side.South) };
+            var garage = AddChild(new Garage(this, basement));
+            garage.LoadChildren();
         }
     }
 }

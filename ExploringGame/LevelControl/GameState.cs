@@ -29,6 +29,7 @@ public enum StateKey
     HalfBathroomLightOn,
     SpareRoomLightOn,
     KidsBedroomLightOn,
+    GarageInnerDoorOpen
 }
 
 public class GameState
