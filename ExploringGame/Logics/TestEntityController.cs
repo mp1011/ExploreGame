@@ -62,9 +62,6 @@ public class TestEntityController : IShapeController<TestEntity>
 
     public void Update(GameTime gameTime)
     {
-        if (gameTime.TotalGameTime.TotalMinutes >= 3)
-            Console.Write("*");
-
         _debugger.Update(gameTime);
         Vector3 targetDirection = _pathFinder.GetTargetDirection(gameTime);
 

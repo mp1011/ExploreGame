@@ -29,6 +29,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     private TimedAction _lightSwitchCheck;
     private const float LightSwitchActivationDistance = 4.0f;
     private EntityRoomFinder _entityRoomFinder;
+    private LightSpiritFlickerEffect _flickerEffect;
     public PathFinder PathFinder => _pathFinder;
 
     public HalfPresencePhaseHandler(LightSpirit lightSpirit, Player player, Physics physics, LoadedLevelData loadedLevelData, Random random)
@@ -56,11 +57,17 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
         _lightSwitchCheck = new TimedAction(TimeSpan.FromSeconds(1), CheckForLightSwitches);
 
+        var distanceCalculator = new WaypointDistanceCalculator(_loadedLevelData);
+        _flickerEffect = new LightSpiritFlickerEffect(_lightSpirit, _loadedLevelData, distanceCalculator, _random);
+
         _med = new MovingEntityDebugger(_lightSpirit, _pathFinder);
     }
 
     public void Update(GameTime gameTime)
     {
+        // Update light flickering effect
+        _flickerEffect.Update(gameTime);
+
         if (_debugPause)
             return;
 
@@ -68,6 +75,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
         // Update the Light Spirit's room
         _entityRoomFinder.UpdateRoom(_lightSpirit);
+
 
         // Check for light switches to turn on (once per second, priority for LS)
         bool isTargetingLightSwitch = _pathFinder.CurrentTarget?.Target is LightSwitch;

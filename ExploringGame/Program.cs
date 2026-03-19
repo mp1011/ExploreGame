@@ -5,13 +5,13 @@ using ExploringGame.Logics;
 using ExploringGame.Testing;
 using System.Linq;
 
-// using var game = new Game1(new BasementWorldSegment(null));
+using var game = new Game1(new BasementWorldSegment(null));
 
-var testMap = TestMaps.PathfindingTest();
-testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;
+//var testMap = TestMaps.PathfindingTest();
+//testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;
 
-using var game = new Game1(testMap);
+//using var game = new Game1(testMap);
 
-LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
+//LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
 
 game.Run();

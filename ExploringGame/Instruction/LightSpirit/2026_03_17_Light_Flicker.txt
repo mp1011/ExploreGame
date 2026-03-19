@@ -1,0 +1,23 @@
+# GOAL
+While in the "Half Presence" phase, lights near the Light Spirit should flicker, giving the player an indication of its presence.
+
+# CONTEXT
+- ILightSource: 'Logics\ILightSource.cs'
+	- this interface has an Intensity and Color property 
+- WaypointDistanceCalculator - use this to determine how far away the Light Spirit is from a light.
+	- this works better than straight line distance because we don't want to consider the Light Spirit to be "close" to a light if it is in the basement and the light is upstairs.
+- TimedAction - use this class for recurring behaviors
+
+# DETAIL
+- the "Flickering" level of a light should be variable, based on how close the LightSpirit is
+	- same room = full intensity (distance < 10 ft)
+	- nearby room = noticeable but less intense (distance < 20 ft)
+	- far away = hardly noticeable or not at all (distance >= 20 ft)
+- Flickering means raising the intensity of the light beyond its normal level
+- In addition, we also want to give the light a slight red color
+	- match the intensity of the red with the flickering level.
+- every 500 ms, set a "target" intensity of each light to a random value, starting at the light's original intensity.
+	- the random range depends on the flickering level. The max intensity is +2.0.
+- every frame, smoothly interpolate the Intensity such that it reaches the target within 200 ms
+- when a light is no longer under the influence of flickering, interpolate back to its original intensity and color.
+

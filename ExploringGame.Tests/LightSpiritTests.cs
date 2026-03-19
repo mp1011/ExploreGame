@@ -5,6 +5,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Controllers;
+using ExploringGame.Services;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
@@ -221,6 +222,72 @@ public class LightSpiritTests
                 .Any(light => light.On);
 
             if (anyLightOn)
+                return TestResult.PASS;
+
+            return TestResult.CONTINUE;
+        });
+        game.Run();
+    }
+
+    [Fact]
+    public void LightSpirit_CausesLightsToFlicker_Basement()
+    {
+        // Arrange: Use BasementWorldSegment with all lights turned on
+        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
+        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (g, gameTime) =>
+        {
+            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
+            {
+                g.SetAllLights(light => true);
+                return TestResult.CONTINUE;
+            }
+
+            // Wait until Light Spirit is in HalfPresence phase
+            var loadedLevelData = g.GetService<LoadedLevelData>();
+            var lightSpiritController = loadedLevelData.LoadedSegments
+                .SelectMany(ld => ld.ActiveObjects)
+                .OfType<LightSpiritController>()
+                .FirstOrDefault();
+
+            if (lightSpiritController == null || lightSpiritController.LightSpirit.Phase != LightSpiritPhase.HalfPresence)
+                return TestResult.CONTINUE;
+
+            // Only check after Light Spirit has been active for a bit
+            if (gameTime.TotalGameTime.TotalMinutes < 5)
+                return TestResult.CONTINUE;
+
+            // Get all lights
+            var allLights = loadedLevelData.LoadedSegments
+                .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+                .OfType<ILightSource>()
+                .Where(light => light.On && light.Room != null)
+                .ToList();
+
+            if (allLights.Count < 2)
+                return TestResult.CONTINUE;
+
+            // Calculate path distance from Light Spirit to each light
+            var distanceCalculator = g.GetService<WaypointDistanceCalculator>();
+            var lightSpiritPosition = lightSpiritController.LightSpirit.Position;
+
+            var lightDistances = allLights.Select(light =>
+            {
+                var distance = distanceCalculator.CalculateDistance(lightSpiritPosition, light.LightPosition);
+                return (light, distance: distance ?? float.MaxValue);
+            }).ToList();
+
+            // Find lights near and far from Light Spirit
+            var nearLights = lightDistances.Where(ld => ld.distance < 15f).ToList();
+            var farLights = lightDistances.Where(ld => ld.distance > 30f).ToList();
+
+            if (nearLights.Count == 0 || farLights.Count == 0)
+                return TestResult.CONTINUE;
+
+            // Assert: Near lights should have higher average intensity than far lights
+            var averageNearIntensity = nearLights.Average(ld => ld.light.Intensity);
+            var averageFarIntensity = farLights.Average(ld => ld.light.Intensity);
+
+            if (averageNearIntensity > averageFarIntensity)
                 return TestResult.PASS;
 
             return TestResult.CONTINUE;

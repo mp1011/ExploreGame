@@ -17,7 +17,7 @@ public interface ILightSource
     /// <summary>
     /// Color of the light
     /// </summary>
-    Color Color { get; }
+    Color Color { get; set; }
 
     /// <summary>
     /// Position of the light in world space
