@@ -4,12 +4,19 @@ using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
 public class UpstairsWorldSegment : WorldSegment
 {
     public static readonly float FloorY = Measure.Feet(10);
+
+    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
+    {
+        new WorldSegmentTransition(typeof(BasementWorldSegment)),
+        new WorldSegmentTransition(typeof(OutsideWorldSegment))
+    };
 
     public UpstairsWorldSegment(BasementWorldSegment basement)
     {

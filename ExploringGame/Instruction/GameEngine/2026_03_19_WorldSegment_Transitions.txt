@@ -1,0 +1,42 @@
+﻿# GOAL
+Dynamically load and unload WorldSegments in order to have a seamless, connected world.
+
+# CONTEXT
+- WorldSegment: a region of the game world
+	- WorldSegments are organized so that the player will only be able to see at most two at any time. 
+	- however, more than 2 may be loaded for easier transitions
+- LoadedLevelData: contains the WorldSegments currently loaded
+	- LevelData: information about a single loaded WorldSegment, including its geometry buffers and Active Objects
+
+# SUB-GOALS
+1. At any time, only the WorldSegment the player is in, and any WorldSegments neighboring it, will be available in LoadedLevelData
+	- this requires establishing which WorldSegments are connected to eachother
+2. Once computed, a WorldSegment will remain in memory, thanks to the ServiceContainer
+	- in a later update, we'll add logic to remove WorldSegment's from memory that are no longer needed, but this is out of scope for this change
+	
+
+# INFORMATION
+World Segment Connections:
+	BasementWorldSegment connects to UpstairsWorldSegment (both ways)
+	Upstairs WorldSegment connects to OutsideWorldSegment (both ways)
+
+# DEVELOPMENT PLAN
+1. Establish a way for WorldSegments to indicate their neighbors.
+	- there's no limit to how many neighbors a WorldSegment can have
+	- for most classes this should be a readonly list, however for TestWorldSegment we want the ability to control it dynamically (through public methods)
+	- this can be a property directly on WorldSegment. 
+	- However, this can't simply be a list of other WorldSegments as that would force the entire game world into memory at once.
+2. Set up a failing test for transitions
+	- create a test world made of 5 TestWorldSegments, labelled A through E each which connects to the next one in a single chain
+	- using MockPlayerInput, have the player walk forward such that they pass through each WorldSegment
+	- assertions:
+		1. assert that the player has visited every WorldSegment
+		2. when player is in World Segment A, then World Segment's A and B should be loaded only
+		3. when player is in World Segment B, then A, B, C should be loaded
+		4. when in C, then B, C, D should be loaded
+		5. D -> C,D,E
+		6. E -> D,E
+	- when you are running tests, use a filter to only run this test. At this time, we don't want to run other tests.
+	- ensure this test fails before we continue
+
+

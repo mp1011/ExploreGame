@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 {
@@ -8,6 +9,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
     {
 
         public override Vector3 DefaultPlayerStart => new Vector3(7.4f, 1.4f, -7.0f);
+
+        public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
+        {
+            new WorldSegmentTransition(typeof(UpstairsWorldSegment))
+        };
 
         public BasementWorldSegment(UpstairsWorldSegment upstairsWorldSegment) : base()
         {
