@@ -17,7 +17,7 @@ public class RoomLightingTests
     public void AllRoomsHaveMinimalLightWithNoLightsOn()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         // Act - Run game and turn off lights after initialization
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
@@ -63,7 +63,7 @@ public class RoomLightingTests
     public void RoomWithLightSourceHasFullIntensity()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         // Act - Turn off all lights, then turn on only BasementOffice lights
         bool lightsConfigured = false;
@@ -107,7 +107,7 @@ public class RoomLightingTests
     public void AdjacentRoomReceivesDecayedLight()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         // Act - Turn on only BasementOffice lights, check Basement receives light
         bool lightsConfigured = false;
@@ -162,7 +162,7 @@ public class RoomLightingTests
     public void LightDecreasesAcrossConnectedRoomChain()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         // Act - Test light propagation through: BasementOffice -> Basement -> UpstairsHall -> Kitchen -> LivingRoom
         bool lightsConfigured = false;
@@ -239,7 +239,7 @@ public class RoomLightingTests
     public void RoomGraphHasExpectedStructure()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         using var game = new TestGame(basement, framesToRun: 10, testAssertion: (g, gameTime) =>
         {

@@ -179,7 +179,7 @@ public class LightSpiritTests
     [Fact]
     public void LightSpirit_CanOpenDoors_JunctionTest()
     {
-        var worldSegment = new BasementWorldSegment(null);
+        var worldSegment = new BasementWorldSegment();
         using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(20), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
@@ -205,7 +205,7 @@ public class LightSpiritTests
     public void LightSpirit_CanTurnOnLightSwitches_Basement()
     {
         // Arrange: Use BasementWorldSegment and turn all lights off
-        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
+        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment();
         using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
@@ -233,7 +233,7 @@ public class LightSpiritTests
     public void LightSpirit_CausesLightsToFlicker_Basement()
     {
         // Arrange: Use BasementWorldSegment with all lights turned on
-        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment(null);
+        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment();
         using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
@@ -302,7 +302,7 @@ public class LightSpiritTests
     [Fact]
     public void LightSpirit_CanSeekPlayer_Basement()
     {
-        var worldSegment = new BasementWorldSegment(null);
+        var worldSegment = new BasementWorldSegment();
         var log = new List<string>();
         double lastLogTime = 0;
 

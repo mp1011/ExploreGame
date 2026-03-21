@@ -20,13 +20,14 @@ World Segment Connections:
 	BasementWorldSegment connects to UpstairsWorldSegment (both ways)
 	Upstairs WorldSegment connects to OutsideWorldSegment (both ways)
 
+
 # DEVELOPMENT PLAN
-1. Establish a way for WorldSegments to indicate their neighbors.
+1. Establish a way for WorldSegments to indicate their neighbors. (DONE)
 	- there's no limit to how many neighbors a WorldSegment can have
 	- for most classes this should be a readonly list, however for TestWorldSegment we want the ability to control it dynamically (through public methods)
 	- this can be a property directly on WorldSegment. 
 	- However, this can't simply be a list of other WorldSegments as that would force the entire game world into memory at once.
-2. Set up a failing test for transitions
+2. Set up a failing test for transitions (DONE)
 	- create a test world made of 5 TestWorldSegments, labelled A through E each which connects to the next one in a single chain
 	- using MockPlayerInput, have the player walk forward such that they pass through each WorldSegment
 	- assertions:
@@ -38,5 +39,25 @@ World Segment Connections:
 		6. E -> D,E
 	- when you are running tests, use a filter to only run this test. At this time, we don't want to run other tests.
 	- ensure this test fails before we continue
+3. Rework BuildRoomGraph to better support loading segments at runtime (Done)
+	- establish a way to know if a segment was already loaded
+		- if so, we don't need to do any of the following:
+			- update the RoomGraph
+			- update the Waypoint Graph
+			- update the Lighting Calculator
+			- recompute the geometry
+		- at this time, we are not worrying about freeing anything from memory.
+			- We'll load WorldSegments as we need them, but it will be additive only.
+	- to do this, we'll repurpose LoadedSegments to mean any segment we've previously loaded, 
+		and create a new collection, ActiveSegments, to represent the segments currently in play
+	- LoadSegment will change to process just the SINGLE segment passed into it, rather than searching for neighbors
+	- in the next step, we'll add code to load neighbors but for now, we focus only on one segment at a time
+4. Activate neighboring segments as well
+	- create a method SetActiveSegments
+	- this finds the player's current WorldSegment (there are methods to find the room that an object is in)
+	- if this matches the first ActiveWorldSegment, do nothing (it means we already activated it)
+	- otherwise, clear the current ActiveWorldSegment list, and recreate it based on the current segment and its neighbors
+	- ensure the first ActiveWorldSegment is the one the player is in
+	
 
 

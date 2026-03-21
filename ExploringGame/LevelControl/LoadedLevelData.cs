@@ -22,6 +22,7 @@ public class LoadedLevelData
     private readonly RoomLightingCalculator _lightingCalculator;
 
     public List<LevelData> LoadedSegments { get; } = new();
+    public List<LevelData> ActiveSegments { get; } = new();
     public RoomGraph RoomGraph { get; private set; }
     public WaypointGraph WaypointGraph { get; private set; }
     public RoomLightingCalculator LightingCalculator => _lightingCalculator;
@@ -36,86 +37,64 @@ public class LoadedLevelData
         _serviceContainer = serviceContainer;
         _setupColliderBodies = setupColliderBodies;
         _lightingCalculator = lightingCalculator;
+
+        RoomGraph = new RoomGraph();
+        WaypointGraph = new WaypointGraph(RoomGraph);
     }
 
     public void Update(GameTime gameTime)
     {
-        foreach(var segment in LoadedSegments)
+        foreach(var segment in ActiveSegments)
             segment.Update(gameTime);
     }
 
     public void LoadSegment(WorldSegment worldSegment)
     {
-        List<WorldSegment> addedSegments = new();
-        addedSegments.Add(worldSegment);
-        _serviceContainer.BindSingleton(worldSegment, worldSegment.GetType());
+        // Check if segment is already loaded
+        if (IsSegmentLoaded(worldSegment))
+            return;
 
-        // hint for copilot, uncomment this block when you've created WorldSegment transitions
-        //foreach (var transition in worldSegment.Transitions)
-        //{
-        //    var nextSegment = _serviceContainer.Get(transition.WorldSegmentType) as WorldSegment;
-        //    addedSegments.Add(nextSegment);
-        //    _serviceContainer.BindSingleton(nextSegment, nextSegment.GetType());
-        //}
-
-        BuildRoomGraph(addedSegments);
-
-        // Initialize or update the shared WaypointGraph
-        if (WaypointGraph == null)
-            WaypointGraph = new WaypointGraph(RoomGraph);
-
-        foreach (var addedSegment in addedSegments)
+        // Build room graph for this segment
+        var rooms = worldSegment.TraverseAllChildren().OfType<Room>().ToList();
+        foreach (var room in rooms)
         {
-            var rooms = addedSegment.TraverseAllChildren().OfType<Room>().ToList();
-            WaypointGraph.AddRoomsAndWaypoints(rooms, addedSegment);
-        }
+            RoomGraph.AddRoom(room);
 
-        // Initialize lighting with the room graph and segments
-        _lightingCalculator.SetRoomGraph(RoomGraph);
-        _lightingCalculator.AddSegments(addedSegments);
-
-        foreach (var addedSegment in addedSegments)
-        {
-            var triangles = addedSegment.Build((QualityLevel)8); //todo, quality level
-
-            AssignRoomsToPlaceableShapes(addedSegment);
-
-            var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
-            var activeObjects = _serviceContainer.CreateControllers(addedSegment.TraverseAllChildren());
-
-            var newLevelData = new LevelData(addedSegment, shapeBuffers, activeObjects);
-            _setupColliderBodies.Execute(newLevelData.WorldSegment);
-            newLevelData.Initialize();
-
-            LoadedSegments.Add(newLevelData);
-        }
-    }
-
-    private void BuildRoomGraph(List<WorldSegment> segments)
-    {
-        if (RoomGraph == null)
-        {
-            RoomGraph = new RoomGraph();
-        }
-
-        foreach (var segment in segments)
-        {
-            var rooms = segment.TraverseAllChildren().OfType<Room>().ToList();
-
-            foreach (var room in rooms)
+            foreach (var connection in room.RoomConnections)
             {
-                RoomGraph.AddRoom(room);
-
-                foreach (var connection in room.RoomConnections)
+                var connectedRoom = connection.GetOtherRoom(room);
+                if (connectedRoom != null)
                 {
-                    var connectedRoom = connection.GetOtherRoom(room);
-                    if (connectedRoom != null)
-                    {
-                        RoomGraph.AddConnection(room, connectedRoom);
-                    }
+                    RoomGraph.AddConnection(room, connectedRoom);
                 }
             }
         }
+
+        // Add waypoints for this segment
+        WaypointGraph.AddRoomsAndWaypoints(rooms, worldSegment);
+
+        // Update lighting calculator
+        _lightingCalculator.SetRoomGraph(RoomGraph);
+        _lightingCalculator.AddSegments(new List<WorldSegment> { worldSegment });
+
+        // Build geometry and create level data
+        var triangles = worldSegment.Build((QualityLevel)8); //todo, quality level
+
+        AssignRoomsToPlaceableShapes(worldSegment);
+
+        var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
+        var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
+
+        var newLevelData = new LevelData(worldSegment, shapeBuffers, activeObjects);
+        _setupColliderBodies.Execute(newLevelData.WorldSegment);
+        newLevelData.Initialize();
+
+        LoadedSegments.Add(newLevelData);
+    }
+
+    private bool IsSegmentLoaded(WorldSegment worldSegment)
+    {
+        return LoadedSegments.Any(ld => ld.WorldSegment == worldSegment);
     }
 
     private void AssignRoomsToPlaceableShapes(WorldSegment segment)
@@ -127,18 +106,17 @@ public class LoadedLevelData
 
         foreach (var shape in placeableShapes)
         {
-            // Use the same logic as AddStampedShape to find the room containing this shape
-            var room = FindRoomContainingPosition(shape.Position, RoomGraph);
+            var room = FindRoomContainingPosition(shape.Position);
 
             // Use the LightingGroup for consistency (RoomParts point to their parent room)
             shape.Room = room?.LightingGroup;
         }
     }
 
-    private Room FindRoomContainingPosition(Vector3 position, RoomGraph roomGraph)
+    private Room FindRoomContainingPosition(Vector3 position)
     {
         // Check each room to see if it contains the position
-        foreach (var room in roomGraph.GetAllRooms())
+        foreach (var room in RoomGraph.GetAllRooms())
         {
             if (room.ContainsPoint(position))
                 return room;
@@ -148,7 +126,7 @@ public class LoadedLevelData
         Room nearestRoom = null;
         float nearestDistance = float.MaxValue;
 
-        foreach (var room in roomGraph.GetAllRooms())
+        foreach (var room in RoomGraph.GetAllRooms())
         {
             var distance = Vector3.DistanceSquared(position, room.Position);
             if (distance < nearestDistance)

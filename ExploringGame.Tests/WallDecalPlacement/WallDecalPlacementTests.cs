@@ -1,4 +1,4 @@
-﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.Logics;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;

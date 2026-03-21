@@ -25,7 +25,7 @@ public class LightingVisualTests
     [InlineData(LightIntensity.ExtremelyBright)]
     public void Basement_PointLightVisual(double lightIntensity)
     {
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         // Generate screenshot name from test name and parameters
         var testName = nameof(Basement_PointLightVisual);

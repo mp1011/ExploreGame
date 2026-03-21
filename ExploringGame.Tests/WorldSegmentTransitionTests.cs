@@ -1,8 +1,10 @@
 using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
+using ExploringGame.Services;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
@@ -15,39 +17,42 @@ namespace ExploringGame.Tests;
 
 public class WorldSegmentTransitionTests
 {
+    private (T segment, Room room) CreateSegmentWithRoom<T>(float northSide, Vector3? playerStart = null) 
+        where T : TestWorldSegment, new()
+    {
+        var segment = new T();
+        segment.Depth = 10f;
+        segment.Width = 10f;
+        segment.Height = 10f;
+        segment.SetSide(Side.North, northSide);
+
+        if (playerStart.HasValue)
+            segment.PlayerStart = playerStart.Value;
+
+        var room = new Room(segment);
+        room.Depth = 10f;
+        room.Width = 10f;
+        room.Height = 10f;
+        room.SetSide(Side.North, northSide);
+
+        return (segment, room);
+    }
+
     [Fact]
     public void OnlyCurrentAndNeighboringWorldSegmentsLoaded()
     {
         // Arrange: Create 5 TestWorldSegments labeled A through E in a chain
-        var segmentA = new TestWorldSegmentA(new Vector3(0, 1.5f, 0));
-        segmentA.Depth = 10f;
-        segmentA.Width = 10f;
-        segmentA.Height = 10f;
-        segmentA.SetSide(Side.North, 0f);
+        var (segmentA, roomA) = CreateSegmentWithRoom<TestWorldSegmentA>(0f, new Vector3(0, 1.5f, 5.0f));
+        var (segmentB, roomB) = CreateSegmentWithRoom<TestWorldSegmentB>(-10f);
+        var (segmentC, roomC) = CreateSegmentWithRoom<TestWorldSegmentC>(-20f);
+        var (segmentD, roomD) = CreateSegmentWithRoom<TestWorldSegmentD>(-30f);
+        var (segmentE, roomE) = CreateSegmentWithRoom<TestWorldSegmentE>(-40f);
 
-        var segmentB = new TestWorldSegmentB(new Vector3(0, 1.5f, -10f));
-        segmentB.Depth = 10f;
-        segmentB.Width = 10f;
-        segmentB.Height = 10f;
-        segmentB.SetSide(Side.North, -10f);
-
-        var segmentC = new TestWorldSegmentC(new Vector3(0, 1.5f, -20f));
-        segmentC.Depth = 10f;
-        segmentC.Width = 10f;
-        segmentC.Height = 10f;
-        segmentC.SetSide(Side.North, -20f);
-
-        var segmentD = new TestWorldSegmentD(new Vector3(0, 1.5f, -30f));
-        segmentD.Depth = 10f;
-        segmentD.Width = 10f;
-        segmentD.Height = 10f;
-        segmentD.SetSide(Side.North, -30f);
-
-        var segmentE = new TestWorldSegmentE(new Vector3(0, 1.5f, -40f));
-        segmentE.Depth = 10f;
-        segmentE.Width = 10f;
-        segmentE.Height = 10f;
-        segmentE.SetSide(Side.North, -40f);
+        // Connect the rooms together
+        roomA.AddConnectingRoom(roomB, Side.North, null);
+        roomB.AddConnectingRoom(roomC, Side.North, null);
+        roomC.AddConnectingRoom(roomD, Side.North, null);
+        roomD.AddConnectingRoom(roomE, Side.North, null);
 
         // Set up transitions: A<->B<->C<->D<->E
         segmentA.AddTransition(typeof(TestWorldSegmentB));
@@ -76,26 +81,25 @@ public class WorldSegmentTransitionTests
 
         var testAssertion = new Func<TestGame, GameTime, TestResult>((game, gameTime) =>
         {
+            if (gameTime.TotalGameTime.TotalMilliseconds < 500)
+                return TestResult.CONTINUE;
+
             var player = game.GetService<Player>();
             var loadedLevelData = game.GetService<LoadedLevelData>();
+            var entityRoomFinder = game.GetService<EntityRoomFinder>();
 
-            // Determine which segment the player is currently in
-            WorldSegment currentSegment = null;
-            foreach (var levelData in loadedLevelData.LoadedSegments)
-            {
-                if (levelData.WorldSegment.ContainsPoint(player.Position))
-                {
-                    currentSegment = levelData.WorldSegment;
-                    visitedSegments.Add(currentSegment.GetType());
-                    break;
-                }
-            }
+            // Determine which segment the player is currently in using EntityRoomFinder
+            var currentRoom = entityRoomFinder.FindRoom(player.Position);
+            if (currentRoom == null)
+                return TestResult.CONTINUE;
 
+            var currentSegment = currentRoom.WorldSegment;
             if (currentSegment == null)
                 return TestResult.CONTINUE;
 
-            // Assertions based on which segment the player is in
-            var loadedTypes = loadedLevelData.LoadedSegments.Select(s => s.WorldSegment.GetType()).ToHashSet();
+            visitedSegments.Add(currentSegment.GetType());
+
+            var loadedTypes = loadedLevelData.ActiveSegments.Select(s => s.WorldSegment.GetType()).ToHashSet();
 
             if (currentSegment is TestWorldSegmentA)
             {
@@ -148,20 +152,11 @@ public class WorldSegmentTransitionTests
             return TestResult.CONTINUE;
         });
 
-        // Set up MockPlayerInput to move player forward
-        var mockInput = new MockPlayerInput();
-        
-        // Hold forward key for 600 frames (10 seconds at 60 FPS) to walk through all segments
-        for (int frame = 1; frame <= 600; frame++)
-        {
-            mockInput.AddKeyPress(frame, GameKey.Forward);
-        }
+        using var testGame = new TestGame(segmentA, TimeSpan.FromMinutes(5), testAssertion);
 
-        using var testGame = new TestGame(segmentA, 600, testAssertion);
+        testGame.MockPlayerInput.AddKeyPress(1, GameKey.Forward);
 
         // Act
         testGame.Run();
-
-        // The test will pass if we reach segment E with all assertions passing
     }
 }

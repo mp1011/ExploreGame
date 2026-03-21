@@ -33,25 +33,25 @@ public class TestWorldSegment : WorldSegment
 
 public class TestWorldSegmentA : TestWorldSegment
 {
-    public TestWorldSegmentA(Vector3? playerStart = null) : base(playerStart) { }
+    public TestWorldSegmentA() : base() { }
 }
 
 public class TestWorldSegmentB : TestWorldSegment
 {
-    public TestWorldSegmentB(Vector3? playerStart = null) : base(playerStart) { }
+    public TestWorldSegmentB() : base() { }
 }
 
 public class TestWorldSegmentC : TestWorldSegment
 {
-    public TestWorldSegmentC(Vector3? playerStart = null) : base(playerStart) { }
+    public TestWorldSegmentC() : base() { }
 }
 
 public class TestWorldSegmentD : TestWorldSegment
 {
-    public TestWorldSegmentD(Vector3? playerStart = null) : base(playerStart) { }
+    public TestWorldSegmentD() : base() { }
 }
 
 public class TestWorldSegmentE : TestWorldSegment
 {
-    public TestWorldSegmentE(Vector3? playerStart = null) : base(playerStart) { }
+    public TestWorldSegmentE() : base() { }
 }

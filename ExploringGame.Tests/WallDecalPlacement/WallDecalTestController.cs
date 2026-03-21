@@ -1,4 +1,4 @@
-﻿using ExploringGame.Entities;
+using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;

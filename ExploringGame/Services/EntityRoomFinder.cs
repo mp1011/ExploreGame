@@ -62,4 +62,9 @@ public class EntityRoomFinder
 
         return nearestRoom;
     }
+
+    public Room FindRoom(Vector3 position)
+    {
+        return FindRoomContainingPosition(position);
+    }
 }

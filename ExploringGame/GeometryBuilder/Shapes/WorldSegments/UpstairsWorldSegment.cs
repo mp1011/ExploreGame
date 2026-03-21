@@ -18,14 +18,14 @@ public class UpstairsWorldSegment : WorldSegment
         new WorldSegmentTransition(typeof(OutsideWorldSegment))
     };
 
-    public UpstairsWorldSegment(BasementWorldSegment basement)
+    public UpstairsWorldSegment()
     {
         Depth = Measure.Feet(53);
         Width = Measure.Feet(50);
         Height = Measure.Feet(10);
         SetSide(Side.Bottom, FloorY);
 
-        var upstairsHall = basement?.FindChild<UpstairsHall>() ?? new UpstairsHall(this);
+        var upstairsHall = new UpstairsHall(this);
         var kitchen = new Kitchen(this, upstairsHall);
         var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
         var bedroom = new Bedroom(this, upstairsHall);

@@ -18,7 +18,7 @@ public class ShaderLightCountTests
     [Fact]
     public void WhenRenderingBasementOffice_ShaderGetsZeroLights()
     {
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         using var game = new TestGame(basement, simulationTime: TimeSpan.FromSeconds(0.1));
         game.Run();
@@ -53,7 +53,7 @@ public class ShaderLightCountTests
     [Fact]
     public void WhenRenderingBasement_ShaderGetsOneLight()
     {
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         using var game = new TestGame(basement, simulationTime: TimeSpan.FromSeconds(0.1));
         game.Run();

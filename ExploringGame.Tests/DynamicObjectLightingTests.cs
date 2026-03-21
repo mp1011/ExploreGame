@@ -96,7 +96,7 @@ public class DynamicObjectLightingTests
     public void StampedShape_InDifferentRooms_HaveDifferentLightingGroups()
     {
         // Arrange - Create a world with two distinct rooms
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
         {
@@ -123,7 +123,7 @@ public class DynamicObjectLightingTests
     public void DynamicObject_TestEntity_CanHaveRoomAssigned()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
         var basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
 
         // Create a test entity
@@ -142,7 +142,7 @@ public class DynamicObjectLightingTests
     public void StaticPlaceableObject_WithoutController_CanHaveRoomAssigned()
     {
         // Arrange - OfficeDesk is a PlaceableShape but does NOT have a controller
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
 
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
         {
@@ -176,7 +176,7 @@ public class DynamicObjectLightingTests
     public void DynamicObject_MovingToNewRoom_UpdatesRoomProperty()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
         var testEntity = new TestEntity();
         testEntity.Position = new Vector3(0, 1.5f, 0);
 
@@ -219,7 +219,7 @@ public class DynamicObjectLightingTests
     public void DynamicObject_StayingInSameRoom_RoomPropertyRemainsStable()
     {
         // Arrange
-        var basement = new BasementWorldSegment(null);
+        var basement = new BasementWorldSegment();
         var testEntity = new TestEntity();
         testEntity.Position = new Vector3(0, 1.5f, 0);
 

@@ -9,7 +9,7 @@ public class OutsideWorldSegment : WorldSegment
         new WorldSegmentTransition(typeof(UpstairsWorldSegment))
     };
 
-    public OutsideWorldSegment(UpstairsWorldSegment upstairsWorldSegment) : base()
+    public OutsideWorldSegment() : base()
     {
         Depth = Measure.Feet(100);
         Width = Measure.Feet(100);

@@ -25,6 +25,7 @@ public class Game1 : Game
     private IPlayerInput _playerInput;
     private EntityMover _playerMover;
     protected LoadedLevelData _loadedLevelData;
+    private WorldSegmentActivationManager _segmentActivationManager;
     private WorldSegment _mainShape;
 
     protected GraphicsDeviceManager _graphics;
@@ -99,6 +100,8 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<DebugController>();
         _debugController = _serviceContainer.Get<DebugController>();
 
+        _serviceContainer.BindSingleton<WorldSegmentActivationManager>();
+        _segmentActivationManager = _serviceContainer.Get<WorldSegmentActivationManager>();
 
         base.Initialize();
     }
@@ -137,11 +140,12 @@ public class Game1 : Game
         if(_loadedLevelData.LoadedSegments.Count == 0)
         {
             _player.Position = _mainShape.DefaultPlayerStart;
-            _loadedLevelData.LoadSegment(_mainShape);
             _playerMover.Initialize();
+            _segmentActivationManager.ActivateSegmentAndNeighbors(_mainShape);
         }
 
         _playerMover.Update(gameTime);
+        _segmentActivationManager.Update();
         _loadedLevelData.Update(gameTime);
 
         _playerInput.Update(Window);
@@ -172,7 +176,7 @@ public class Game1 : Game
         graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
         graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
-        foreach (var levelData in _loadedLevelData.LoadedSegments)
+        foreach (var levelData in _loadedLevelData.ActiveSegments)
         {
             _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
             _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);

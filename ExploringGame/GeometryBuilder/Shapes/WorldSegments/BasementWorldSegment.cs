@@ -15,7 +15,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             new WorldSegmentTransition(typeof(UpstairsWorldSegment))
         };
 
-        public BasementWorldSegment(UpstairsWorldSegment upstairsWorldSegment) : base()
+        public BasementWorldSegment() : base()
         {
             Depth = Measure.Feet(53);
             Width = Measure.Feet(50);
@@ -28,7 +28,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             office.LoadChildren();
             basement.LoadChildren();
 
-            var upstairsHall = upstairsWorldSegment?.FindChild<UpstairsHall>() ?? new UpstairsHall(this);
+            var upstairsHall = new UpstairsHall(this);
             upstairsHall.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South, 0.5f);
 
