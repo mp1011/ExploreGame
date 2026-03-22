@@ -67,6 +67,7 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<LoadedTextureSheets>();  
         _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<RoomLightingCalculator>();
+        _serviceContainer.BindSingleton<WorldSegmentAnchorProcessor>();
         _serviceContainer.BindSingleton<LoadedLevelData>();
         _loadedLevelData = _serviceContainer.Get<LoadedLevelData>();
         _serviceContainer.BindSingleton<EntityRoomFinder>();

@@ -114,6 +114,19 @@ public class Room : Shape
 
     public RoomConnection[] GetRoomConnections(Side side) => _roomConnections.Where(p => p.Side == side).ToArray();
 
+    public void ReplaceRoomInConnections(Room oldRoom, Room newRoom)
+    {
+        _roomConnections = _roomConnections.Select(connection =>
+        {
+            if (connection.Other == oldRoom)
+                return new RoomConnection(connection.Room, newRoom, connection.Side, connection.Position);
+            else if (connection.Room == oldRoom)
+                return new RoomConnection(newRoom, connection.Other, connection.Side, connection.Position);
+            else
+                return connection;
+        }).ToList();
+    }
+
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         var shape = BuildCuboid();

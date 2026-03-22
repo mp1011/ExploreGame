@@ -1,0 +1,42 @@
+# PROBLEM STATEMENT
+- The game world is intended to be a connected world, made of individual segments.
+- Currently, each segment is positioned relative to other segments
+- However, as the world grows bigger, it would mean we can't load the later segments without also loading the rest of the whole game world
+
+# SOLUTION
+- when each WorldSegment is loaded, it is positioned against the world origin
+- specific Shapes are designated as "anchors", which are shared between multiple segments
+- when a WorldSegment is loaded, we use anchors to move the new WorldSegment into the proper place
+	- this means the absolute position of each room may be different depending on which segment is loaded first
+	- however the RELATIVE position will be the same
+
+# TECHNICAL OVERVIEW
+- each WorldSegment will expose a list of "Anchor" shape types which are shapes shared by multiple segments
+- when we load a WorldSegment, we check if any of those Anchor shapes were already loaded
+	- if so, we move every shape in the WorldSegment such that its own Anchor shape overlaps the previously loaded anchor
+	- then, the new anchor shape gets replaced by the previously loaded one, and all connections are replaced
+
+# TESTING
+- we don't need specific tests for this change. 
+- we'll use the existing test suite to determine if this works correctly
+
+# TECHNICAL DETAIL
+1. When a new WorldSegment is loaded, we go through its Anchor shapes types and check if there's an instance already loaded
+2. If so, we check the delta between the loaded anchor shape and the current
+3. As a sanity check, the size of original and new anchor shapes are compared. If they are not the same, we raise an error.
+3. The shapes and geometry of the new segment are translated to match the original anchor shape
+4. If there are multiple anchors, we check the rest of them.
+	- however, since we only expect one translation, we expect no additional translations to occur
+	- should we find that another anchor is trying to move the segment again, we throw an error as it means there is some contradiction of anchors
+
+# QUESTIONS AND ANSWERS
+1.	Anchor Identification: How are "Anchor" shapes designated or identified?
+	- we'll add a new list to WorldSegment, where we can add the Type of the anchor segments.
+2.	Shape Type Matching: When the instructions say "Anchor shapes types" - does this mean:
+•	Matching by a Type property on Shape? (yes)
+3.	Implementation Location: Where should this anchor positioning logic be implemented?
+•	In WorldSegmentActivationManager (which seems to handle segment loading)? (yes)
+4.	Geometry Translation: What geometry needs to be translated besides the shapes themselves? Are there other collections or objects in WorldSegment that need position updates?
+	- i believe we only need to translate the shapes themselves. If that is not the case, we'll fix it later.
+5.	Connection Replacement: What are "connections" in this context, and how should they be replaced when the anchor shape is replaced?
+	- connections refers to RoomConnection

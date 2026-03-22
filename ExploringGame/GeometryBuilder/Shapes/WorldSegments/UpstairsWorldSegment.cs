@@ -5,18 +5,21 @@ using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
 public class UpstairsWorldSegment : WorldSegment
 {
-    public static readonly float FloorY = Measure.Feet(10);
 
-    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-    {
-        new WorldSegmentTransition(typeof(BasementWorldSegment)),
-        new WorldSegmentTransition(typeof(OutsideWorldSegment))
-    };
+    public override Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<LivingRoom>().Single().Position;
+    public static readonly float FloorY = Measure.Feet(10);
+  //  public override IReadOnlyList<Type> AnchorShapeTypes => new[] { typeof(UpstairsHall) };
+    //public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
+    //{
+    //    new WorldSegmentTransition(typeof(BasementWorldSegment)),
+    //    new WorldSegmentTransition(typeof(OutsideWorldSegment))
+    //};
 
     public UpstairsWorldSegment()
     {
@@ -38,7 +41,6 @@ public class UpstairsWorldSegment : WorldSegment
         livingRoom.SetSideUnanchored(Side.East, den.GetSide(Side.West) - 1.0f);
 
         spareRoom.SetSide(Side.North, livingRoom.GetSide(Side.South) + 0.5f);
-
 
         upstairsHall.SetSideUnanchored(Side.West, spareRoom.GetSide(Side.East) + 0.5f);
         upstairsHall.LoadChildren();

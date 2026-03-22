@@ -20,6 +20,7 @@ public class LoadedLevelData
     private readonly Physics _physics;
     private readonly LoadedTextureSheets _loadedTextureSheets;
     private readonly RoomLightingCalculator _lightingCalculator;
+    private readonly WorldSegmentAnchorProcessor _anchorProcessor;
 
     public List<LevelData> LoadedSegments { get; } = new();
     public List<LevelData> ActiveSegments { get; } = new();
@@ -29,7 +30,8 @@ public class LoadedLevelData
 
     public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
         LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer, 
-        RoomLightingCalculator lightingCalculator)
+        RoomLightingCalculator lightingCalculator,
+        WorldSegmentAnchorProcessor anchorProcessor)
     {
         _game = game;
         _physics = physics;
@@ -37,6 +39,7 @@ public class LoadedLevelData
         _serviceContainer = serviceContainer;
         _setupColliderBodies = setupColliderBodies;
         _lightingCalculator = lightingCalculator;
+        _anchorProcessor = anchorProcessor;
 
         RoomGraph = new RoomGraph();
         WaypointGraph = new WaypointGraph(RoomGraph);
@@ -53,6 +56,9 @@ public class LoadedLevelData
         // Check if segment is already loaded
         if (IsSegmentLoaded(worldSegment))
             return;
+
+        // Apply anchor-based positioning before building
+        _anchorProcessor.ApplyAnchorPositioning(worldSegment, LoadedSegments);
 
         // Build room graph for this segment
         var rooms = worldSegment.TraverseAllChildren().OfType<Room>().ToList();
