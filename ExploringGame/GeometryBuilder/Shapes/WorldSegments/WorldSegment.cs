@@ -17,9 +17,6 @@ public class WorldSegment : Shape
 
     public virtual IReadOnlyList<WorldSegmentTransition> Transitions { get; } = Array.Empty<WorldSegmentTransition>();
 
-    public virtual IReadOnlyList<Type> AnchorShapeTypes { get; } = Array.Empty<Type>();
-
-
     public WorldSegment(params Shape[] contents)
     {
         foreach (var item in contents)

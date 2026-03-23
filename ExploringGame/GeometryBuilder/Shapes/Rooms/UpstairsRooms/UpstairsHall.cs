@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
@@ -14,9 +15,10 @@ public class UpstairsHall : Room
     public Room SouthHall { get; private set; }
     public Room NorthHall { get; private set; }
 
-    public UpstairsHall(WorldSegment worldSegment) : base(worldSegment, 
-        height: Measure.Feet(7), width: Measure.Feet(4), depth: Measure.Feet(4))
+    public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
     {
+        Size = new Vector3(1.92f,  3.36f,  1.92f);
+        Position = new Vector3(-2.0699997f,  6.4799995f, -0.060000002f);
     }
 
     public override void LoadChildren()

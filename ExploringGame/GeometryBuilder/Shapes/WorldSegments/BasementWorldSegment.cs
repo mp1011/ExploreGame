@@ -9,10 +9,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 {
     public class BasementWorldSegment : WorldSegment
     {
-
         public override Vector3 DefaultPlayerStart => new Vector3(7.4f, 1.4f, -7.0f);
 
-        public override IReadOnlyList<Type> AnchorShapeTypes => new[] { typeof(UpstairsHall) };
         public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
         {
             new WorldSegmentTransition(typeof(UpstairsWorldSegment))
@@ -32,10 +30,10 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             basement.LoadChildren();
 
             var dummyUpstairsHall = new PlaceholderShape<UpstairsHall>(this,
-                position: new Vector3(-2.3899999f, 6.48f, 0f),
-                size: new Vector3(6.7f, 3.36f, 1.92f));
+                position: new Vector3(-3.4249997f, 6.4799995f, -0.060000002f),
+                size: new Vector3(4.63f, 3.36f, 1.92f));
 
-            basement.BasementStairsDoor.AddConnectingRoom(dummyUpstairsHall, Side.South, 0.5f);
+            basement.BasementStairsDoor.AddConnectingRoom(dummyUpstairsHall, Side.South);
 
             var garage = AddChild(new Garage(this, basement));
             garage.LoadChildren();

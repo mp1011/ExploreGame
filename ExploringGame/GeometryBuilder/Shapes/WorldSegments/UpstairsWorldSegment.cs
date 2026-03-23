@@ -1,15 +1,10 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
-using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
-using ExploringGame.Services;
-using Jitter2.Collision.Shapes;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
@@ -18,7 +13,6 @@ public class UpstairsWorldSegment : WorldSegment
 
     public override Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<LivingRoom>().Single().Position;
     public static readonly float FloorY = Measure.Feet(10);
-    public override IReadOnlyList<Type> AnchorShapeTypes => new[] { typeof(UpstairsHall) };
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
     {
         new WorldSegmentTransition(typeof(BasementWorldSegment))      
@@ -32,6 +26,8 @@ public class UpstairsWorldSegment : WorldSegment
         SetSide(Side.Bottom, FloorY);
 
         var upstairsHall = new UpstairsHall(this);
+
+
         var kitchen = new Kitchen(this, upstairsHall);
         var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
         var bedroom = new Bedroom(this, upstairsHall);
@@ -63,7 +59,7 @@ public class UpstairsWorldSegment : WorldSegment
         var dummyBasementStairsDoor = new PlaceholderShape<DoorJunction>(this, "BasementStairsDoor",
             position: new Vector3(-2.0699997f, 6.72f, -1.27f),
             size: new Vector3(1.22f, 3.84f, 0.5f)); 
-        dummyBasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South, 0.5f);
+        dummyBasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South);
 
         AddChild(new WallDecalStamp());
 
