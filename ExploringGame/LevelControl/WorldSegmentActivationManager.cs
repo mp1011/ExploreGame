@@ -11,16 +11,19 @@ public class WorldSegmentActivationManager
     private readonly EntityRoomFinder _entityRoomFinder;
     private readonly Player _player;
     private readonly ServiceContainer _serviceContainer;
+    private readonly WorldSegmentAnchorProcessor _anchorProcessor;
 
     public WorldSegmentActivationManager(LoadedLevelData loadedLevelData, 
         EntityRoomFinder entityRoomFinder, 
         Player player,
-        ServiceContainer serviceContainer)
+        ServiceContainer serviceContainer,
+        WorldSegmentAnchorProcessor anchorProcessor)
     {
         _loadedLevelData = loadedLevelData;
         _entityRoomFinder = entityRoomFinder;
         _player = player;
         _serviceContainer = serviceContainer;
+        _anchorProcessor = anchorProcessor;
     }
 
     public void Update()
@@ -51,6 +54,13 @@ public class WorldSegmentActivationManager
                 ActivateSegment(neighborSegment);
             }
         }
+
+        // Process placeholders after all segments are loaded
+        _anchorProcessor.ProcessPlaceholders(
+            _loadedLevelData.LoadedSegments,
+            _loadedLevelData.RoomGraph,
+            _loadedLevelData.WaypointGraph,
+            _loadedLevelData.LightingCalculator);
     }
 
     private void UpdateActiveSegments(Vector3 playerPosition)

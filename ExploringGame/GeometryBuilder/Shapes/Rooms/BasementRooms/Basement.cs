@@ -76,6 +76,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
                 { Depth =0.5f };
 
+            BasementStairsDoor.Tag = "BasementStairsDoor";
+
             BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             BasementStairsDoor.SetSide(Side.North, GetSide(Side.South));
 

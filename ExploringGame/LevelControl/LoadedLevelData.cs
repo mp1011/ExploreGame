@@ -57,9 +57,6 @@ public class LoadedLevelData
         if (IsSegmentLoaded(worldSegment))
             return;
 
-        // Apply anchor-based positioning before building
-        _anchorProcessor.ApplyAnchorPositioning(worldSegment, LoadedSegments);
-
         // Build room graph for this segment
         var rooms = worldSegment.TraverseAllChildren().OfType<Room>().ToList();
         foreach (var room in rooms)

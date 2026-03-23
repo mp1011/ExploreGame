@@ -1,6 +1,8 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics.Pathfinding;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -10,104 +12,114 @@ namespace ExploringGame.LevelControl;
 
 public class WorldSegmentAnchorProcessor
 {
-    public void ApplyAnchorPositioning(WorldSegment worldSegment, IEnumerable<LevelData> loadedSegments)
+    public void ProcessPlaceholders(IEnumerable<LevelData> loadedSegments, RoomGraph roomGraph, WaypointGraph waypointGraph, RoomLightingCalculator lightingCalculator)
     {
-        if (!worldSegment.AnchorShapeTypes.Any())
-            return;
+        // Find all PlaceHolderShape instances
+        var placeholders = loadedSegments
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren()
+                .Where(s => s.GetType().IsGenericType && 
+                            s.GetType().GetGenericTypeDefinition() == typeof(PlaceholderShape<>)))
+            .ToList();
 
-        Vector3? translation = null;
-        Shape existingAnchor = null;
-        Shape newAnchor = null;
-
-        // Check each anchor type to see if it's already loaded
-        foreach (var anchorType in worldSegment.AnchorShapeTypes)
+        foreach (var placeholder in placeholders)
         {
-            var newAnchorShape = FindShapeByType(worldSegment, anchorType);
-            if (newAnchorShape == null)
-                continue;
+            var realShape = FindMatchingRealShape(placeholder, loadedSegments);
 
-            var existingAnchorShape = FindLoadedShapeByType(anchorType, loadedSegments);
-            if (existingAnchorShape == null)
-                continue;
-
-            // Found a matching anchor - calculate translation
-            var delta = existingAnchorShape.Position - newAnchorShape.Position;
-
-            // Validate anchor sizes match
-            const float sizeTolerance = 0.001f;
-            if (Vector3.Distance(existingAnchorShape.Size, newAnchorShape.Size) > sizeTolerance)
+            if (realShape == null)
             {
+                var placeholderType = placeholder.GetType().GetGenericArguments()[0];
+                var tag = (placeholder as Room)?.Tag;
+                var tagInfo = string.IsNullOrEmpty(tag) ? "" : $" with tag '{tag}'";
                 throw new InvalidOperationException(
-                    $"Anchor shape size mismatch for type {anchorType.Name}. " +
-                    $"Existing size: {existingAnchorShape.Size}, New size: {newAnchorShape.Size}");
+                    $"No matching real shape found for PlaceholderShape<{placeholderType.Name}>{tagInfo}");
             }
 
-            // Check for conflicting translations
-            const float translationTolerance = 0.001f;
-            if (translation.HasValue && Vector3.Distance(translation.Value, delta) > translationTolerance)
-            {
-                throw new InvalidOperationException(
-                    $"Conflicting anchor translations detected. " +
-                    $"Previous translation: {translation.Value}, New translation: {delta}");
-            }
-
-            translation = delta;
-            existingAnchor = existingAnchorShape;
-            newAnchor = newAnchorShape;
-        }
-
-        // If we found a matching anchor, translate all shapes in the segment
-        if (translation.HasValue && existingAnchor != null && newAnchor != null)
-        {
-            TranslateSegmentShapes(worldSegment, translation.Value);
-            ReplaceAnchorShapeReferences(newAnchor, existingAnchor, loadedSegments);
+            ValidatePlaceholderMatch(placeholder, realShape);
+            ReplacePlaceholderWithRealShape(placeholder, realShape, loadedSegments, roomGraph, waypointGraph, lightingCalculator);
         }
     }
 
-    private Shape FindShapeByType(WorldSegment worldSegment, Type shapeType)
+    private Shape FindMatchingRealShape(Shape placeholder, IEnumerable<LevelData> loadedSegments)
     {
-        return worldSegment.TraverseAllChildren().FirstOrDefault(s => s.GetType() == shapeType);
-    }
+        var placeholderType = placeholder.GetType();
+        var targetType = placeholderType.GetGenericArguments()[0];
+        var placeholderTag = (placeholder as Room)?.Tag;
 
-    private Shape FindLoadedShapeByType(Type shapeType, IEnumerable<LevelData> loadedSegments)
-    {
         foreach (var levelData in loadedSegments)
         {
-            var shape = levelData.WorldSegment.TraverseAllChildren()
-                .FirstOrDefault(s => s.GetType() == shapeType);
-            if (shape != null)
-                return shape;
+            foreach (var shape in levelData.WorldSegment.TraverseAllChildren())
+            {
+                // Skip other placeholders
+                if (shape.GetType().IsGenericType && 
+                    shape.GetType().GetGenericTypeDefinition() == typeof(PlaceholderShape<>))
+                    continue;
+
+                // Check if type matches
+                if (shape.GetType() == targetType)
+                {
+                    // If placeholder has a tag, match on tag
+                    if (!string.IsNullOrEmpty(placeholderTag))
+                    {
+                        if (shape is Room room && room.Tag == placeholderTag)
+                            return shape;
+                    }
+                    else
+                    {
+                        // No tag, just match on type
+                        return shape;
+                    }
+                }
+            }
         }
+
         return null;
     }
 
-    private void TranslateSegmentShapes(WorldSegment worldSegment, Vector3 translation)
+    private void ValidatePlaceholderMatch(Shape placeholder, Shape realShape)
     {
-        foreach (var shape in worldSegment.TraverseAllChildren())
+        const float tolerance = 0.001f;
+
+        var positionMatch = Vector3.Distance(placeholder.Position, realShape.Position) < tolerance;
+        var sizeMatch = Vector3.Distance(placeholder.Size, realShape.Size) < tolerance;
+
+        if (!positionMatch || !sizeMatch)
         {
-            shape.Position += translation;
+            var placeholderType = placeholder.GetType().GetGenericArguments()[0];
+            var tag = (placeholder as Room)?.Tag;
+            var tagInfo = string.IsNullOrEmpty(tag) ? "" : $" (tag: '{tag}')";
+
+            throw new InvalidOperationException(
+                $"PlaceholderShape<{placeholderType.Name}>{tagInfo} does not match real shape.\n" +
+                $"Placeholder - Position: {placeholder.Position}, Size: {placeholder.Size}\n" +
+                $"Real Shape  - Position: {realShape.Position}, Size: {realShape.Size}\n" +
+                $"Update the placeholder's hard-coded position and size to match.");
         }
     }
 
-    private void ReplaceAnchorShapeReferences(Shape newAnchor, Shape existingAnchor, IEnumerable<LevelData> loadedSegments)
+    private void ReplacePlaceholderWithRealShape(Shape placeholder, Shape realShape, 
+        IEnumerable<LevelData> loadedSegments, RoomGraph roomGraph, WaypointGraph waypointGraph, 
+        RoomLightingCalculator lightingCalculator)
     {
-        // Replace room connections that reference the new anchor
-        if (newAnchor is Room newAnchorRoom && existingAnchor is Room existingAnchorRoom)
+        // Replace in parent/child relations
+        if (placeholder.Parent != null)
         {
-            ReplaceRoomInConnections(newAnchorRoom, existingAnchorRoom, loadedSegments);
+            RemoveChildFromParent(placeholder);
         }
 
-        // Transfer children from new anchor to existing anchor
-        foreach (var child in newAnchor.Children.ToList())
+        // Replace in RoomConnections
+        if (placeholder is Room placeholderRoom && realShape is Room realRoom)
         {
-            existingAnchor.AddChild(child);
+            ReplaceRoomInConnections(placeholderRoom, realRoom, loadedSegments);
         }
 
-        // Remove the new anchor from its parent
-        if (newAnchor.Parent != null)
+        // Replace in RoomGraph
+        if (placeholder is Room pRoom && realShape is Room rRoom)
         {
-            RemoveChildFromParent(newAnchor);
+            ReplaceRoomInGraph(pRoom, rRoom, roomGraph);
         }
+
+        // WaypointGraph and LightingCalculator replacements would go here
+        // These may need additional methods depending on their internal structure
     }
 
     private void RemoveChildFromParent(Shape child)
@@ -132,13 +144,22 @@ public class WorldSegmentAnchorProcessor
             .SelectMany(ld => ld.WorldSegment.TraverseAllChildren().OfType<Room>())
             .ToList();
 
-        // Also include rooms from the segment being loaded (not yet in LoadedSegments)
-        allRooms.AddRange(oldRoom.WorldSegment.TraverseAllChildren().OfType<Room>());
-
         // Update all room connections
         foreach (var room in allRooms.Distinct())
         {
             room.ReplaceRoomInConnections(oldRoom, newRoom);
         }
+    }
+
+    private void ReplaceRoomInGraph(Room placeholderRoom, Room realRoom, RoomGraph roomGraph)
+    {
+        // This will need to be implemented based on RoomGraph's API
+        // For now, we might need to:
+        // 1. Remove placeholderRoom from graph
+        // 2. Add realRoom if not already present
+        // 3. Update connections that pointed to placeholderRoom
+
+        // Placeholder for implementation
+        // roomGraph.ReplaceRoom(placeholderRoom, realRoom);
     }
 }

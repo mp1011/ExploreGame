@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using Jitter2.Dynamics.Constraints;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 
         public override Vector3 DefaultPlayerStart => new Vector3(7.4f, 1.4f, -7.0f);
 
-     //   public override IReadOnlyList<Type> AnchorShapeTypes => new[] { typeof(UpstairsHall) };
-        //public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-        //{
-        //    new WorldSegmentTransition(typeof(UpstairsWorldSegment))
-        //};
+        public override IReadOnlyList<Type> AnchorShapeTypes => new[] { typeof(UpstairsHall) };
+        public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
+        {
+            new WorldSegmentTransition(typeof(UpstairsWorldSegment))
+        };
 
         public BasementWorldSegment() : base()
         {
@@ -30,13 +31,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             office.LoadChildren();
             basement.LoadChildren();
 
-            var upstairsHall = new UpstairsHall(this);
+            var dummyUpstairsHall = new PlaceholderShape<UpstairsHall>(this,
+                position: new Vector3(-2.3899999f, 6.48f, 0f),
+                size: new Vector3(6.7f, 3.36f, 1.92f));
 
-            // hard-code upstairs hall position to match upstairs world segment
-            upstairsHall.Size = new Vector3(6.7f,  3.36f,  1.92f);
-            upstairsHall.Position = new Vector3(-2.3899999f, 6.48f, 0f);
-
-            basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South, 0.5f);
+            basement.BasementStairsDoor.AddConnectingRoom(dummyUpstairsHall, Side.South, 0.5f);
 
             var garage = AddChild(new Garage(this, basement));
             garage.LoadChildren();

@@ -40,3 +40,36 @@
 	- i believe we only need to translate the shapes themselves. If that is not the case, we'll fix it later.
 5.	Connection Replacement: What are "connections" in this context, and how should they be replaced when the anchor shape is replaced?
 	- connections refers to RoomConnection
+
+# SECOND ROUND ITERATION
+- the problem with shared anchor shapes is the geometry has to be exactly the same for both WorldSegments
+- however, geometry depends on what rooms connect to it. 
+	- specific example, in UpstairsWorldSegment, the UpstairsHall connects to upstairsHall.NorthHall and upstairsHall.SouthHall
+	- but in BasementWorldSegment, UpstairsHall connects to the DoorJunction of the basement stairs
+- instead of thinking of anchors as shared regions, we instead use a model where one WorldSegment has the "real" shape and the other has a Placeholdder
+- I've created a new class, PlaceHolderShape<T>. This is a shape meant to anchor to a real shape in the other WorldSegment
+	- PlaceHolderShape matches via a type parameter T (the placeholder doesn't actually reference T at all).
+	- in addition, a "Tag" may be provided if the type parameter alone isn't enough
+
+## Changes for Round 2
+1. OLD - individual world segments would be moved so that they line up with previously loaded segments
+   NEW - all world segments created at same objective position, using hard-coded positions
+2. OLD - world segments would share shapes, and only the first loaded one would be used
+   NEW - each shape exists only in one world segment. Other world segments that reference it will create a PlaceholderShape in its place
+3. OLD - world segments held a list of anchor shape types
+   NEW - logic is based on PlaceholderShapes
+
+## New Process for Round 2
+1. In WorldSegmentActivationManager -> ActivateSegmentAndNeighbors, first we load each world segment
+2. Then, we look for PlaceholderShapes. For each, we match it with a real shape
+	- matching is done via the type parameter of PlaceHolderShape, plus the Tag if it is present
+	- if no match is found, raise an error. Placeholders must always have a match
+3. compare the size and position of the placeholder and real shape
+	- if they don't match, raise an error containing the shape, real size, and real position, so that we can update the hard-coded position
+	of the placeholder shape
+4. replace the placeholder with the real shape in the following places
+	- parent/child relations
+	- RoomConnection
+	- RoomGraph
+	- WaypointGraph
+	- _lightingCalculator
