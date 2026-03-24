@@ -81,12 +81,12 @@ public class WorldSegmentTransitionTests
 
         var testAssertion = new Func<TestGame, GameTime, TestResult>((game, gameTime) =>
         {
-            if (gameTime.TotalGameTime.TotalMilliseconds < 500)
-                return TestResult.CONTINUE;
-
             var player = game.GetService<Player>();
             var loadedLevelData = game.GetService<LoadedLevelData>();
             var entityRoomFinder = game.GetService<EntityRoomFinder>();
+
+            if (gameTime.TotalGameTime.TotalMilliseconds < 500)
+                return TestResult.CONTINUE;
 
             // Determine which segment the player is currently in using EntityRoomFinder
             var currentRoom = entityRoomFinder.FindRoom(player.Position);
@@ -152,7 +152,18 @@ public class WorldSegmentTransitionTests
             return TestResult.CONTINUE;
         });
 
-        using var testGame = new TestGame(segmentA, TimeSpan.FromMinutes(5), testAssertion);
+        var testSetup = new Action<TestGame>(g =>
+        {
+            var loadedLevelData = g.GetService<LoadedLevelData>();
+
+            // for this test, we need to have all the segments loaded, as we're only testing activation
+            loadedLevelData.LoadSegment(segmentB);
+            loadedLevelData.LoadSegment(segmentC);
+            loadedLevelData.LoadSegment(segmentD);
+            loadedLevelData.LoadSegment(segmentE);
+        });
+      
+        using var testGame = new TestGame(segmentA, TimeSpan.FromMinutes(5), testAssertion, testSetup);
 
         testGame.MockPlayerInput.AddKeyPress(1, GameKey.Forward);
 

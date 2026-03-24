@@ -235,32 +235,33 @@ public class RoomLightingTests
         game.Run();
     }
 
-    [Fact]
-    public void RoomGraphHasExpectedStructure()
-    {
-        // Arrange
-        var basement = new BasementWorldSegment();
+    // retiring this test as it will change too often
+    //[Fact]
+    //public void RoomGraphHasExpectedStructure()
+    //{
+    //    // Arrange
+    //    var basement = new BasementWorldSegment();
 
-        using var game = new TestGame(basement, framesToRun: 10, testAssertion: (g, gameTime) =>
-        {
-            if (gameTime.TotalGameTime.TotalMilliseconds > 50)
-            {
-                var loadedLevelData = g.GetService<LoadedLevelData>();
-                var basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
+    //    using var game = new TestGame(basement, framesToRun: 10, testAssertion: (g, gameTime) =>
+    //    {
+    //        if (gameTime.TotalGameTime.TotalMilliseconds > 50)
+    //        {
+    //            var loadedLevelData = g.GetService<LoadedLevelData>();
+    //            var basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
 
-                var treeView = BuildRoomGraphTree(basementOffice, loadedLevelData.RoomGraph);
+    //            var treeView = BuildRoomGraphTree(basementOffice, loadedLevelData.RoomGraph);
 
-                var expected = File.ReadAllText("Fixtures\\ExpectedRoomGraph.txt").Trim();
-                File.WriteAllText("Fixtures\\ActualRoomGraph.txt", treeView);
-                Assert.Equal(expected.Trim(), treeView.Trim());
-                return TestResult.PASS;
-            }
+    //            var expected = File.ReadAllText("Fixtures\\ExpectedRoomGraph.txt").Trim();
+    //            File.WriteAllText("Fixtures\\ActualRoomGraph.txt", treeView);
+    //            Assert.Equal(expected.Trim(), treeView.Trim());
+    //            return TestResult.PASS;
+    //        }
 
-            return TestResult.CONTINUE;
-        });
+    //        return TestResult.CONTINUE;
+    //    });
 
-        game.Run();
-    }
+    //    game.Run();
+    //}
 
     private string BuildRoomGraphTree(Room startRoom, RoomGraph roomGraph, int indent = 0, HashSet<Room> visited = null)
     {

@@ -128,6 +128,7 @@ public class Game1 : Game
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
+    private bool _ranInit = false;
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -138,8 +139,9 @@ public class Game1 : Game
 
         _physics.Update(gameTime);
 
-        if(_loadedLevelData.LoadedSegments.Count == 0)
+        if(!_ranInit)
         {
+            _ranInit = true;
             _player.Position = _mainShape.DefaultPlayerStart;
             _playerMover.Initialize();
             _segmentActivationManager.ActivateSegmentAndNeighbors(_mainShape);

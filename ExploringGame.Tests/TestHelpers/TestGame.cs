@@ -27,16 +27,18 @@ public class TestGame : Game1
     private bool _testPassed = false;
     private string _testFailureMessage;
 
+    private Action<TestGame> _testSetup;
+
     protected override bool AlwaysActive => true;
     public MockPlayerInput MockPlayerInput { get; }
 
     public override Random Random => new Random(12345);
 
-    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null, string screenshotName = null) : 
-        this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion, screenshotName)
+    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null, Action<TestGame> testSetup = null, string screenshotName = null) : 
+        this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion, testSetup, screenshotName)
     {}
 
-    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null, string screenshotName = null) 
+    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null, Action<TestGame> testSetup = null, string screenshotName = null) 
         : base(worldSegment)
     {
         // Set higher default ambient light for visual tests (so rooms without lighting data are visible)
@@ -45,6 +47,7 @@ public class TestGame : Game1
         MockPlayerInput = new MockPlayerInput();
         _framesRemaining = framesToRun;
         _testAssertion = testAssertion;
+        _testSetup = testSetup;
 
         // Create screenshots directory in test output
         var screenshotDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Screenshots");
@@ -129,7 +132,7 @@ public class TestGame : Game1
     }
 
     private TimeSpan _lastLogTime = TimeSpan.Zero;
-
+    private bool _ranSetup = false;
     protected override void Update(GameTime gameTime)
     {
         try
@@ -137,6 +140,12 @@ public class TestGame : Game1
             if (--_framesRemaining <= 0 && _screenshotTaken)
             {
                 Exit();            
+            }
+            
+            if(!_ranSetup && _testSetup != null)
+            {
+                _testSetup.Invoke(this);
+                _ranSetup = true;
             }
 
             var fakeTime = FakeFrameTime();

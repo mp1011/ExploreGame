@@ -250,6 +250,14 @@ public abstract class Shape : IWithPosition
         return child;
     }
 
+    public void RemoveChild(Shape child)
+    {
+        if(child.Parent == this)
+            child.Parent = null;
+
+        _children.Remove(child);
+    }
+
     public Rotation Rotation { get; set; }
 
     public bool ContainsPoint(Vector3 point)

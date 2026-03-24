@@ -97,7 +97,7 @@ public class LoadedLevelData
 
     private bool IsSegmentLoaded(WorldSegment worldSegment)
     {
-        return LoadedSegments.Any(ld => ld.WorldSegment == worldSegment);
+        return LoadedSegments.Any(ld => ld.WorldSegment.GetType() == worldSegment.GetType());
     }
 
     private void AssignRoomsToPlaceableShapes(WorldSegment segment)

@@ -16,14 +16,13 @@ public class WorldSegmentAnchorProcessor
     {
         // Find all PlaceHolderShape instances
         var placeholders = loadedSegments
-            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren()
-                .Where(s => s.GetType().IsGenericType && 
-                            s.GetType().GetGenericTypeDefinition() == typeof(PlaceholderShape<>)))
+            .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
+            .OfType<PlaceholderShape>()
             .ToList();
 
         foreach (var placeholder in placeholders)
         {
-            var realShape = FindMatchingRealShape(placeholder, loadedSegments);
+            var realShape = placeholder.FindMatchingRealShape(loadedSegments);
 
             if (realShape == null)
             {
@@ -38,43 +37,7 @@ public class WorldSegmentAnchorProcessor
             ReplacePlaceholderWithRealShape(placeholder, realShape, loadedSegments, roomGraph, waypointGraph, lightingCalculator);
         }
     }
-
-    private Shape FindMatchingRealShape(Shape placeholder, IEnumerable<LevelData> loadedSegments)
-    {
-        var placeholderType = placeholder.GetType();
-        var targetType = placeholderType.GetGenericArguments()[0];
-        var placeholderTag = (placeholder as Room)?.Tag;
-
-        foreach (var levelData in loadedSegments)
-        {
-            foreach (var shape in levelData.WorldSegment.TraverseAllChildren())
-            {
-                // Skip other placeholders
-                if (shape.GetType().IsGenericType && 
-                    shape.GetType().GetGenericTypeDefinition() == typeof(PlaceholderShape<>))
-                    continue;
-
-                // Check if type matches
-                if (shape.GetType() == targetType)
-                {
-                    // If placeholder has a tag, match on tag
-                    if (!string.IsNullOrEmpty(placeholderTag))
-                    {
-                        if (shape is Room room && room.Tag == placeholderTag)
-                            return shape;
-                    }
-                    else
-                    {
-                        // No tag, just match on type
-                        return shape;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
+  
     private void ValidatePlaceholderMatch(Shape placeholder, Shape realShape)
     {
         const float tolerance = 0.001f;
@@ -96,46 +59,19 @@ public class WorldSegmentAnchorProcessor
         }
     }
 
-    private void ReplacePlaceholderWithRealShape(Shape placeholder, Shape realShape, 
+    private void ReplacePlaceholderWithRealShape(PlaceholderShape placeholder, Room realShape, 
         IEnumerable<LevelData> loadedSegments, RoomGraph roomGraph, WaypointGraph waypointGraph, 
         RoomLightingCalculator lightingCalculator)
-    {
-        // Replace in parent/child relations
+    {        
         if (placeholder.Parent != null)
-        {
-            RemoveChildFromParent(placeholder);
-        }
-
-        // Replace in RoomConnections
-        if (placeholder is Room placeholderRoom && realShape is Room realRoom)
-        {
-            ReplaceRoomInConnections(placeholderRoom, realRoom, loadedSegments);
-        }
-
-        // Replace in RoomGraph
-        if (placeholder is Room pRoom && realShape is Room rRoom)
-        {
-            ReplaceRoomInGraph(pRoom, rRoom, roomGraph);
-        }
-
+            placeholder.Parent.RemoveChild(placeholder);
+       
+        ReplaceRoomInConnections(placeholder, realShape, loadedSegments);   
+        ReplaceRoomInGraph(placeholder, realShape, roomGraph);
+        
         // WaypointGraph and LightingCalculator replacements would go here
         // These may need additional methods depending on their internal structure
-    }
-
-    private void RemoveChildFromParent(Shape child)
-    {
-        if (child.Parent == null)
-            return;
-
-        var parent = child.Parent;
-        var childrenField = parent.GetType()
-            .GetField("_children", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-        if (childrenField?.GetValue(parent) is List<Shape> children)
-        {
-            children.Remove(child);
-        }
-    }
+    } 
 
     private void ReplaceRoomInConnections(Room oldRoom, Room newRoom, IEnumerable<LevelData> loadedSegments)
     {

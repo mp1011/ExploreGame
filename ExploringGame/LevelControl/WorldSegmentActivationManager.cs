@@ -2,6 +2,8 @@ using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using System;
+using System.Linq;
 
 namespace ExploringGame.LevelControl;
 
@@ -47,12 +49,13 @@ public class WorldSegmentActivationManager
         // Add all neighboring segments
         foreach (var transition in worldSegment.Transitions)
         {
-            // Get or create the neighbor segment from the ServiceContainer
-            var neighborSegment = _serviceContainer.Get(transition.WorldSegmentType) as GeometryBuilder.Shapes.WorldSegments.WorldSegment;
-            if (neighborSegment != null)
-            {
-                ActivateSegment(neighborSegment);
-            }
+            // Find the neighbor segment in already loaded segments
+            var neighborSegment = _loadedLevelData.LoadedSegments
+                .Select(ld => ld.WorldSegment)
+                .FirstOrDefault(ws => ws.GetType() == transition.WorldSegmentType) 
+                ?? Activator.CreateInstance(transition.WorldSegmentType) as WorldSegment;
+            
+            ActivateSegment(neighborSegment);            
         }
 
         // Process placeholders after all segments are loaded
