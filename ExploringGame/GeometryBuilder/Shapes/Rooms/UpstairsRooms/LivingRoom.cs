@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
@@ -23,7 +24,7 @@ public class LivingRoom : Room
     }
 
     public override void LoadChildren()
-    { 
+    {
         AddConnectingRoom(new RoomConnection(this, _kitchen, Side.South), adjustPlacement: false);
         AddConnectingRoom(new RoomConnection(this, _upstairsHall.NorthHall, Side.South), adjustPlacement: false);
 

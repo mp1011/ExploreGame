@@ -1,8 +1,14 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.LevelControl;
+using ExploringGame.Logics.Pathfinding;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +21,8 @@ public class UpstairsWorldSegment : WorldSegment
     public static readonly float FloorY = Measure.Feet(10);
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
     {
-        new WorldSegmentTransition(typeof(BasementWorldSegment))      
+        new WorldSegmentTransition(typeof(BasementWorldSegment)),
+        new WorldSegmentTransition(typeof(OutsideWorldSegment)),
     };
 
     public UpstairsWorldSegment()
@@ -27,6 +34,9 @@ public class UpstairsWorldSegment : WorldSegment
 
         var upstairsHall = new UpstairsHall(this);
 
+        var deck = new PlaceholderShape<FrontDeck>(this,
+            position: new Vector3(-13.94f, 7.6800003f, -8.639999f),
+            size: new Vector3(2.8799999f, 5.7599998f, 8.16f));
 
         var kitchen = new Kitchen(this, upstairsHall);
         var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
@@ -36,7 +46,9 @@ public class UpstairsWorldSegment : WorldSegment
         var spareRoom = new SpareRoom(this, upstairsHall, bedroom);
         var den = new Den(this, livingRoom);
         var halfBath = new HalfBathroom(this, den);
-      
+
+        
+
         livingRoom.SetSideUnanchored(Side.East, den.GetSide(Side.West) - 1.0f);
 
         spareRoom.SetSide(Side.North, livingRoom.GetSide(Side.South) + 0.5f);
@@ -67,6 +79,16 @@ public class UpstairsWorldSegment : WorldSegment
         var lightSpirit = new LightSpirit();
         lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
         AddChild(lightSpirit);
+
+        var frontDoor = livingRoom.AddConnectingRoomWithJunction(
+            new DoorJunction(livingRoom, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
+            other: deck,
+            side: Side.West,
+            align: HAlign.Left,
+            offset: 0.2f,
+            adjustPlacement: false);
+
+        frontDoor.Tag = "FrontDoor";
     }
 
 }

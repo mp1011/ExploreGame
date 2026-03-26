@@ -100,7 +100,7 @@ public class Room : Shape
         junction.AddConnectingRoom(new RoomConnection(junction, other, side));
     }
 
-    public void AddConnectingRoomWithJunction(Room junction, Room other, Side side, HAlign align, float offset = 0f, bool adjustPlacement = true)
+    public Room AddConnectingRoomWithJunction(Room junction, Room other, Side side, HAlign align, float offset = 0f, bool adjustPlacement = true)
     {
         if(!adjustPlacement)
         {
@@ -110,6 +110,7 @@ public class Room : Shape
 
         AddConnectingRoom(new RoomConnection(this, junction, side, align, offset));
         junction.AddConnectingRoom(new RoomConnection(junction, other, side), adjustPlacement);
+        return junction;
     }
 
     public RoomConnection[] GetRoomConnections(Side side) => _roomConnections.Where(p => p.Side == side).ToArray();
