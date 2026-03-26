@@ -23,7 +23,7 @@ public class KidsBedroom : Room
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Pull, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left,
+            new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left,
             adjustPlacement: false);
 
         // Place windows on south and east walls

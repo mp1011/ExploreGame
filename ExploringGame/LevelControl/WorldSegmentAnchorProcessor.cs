@@ -65,13 +65,12 @@ public class WorldSegmentAnchorProcessor
     {        
         if (placeholder.Parent != null)
             placeholder.Parent.RemoveChild(placeholder);
-       
-        ReplaceRoomInConnections(placeholder, realShape, loadedSegments);   
-        ReplaceRoomInGraph(placeholder, realShape, roomGraph);
-        
-        // WaypointGraph and LightingCalculator replacements would go here
-        // These may need additional methods depending on their internal structure
-    } 
+
+        roomGraph.ReplaceRoom(placeholder, realShape);
+        ReplaceRoomInConnections(placeholder, realShape, loadedSegments);
+        ReplaceRoomInWaypointGraph(placeholder, realShape, waypointGraph);
+        ReplaceRoomInLightingCalculator(placeholder, realShape, lightingCalculator);
+    }
 
     private void ReplaceRoomInConnections(Room oldRoom, Room newRoom, IEnumerable<LevelData> loadedSegments)
     {
@@ -87,15 +86,13 @@ public class WorldSegmentAnchorProcessor
         }
     }
 
-    private void ReplaceRoomInGraph(Room placeholderRoom, Room realRoom, RoomGraph roomGraph)
+    private void ReplaceRoomInWaypointGraph(Room placeholderRoom, Room realRoom, WaypointGraph waypointGraph)
     {
-        // This will need to be implemented based on RoomGraph's API
-        // For now, we might need to:
-        // 1. Remove placeholderRoom from graph
-        // 2. Add realRoom if not already present
-        // 3. Update connections that pointed to placeholderRoom
+        waypointGraph.ReplaceRoom(placeholderRoom, realRoom);
+    }
 
-        // Placeholder for implementation
-        // roomGraph.ReplaceRoom(placeholderRoom, realRoom);
+    private void ReplaceRoomInLightingCalculator(Room placeholderRoom, Room realRoom, RoomLightingCalculator lightingCalculator)
+    {
+        lightingCalculator.ReplaceRoom(placeholderRoom, realRoom);
     }
 }

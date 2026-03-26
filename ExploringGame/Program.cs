@@ -10,9 +10,8 @@ using var game = new Game1(new BasementWorldSegment());
 
 //var testMap = TestMaps.PathfindingTest();
 //testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;
-
+//LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
 //using var game = new Game1(testMap);
 
-//LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
 
 game.Run();

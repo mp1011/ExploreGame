@@ -89,8 +89,6 @@ public class PathFinder
         _timeSinceLastDirectionComputation = TimeSpan.Zero;
         _cachedDirection = ComputeTargetDirection(gameTime);
 
-        if (CurrentTarget.Target != t)
-            Console.WriteLine($"Target = {CurrentTarget.Target}");
         return _cachedDirection;
     }
 
@@ -119,6 +117,19 @@ public class PathFinder
         if (_physics.HasLineOfSight(_entity, CurrentTarget.Target))
         {
             return Vector3.Normalize(CurrentTarget.Target.Position - _entity.Position);
+        }
+
+        // Step 3.5: Detect if stuck on obstacle and need to find alternate route
+        if (IsStuckOnObstacle())
+        {
+            // Jump to Step 6: Pick a valid Random Sample Point
+            var obstacleAvoidanceSamplePoint = FindValidSamplePoint();
+            if (obstacleAvoidanceSamplePoint.HasValue)
+            {
+                _samplePoint.Position = obstacleAvoidanceSamplePoint.Value;
+                CurrentTarget = new PathFinderTarget(_samplePoint);
+                return Vector3.Normalize(CurrentTarget.Target.Position - _entity.Position);
+            }
         }
 
         // Step 4: Is the Random Walk Timer > 0?
@@ -258,6 +269,41 @@ public class PathFinder
         return bestPoint;
     }
 
+    private bool IsStuckOnObstacle()
+    {
+        // Check condition 1: LS does not have line of sight to target (primary target)
+        if (_physics.HasLineOfSight(_entity, PrimaryTarget.Target))
+            return false;
+
+        // Check condition 2: target is NOT a PathfinderSamplePoint
+        if (CurrentTarget.Target is PathfinderSamplePoint)
+            return false;
+
+        // Check condition 3: there is no waypoint closer to the target than the one the LS is already at
+        var currentWaypoint = _waypointGraph.FindNearestWaypoint(_entity.Position);
+        if (currentWaypoint == null)
+            return false;
+
+        var currentWaypointDistanceToTarget = Vector3.Distance(currentWaypoint.Position, PrimaryTarget.Target.Position);
+
+        // Check all waypoints to see if any are closer to the target
+        foreach (var waypoint in _waypointGraph.GetAllWaypoints())
+        {
+            if (waypoint == currentWaypoint)
+                continue;
+
+            var distanceToTarget = Vector3.Distance(waypoint.Position, PrimaryTarget.Target.Position);
+            if (distanceToTarget < currentWaypointDistanceToTarget)
+            {
+                // Found a waypoint closer to target, so not stuck
+                return false;
+            }
+        }
+
+        // All conditions met - we're stuck on an obstacle
+        return true;
+    }
+
     private Vector3 RotateVector2D(Vector3 vector, float angle)
     {
         var cos = (float)Math.Cos(angle);
@@ -296,6 +342,11 @@ public class PathFinder
             _body = physics.CreateStaticBody(this, CollisionGroup.LineOfSightTest, CollisionGroup.Environment);
             ColliderBodies = new[] { _body };
             Rotation = null;
+        }
+
+        public override string ToString()
+        {
+            return "SamplePoint";
         }
     }
 }

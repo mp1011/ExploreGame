@@ -9,6 +9,7 @@ namespace ExploringGame.Logics.Pathfinding;
 /// Relies on RoomGraph for all connectivity/pathfinding operations.
 /// </summary>
 public class AnnotatedGraph<T>
+    where T:IWithRoom
 {
     private readonly RoomGraph _roomGraph;
     private readonly Dictionary<Room, T> _annotations = new();
@@ -57,5 +58,24 @@ public class AnnotatedGraph<T>
             .Where(room => _annotations.ContainsKey(room))
             .Select(room => _annotations[room])
             .ToList();
+    }
+
+    /// <summary>
+    /// Replaces a room key in the annotations dictionary with a new room key,
+    /// preserving the associated annotation value.
+    /// </summary>
+    public void ReplaceKey(Room oldRoom, Room newRoom)
+    {
+        if (_annotations.TryGetValue(oldRoom, out var annotation))
+        {
+            _annotations.Remove(oldRoom);
+            _annotations[newRoom] = annotation;            
+        }
+
+        foreach(var ano in _annotations.Values)
+        {
+            if (ano.Room == oldRoom)
+                ano.Room = newRoom;
+        }
     }
 }

@@ -8,9 +8,9 @@ namespace ExploringGame.Logics.Pathfinding;
 /// Stores lighting information for a room, including
 /// light contributions from various light sources.
 /// </summary>
-public class RoomLightData
+public class RoomLightData : IWithRoom
 {
-    public Room Room { get; }
+    public Room Room { get; set; }
 
     private Dictionary<ILightSource, float> _lightContributions = new();
     private float _cachedTotalLight = 0f;

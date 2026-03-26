@@ -83,4 +83,20 @@ public class WaypointGraph
 
         return _annotatedGraph.FindPath(start.Room, goal.Room);
     }
+
+    /// <summary>
+    /// Gets all waypoints in the graph.
+    /// </summary>
+    public IEnumerable<Waypoint> GetAllWaypoints()
+    {
+        return _annotatedGraph.GetAllAnnotations();
+    }
+
+    /// <summary>
+    /// Replaces a placeholder room with a real room in the waypoint graph.
+    /// </summary>
+    public void ReplaceRoom(Room oldRoom, Room newRoom)
+    {
+        _annotatedGraph.ReplaceKey(oldRoom, newRoom);
+    }
 }

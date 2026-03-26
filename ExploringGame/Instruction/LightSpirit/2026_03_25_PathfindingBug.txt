@@ -1,0 +1,12 @@
+# GOAL
+Currently the Light Spirit can get stuck on obstacles. It will continue colliding with the obstacles, potentially pushing it up toward the ceiling.
+
+# SOLUTION
+1. Detect when an obstacle is in the way. This can be detected when all of the following are true
+- LS does not have a line of sight to target
+- target is NOT a PathfinderSamplePoint
+- there is no waypoint closer to the target than the one the LS is already at
+2. Upon detection, go to the "random sample point" method (Step 6 of pathfinding)
+
+# TESTING
+- existing tests, particularly LightSpirit_CanSeekPlayer_Basement, will verify

@@ -105,6 +105,7 @@ public class LoadedLevelData
         // Find all PlaceableShapes in the segments
         var placeableShapes = segment.TraverseAllChildren()
             .OfType<PlaceableShape>()
+            .Where(p => p.ViewFrom != ViewFrom.None)
             .ToList();
 
         foreach (var shape in placeableShapes)

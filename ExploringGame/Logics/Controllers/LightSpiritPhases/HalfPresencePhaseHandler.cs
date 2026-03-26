@@ -41,9 +41,6 @@ public class HalfPresencePhaseHandler : IPhaseHandler
         _loadedLevelData = loadedLevelData;
     }
 
-    //temporary
-    MovingEntityDebugger _med;
-
     public void OnEnter()
     {
         _waypointGraph = _loadedLevelData.WaypointGraph;
@@ -59,8 +56,6 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
         var distanceCalculator = new WaypointDistanceCalculator(_loadedLevelData);
         _flickerEffect = new LightSpiritFlickerEffect(_lightSpirit, _loadedLevelData, distanceCalculator, _random);
-
-        _med = new MovingEntityDebugger(_lightSpirit, _pathFinder);
     }
 
     public void Update(GameTime gameTime)
@@ -70,8 +65,6 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
         if (_debugPause)
             return;
-
-        _med.Update(gameTime);
 
         // Update the Light Spirit's room
         _entityRoomFinder.UpdateRoom(_lightSpirit);
@@ -169,8 +162,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
 
     public void OnExit() { }
 
-    public string DebugDescribe() => string.Empty;
-
+    public string DebugDescribe() => $"Target = {_pathFinder.CurrentTarget.Target}";
     public void ForceNextPhase() => _lightSpirit.Phase = LightSpiritPhase.FullPresence;
 }
 

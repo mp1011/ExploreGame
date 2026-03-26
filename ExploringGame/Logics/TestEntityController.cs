@@ -48,8 +48,6 @@ public class TestEntityController : IShapeController<TestEntity>
 
         var primaryTarget = new PathFinderTarget(_player);
         _pathFinder = new PathFinder(_physics, _loadedLevelData.WaypointGraph, Shape, new System.Random(), primaryTarget);
-
-        _debugger = new MovingEntityDebugger(Shape, _pathFinder);
     }
 
     public void Stop()
@@ -58,11 +56,8 @@ public class TestEntityController : IShapeController<TestEntity>
         _entityMover = null;
     }
 
-    private MovingEntityDebugger _debugger;
-
     public void Update(GameTime gameTime)
     {
-        _debugger.Update(gameTime);
         Vector3 targetDirection = _pathFinder.GetTargetDirection(gameTime);
 
         // Apply speed and movement

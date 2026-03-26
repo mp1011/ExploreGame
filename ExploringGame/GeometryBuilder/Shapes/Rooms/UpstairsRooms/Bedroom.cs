@@ -22,7 +22,7 @@ public class Bedroom : Room
     public override void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Pull,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
+            new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
                 adjustPlacement: false);
 
         // Place windows on west and south walls

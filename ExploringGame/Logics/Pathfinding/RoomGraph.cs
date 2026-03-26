@@ -16,6 +16,41 @@ public class RoomGraph
         }
     }
 
+    public void ReplaceRoom(Room oldRoom, Room newRoom)
+    {
+        if (!_adjacency.ContainsKey(oldRoom))
+            return;
+
+        // Get all neighbors of the old room
+        var neighbors = _adjacency[oldRoom].ToList();
+
+        // Add the new room if it doesn't exist
+        AddRoom(newRoom);
+
+        // Transfer all connections from old room to new room
+        foreach (var neighbor in neighbors)
+        {
+            // Add connection between new room and the neighbor
+            if (!_adjacency[newRoom].Contains(neighbor))
+            {
+                _adjacency[newRoom].Add(neighbor);
+            }
+
+            // Update the neighbor to point to new room instead of old room
+            var neighborList = _adjacency[neighbor];
+            for (int i = 0; i < neighborList.Count; i++)
+            {
+                if (neighborList[i] == oldRoom)
+                {
+                    neighborList[i] = newRoom;
+                }
+            }
+        }
+
+        // Remove the old room from the adjacency dictionary
+        _adjacency.Remove(oldRoom);
+    }
+
     public void AddConnection(Room room1, Room room2)
     {
         AddRoom(room1);

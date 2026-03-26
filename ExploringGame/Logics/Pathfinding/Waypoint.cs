@@ -9,8 +9,6 @@ namespace ExploringGame.Logics.Pathfinding;
 
 public class Waypoint : PlaceableShape
 {
-    public Room Room { get; }
-
     public bool IsTargeted { get; set; }
 
     public Waypoint(Room room)

@@ -45,4 +45,9 @@ public class PlaceholderShape<T> : PlaceholderShape
         else
             return typeMatches.SingleOrDefault() as Room;
     }
+
+    public override string ToString()
+    {
+        return $"Placeholder: {typeof(T).Name} {Tag}".Trim();
+    }
 }

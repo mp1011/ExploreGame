@@ -3,12 +3,15 @@ using ExploringGame.GeometryBuilder.Shapes;
 using Microsoft.Xna.Framework;
 namespace ExploringGame.Logics;
 
+public interface IWithRoom
+{
+    Room Room { get; set; }
+}
 
-public interface IPlaceableObject
+public interface IPlaceableObject : IWithRoom
 {
     Shape Self { get; }
     Shape[] Children { get; }
-    Room Room { get; set; }
 }
 
 public interface IControllable

@@ -281,4 +281,13 @@ public class RoomLightingCalculator
             return null;
 
         return _roomLightGraph.Get(lightingGroup);
-    }}
+    }
+
+    /// <summary>
+    /// Replaces a placeholder room with a real room in the lighting calculator.
+    /// </summary>
+    public void ReplaceRoom(Room oldRoom, Room newRoom)
+    {
+        _roomLightGraph.ReplaceKey(oldRoom, newRoom);
+    }
+}
