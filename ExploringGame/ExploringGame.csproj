@@ -20,18 +20,12 @@
     <None Remove="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".copilot\skills\add_light_with_switch.skill" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icon.ico">
       <LogicalName>Icon.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Icon.bmp">
       <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".copilot\skills\build_shapes.skill" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Clipper2" Version="2.0.0" />
@@ -43,6 +37,7 @@
     <PackageReference Include="System.Drawing.Common" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include=".copilot\" />
     <Folder Include="Instruction\Pathfinding\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="CollectPackageReferences">

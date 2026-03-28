@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExploringGame", "ExploringG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExploringGame.Tests", "ExploringGame.Tests\ExploringGame.Tests.csproj", "{7FC1BD65-8484-FEC9-90A0-F48FFA8B0806}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gh", "gh", "{DB4FCC74-DE30-4FCD-AB0E-69692D7C775F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{208FA8AD-669B-4F22-9CF6-FDEE956A6990}"
 	ProjectSection(SolutionItems) = preProject
-		.github\agents\my-agent.agent.md = .github\agents\my-agent.agent.md
+		.github\copilot-instructions.md = .github\copilot-instructions.md
 	EndProjectSection
 EndProject
 Global

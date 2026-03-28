@@ -38,8 +38,9 @@ public class UpstairsWorldSegment : WorldSegment
             position: new Vector3(-13.94f, 7.6800003f, -8.639999f),
             size: new Vector3(2.8799999f, 5.7599998f, 8.16f));
 
+
         var kitchen = new Kitchen(this, upstairsHall);
-        var livingRoom = new LivingRoom(this, upstairsHall, kitchen);
+        var livingRoom = new LivingRoom(this, upstairsHall, kitchen, deck);
         var bedroom = new Bedroom(this, upstairsHall);
         var bathroom = new Bathroom(this, upstairsHall);
         var kidsBedroom = new KidsBedroom(this, upstairsHall, bedroom);

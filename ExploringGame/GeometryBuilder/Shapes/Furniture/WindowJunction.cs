@@ -37,7 +37,7 @@ public class Window : Room
 
     public override bool HasPathfindingWaypoint => false;
 
-    public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f) : base(room.WorldSegment)
+    public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f, Room otherRoom = null) : base(room.WorldSegment)
     {
         room.AddChild(this);
         _parentRoom = room;
@@ -49,9 +49,18 @@ public class Window : Room
             .SetAxis(wallSide.GetPerpendicularAxis(), width)
             .SetAxis(Axis.Y, height);
 
-        _exteriorRoom = CreateDummyExterior();
-        _exteriorRoom.Place().OnSideOuter(_wallSide, this);
-        _parentRoom.AddConnectingRoomWithJunction(this, _exteriorRoom, _wallSide, align, offset);
+        if (otherRoom == null)
+        {
+            _exteriorRoom = CreateDummyExterior();
+            _exteriorRoom.Place().OnSideOuter(_wallSide, this);
+            otherRoom = _exteriorRoom;
+        }
+        else
+        {
+            _exteriorRoom = otherRoom;
+        }
+
+        _parentRoom.AddConnectingRoomWithJunction(this, otherRoom, _wallSide, align, offset, adjustPlacement: (otherRoom == null));
 
         this.Place().FromSide(Side.Bottom, SillHeight);
 

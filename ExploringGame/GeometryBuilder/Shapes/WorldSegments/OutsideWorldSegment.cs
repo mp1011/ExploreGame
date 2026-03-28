@@ -32,6 +32,10 @@ public class OutsideWorldSegment : WorldSegment
            position: new Vector3(-12.25f, 6.48f, -5.37f),
            size: new Vector3(0.49999923f, 3.36f, 1.22f));
 
+        var livingRoomWindow = new PlaceholderShape<Window>(this, "LivingRoomWindow",
+            position: new Vector3(-12.25f, 6.7200003f, -9.359999f),
+            size: new Vector3(0.49999923f, 1.92f, 2.8799999f));
+
         deck.Depth = livingRoom.Depth;
         deck.Width = Measure.Feet(6);
         deck.Height = livingRoom.Height + Measure.Feet(5);
@@ -41,6 +45,7 @@ public class OutsideWorldSegment : WorldSegment
         deck.FixedAmbientLight = LightIntensity.Bright;
 
         deck.AddConnectingRoom(frontDoor, Side.East);
+        deck.AddConnectingRoom(livingRoomWindow, Side.East);
 
         deck.LoadChildren();
     }
