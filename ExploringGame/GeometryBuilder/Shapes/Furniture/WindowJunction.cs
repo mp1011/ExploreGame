@@ -54,13 +54,16 @@ public class Window : Room
             _exteriorRoom = CreateDummyExterior();
             _exteriorRoom.Place().OnSideOuter(_wallSide, this);
             otherRoom = _exteriorRoom;
+            _parentRoom.AddConnectingRoomWithJunction(this, otherRoom, _wallSide, align, offset, adjustPlacement: true);
+
         }
         else
         {
             _exteriorRoom = otherRoom;
+            _parentRoom.AddConnectingRoomWithJunction(this, otherRoom, _wallSide, align, offset, adjustPlacement: false);
+
         }
 
-        _parentRoom.AddConnectingRoomWithJunction(this, otherRoom, _wallSide, align, offset, adjustPlacement: (otherRoom == null));
 
         this.Place().FromSide(Side.Bottom, SillHeight);
 

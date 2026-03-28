@@ -47,6 +47,9 @@ public class OutsideWorldSegment : WorldSegment
         deck.AddConnectingRoom(frontDoor, Side.East);
         deck.AddConnectingRoom(livingRoomWindow, Side.East);
 
+        var frontYard = new FrontYard(this, deck);
+
         deck.LoadChildren();
+        frontYard.LoadChildren();
     }
 }
