@@ -121,6 +121,7 @@ public class Game1 : Game
         var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();
         loadedTextures.AddTexture(new BasementTextureSheet(Content));
         loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
+        loadedTextures.AddTexture(new SkyTextureSheet(Content));
 
         dualEffect.SetTextures(loadedTextures);
 

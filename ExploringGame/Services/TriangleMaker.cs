@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace ExploringGame.Services;
 
@@ -274,5 +275,23 @@ public static class TriangleMaker
         }
 
         return triangles.ToArray();
+    }
+
+    /// <summary>
+    /// Generates triangles for a dome (top hemisphere of an ellipsoid)
+    /// </summary>
+    /// <param name="shape">The shape to build the dome for</param>
+    /// <param name="segments">Number of segments for both latitude and longitude (default: 32)</param>
+    /// <returns>Array of triangles forming a dome</returns>
+    public static Triangle[] BuildDome(Shape shape, int segments = 32)
+    {
+        var allTriangles = BuildEllipsoid(shape, segments);
+        var centerY = shape.Position.Y;
+
+        return allTriangles.Where(t =>
+            t.A.Y >= centerY ||
+            t.B.Y >= centerY ||
+            t.C.Y >= centerY
+        ).ToArray();
     }
 }

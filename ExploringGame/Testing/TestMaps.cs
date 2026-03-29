@@ -8,6 +8,7 @@ using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -36,6 +37,32 @@ public static partial class TestMaps
         protected override Side OmitSides => Side.All & ~Side.Bottom;
 
         public SkyboxTestRoom(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null)
+            : base(worldSegment, width, depth, height)
+        {
+        }
+    }
+
+    public static WorldSegment SkyDomeTest()
+    {
+        LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
+
+        var world = new SkyDomeTestWorldSegment();
+        var room = new SkyDomeTestRoom(world, width: 20f, depth: 20f, height: 10f);
+        room.Y = 0f;
+
+        return world;
+    }
+
+    private class SkyDomeTestWorldSegment : WorldSegment
+    {
+        public override SkyboxShape Skybox => SkyDome.Instance;
+    }
+
+    private class SkyDomeTestRoom : Room
+    {
+        protected override Side OmitSides => Side.All & ~Side.Bottom;
+
+        public SkyDomeTestRoom(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null)
             : base(worldSegment, width, depth, height)
         {
         }

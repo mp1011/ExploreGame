@@ -123,3 +123,13 @@ public class ExteriorTheme : Theme
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
     }
 }
+
+public class SkyTheme : Theme
+{
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Sky;
+
+    public SkyTheme()
+    {
+        MainTexture = new TextureInfo(TextureKey.Sky, TextureStyle.FillSide);
+    }
+}

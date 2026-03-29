@@ -16,12 +16,14 @@ public enum TextureKey
     Plain = 5,
     Brick = 6,
     Tile = 7,
+    Sky = 8,
 }
 
 public enum TextureSheetKey
 {
     Basement,
-    Upstairs
+    Upstairs,
+    Sky
 }
 
 public abstract class TextureSheet
@@ -83,5 +85,15 @@ public class UpstairsTextureSheet : TextureSheet
         Add(TextureKey.Brick, left: 3830, top: 21, right: 4914, bottom: 976);
         Add(TextureKey.Tile, left: 1108, top: 37, right: 2231, bottom: 1169);
         Add(TextureKey.None, left: 100, top: 1500, right: 200, bottom: 1600);
+    }
+}
+
+public class SkyTextureSheet : TextureSheet
+{
+    public override TextureSheetKey Key => TextureSheetKey.Sky;
+
+    public SkyTextureSheet(ContentManager content) : base(content, "sky")
+    {
+        Add(TextureKey.Sky, left: 0, top: 0, right: 4096, bottom: 1347);
     }
 }
