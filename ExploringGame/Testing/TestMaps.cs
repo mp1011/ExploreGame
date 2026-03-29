@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.GeometryBuilder.Shapes.TestShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
@@ -16,6 +17,29 @@ namespace ExploringGame.Testing;
 
 public static partial class TestMaps
 {
+    public static WorldSegment SkyboxTest()
+    {
+        var world = new SkyboxTestWorldSegment();
+        var room = new SkyboxTestRoom(world, width: 20f, depth: 20f, height: 10f);
+        room.Y = 0f;
+
+        return world;
+    }
+
+    private class SkyboxTestWorldSegment : WorldSegment
+    {
+        public override SkyboxShape Skybox => TestSkybox.Instance;
+    }
+
+    private class SkyboxTestRoom : Room
+    {
+        protected override Side OmitSides => Side.All & ~Side.Bottom;
+
+        public SkyboxTestRoom(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null)
+            : base(worldSegment, width, depth, height)
+        {
+        }
+    }
 
     public static WorldSegment TilingTextureTestMap()
     {

@@ -176,4 +176,25 @@ internal class ShapeBufferCreator
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup);
     }
+
+    public ShapeBuffer CreateSkyboxBuffer(Shape skybox)
+    {
+        if (!_shapeTriangles.ContainsKey(skybox))
+            return null;
+
+        var skyboxTriangles = new Dictionary<Shape, Triangle[]>
+        {
+            [skybox] = _shapeTriangles[skybox]
+        };
+
+        var skyboxDepthStencilState = new DepthStencilState
+        {
+            DepthBufferEnable = true,
+            DepthBufferWriteEnable = false,
+            DepthBufferFunction = CompareFunction.LessEqual
+        };
+
+        var buffers = _vertexBufferBuilder.Build(skyboxTriangles, _textureSheets.Get(skybox.Theme.TextureSheetKey), _graphicsDevice);
+        return new ShapeBuffer(skybox, buffers.Item1, buffers.Item2, buffers.Item3, skybox.Theme.TextureSheetKey, skybox.RasterizerState, null, skyboxDepthStencilState);
+    }
 }

@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Pathfinding;
+using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -27,6 +28,7 @@ public class LoadedLevelData
     public RoomGraph RoomGraph { get; private set; }
     public WaypointGraph WaypointGraph { get; private set; }
     public RoomLightingCalculator LightingCalculator => _lightingCalculator;
+    public ShapeBuffer SkyboxBuffer { get; set; }
 
     public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
         LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer, 
@@ -85,8 +87,17 @@ public class LoadedLevelData
 
         AssignRoomsToPlaceableShapes(worldSegment);
 
-        var shapeBuffers = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice).Execute();
+        var shapeBufferCreator = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice);
+        var shapeBuffers = shapeBufferCreator.Execute();
         var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
+
+        // Build skybox if this segment has one and we don't already have a skybox
+        if (worldSegment.Skybox != null && SkyboxBuffer == null)
+        {
+            var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
+            var skyboxBufferCreator = new ShapeBufferCreator(skyboxTriangles, _loadedTextureSheets, _game.GraphicsDevice);
+            SkyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
+        }
 
         var newLevelData = new LevelData(worldSegment, shapeBuffers, activeObjects);
         _setupColliderBodies.Execute(newLevelData.WorldSegment);

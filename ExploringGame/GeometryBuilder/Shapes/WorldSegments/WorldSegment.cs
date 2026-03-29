@@ -13,6 +13,8 @@ public class WorldSegment : Shape
 {
     public override ViewFrom ViewFrom => ViewFrom.None;
 
+    public virtual SkyboxShape Skybox => null;
+
     public virtual Vector3 DefaultPlayerStart { get; }
 
     public virtual IReadOnlyList<WorldSegmentTransition> Transitions { get; } = Array.Empty<WorldSegmentTransition>();

@@ -184,6 +184,11 @@ public class Game1 : Game
             _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
             _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
         }
+
+        if (_loadedLevelData.SkyboxBuffer != null)
+        {
+            _renderEffect.Draw(graphicsDevice, new[] { _loadedLevelData.SkyboxBuffer }, _cameraService.SkyboxView, _cameraService.Projection);
+        }
     }
 
     protected override void Draw(GameTime gameTime)

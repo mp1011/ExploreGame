@@ -6,7 +6,10 @@ using ExploringGame.Testing;
 using System.Linq;
 
 //using var game = new Game1(new BasementWorldSegment());
- using var game = new Game1(new UpstairsWorldSegment());
+//using var game = new Game1(new UpstairsWorldSegment());
+
+var testMap = TestMaps.SkyboxTest();
+using var game = new Game1(testMap);
 
 //var testMap = TestMaps.PathfindingTest();
 //testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;

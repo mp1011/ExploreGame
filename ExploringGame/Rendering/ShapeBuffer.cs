@@ -11,5 +11,6 @@ public record ShapeBuffer(
     int TriangleCount,
     TextureSheetKey Texture,
     RasterizerState RasterizerState = null,
-    Room LightingGroup = null)
+    Room LightingGroup = null,
+    DepthStencilState DepthStencilState = null)
 {}

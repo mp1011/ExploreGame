@@ -38,7 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".copilot\" />
-    <Folder Include="Instruction\Rendering\" />
     <Folder Include="Instruction\Pathfinding\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="CollectPackageReferences">

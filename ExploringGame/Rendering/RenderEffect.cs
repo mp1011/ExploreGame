@@ -55,6 +55,13 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
                 graphicsDevice.RasterizerState = shapeBuffer.RasterizerState;
             }
 
+            // Apply custom DepthStencilState if present (e.g., for skybox)
+            var previousDepthStencilState = graphicsDevice.DepthStencilState;
+            if (shapeBuffer.DepthStencilState != null)
+            {
+                graphicsDevice.DepthStencilState = shapeBuffer.DepthStencilState;
+            }
+
             graphicsDevice.SetVertexBuffer(shapeBuffer.VertexBuffer);
             graphicsDevice.Indices = shapeBuffer.IndexBuffer;
 
@@ -62,6 +69,12 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
             {
                 pass.Apply();                
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, shapeBuffer.TriangleCount);
+            }
+
+            // Restore previous DepthStencilState
+            if (shapeBuffer.DepthStencilState != null)
+            {
+                graphicsDevice.DepthStencilState = previousDepthStencilState;
             }
 
             // Restore previous RasterizerState
