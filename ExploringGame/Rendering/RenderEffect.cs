@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics;
+﻿using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -128,7 +129,7 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
             brightness = lightingGroup.FixedAmbientLight.Value;
         }
 
-        if (lightingGroup != null && _roomLightingCalculator.RoomLightGraph.TryGet(lightingGroup, out var lightData))
+        if (lightingGroup is Room room && _roomLightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
         {
             brightness += lightData.TotalLight;
         }
@@ -218,7 +219,7 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         int activeLightCount = 0;
 
         var lightingGroup = shapeBuffer.LightingGroup;
-        if (lightingGroup != null && _roomLightingCalculator.RoomLightGraph.TryGet(lightingGroup, out var lightData))
+        if (lightingGroup is Room room && _roomLightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
         {
             // Get only the light sources physically located in this room
             // (not lights from neighboring rooms that contribute to ambient lighting)

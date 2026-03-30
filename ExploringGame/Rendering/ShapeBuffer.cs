@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.Logics;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 namespace ExploringGame.Rendering;
@@ -11,6 +12,6 @@ public record ShapeBuffer(
     int TriangleCount,
     TextureSheetKey Texture,
     RasterizerState RasterizerState = null,
-    Room LightingGroup = null,
+    ILightingGroup LightingGroup = null,
     DepthStencilState DepthStencilState = null)
 {}

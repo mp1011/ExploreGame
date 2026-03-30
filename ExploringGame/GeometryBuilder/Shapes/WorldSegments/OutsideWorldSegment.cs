@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -10,6 +11,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
 public class OutsideWorldSegment : WorldSegment
 {
+    public override SkyboxShape Skybox => SkyDome.Instance;
+
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
     {
         new WorldSegmentTransition(typeof(UpstairsWorldSegment))

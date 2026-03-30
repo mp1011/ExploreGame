@@ -114,13 +114,12 @@ public class LivingRoomTheme : UpstairsHallTheme
 
 public class ExteriorTheme : Theme
 {
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Outdoors;
 
     public ExteriorTheme()
     {
-        SideTextures[Side.Top] = new TextureInfo(Color.SkyBlue);
-        SideTextures[Side.Bottom] = new TextureInfo(Color.Green);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Grass, TextureStyle.Tile, TileSize: 2.0f);
+        MainTexture = new TextureInfo(Color.LightGray);
     }
 }
 
@@ -130,6 +129,6 @@ public class SkyTheme : Theme
 
     public SkyTheme()
     {
-        MainTexture = new TextureInfo(TextureKey.Sky, TextureStyle.FillSide);
+        MainTexture = new TextureInfo(TextureKey.Sky, TextureStyle.Spherical);
     }
 }

@@ -1,12 +1,15 @@
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
-public abstract class SkyboxShape : Shape
+public abstract class SkyboxShape : Shape, ILightingGroup
 {
     public override ViewFrom ViewFrom => ViewFrom.Inside;
+
+    public virtual float? FixedAmbientLight => LightIntensity.Normal;
 
     public SkyboxShape()
     {

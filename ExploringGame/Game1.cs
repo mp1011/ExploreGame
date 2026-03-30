@@ -122,6 +122,7 @@ public class Game1 : Game
         loadedTextures.AddTexture(new BasementTextureSheet(Content));
         loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
         loadedTextures.AddTexture(new SkyTextureSheet(Content));
+        loadedTextures.AddTexture(new OutdoorsTextureSheet(Content));
 
         dualEffect.SetTextures(loadedTextures);
 

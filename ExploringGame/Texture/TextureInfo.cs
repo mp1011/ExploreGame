@@ -6,7 +6,8 @@ public enum TextureStyle
 {
     FillSide,
     Tile,
-    HorizontalRepeat
+    HorizontalRepeat,
+    Spherical
 }
 
 public static class TextureStyleExtensions

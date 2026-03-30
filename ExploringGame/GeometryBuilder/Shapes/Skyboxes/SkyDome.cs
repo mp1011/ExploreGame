@@ -1,7 +1,6 @@
-using ExploringGame.GeometryBuilder;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
-using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 
@@ -11,6 +10,8 @@ public class SkyDome : SkyboxShape
     public static SkyDome Instance => _instance ??= new SkyDome();
 
     public override Theme Theme { get; }
+
+    public override float? FixedAmbientLight => LightIntensity.Bright;
 
     private SkyDome()
     {

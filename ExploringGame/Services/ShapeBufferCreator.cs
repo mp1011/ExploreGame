@@ -59,7 +59,7 @@ internal class ShapeBufferCreator
 
         // Group static shapes by LightingGroup and Texture
         // Only group Room shapes and their direct static children (not StampedShapes, ShapeStamps, or active objects)
-        var shapesGroupedByLightingGroup = new Dictionary<(Room LightingGroup, TextureSheetKey Texture), List<Shape>>();
+        var shapesGroupedByLightingGroup = new Dictionary<(ILightingGroup LightingGroup, TextureSheetKey Texture), List<Shape>>();
         var remainingStaticShapes = new List<Shape>();
 
         foreach (var shape in staticShapes)
@@ -167,7 +167,7 @@ internal class ShapeBufferCreator
         Shape shape,
         Shape[] children,
         TextureSheetKey key,
-        Room lightingGroup = null)
+        ILightingGroup lightingGroup = null)
     {
         var worldSegmentTriangles = new Dictionary<Shape, Triangle[]>();
         foreach (var child in children)
@@ -177,7 +177,7 @@ internal class ShapeBufferCreator
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup);
     }
 
-    public ShapeBuffer CreateSkyboxBuffer(Shape skybox)
+    public ShapeBuffer CreateSkyboxBuffer(SkyboxShape skybox)
     {
         if (!_shapeTriangles.ContainsKey(skybox))
             return null;
@@ -195,6 +195,6 @@ internal class ShapeBufferCreator
         };
 
         var buffers = _vertexBufferBuilder.Build(skyboxTriangles, _textureSheets.Get(skybox.Theme.TextureSheetKey), _graphicsDevice);
-        return new ShapeBuffer(skybox, buffers.Item1, buffers.Item2, buffers.Item3, skybox.Theme.TextureSheetKey, skybox.RasterizerState, null, skyboxDepthStencilState);
+        return new ShapeBuffer(skybox, buffers.Item1, buffers.Item2, buffers.Item3, skybox.Theme.TextureSheetKey, skybox.RasterizerState, skybox, skyboxDepthStencilState);
     }
 }

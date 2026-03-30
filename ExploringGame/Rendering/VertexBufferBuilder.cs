@@ -39,17 +39,18 @@ public class VertexBufferBuilder
         foreach (Shape shape in shapeTriangles.Keys)
         {
             var triangles = shapeTriangles[shape];
-            CreateVertices(Side.West, textureSheet, triangles, vertices, indices, indexCache);
-            CreateVertices(Side.North, textureSheet, triangles, vertices, indices, indexCache);
-            CreateVertices(Side.East, textureSheet, triangles, vertices, indices, indexCache);
-            CreateVertices(Side.South, textureSheet, triangles, vertices, indices, indexCache);
-            CreateVertices(Side.Top, textureSheet, triangles, vertices, indices, indexCache);
-            CreateVertices(Side.Bottom, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(shape, Side.West, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(shape, Side.North, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(shape, Side.East, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(shape, Side.South, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(shape, Side.Top, textureSheet, triangles, vertices, indices, indexCache);
+            CreateVertices(shape, Side.Bottom, textureSheet, triangles, vertices, indices, indexCache);
         }
     }
 
 
-    private void CreateVertices(Side side,
+    private void CreateVertices(Shape shape,
+                                Side side,
                                 TextureSheet textureSheet,
                                 IEnumerable<Triangle> triangles,
                                 List<VertexPositionColorNormalTexture> vertices,
@@ -62,9 +63,21 @@ public class VertexBufferBuilder
 
         foreach (var triangle in sideTriangles)
         {
+            var vertexCoords = new List<(Vector3 vertex, Vector2 uv)>();
+
             foreach (var vertex in triangle.Vertices)
             {
-                var textureCoords = CalcTextureCoordinates(side, textureSheet, triangle, vertex, cornerVertices);
+                var textureCoords = CalcTextureCoordinates(shape, side, textureSheet, triangle, vertex, cornerVertices);
+                vertexCoords.Add((vertex, textureCoords));
+            }
+
+            if (triangle.TextureInfo.Style == TextureStyle.Spherical)
+            {
+                FixSphericalSeam(vertexCoords);
+            }
+
+            foreach (var (vertex, textureCoords) in vertexCoords)
+            {
                 int index;
                 if (!indexCache.TryGetValue((vertex, triangle.TextureInfo.Color, textureCoords), out index))
                 {
@@ -80,7 +93,7 @@ public class VertexBufferBuilder
         }            
     }
 
-    public Vector2 CalcTextureCoordinates(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
+    public Vector2 CalcTextureCoordinates(Shape shape, Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
     {
         var texture = triangle.TextureInfo;
         var textureCoordinates = texture.Style switch
@@ -88,6 +101,7 @@ public class VertexBufferBuilder
             TextureStyle.FillSide => CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, corners),
             TextureStyle.Tile => CalcTextureCoordinates_Tile(side, textureSheet, triangle, position, corners),
             TextureStyle.HorizontalRepeat => CalcTextureCoordinates_HorizontalRepeat(side, textureSheet, triangle, texture, position, corners),
+            TextureStyle.Spherical => CalcTextureCoordinates_Spherical(shape, position),
             _ => throw new System.ArgumentException($"Unknown texture style {texture.Style}")
         };
 
@@ -169,6 +183,44 @@ public class VertexBufferBuilder
         var vCoordinates = CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, corners);
 
         return new Vector2(uCoordindates.X, vCoordinates.Y);
+    }
+
+    private Vector2 CalcTextureCoordinates_Spherical(Shape shape, Vector3 position)
+    {
+        var center = shape.Position;
+        float rx = shape.Width / 2f;
+        float ry = shape.Height / 2f;
+        float rz = shape.Depth / 2f;
+
+        float dx = position.X - center.X;
+        float dy = position.Y - center.Y;
+        float dz = position.Z - center.Z;
+
+        float nx = dx / rx;
+        float nz = dz / rz;
+
+        float u = (float)(Math.Atan2(nz, nx) / (2 * Math.PI)) + 0.5f;
+        float v = dy / ry;
+
+        return new Vector2(u, 1f - v);
+    }
+
+    private void FixSphericalSeam(List<(Vector3 vertex, Vector2 uv)> vertexCoords)
+    {
+        float minU = vertexCoords.Min(vc => vc.uv.X);
+        float maxU = vertexCoords.Max(vc => vc.uv.X);
+
+        if (maxU - minU > 0.5f)
+        {
+            for (int i = 0; i < vertexCoords.Count; i++)
+            {
+                var (vertex, uv) = vertexCoords[i];
+                if (uv.X < 0.5f)
+                {
+                    vertexCoords[i] = (vertex, new Vector2(uv.X + 1f, uv.Y));
+                }
+            }
+        }
     }
 
 }

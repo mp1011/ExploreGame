@@ -44,11 +44,10 @@ public static partial class TestMaps
 
     public static WorldSegment SkyDomeTest()
     {
-        LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
-
         var world = new SkyDomeTestWorldSegment();
         var room = new SkyDomeTestRoom(world, width: 20f, depth: 20f, height: 10f);
         room.Y = 0f;
+        room.FixedAmbientLight = LightIntensity.Bright;
 
         return world;
     }

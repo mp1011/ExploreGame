@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
-public class Room : Shape
+public class Room : Shape, ILightingGroup
 {
     public WorldSegment WorldSegment { get; private set; }
 

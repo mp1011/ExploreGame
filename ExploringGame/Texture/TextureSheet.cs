@@ -17,13 +17,15 @@ public enum TextureKey
     Brick = 6,
     Tile = 7,
     Sky = 8,
+    Grass = 9
 }
 
 public enum TextureSheetKey
 {
     Basement,
     Upstairs,
-    Sky
+    Sky,
+    Outdoors
 }
 
 public abstract class TextureSheet
@@ -95,5 +97,16 @@ public class SkyTextureSheet : TextureSheet
     public SkyTextureSheet(ContentManager content) : base(content, "sky")
     {
         Add(TextureKey.Sky, left: 0, top: 0, right: 4096, bottom: 1347);
+    }
+}
+
+public class OutdoorsTextureSheet : TextureSheet
+{
+    public override TextureSheetKey Key => TextureSheetKey.Outdoors;
+
+    public OutdoorsTextureSheet(ContentManager content) : base(content, "outdoors")
+    {
+        Add(TextureKey.Grass, left: 299, top: 268, right: 1812, bottom: 1756);
+        Add(TextureKey.None, left: 50, top: 50, right: 100, bottom: 100);
     }
 }

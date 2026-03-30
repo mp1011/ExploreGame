@@ -94,69 +94,74 @@ This preserves the angular relationships from the spherical generation method.
 - Sky texture is loaded via TextureSheetKey.Sky (true)
 - SkyDome is visible in the scene (true)
 
-### Step 1: Add Spherical TextureStyle
+### Step 1: Add Spherical TextureStyle ✓ COMPLETE
 **File**: `ExploringGame\Texture\TextureInfo.cs`
-- Add `Spherical` to the `TextureStyle` enum
-- No changes needed to TextureStyleExtensions (spherical doesn't tile)
+- ✓ Added `Spherical` to the `TextureStyle` enum
+- ✓ No changes needed to TextureStyleExtensions (spherical doesn't tile)
 
-**Expected**: Code compiles with new enum value available
+**Result**: Code compiles with new enum value available
 
-### Step 2: Store Shape Metadata in Triangle
-**File**: `ExploringGame\GeometryBuilder\Basic.cs`
-- Add Shape reference or shape dimensions (Position, Width, Height, Depth) to Triangle class
-- This data is needed for spherical coordinate calculations
+### Step 2: Pass Shape Through Method Chain ✓ COMPLETE (ALTERNATIVE APPROACH)
+**Decision**: Instead of storing metadata in Triangle, pass Shape through the method signatures
+**Files**: `ExploringGame\Rendering\VertexBufferBuilder.cs`
+- ✓ Updated `BuildBuffers` to pass `shape` to `CreateVertices` calls
+- ✓ Updated `CreateVertices` signature to accept `Shape shape` parameter
+- ✓ Updated `CalcTextureCoordinates` signature to accept `Shape shape` parameter
+- ✓ Shape context flows through rendering pipeline only where needed
 
-**Alternative**: Pass Shape to CalcTextureCoordinates (requires signature changes in VertexBufferBuilder)
+**Result**: Triangle maintains Single Responsibility, Shape context available for UV calculation
 
-**Expected**: Triangle can provide shape center and radii to UV calculation
-
-### Step 3: Implement Spherical UV Calculation
+### Step 3: Implement Spherical UV Calculation ✓ COMPLETE
 **File**: `ExploringGame\Rendering\VertexBufferBuilder.cs`
-- Add `CalcTextureCoordinates_Spherical` method
-- Implementation:
+- ✓ Added `CalcTextureCoordinates_Spherical(Shape shape, Vector3 position)` method
+- ✓ Implementation uses spherical coordinate mapping:
   ```csharp
-  // Extract shape center and radii from triangle
-  // For dome/ellipsoid:
-  // U = atan2((z - center.Z) / rz, (x - center.X) / rx) / (2π) + 0.5
-  // V = (y - (center.Y - ry)) / (2 * ry)  // Maps bottom to top of dome
+  nx = (x - center.X) / rx
+  nz = (z - center.Z) / rz
+  U = atan2(nz, nx) / (2π) + 0.5
+  V = (y + ry - center.Y) / (2 * ry)
   ```
-- Add case to switch statement in `CalcTextureCoordinates()`
+- ✓ Added case to switch statement in `CalcTextureCoordinates()`
 
-**Expected**: New method compiles and is reachable via TextureStyle.Spherical
+**Result**: Spherical UV mapping implemented and reachable via TextureStyle.Spherical
 
-### Step 4: Update SkyTheme
+### Step 4: Update SkyTheme ✓ COMPLETE
 **File**: `ExploringGame\Texture\Theme.cs`
-- Change `SkyTheme` MainTexture from `TextureStyle.FillSide` to `TextureStyle.Spherical`
+- ✓ Changed `SkyTheme` MainTexture from `TextureStyle.FillSide` to `TextureStyle.Spherical`
 
-**Expected**: SkyDome now uses spherical UV mapping
+**Result**: SkyDome now uses spherical UV mapping. Build successful.
 
-### Step 5: Initial Visual Test
+### Step 5: Initial Visual Test ⏸️ AWAITING USER FEEDBACK
 **Action**: Run Program.cs and observe the sky dome
-**Look for**:
-- Texture should wrap smoothly around the dome
-- No stretching or compression at poles
-- Horizon line appears level and continuous
-- No seams or discontinuities (except at longitude 0°/360° boundary)
 
-**Common Issues**:
-- **Seam visible**: Check if U wrapping needs adjustment (may need 0-1 vs 0.5-1.5 offset)
-- **Upside down**: V coordinate may need to be inverted (1 - V)
-- **Rotated**: U coordinate offset may need adjustment (+0.5, +0.25, etc.)
-- **Stretched at poles**: Verify normalization by ellipsoid radii is correct
+**First Test Result**: Texture mostly correct but flipped along Y axis
+**Fix Applied**: Inverted V coordinate (changed `v` to `1f - v`) to account for inside view
+**Reason**: When viewing from inside a dome, texture orientation needs to be flipped vertically
 
-### Step 6: Fine-Tune UV Mapping
-**Potential adjustments**:
-- **U offset**: Rotate texture horizontally by adjusting the atan2 result
-- **V direction**: Flip V if texture appears upside down
-- **V range for dome**: Since dome is only top hemisphere, may need to map to V range 0.5-1.0 instead of 0-1
+**Second Test Result**: Better orientation but most of texture not visible
+**Issue Identified**: Formula `(dy + ry) / (2f * ry)` maps full ellipsoid (-ry to +ry), but dome only uses top half (0 to +ry)
+**Fix Applied**: Changed to `dy / ry` to map full texture across dome's actual height range
+- Bottom of dome (y = center.Y): v = 0 → 1-v = 1.0 → bottom of texture
+- Top of dome (y = center.Y + ry): v = 1 → 1-v = 0 → top of texture
 
-**Test cases**:
-1. Sky texture with visible features (clouds, horizon gradient)
-2. Rotate camera 360° - horizon should be continuous
-3. Look straight up - pole should show minimal distortion
-4. Check seam at longitude 0° (often behind player start position)
+**Awaiting Third Test**: Please restart/hot reload and verify full texture is now visible across the dome.
+### Step 5: Initial Visual Test ✓ COMPLETE
+**Action**: Run Program.cs and observe the sky dome
 
-### Step 7: Verify No Regression
+**Test History**:
+1. **Initial test**: Texture flipped on Y axis → Fixed by inverting V coordinate (1 - v)
+2. **Second test**: Most texture not visible → Fixed by changing V formula to `dy / ry` (dome-specific range)
+3. **Third test**: Severe seam with stretched texture arc → Fixed by implementing `FixSphericalSeam` method
+   - Detects triangles with U span > 0.5 (seam crossers)
+   - Adjusts low U values (+1.0) to fix interpolation direction
+
+**Final Result**: ✅ SUCCESS! Texture looks perfect
+- Texture wraps smoothly around the dome
+- No stretching or compression
+- Proper orientation (top to bottom)
+- Seam handled correctly
+
+### Step 7: Verify No Regression ⏸️ AWAITING USER FEEDBACK
 **Action**: Check that other shapes still render correctly
 **Test shapes**:
 - Rooms (boxes) with TextureStyle.FillSide

@@ -6,6 +6,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 class FrontYard : Room
 {
+    protected override Side OmitSides => Side.North | Side.South | Side.East | Side.West | Side.Top;
 
     public override Theme Theme => new ExteriorTheme();
 
