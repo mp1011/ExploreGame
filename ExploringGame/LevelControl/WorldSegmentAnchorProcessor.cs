@@ -24,17 +24,11 @@ public class WorldSegmentAnchorProcessor
         {
             var realShape = placeholder.FindMatchingRealShape(loadedSegments);
 
-            if (realShape == null)
+            if (realShape != null)
             {
-                var placeholderType = placeholder.GetType().GetGenericArguments()[0];
-                var tag = (placeholder as Room)?.Tag;
-                var tagInfo = string.IsNullOrEmpty(tag) ? "" : $" with tag '{tag}'";
-                throw new InvalidOperationException(
-                    $"No matching real shape found for PlaceholderShape<{placeholderType.Name}>{tagInfo}");
+                ValidatePlaceholderMatch(placeholder, realShape);
+                ReplacePlaceholderWithRealShape(placeholder, realShape, loadedSegments, roomGraph, waypointGraph, lightingCalculator);
             }
-
-            ValidatePlaceholderMatch(placeholder, realShape);
-            ReplacePlaceholderWithRealShape(placeholder, realShape, loadedSegments, roomGraph, waypointGraph, lightingCalculator);
         }
     }
   
