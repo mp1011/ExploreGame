@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -87,13 +88,23 @@ public abstract class Stairs : Room
             lastStep = step;
         }
 
-        _steps[^1].SetSideUnanchored(StartSide.Opposite(), TopFloor.GetSide(StartSide));
+        _steps[^1].SetSideUnanchored(StartSide.Opposite(), GetSide(StartSide.Opposite()));
     }
 }
 
 
 public class StairStep : Shape, ICollidable
 {
+    public override Theme Theme { get; }
+    public StairStep(Theme theme)
+    {
+        Theme = theme;
+    }
+
+    public StairStep(TextureSheetKey key, TextureInfo texture) : this(new Theme(key) {  MainTexture = texture})
+    {
+    }
+
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.Step(this);

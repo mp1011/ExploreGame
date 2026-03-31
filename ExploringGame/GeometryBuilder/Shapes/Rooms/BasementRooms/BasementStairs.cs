@@ -28,7 +28,7 @@ public class BasementStairs : Stairs, ICutoutShape
 
     protected override StairStep CreateStep()
     {
-        return new StairStep { MainTexture = new TextureInfo(TextureKey.Ceiling) };
+        return new StairStep(Theme) { MainTexture = new TextureInfo(TextureKey.Ceiling) };
     }
 
     public Triangle[] Build()

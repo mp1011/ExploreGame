@@ -1,0 +1,15 @@
+using ExploringGame.GeometryBuilder;
+using Microsoft.Xna.Framework;
+
+namespace ExploringGame.Texture;
+
+public class YardTheme : Theme
+{
+    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Outdoors;
+
+    public YardTheme()
+    {
+        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Grass, TextureStyle.Tile, TileSize: 2.0f);
+        MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
+    }
+}

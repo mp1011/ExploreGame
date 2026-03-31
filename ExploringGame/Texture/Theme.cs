@@ -1,6 +1,7 @@
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.Texture;
 
@@ -34,6 +35,14 @@ public class Theme
         SideTextures = new Dictionary<Side, TextureInfo>(other.SideTextures);
     }   
 
+    public TextureInfo GetTexture(TextureKey key)
+    {
+        if (MainTexture.Key == key)
+            return MainTexture;
+        else
+            return SideTextures.Values.FirstOrDefault(p => p.Key == key) ?? throw new System.Exception($"No texture in this theme has key {key}");
+    }
+
     public TextureInfo TextureInfoForSide(Side side)
     {
         if (SideTextures.TryGetValue(side, out var texture))
@@ -43,92 +52,4 @@ public class Theme
     }
 
     public static Theme Missing { get => new Theme { MainTexture = new TextureInfo(Color.Magenta) }; }
-}
-
-public class TestTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
-
-    public TestTheme()
-    {
-        MainTexture = new TextureInfo(Color.Pink, TextureKey.Ceiling);
-        SideTextures[Side.Top] = new TextureInfo(Color.Gray, TextureKey.Ceiling);
-        SideTextures[Side.Bottom] = new TextureInfo(Color.Purple, TextureKey.Ceiling);
-    }
-}
-
-public class BasementRoomTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
-
-
-    public BasementRoomTheme()
-    {
-        SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
-        SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Floor);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
-    }
-}
-
-public class UpstairsHallTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
-
-    public UpstairsHallTheme()
-    {
-        SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);      
-        SideTextures[Side.Bottom] = new TextureInfo(Color.Brown, TextureKey.Floor);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain, TextureStyle.HorizontalRepeat, TileSize: 3.0f);
-    }
-}
-
-public class KitchenTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
-
-    public KitchenTheme()
-    {
-        SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);
-        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Tile, TextureStyle.Tile, TileSize: 2);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain);
-    }
-}
-
-public class BathroomTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Upstairs;
-
-    public BathroomTheme()
-    {
-        MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
-    }
-}
-
-public class LivingRoomTheme : UpstairsHallTheme
-{
-    public LivingRoomTheme()
-    {
-        SideTextures[Side.North] = new TextureInfo(TextureKey.Wood);
-    }
-}
-
-public class ExteriorTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Outdoors;
-
-    public ExteriorTheme()
-    {
-        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Grass, TextureStyle.Tile, TileSize: 2.0f);
-        MainTexture = new TextureInfo(Color.LightGray);
-    }
-}
-
-public class SkyTheme : Theme
-{
-    public override TextureSheetKey TextureSheetKey => TextureSheetKey.Sky;
-
-    public SkyTheme()
-    {
-        MainTexture = new TextureInfo(TextureKey.Sky, TextureStyle.Spherical);
-    }
 }

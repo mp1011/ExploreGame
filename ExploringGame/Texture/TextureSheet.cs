@@ -17,7 +17,10 @@ public enum TextureKey
     Brick = 6,
     Tile = 7,
     Sky = 8,
-    Grass = 9
+    Grass = 9,
+    Siding = 10,
+    Concrete = 11
+
 }
 
 public enum TextureSheetKey
@@ -107,6 +110,13 @@ public class OutdoorsTextureSheet : TextureSheet
     public OutdoorsTextureSheet(ContentManager content) : base(content, "outdoors")
     {
         Add(TextureKey.Grass, left: 299, top: 268, right: 1812, bottom: 1756);
+
+        Add(TextureKey.Siding, left: 316, top: 1889, right: 721, bottom: 2097);
+        Add(TextureKey.Wood, left: 872, top: 1883, right: 1363, bottom: 2299);
+        Add(TextureKey.Brick, left: 1549, top: 1881, right: 2352, bottom: 2704);
+        Add(TextureKey.Plain, left: 2672, top: 2025, right: 3313, bottom: 2727);
+        Add(TextureKey.Concrete, left: 2429, top: 408, right: 3762, bottom: 1803);
+
         Add(TextureKey.None, left: 50, top: 50, right: 100, bottom: 100);
     }
 }

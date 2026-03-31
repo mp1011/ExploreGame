@@ -1,14 +1,17 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Texture;
+using System.Reflection.Metadata;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
-class FrontYard : Room
+public class FrontYard : Room
 {
+    public FrontDeck Deck { get; }
+
     protected override Side OmitSides => Side.North | Side.South | Side.East | Side.West | Side.Top;
 
-    public override Theme Theme => new ExteriorTheme();
+    public override Theme Theme => new YardTheme();
 
     public FrontYard(WorldSegment worldSegment, FrontDeck deck) : base(worldSegment)
     {
@@ -23,10 +26,14 @@ class FrontYard : Room
         AddConnectingRoom(deck, Side.East);
 
         FixedAmbientLight = LightIntensity.Bright;
+        Deck = deck;
     }
 
     public override void LoadChildren()
     {
-        
+        var deckStairs = Deck.AddChild(new FrontDeckStairs(this, Deck));
+        deckStairs.SetSide(Side.Bottom, GetSide(Side.Bottom));
+        deckStairs.SetSide(Side.North, Deck.WestPart.GetSide(Side.South));
+        deckStairs.SetSide(Side.East, Deck.WestPart.GetSide(Side.East));
     }
 }
