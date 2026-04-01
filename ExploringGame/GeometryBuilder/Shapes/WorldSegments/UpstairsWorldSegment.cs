@@ -35,9 +35,8 @@ public class UpstairsWorldSegment : WorldSegment
         var upstairsHall = new UpstairsHall(this);
 
         var deck = new PlaceholderShape<FrontDeck>(this,
-            position: new Vector3(-13.94f, 7.6800003f, -8.639999f),
-            size: new Vector3(2.8799999f, 5.7599998f, 8.16f));
-
+            position: new Vector3(-13.94f, 7.6800003f, -9.839999f),
+            size: new Vector3(2.8799999f, 5.7599998f, 10.559999f));
 
         var kitchen = new Kitchen(this, upstairsHall);
         var livingRoom = new LivingRoom(this, upstairsHall, kitchen, deck);

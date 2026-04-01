@@ -19,6 +19,12 @@ public class Theme
         TextureSheetKey = key;
     }
 
+    public Theme(TextureSheetKey key, TextureKey texture, Color color)
+    {
+        TextureSheetKey = key;
+        MainTexture = new TextureInfo(Color: color, Key: texture);
+    }
+
     public Theme(TextureKey key)
     {
         MainTexture = new TextureInfo(Key: key);

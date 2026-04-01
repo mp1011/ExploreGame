@@ -41,5 +41,7 @@ public class LivingRoom : Room
 
         lightSwitch.Position = Position;
         lightSwitch.Place().OnSideInner(Side.East);
+
+        SetSideUnanchored(Side.North, GetSide(Side.North) - Measure.Feet(5));
     }
 }

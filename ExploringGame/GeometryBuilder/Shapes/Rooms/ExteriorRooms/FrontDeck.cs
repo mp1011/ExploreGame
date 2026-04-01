@@ -9,6 +9,9 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class FrontDeck : Room
 {
+    private readonly float PostHeight = Measure.Feet(4);
+    private readonly float PostWidth = Measure.Inches(10);
+    private readonly float PostInset = Measure.Inches(4);
     public Shape WestPart { get; private set; }
     protected override Side OmitSides => Side.Top;
 
@@ -31,6 +34,34 @@ public class FrontDeck : Room
             .OnSideInner(Side.North, this);
 
         WestPart.SetSide(Side.Top, GetSide(Side.Bottom));
+
+        // posts
+        var northWestPost = CreatePost().Place()
+            .OnSideInner(Side.North, WestPart, PostInset)
+            .OnSideInner(Side.West, WestPart, PostInset);
+
+        var northEastPost = CreatePost().Place()
+         .OnSideInner(Side.North, WestPart, PostInset)
+         .OnSideInner(Side.East, this, -PostInset);
+
+        var southWestPost = CreatePost().Place()
+          .OnSideInner(Side.South, WestPart, -PostInset)
+          .OnSideInner(Side.West, WestPart, PostInset);
+
+        var southEastPost = CreatePost().Place()
+          .OnSideInner(Side.South, WestPart, -PostInset)
+          .OnSideInner(Side.East, WestPart, -PostInset);
+
+    }
+
+    private Shape CreatePost()
+    {
+        var post = AddChild(new Box(new Theme(Theme.TextureSheetKey, TextureKey.Plain, Color.White)));
+        post.Height = PostHeight;
+        post.Width = PostWidth;
+        post.Depth = PostWidth;
+        post.Place().OnFloor();
+        return post;
     }
 }
 

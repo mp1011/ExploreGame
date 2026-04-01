@@ -1,3 +1,4 @@
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -45,11 +46,21 @@ public class WorldSegmentAnchorProcessor
             var tag = (placeholder as Room)?.Tag;
             var tagInfo = string.IsNullOrEmpty(tag) ? "" : $" (tag: '{tag}')";
 
-            throw new InvalidOperationException(
+            var errorMessage = 
                 $"PlaceholderShape<{placeholderType.Name}>{tagInfo} does not match real shape.\n" +
-                $"Placeholder - Position: {placeholder.Position}, Size: {placeholder.Size}\n" +
-                $"Real Shape  - Position: {realShape.Position}, Size: {realShape.Size}\n" +
-                $"Update the placeholder's hard-coded position and size to match.");
+                $"Placeholder - Position: new Vector3({placeholder.Position.X}f, {placeholder.Position.Y}f, {placeholder.Position.Z}f), Size: new Vector3({placeholder.Size.X}f, {placeholder.Size.Y}f, {placeholder.Size.Z}f)\n" +
+                $"Real Shape  - position: new Vector3({realShape.Position.X}f, {realShape.Position.Y}f, {realShape.Position.Z}f), size: new Vector3({realShape.Size.X}f, {realShape.Size.Y}f, {realShape.Size.Z}f)\n" +
+                $"Update the placeholder's hard-coded position and size to match.";
+
+            if (Debug.PlaceholderStrictMode)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+            else
+            {
+                // Just log a warning but don't crash
+                System.Diagnostics.Debug.WriteLine($"WARNING: {errorMessage}");
+            }
         }
     }
 

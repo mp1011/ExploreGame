@@ -28,8 +28,8 @@ public class OutsideWorldSegment : WorldSegment
         var deck = new FrontDeck(this);
 
         var livingRoom = new PlaceholderShape<LivingRoom>(this,
-            position: new Vector3(-4.58f, 6.48f, -8.639999f),
-            size: new Vector3(14.84f, 3.36f, 8.16f));
+            position: new Vector3(-4.58f, 6.48f, -9.839999f),
+            size: new Vector3(14.84f, 3.36f, 10.559999f));
 
         var frontDoor = new PlaceholderShape<DoorJunction>(this, "FrontDoor",
            position: new Vector3(-12.25f, 6.48f, -5.37f),

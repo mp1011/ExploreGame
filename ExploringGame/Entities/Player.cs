@@ -16,6 +16,9 @@ public class Player : ICollidable, ICamera
 
     public Vector3 Size => new Vector3(0.5f, 1.8f, 0.5f);
 
+    private float PhysicsCapsuleHeight => 2.8f; // Capsule length (2.0) + 2 * radius (0.4) from Physics.CreateCapsule
+    private float EyeHeight => Measure.Feet(5.5f);
+
     public CollisionGroup CollisionGroup => CollisionGroup.Player;
 
     public CollisionGroup CollidesWithGroups => CollisionGroup.All & ~CollisionGroup.Player;
@@ -24,8 +27,14 @@ public class Player : ICollidable, ICamera
 
     public Matrix CreateViewMatrix()
     {
+        // Camera should be at eye height above the floor
+        // Position is at center of physics capsule, so feet are at Position.Y - (PhysicsCapsuleHeight / 2f)
+        var feetPosition = Position.Y - (PhysicsCapsuleHeight / 2f);
+        var cameraY = feetPosition + EyeHeight;
+        var cameraPosition = new Vector3(Position.X, cameraY, Position.Z);
+
         var lookDir = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(Rotation.Yaw, Rotation.Pitch, 0));
-        return Matrix.CreateLookAt(Position, Position + lookDir, Vector3.Up);
+        return Matrix.CreateLookAt(cameraPosition, cameraPosition + lookDir, Vector3.Up);
     }
 
     public Player(Physics physics)
