@@ -10,6 +10,8 @@ public class FrontPorchTheme : Theme
     public FrontPorchTheme()
     {
         SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Wood, TextureStyle.Tile, TileSize: 2.0f);
+        SideTextures[Side.East] = new TextureInfo(TextureKey.Siding, TextureStyle.Tile, TileSize: 2.0f);
+
         MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
     }
 }

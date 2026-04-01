@@ -10,6 +10,8 @@ public class Theme
     public TextureInfo MainTexture { get; set; } = new TextureInfo(Color.Magenta);
     public Dictionary<Side, TextureInfo> SideTextures { get; set; } = new();
 
+    public Dictionary<TextureKey, TextureInfo> AdditionalTextures { get; } = new();
+
     public virtual TextureSheetKey TextureSheetKey { get; } = TextureSheetKey.Basement;
 
     public Theme() { }
@@ -46,7 +48,9 @@ public class Theme
         if (MainTexture.Key == key)
             return MainTexture;
         else
-            return SideTextures.Values.FirstOrDefault(p => p.Key == key) ?? throw new System.Exception($"No texture in this theme has key {key}");
+            return SideTextures.Values.FirstOrDefault(p => p.Key == key) ??
+                AdditionalTextures.GetValueOrDefault(key) ??
+                throw new System.Exception($"No texture in this theme has key {key}");
     }
 
     public TextureInfo TextureInfoForSide(Side side)

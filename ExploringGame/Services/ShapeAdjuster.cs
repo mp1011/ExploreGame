@@ -212,4 +212,33 @@ public class ShapeAdjuster
 
         return this;
     }
+
+    /// <summary>
+    /// Sets the given axis size, preserving the center
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="add"></param>
+    /// <returns></returns>
+    public ShapeAdjuster SetAxis(Axis axis, float from, float to)
+    {
+        if (axis.HasFlag(Axis.X))
+        {
+            _shape.SetSide(Side.West, from);
+            _shape.SetSideUnanchored(Side.East, to);
+        }
+
+        if (axis.HasFlag(Axis.Y))
+        {
+            _shape.SetSide(Side.Bottom, from);
+            _shape.SetSideUnanchored(Side.Top, to);
+        }
+
+        if (axis.HasFlag(Axis.Z))
+        {
+            _shape.SetSide(Side.North, from);
+            _shape.SetSideUnanchored(Side.South, to);
+        }
+
+        return this;
+    }
 }

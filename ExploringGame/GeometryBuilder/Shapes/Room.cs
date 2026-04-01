@@ -31,7 +31,7 @@ public class Room : Shape, ILightingGroup
     
     public List<VertexOffset> VertexOffsets { get; } = new();
 
-    protected virtual Side OmitSides { get; }
+    public virtual Side OmitSides { get; }
 
     public virtual bool HasPathfindingWaypoint => true;
 
@@ -67,6 +67,12 @@ public class Room : Shape, ILightingGroup
     public void AddConnectingRoom(Room other, Side side, float? placement = null)
     {
         AddConnectingRoom(new RoomConnection(this, other, side, placement.GetValueOrDefault()),
+            adjustPlacement: placement.HasValue);
+    }
+
+    public void AddConnectingRoom(Room other, Side side, HAlign align, float? placement = null)
+    {
+        AddConnectingRoom(new RoomConnection(this, other, side, align, placement.GetValueOrDefault()),
             adjustPlacement: placement.HasValue);
     }
 

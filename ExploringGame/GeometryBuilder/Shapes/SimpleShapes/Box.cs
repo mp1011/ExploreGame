@@ -23,9 +23,21 @@ public class Box : Shape
         MainTexture = new TextureInfo(Key: textureKey);
     }
 
+    public Box(TextureInfo texture)
+    {
+        MainTexture = texture;
+    }
+
     public Box(Theme theme)
     {
         _theme = theme;
+    }
+
+    public Box(Theme theme, TextureKey key)
+    {
+        _theme = new Theme(theme.TextureSheetKey);
+        _theme.AdditionalTextures[key] = theme.GetTexture(key);
+        _theme.MainTexture = theme.GetTexture(key);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

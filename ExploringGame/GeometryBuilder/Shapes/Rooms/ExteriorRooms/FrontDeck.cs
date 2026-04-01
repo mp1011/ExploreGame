@@ -19,8 +19,7 @@ public class FrontDeck : Room
     private readonly float BarSpacing = Measure.Inches(8);
 
     public Shape WestPart { get; private set; }
-    protected override Side OmitSides => Side.Top;
-
+    public override Side OmitSides => Side.North | Side.South | Side.West | Side.Top;
     public override Theme Theme => new FrontPorchTheme();
     public FrontDeck(WorldSegment worldSegment) : base(worldSegment)
     {
@@ -41,6 +40,16 @@ public class FrontDeck : Room
 
         WestPart.SetSide(Side.Top, GetSide(Side.Bottom));
 
+        var northPart = AddChild(new Box(Theme));
+        northPart.OmitSides = Side.Top;
+        northPart.Height = Height;
+        northPart.Width = Width;
+        northPart.Depth = Measure.Inches(5);
+        northPart.Place().OnSideInner(Side.North)
+            .OnSideInner(Side.West);
+        northPart.SetSide(Side.Top, WestPart.GetSide(Side.Top));
+            
+ 
         // posts
         var northWestPost = CreatePost().Place()
             .OnSideInner(Side.North, WestPart, PostInset)

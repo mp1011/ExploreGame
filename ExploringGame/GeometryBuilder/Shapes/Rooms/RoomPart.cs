@@ -4,6 +4,8 @@ public class RoomPart : Room
 {
     public Room Main { get; }
 
+    public override Side OmitSides => Main.OmitSides;
+
     public RoomPart(Room main, float? height = null, float? width = null, float? depth = null)
         : base(main.WorldSegment, theme: main.Theme)
     {

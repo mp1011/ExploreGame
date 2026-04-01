@@ -34,7 +34,7 @@ public static partial class TestMaps
 
     private class SkyboxTestRoom : Room
     {
-        protected override Side OmitSides => Side.All & ~Side.Bottom;
+        public override Side OmitSides => Side.All & ~Side.Bottom;
 
         public SkyboxTestRoom(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null)
             : base(worldSegment, width, depth, height)
@@ -59,7 +59,7 @@ public static partial class TestMaps
 
     private class SkyDomeTestRoom : Room
     {
-        protected override Side OmitSides => Side.All & ~Side.Bottom;
+        public override Side OmitSides => Side.All & ~Side.Bottom;
 
         public SkyDomeTestRoom(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null)
             : base(worldSegment, width, depth, height)

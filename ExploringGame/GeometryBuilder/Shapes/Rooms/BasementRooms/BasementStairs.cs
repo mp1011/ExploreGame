@@ -12,7 +12,7 @@ public class BasementStairs : Stairs, ICutoutShape
 
     public Side ParentCutoutSide => Side.Top;
 
-    protected override Side OmitSides => Side.South | Side.North;
+    public override Side OmitSides => Side.South | Side.North;
 
     public Shape CutoutTarget => BottomFloor;
 
