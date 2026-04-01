@@ -24,6 +24,8 @@ public static partial class ShapeExtensions
 public class ShapePlacer
 {
     protected Shape _shape;
+
+    public Shape Shape() => _shape;
     
     public ShapePlacer(Shape shape)
     {
