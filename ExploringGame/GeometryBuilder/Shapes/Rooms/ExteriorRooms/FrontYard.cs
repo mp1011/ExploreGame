@@ -60,7 +60,5 @@ public class FrontYard : Room
         houseNorthSide.Place().OnFloor();
         houseNorthSide.SetSide(Side.South, Deck.GetSide(Side.North));       
         houseNorthSide.AdjustShape().SetAxis(Axis.X, Deck.GetSide(Side.East), northPart.GetSide(Side.East));
-
-        houseNorthSide.Z -= 1.0f;
     }
 }

@@ -36,7 +36,7 @@ public class SplitTrianglesForTiling
             return sideTriangles;
 
         if (!sideTriangles.Any())
-            return triangles;
+            return Array.Empty<Triangle>();
 
         var corner = sideTriangles.GetCornerVertices(side).Item1;
 
