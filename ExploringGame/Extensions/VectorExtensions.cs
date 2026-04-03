@@ -42,6 +42,13 @@ public static class VectorExtensions
                vector.Y.IsValidPositive() &&
                vector.Z.IsValidPositive();
     }
+
+    public static bool IsAlmost(this Vector3 vector, Vector3 other, float tolerance = 1e-6f)
+    {
+        return vector.X.IsAlmost(other.X, tolerance) &&
+               vector.Y.IsAlmost(other.Y, tolerance) &&
+               vector.Z.IsAlmost(other.Z, tolerance);
+    }
     public static Vector3 Center(this IEnumerable<Vector3> points)
     {
         Vector3 min = points.First();

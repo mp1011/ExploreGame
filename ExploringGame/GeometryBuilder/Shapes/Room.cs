@@ -139,8 +139,7 @@ public class Room : Shape, ILightingGroup
     {
         var shape = BuildCuboid();
         shape = new SideRemover().Execute(shape, OmitSides);
-        var originalShape = shape;
-
+       
         foreach(var connection in _roomConnections)
             shape = new RemoveSurfaceRegion().Execute(shape, connection.Side, 
                 connection.CalcCutoutPlacement(shape), ViewFrom);

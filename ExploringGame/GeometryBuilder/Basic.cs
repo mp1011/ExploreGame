@@ -136,11 +136,11 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
 
     public Triangle ReplaceVertex(Vector3 oldVertex, Vector3 newVertex)
     {
-        if (A == oldVertex)
+        if (A.IsAlmost(oldVertex))
             return new Triangle(newVertex, B, C, TextureInfo, Side);
-        else if (B == oldVertex)
+        else if (B.IsAlmost(oldVertex))
             return new Triangle(A, newVertex, C, TextureInfo, Side);
-        else if (C == oldVertex)
+        else if (C.IsAlmost(oldVertex))
             return new Triangle(A, B, newVertex, TextureInfo, Side);
         else
             return this;

@@ -41,6 +41,6 @@ public class VertexOffsetter
             };           
         }
 
-        return vertices.ToArray();
+        return vertices.Distinct().ToArray();
     }
 }
