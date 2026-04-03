@@ -392,14 +392,34 @@ public abstract class Shape : IWithPosition
 
     private Triangle CorrectWinding(Triangle triangle)
     {
-        var winding = triangle.CalcWinding(Position);
-        if (winding == Winding.CounterClockwise && ViewFrom == ViewFrom.Inside)
-            return triangle.Invert();
-        else if (winding == Winding.Clockwise && ViewFrom == ViewFrom.Outside)
-            return triangle.Invert();
-        else
-            return triangle;
+        // For shapes that may have vertex offsets (slanted surfaces), use the Side metadata
+        // to determine the expected normal direction rather than relying solely on the center point
+        Vector3 expectedNormal = GetExpectedNormalForSide(triangle.Side);
 
+        // Check if the triangle's actual normal is pointing in roughly the same direction as expected
+        float alignment = Vector3.Dot(triangle.Normal, expectedNormal);
+
+        // If ViewFrom is Outside, we want the normal pointing away from the shape
+        // If ViewFrom is Inside, we want the normal pointing toward the shape center
+        bool shouldInvert = (ViewFrom == ViewFrom.Outside && alignment < 0) ||
+                           (ViewFrom == ViewFrom.Inside && alignment > 0);
+
+        return shouldInvert ? triangle.Invert() : triangle;
+    }
+
+    private Vector3 GetExpectedNormalForSide(Side side)
+    {
+        // Return the expected outward-facing normal for each side of the cuboid
+        return side switch
+        {
+            Side.North => -Vector3.UnitZ,    // North faces negative Z
+            Side.South => Vector3.UnitZ,     // South faces positive Z
+            Side.West => -Vector3.UnitX,     // West faces negative X
+            Side.East => Vector3.UnitX,      // East faces positive X
+            Side.Top => Vector3.UnitY,       // Top faces positive Y
+            Side.Bottom => -Vector3.UnitY,   // Bottom faces negative Y
+            _ => Vector3.UnitY               // Default fallback
+        };
     }
 
     /// <summary>

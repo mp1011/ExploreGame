@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.Services;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
@@ -189,11 +190,9 @@ public static class VectorExtensions
         if (!sideTriangles.Any())
             return (Vector3.Zero, Vector3.Zero);
 
-        var verts = sideTriangles.SelectMany(p => p.Vertices).ToArray();
-        var boundingBoxCorners = verts.GetBoundingBoxCorners(side);
-
-        return (verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item1)).First(),
-                verts.OrderBy(p => p.SquaredDistance(boundingBoxCorners.Item2)).First());
+        // Use the new best-fit plane approach to handle both axis-aligned and slanted surfaces
+        var calculator = new BestFitPlaneCalculator();
+        return calculator.GetOrientedBoundingBoxCorners(sideTriangles);
     }
 
     public static (Vector3, Vector3) GetBoundingBoxCorners(this Vector3[] verts, Side side)

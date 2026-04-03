@@ -13,7 +13,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class WestRoof : Room
 {
-    private static readonly float RoofHeight = Measure.Feet(0.9f);
+    private static readonly float RoofHeight = Measure.Feet(3.0f);
     private static readonly float RoofOverhang = Measure.Feet(1);
 
     public override Theme Theme { get; } = new RoofTheme();
@@ -35,7 +35,7 @@ public class WestRoof : Room
                     .OnSideOuter(Side.Top, yard)
                     .OnSideInner(Side.North, yard.Deck, -RoofOverhang);
 
-         VertexOffsets.Add(new VertexOffset(Side.East, new Vector3(0, RoofHeight, 0)));
+       //  VertexOffsets.Add(new VertexOffset(Side.East, new Vector3(0, RoofHeight, 0)));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
