@@ -24,9 +24,11 @@ public class WestRoof : Room
     {
         FixedAmbientLight = LightIntensity.Bright;
 
-        Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.Tile, TileSize: 1.0f);
+        Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.FillSide, TileSize: 1.0f);
+        Theme.SideTextures[Side.Top] = new TextureInfo(Color.Green, TextureKey.Concrete, TextureStyle.FillSide, TileSize: 1.0f);
+
         //Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.FillSide);
-        
+
         Height = Measure.Feet(1);
         Depth = yard.Depth;
         Width = Measure.Feet(20);
@@ -35,7 +37,7 @@ public class WestRoof : Room
                     .OnSideOuter(Side.Top, yard)
                     .OnSideInner(Side.North, yard.Deck, -RoofOverhang);
 
-       //  VertexOffsets.Add(new VertexOffset(Side.East, new Vector3(0, RoofHeight, 0)));
+        VertexOffsets.Add(new VertexOffset(Side.East, new Vector3(0, RoofHeight, 0)));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

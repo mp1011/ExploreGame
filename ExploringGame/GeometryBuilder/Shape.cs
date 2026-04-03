@@ -387,39 +387,79 @@ public abstract class Shape : IWithPosition
 
     private Triangle[] CorrectWinding(IEnumerable<Triangle> triangles)
     {
-        return triangles.Select(CorrectWinding).ToArray();
+        var triangleArray = triangles.ToArray();
+
+        if (triangleArray.Length == 0)
+            return Array.Empty<Triangle>();
+
+        // Calculate the geometric center of all triangles (centroid of all vertices)
+        var allVertices = triangleArray.SelectMany(t => new[] { t.A, t.B, t.C }).ToArray();
+        var geometricCenter = new Vector3(
+            allVertices.Average(v => v.X),
+            allVertices.Average(v => v.Y),
+            allVertices.Average(v => v.Z)
+        );
+
+        // Check if all triangles are roughly coplanar (all on one plane)
+        // If so, use the shape's Position as the reference instead
+        Vector3 referenceCenter;
+        if (AreTrianglesCoplanar(triangleArray))
+        {
+            // Triangles are on a single plane - use the shape's bounding box center
+            referenceCenter = Position;
+        }
+        else
+        {
+            // Triangles span multiple planes - use their geometric center
+            referenceCenter = geometricCenter;
+        }
+
+        return triangleArray.Select(t => CorrectWinding(t, referenceCenter)).ToArray();
     }
 
-    private Triangle CorrectWinding(Triangle triangle)
+    private bool AreTrianglesCoplanar(Triangle[] triangles)
     {
-        // For shapes that may have vertex offsets (slanted surfaces), use the Side metadata
-        // to determine the expected normal direction rather than relying solely on the center point
-        Vector3 expectedNormal = GetExpectedNormalForSide(triangle.Side);
+        if (triangles.Length <= 1)
+            return true;
 
-        // Check if the triangle's actual normal is pointing in roughly the same direction as expected
-        float alignment = Vector3.Dot(triangle.Normal, expectedNormal);
+        // Calculate average normal
+        var avgNormal = Vector3.Zero;
+        foreach (var triangle in triangles)
+        {
+            avgNormal += triangle.Normal;
+        }
+        avgNormal = Vector3.Normalize(avgNormal / triangles.Length);
 
-        // If ViewFrom is Outside, we want the normal pointing away from the shape
-        // If ViewFrom is Inside, we want the normal pointing toward the shape center
-        bool shouldInvert = (ViewFrom == ViewFrom.Outside && alignment < 0) ||
-                           (ViewFrom == ViewFrom.Inside && alignment > 0);
+        // Check if all normals are within a certain angle of the average
+        const float coplanarThreshold = 0.95f; // ~18 degrees tolerance
+        foreach (var triangle in triangles)
+        {
+            float alignment = Vector3.Dot(triangle.Normal, avgNormal);
+            if (alignment < coplanarThreshold)
+                return false; // Normals vary too much - not coplanar
+        }
+
+        return true; // All normals are similar - coplanar surface
+    }
+
+    private Triangle CorrectWinding(Triangle triangle, Vector3 geometricCenter)
+    {
+        // Determine if the normal points toward or away from the geometric center
+        // by using the triangle's centroid as a reference point
+        Vector3 triangleCentroid = (triangle.A + triangle.B + triangle.C) / 3f;
+        Vector3 centerToTriangle = triangleCentroid - geometricCenter;
+
+        // Dot product tells us if normal points away from center (positive) or toward (negative)
+        float normalAlignment = Vector3.Dot(triangle.Normal, centerToTriangle);
+
+        bool normalPointsOutward = normalAlignment > 0;
+
+        // For ViewFrom.Outside: we want normals pointing outward (away from center)
+        // For ViewFrom.Inside: we want normals pointing inward (toward center)
+        bool shouldInvert = (ViewFrom == ViewFrom.Outside && !normalPointsOutward) ||
+                           (ViewFrom == ViewFrom.Inside && normalPointsOutward);
 
         return shouldInvert ? triangle.Invert() : triangle;
-    }
-
-    private Vector3 GetExpectedNormalForSide(Side side)
-    {
-        // Return the expected outward-facing normal for each side of the cuboid
-        return side switch
-        {
-            Side.North => -Vector3.UnitZ,    // North faces negative Z
-            Side.South => Vector3.UnitZ,     // South faces positive Z
-            Side.West => -Vector3.UnitX,     // West faces negative X
-            Side.East => Vector3.UnitX,      // East faces positive X
-            Side.Top => Vector3.UnitY,       // Top faces positive Y
-            Side.Bottom => -Vector3.UnitY,   // Bottom faces negative Y
-            _ => Vector3.UnitY               // Default fallback
-        };
     }
 
     /// <summary>
