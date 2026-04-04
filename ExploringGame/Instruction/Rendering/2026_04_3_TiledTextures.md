@@ -19,7 +19,8 @@ Tiled textures don't display right on angled surfaces
 
 # TECHNICAL APPROACH
 
-1. Write a test to capture this behavior (place in ExploringGame.Tests\TextureCoordinateTests\)
+1. Write a failing test (DONE)
+    - Write a test to capture this behavior (place in ExploringGame.Tests\TextureCoordinateTests\)
     - unlike other tests this one won't use a Game instance
     - create a shape with only one surface, and use VertexOffsets to slant the surface
     - make the shape big enough to hold exactly four copies of the tiled texture (thus expecting eight triangles in total).
@@ -27,3 +28,11 @@ Tiled textures don't display right on angled surfaces
     - call Build on the shape to get its triangles
     - call VertexBufferBuilder
     - explicitly test the texture coordinates of each triangle (referring to them as upper/lower left/right)
+
+
+2. Adjust CalcTextureCoordinates_Tile to properly project onto the correct plane
+    - Based on the above test, I've identified the root of the problem:
+    - in VertexBufferBuilder -> CalcTextureCoordinates_Tile, it computes U and V by discarding one of the three dimensions
+    - this is why lengths become skewed for slanted surfaces
+    - the corners are already properly positioned. What we need to do is project the vertex onto the plane formed by the corners
+    - this should result in U and V values that properly line up

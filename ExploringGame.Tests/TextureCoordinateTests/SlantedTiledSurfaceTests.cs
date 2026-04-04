@@ -18,9 +18,14 @@ public class SlantedTiledSurfaceTests
     {
         // Arrange - Create a slanted surface that should hold exactly 4 tiled textures (2x2 grid)
         var tileSize = 1.0f;
-        var surfaceWidth = 2.0f * tileSize;  // 2 tiles wide
-        var surfaceDepth = 2.0f * tileSize;  // 2 tiles deep
-        var slantAmount = 2.0f;  // Amount to raise the north edge to create a slant
+        var slantAmount = 1.0f;  // Amount to raise the north edge to create a slant
+
+        // Calculate surface dimensions so that AFTER slanting, the surface area is 2x2
+        var surfaceWidth = 2.0f * tileSize;  // 2 tiles wide (not affected by slanting)
+        // For depth: we want sqrt(surfaceDepth^2 + slantAmount^2) = 2.0 * tileSize
+        // So: surfaceDepth = sqrt((2.0 * tileSize)^2 - slantAmount^2)
+        var targetSlantedDepth = 2.0f * tileSize;
+        var surfaceDepth = (float)System.Math.Sqrt(targetSlantedDepth * targetSlantedDepth - slantAmount * slantAmount);
 
         var shape = new SlantedTestSurface
         {
@@ -41,9 +46,8 @@ public class SlantedTiledSurfaceTests
         // Filter to only top surface triangles (the slanted surface we're testing)
         var topTriangles = triangles.Where(t => t.Side == Side.Top).ToArray();
 
-        // We should have at least some triangles after tiling
-        Assert.True(topTriangles.Length >= 2, 
-            $"Expected at least 2 triangles, but got {topTriangles.Length}");
+        // We should have exactly 8 triangles (2x2 tiles, 2 triangles per tile, 2 sides = 2*2*2 = 8)
+        Assert.Equal(8, topTriangles.Length);
 
         // Create a mock TextureSheet to calculate texture coordinates
         var mockTextureSheet = new MockTextureSheet();
@@ -53,7 +57,7 @@ public class SlantedTiledSurfaceTests
         var cornerVertices = topTriangles.GetCornerVertices(Side.Top);
 
         // Assert - Check texture coordinates for each triangle
-        // We'll verify that texture coordinates are properly assigned at tile boundaries
+        // All texture coordinates should be either 0.0 or 1.0
         foreach (var triangle in topTriangles)
         {
             foreach (var vertex in triangle.Vertices)
@@ -67,34 +71,16 @@ public class SlantedTiledSurfaceTests
                     cornerVertices
                 );
 
-                // Texture coordinates should be between 0 and 1 for tiled textures
-                Assert.True(textureCoords.X >= 0 && textureCoords.X <= 1,
-                    $"U coordinate {textureCoords.X} out of range at vertex {vertex}");
-                Assert.True(textureCoords.Y >= 0 && textureCoords.Y <= 1,
-                    $"V coordinate {textureCoords.Y} out of range at vertex {vertex}");
+                // For tiled textures, all coordinates should be either 0.0 or 1.0
+                Assert.True(
+                    IsAlmost(textureCoords.X, 0.0f) || IsAlmost(textureCoords.X, 1.0f),
+                    $"Expected U coordinate to be 0.0 or 1.0, but got {textureCoords.X} at vertex {vertex}"
+                );
 
-                // For tiled textures on a 2x2 grid, coordinates at tile boundaries
-                // should be either 0.0 or 1.0 (not fractional values)
-                var isAtTileBoundaryX = IsAtTileBoundary(vertex.X, shape.Position.X, tileSize, surfaceWidth);
-                var isAtTileBoundaryZ = IsAtTileBoundary(vertex.Z, shape.Position.Z, tileSize, surfaceDepth);
-
-                if (isAtTileBoundaryX)
-                {
-                    var normalizedU = textureCoords.X % 1.0f;
-                    Assert.True(
-                        IsAlmost(normalizedU, 0.0f) || IsAlmost(normalizedU, 1.0f),
-                        $"Expected U coordinate to be 0 or 1 at tile boundary, but got {textureCoords.X} (normalized: {normalizedU}) at vertex {vertex}"
-                    );
-                }
-
-                if (isAtTileBoundaryZ)
-                {
-                    var normalizedV = textureCoords.Y % 1.0f;
-                    Assert.True(
-                        IsAlmost(normalizedV, 0.0f) || IsAlmost(normalizedV, 1.0f),
-                        $"Expected V coordinate to be 0 or 1 at tile boundary, but got {textureCoords.Y} (normalized: {normalizedV}) at vertex {vertex}"
-                    );
-                }
+                Assert.True(
+                    IsAlmost(textureCoords.Y, 0.0f) || IsAlmost(textureCoords.Y, 1.0f),
+                    $"Expected V coordinate to be 0.0 or 1.0, but got {textureCoords.Y} at vertex {vertex}"
+                );
             }
         }
     }
