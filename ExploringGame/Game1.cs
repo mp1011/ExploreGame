@@ -31,6 +31,7 @@ public class Game1 : Game
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private IRenderEffect _renderEffect;
+    private IRenderEffect _skyboxEffect;
 
 
     private SpriteFont _debugFont;
@@ -118,6 +119,8 @@ public class Game1 : Game
         var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
         var dualEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
 
+        var skyboxEffect = new SkyboxRenderEffect(this);
+
         var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();
         loadedTextures.AddTexture(new BasementTextureSheet(Content));
         loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
@@ -125,8 +128,10 @@ public class Game1 : Game
         loadedTextures.AddTexture(new OutdoorsTextureSheet(Content));
 
         dualEffect.SetTextures(loadedTextures);
+        skyboxEffect.SetTextures(loadedTextures);
 
         _renderEffect = dualEffect;
+        _skyboxEffect = skyboxEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
@@ -181,15 +186,17 @@ public class Game1 : Game
         graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
         graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
+        // Render geometry first
         foreach (var levelData in _loadedLevelData.ActiveSegments)
         {
             _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
             _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
         }
 
+        // Render skybox LAST with custom shader that forces depth to 1.0
         if (_loadedLevelData.SkyboxBuffer != null)
         {
-            _renderEffect.Draw(graphicsDevice, new[] { _loadedLevelData.SkyboxBuffer }, _cameraService.SkyboxView, _cameraService.Projection);
+            _skyboxEffect.Draw(graphicsDevice, new[] { _loadedLevelData.SkyboxBuffer }, _cameraService.SkyboxView, _cameraService.Projection);
         }
     }
 

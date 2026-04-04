@@ -103,7 +103,8 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
             TextureEnabled = true,
             VertexColorEnabled = true,
             LightingEnabled = true,
-            PreferPerPixelLighting = true
+            PreferPerPixelLighting = true,
+            FogEnabled = false
         };
         effect.DirectionalLight0.Enabled = false;
         effect.Texture = texture;
@@ -269,6 +270,28 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         graphicsDevice.BlendState = previousBlendState;
         graphicsDevice.DepthStencilState = previousDepthStencilState;
         graphicsDevice.RasterizerState = previousRasterizerState;
+    }
+}
+
+public class SkyboxRenderEffect : RenderEffect<Effect>
+{
+    public SkyboxRenderEffect(Game game) : base(game)
+    {
+    }
+
+    protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
+    {
+        var skyboxEffect = contentManager.Load<Effect>("SkyboxEffect").Clone();
+        skyboxEffect.Parameters["Texture"].SetValue(texture);
+        return skyboxEffect;
+    }
+
+    public override void SetParameters(Effect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
+    {
+        var world = shapeBuffer.Shape.GetWorldMatrix();
+        effect.Parameters["World"].SetValue(world);
+        effect.Parameters["View"].SetValue(view);
+        effect.Parameters["Projection"].SetValue(projection);
     }
 }
 
