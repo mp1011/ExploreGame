@@ -40,6 +40,12 @@ public abstract class TextureSheet
         Texture = contentManager.Load<Texture2D>(texture);
     }
 
+    // Protected constructor for testing - allows creating TextureSheet without loading actual textures
+    protected TextureSheet()
+    {
+        Texture = null!;
+    }
+
     public Texture2D Texture { get; }    
     public Dictionary<TextureKey, Rectangle> TextureLocations { get; } = new Dictionary<TextureKey, Rectangle>();
 
@@ -50,13 +56,13 @@ public abstract class TextureSheet
         return this;
     }
 
-    public Vector2 TexturePosition(TextureKey key, Vector2 position)
+    public virtual Vector2 TexturePosition(TextureKey key, Vector2 position)
     {
         var textureLoc = TextureLocations[key];
 
         var pixelPosition = new Vector2(textureLoc.X + (position.X * textureLoc.Width),
                                    textureLoc.Y + (position.Y * textureLoc.Height));
-        
+
         return pixelPosition / new Vector2(Texture.Width, Texture.Height);  
     }
 
