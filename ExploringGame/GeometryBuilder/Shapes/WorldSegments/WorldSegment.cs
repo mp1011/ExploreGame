@@ -1,11 +1,7 @@
-﻿using ExploringGame.Entities;
-using ExploringGame.LevelControl;
-using ExploringGame.Logics;
-using ExploringGame.Logics.Pathfinding;
-using ExploringGame.Logics.ShapeControllers;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
@@ -15,7 +11,7 @@ public class WorldSegment : Shape
 
     public virtual SkyboxShape Skybox => null;
 
-    public virtual Vector3 DefaultPlayerStart { get; }
+    public virtual Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<Room>().FirstOrDefault().Position;
 
     public virtual IReadOnlyList<WorldSegmentTransition> Transitions { get; } = Array.Empty<WorldSegmentTransition>();
 

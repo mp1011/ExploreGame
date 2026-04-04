@@ -15,7 +15,8 @@ public class OutsideWorldSegment : WorldSegment
 
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
     {
-        new WorldSegmentTransition(typeof(UpstairsWorldSegment))
+        new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
+        new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
     };
 
     public OutsideWorldSegment() : base()
@@ -56,5 +57,14 @@ public class OutsideWorldSegment : WorldSegment
         deck.LoadChildren();
         frontYard.LoadChildren();
         roof.LoadChildren();
+
+        var road = new Road(this);
+        road.Tag = "HomeRoad";
+        road.AdjustShape().From(frontYard);
+        road.Depth = Measure.Feet(32);
+
+        road.Place().OnFloor(frontYard);
+        road.Place().OnSideOuter(Side.West, frontYard);
+        road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
     }
 }
