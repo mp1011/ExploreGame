@@ -11,9 +11,9 @@ public class FakeHouse : Shape
 
     public override Theme Theme { get; }
 
-    public FakeHouse(WorldSegment worldSegment, Shape ground)
+    public FakeHouse(BgNeighborhood parent, Shape ground)
     {
-        worldSegment.AddChild(this);
+        parent.AddChild(this);
         Theme = new Theme(TextureSheetKey.Outdoors, TextureKey.Siding, Color.White);
 
         Width = Measure.Feet(50);

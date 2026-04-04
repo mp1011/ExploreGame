@@ -62,6 +62,12 @@
 /processorParam:TextureFormat=Color
 /build:sky.png
 
+#begin SkyboxEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:SkyboxEffect.fx
+
 #begin Sound/DoorClose.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
