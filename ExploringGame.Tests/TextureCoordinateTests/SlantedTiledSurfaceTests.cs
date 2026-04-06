@@ -55,6 +55,7 @@ public class SlantedTiledSurfaceTests
 
         // Get corner vertices for texture coordinate calculation
         var cornerVertices = topTriangles.GetCornerVertices(Side.Top);
+        var planeInfo = TilingPlaneHelper.ComputePlaneInfo(topTriangles, cornerVertices);
 
         // Assert - Check texture coordinates for each triangle
         // All texture coordinates should be either 0.0 or 1.0
@@ -68,7 +69,8 @@ public class SlantedTiledSurfaceTests
                     mockTextureSheet,
                     triangle,
                     vertex,
-                    cornerVertices
+                    cornerVertices,
+                    planeInfo
                 );
 
                 // For tiled textures, all coordinates should be either 0.0 or 1.0
