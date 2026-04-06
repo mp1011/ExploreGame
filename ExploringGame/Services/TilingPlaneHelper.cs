@@ -30,10 +30,10 @@ public static class TilingPlaneHelper
 
     /// <summary>
     /// Computes the plane and texture origin for a set of triangles on the same side.
-    /// The texture origin is the projection of the zero vector onto the plane,
+    /// The texture origin is the projection of the zero vector onto the plane (or a custom origin if provided),
     /// ensuring all shapes on the same plane share the same texture origin.
     /// </summary>
-    public static PlaneInfo ComputePlaneInfo(IEnumerable<Triangle> sideTriangles, (Vector3, Vector3) cornerVertices)
+    public static PlaneInfo ComputePlaneInfo(IEnumerable<Triangle> sideTriangles, (Vector3, Vector3) cornerVertices, Vector3? customOrigin = null)
     {
         var triangleArray = sideTriangles.ToArray();
         if (!triangleArray.Any())
@@ -50,7 +50,7 @@ public static class TilingPlaneHelper
 
         // Create a consistent coordinate system using the same approach as GridTriangleSubdivider
         Vector3 normal = averageNormal;
-        
+
         // Choose a fixed world reference axis (same as GridTriangleSubdivider.ComputeCanonicalBasis)
         Vector3 reference =
             Math.Abs(normal.Y) < 0.999f ? Vector3.UnitY :
@@ -64,9 +64,10 @@ public static class TilingPlaneHelper
         // Derive V (guaranteed orthonormal and consistent)
         Vector3 vAxis = Vector3.Cross(normal, uAxis);
 
-        // Project the zero vector onto this plane to get our texture origin
-        // This is the closest point on the plane to the world origin (0,0,0)
-        Vector3 textureOrigin = ProjectPointOntoPlane(Vector3.Zero, normal, cornerVertices.Item1);
+        // Use custom origin if provided, otherwise project the zero vector onto this plane
+        Vector3 textureOrigin = customOrigin.HasValue 
+            ? ProjectPointOntoPlane(customOrigin.Value, normal, cornerVertices.Item1)
+            : ProjectPointOntoPlane(Vector3.Zero, normal, cornerVertices.Item1);
 
         return new PlaneInfo(normal, uAxis, vAxis, textureOrigin);
     }

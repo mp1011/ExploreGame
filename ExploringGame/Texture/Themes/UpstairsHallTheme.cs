@@ -11,6 +11,6 @@ public class UpstairsHallTheme : Theme
     {
         SideTextures[Side.Top] = new TextureInfo(Color.White, TextureKey.Plain);      
         SideTextures[Side.Bottom] = new TextureInfo(Color.Brown, TextureKey.Floor);
-        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain, TextureStyle.HorizontalRepeat, TileSize: 3.0f);
+        MainTexture = new TextureInfo(Color.LightGray, TextureKey.Plain, TextureStyle.HorizontalRepeat, new TilingInfo(TileSize: 3.0f));
     }
 }

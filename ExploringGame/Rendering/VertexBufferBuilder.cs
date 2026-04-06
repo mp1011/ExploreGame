@@ -62,7 +62,9 @@ public class VertexBufferBuilder
         var cornerVertices = sideTriangles.GetCornerVertices(side);
 
         // Compute the plane info once for this side (for consistent texture coordinates)
-        var planeInfo = Services.TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices);
+        var textureInfo = shape.TextureInfoForSide(side);
+        var tilingOrigin = textureInfo.TilingInfo?.GetTilingOrigin();
+        var planeInfo = Services.TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices, tilingOrigin);
 
         foreach (var triangle in sideTriangles)
         {
@@ -124,7 +126,7 @@ public class VertexBufferBuilder
 
     private Vector2 CalcTextureCoordinates_Tile(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, Services.TilingPlaneHelper.PlaneInfo planeInfo)
     {
-        var textureSize = triangle.TextureInfo.TileSize.Value;
+        var textureSize = triangle.TextureInfo.TilingInfo?.TileSize ?? 1.0f;
 
         // Project the position onto the 2D plane
         var pos2D = Services.TilingPlaneHelper.ProjectTo2D(position, planeInfo);

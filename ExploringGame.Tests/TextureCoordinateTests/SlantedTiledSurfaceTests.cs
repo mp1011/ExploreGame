@@ -34,7 +34,7 @@ public class SlantedTiledSurfaceTests
             MainTexture = new TextureInfo(
                 Key: TextureKey.Wood,
                 Style: TextureStyle.Tile,
-                TileSize: tileSize
+                TilingInfo: new TilingInfo(TileSize: tileSize)
             ),
             SlantAmount = slantAmount
         };

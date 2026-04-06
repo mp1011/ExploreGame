@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using System.Numerics;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 

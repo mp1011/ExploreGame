@@ -70,9 +70,9 @@ public static partial class TestMaps
     public static WorldSegment TilingTextureTestMap()
     {
         var t = new Theme(TextureSheetKey.Upstairs);
-        t.MainTexture = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
-       // t.SideTextures[Side.East] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
-       // t.SideTextures[Side.South] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, TileSize: 2.0f);
+        t.MainTexture = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+       // t.SideTextures[Side.East] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+       // t.SideTextures[Side.South] = new TextureInfo(TextureKey.Tile, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
         return TextureTestMap(t);
     }
 
@@ -335,7 +335,7 @@ public static partial class TestMaps
     public static WorldSegment ConnectingRoomsTest()
     {
         var world = new WorldSegment();
-        var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.Tile, TileSize: 50.0f);
+        var floorTexture = new TextureInfo(Key: TextureKey.Floor, Style: TextureStyle.Tile, TilingInfo: new TilingInfo(TileSize: 50.0f));
 
         var pos = 0.3f;
 

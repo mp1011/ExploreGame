@@ -9,10 +9,10 @@ public class YardTheme : Theme
 
     public YardTheme()
     {
-        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Grass, TextureStyle.Tile, TileSize: 2.0f);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.White, TextureKey.Grass, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
         MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
 
-        AdditionalTextures[TextureKey.Concrete] = new TextureInfo(Color.White, TextureKey.Concrete, TextureStyle.Tile, TileSize: 2.0f);
-        AdditionalTextures[TextureKey.Siding] = new TextureInfo(Color.White, TextureKey.Siding, TextureStyle.Tile, TileSize: 2.0f);
+        AdditionalTextures[TextureKey.Concrete] = new TextureInfo(Color.White, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+        AdditionalTextures[TextureKey.Siding] = new TextureInfo(Color.White, TextureKey.Siding, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
     }
 }
