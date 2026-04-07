@@ -9,6 +9,6 @@ public class RoofTheme : Theme
 
     public RoofTheme()
     {
-        MainTexture = new TextureInfo(Color.DarkGray, TextureKey.Plain, TextureStyle.Tile, TileSize: 1.0f);
+        MainTexture = new TextureInfo(Color.DarkGray, TextureKey.Plain, TextureStyle.Tile, new TilingInfo(TileSize: 1.0f));
     }
 }

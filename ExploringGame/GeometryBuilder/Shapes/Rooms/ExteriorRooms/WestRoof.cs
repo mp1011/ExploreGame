@@ -24,8 +24,8 @@ public class WestRoof : Room
     {
         FixedAmbientLight = LightIntensity.Bright;
 
-        Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.Tile, TileSize: 2.0f);
-        Theme.SideTextures[Side.Top] = new TextureInfo(Color.Green, TextureKey.Concrete, TextureStyle.Tile, TileSize: 2.0f);
+        Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+        Theme.SideTextures[Side.Top] = new TextureInfo(Color.Green, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
 
         //Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.FillSide);
 

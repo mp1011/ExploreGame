@@ -61,13 +61,18 @@ public class VertexBufferBuilder
 
         var cornerVertices = sideTriangles.GetCornerVertices(side);
 
+        // Compute the plane info once for this side (for consistent texture coordinates)
+        var textureInfo = shape.TextureInfoForSide(side);
+        var tilingOrigin = textureInfo.TilingInfo?.GetTilingOrigin();
+        var planeInfo = Services.TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices, tilingOrigin);
+
         foreach (var triangle in sideTriangles)
         {
             var vertexCoords = new List<(Vector3 vertex, Vector2 uv)>();
 
             foreach (var vertex in triangle.Vertices)
             {
-                var textureCoords = CalcTextureCoordinates(shape, side, textureSheet, triangle, vertex, cornerVertices);
+                var textureCoords = CalcTextureCoordinates(shape, side, textureSheet, triangle, vertex, cornerVertices, planeInfo);
                 vertexCoords.Add((vertex, textureCoords));
             }
 
@@ -93,14 +98,14 @@ public class VertexBufferBuilder
         }            
     }
 
-    public Vector2 CalcTextureCoordinates(Shape shape, Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
+    public Vector2 CalcTextureCoordinates(Shape shape, Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners, Services.TilingPlaneHelper.PlaneInfo planeInfo)
     {
         var texture = triangle.TextureInfo;
         var textureCoordinates = texture.Style switch
         {
             TextureStyle.FillSide => CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, corners),
-            TextureStyle.Tile => CalcTextureCoordinates_Tile(side, textureSheet, triangle, position, corners),
-            TextureStyle.HorizontalRepeat => CalcTextureCoordinates_HorizontalRepeat(side, textureSheet, triangle, texture, position, corners),
+            TextureStyle.Tile => CalcTextureCoordinates_Tile(side, textureSheet, triangle, position, planeInfo),
+            TextureStyle.HorizontalRepeat => CalcTextureCoordinates_HorizontalRepeat(side, textureSheet, triangle, texture, position, corners, planeInfo),
             TextureStyle.Spherical => CalcTextureCoordinates_Spherical(shape, position),
             _ => throw new System.ArgumentException($"Unknown texture style {texture.Style}")
         };
@@ -119,24 +124,20 @@ public class VertexBufferBuilder
         // return new Vector2(coordinates.X.NMod(1.0f), coordinates.Y.NMod(1.0f));
     }
 
-    private Vector2 CalcTextureCoordinates_Tile(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
+    private Vector2 CalcTextureCoordinates_Tile(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, Services.TilingPlaneHelper.PlaneInfo planeInfo)
     {
-        var gridOrigin = corners.Item1;
+        var textureSize = triangle.TextureInfo.TilingInfo?.TileSize ?? 1.0f;
 
-        var axisUV = side.GetAxisUV();
-        var axisU = axisUV.Item1;
-        var axisV = axisUV.Item2;
+        // Project the position onto the 2D plane
+        var pos2D = Services.TilingPlaneHelper.ProjectTo2D(position, planeInfo);
 
-        var textureSize = triangle.TextureInfo.TileSize.Value;
+        // Calculate UV coordinates based on the 2D position and tile size
+        var uMod = pos2D.X.NMod(textureSize) / textureSize;
+        var vMod = pos2D.Y.NMod(textureSize) / textureSize;
 
-        var u = position.AxisValue(axisU) - gridOrigin.AxisValue(axisU);
-        var v = position.AxisValue(axisV) - gridOrigin.AxisValue(axisV);
-
-        var uMod = u.NMod(textureSize) / textureSize;
-        var vMod = v.NMod(textureSize) / textureSize;
-
-        var isUMax = position.AxisValue(axisU) == triangle.Vertices.Max(p => p.AxisValue(axisU));
-        var isVMax = position.AxisValue(axisV) == triangle.Vertices.Max(p => p.AxisValue(axisV));
+        // Handle edge case: if we're at the max edge of the triangle and the mod is 0, set to 1
+        var isUMax = Math.Abs(pos2D.X - triangle.Vertices.Select(v => Services.TilingPlaneHelper.ProjectTo2D(v, planeInfo).X).Max()) < 1e-5f;
+        var isVMax = Math.Abs(pos2D.Y - triangle.Vertices.Select(v => Services.TilingPlaneHelper.ProjectTo2D(v, planeInfo).Y).Max()) < 1e-5f;
 
         if (isUMax && uMod == 0f)
             uMod = 1.0f;
@@ -147,39 +148,9 @@ public class VertexBufferBuilder
         return new Vector2(uMod, vMod);
     }
 
-
-    private Vector2 CalcTextureCoordinates_Tile_deleteme(Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners)
-    {
-        var axisUV = side.GetAxisUV();
-        var axisU = axisUV.Item1;
-        var axisV = axisUV.Item2;
-
-        var textureSize = triangle.TextureInfo.TileSize.Value;
-
-        var uBegin = Math.Min(corners.Item1.AxisValue(axisU), corners.Item2.AxisValue(axisU));
-        var vBegin = Math.Min(corners.Item1.AxisValue(axisV), corners.Item2.AxisValue(axisV));
-
-        var u = position.AxisValue(axisU) - uBegin;
-        var v = position.AxisValue(axisV) - vBegin;
-
-        var uMod = u.NMod(textureSize) / textureSize;
-        var vMod = v.NMod(textureSize) / textureSize;
-
-        var isUMax = position.AxisValue(axisU) == triangle.Vertices.Max(p => p.AxisValue(axisU));
-        var isVMax = position.AxisValue(axisV) == triangle.Vertices.Max(p => p.AxisValue(axisV));
-
-        if (isUMax && uMod == 0f)
-            uMod = 1.0f;
-
-        if (isVMax && vMod == 0f)
-            vMod = 1.0f;
-
-        return new Vector2(uMod, vMod);
-    }
-
-    private Vector2 CalcTextureCoordinates_HorizontalRepeat(Side side, TextureSheet textureSheet, Triangle triangle, TextureInfo texture, Vector3 position, (Vector3,Vector3) corners)
+    private Vector2 CalcTextureCoordinates_HorizontalRepeat(Side side, TextureSheet textureSheet, Triangle triangle, TextureInfo texture, Vector3 position, (Vector3,Vector3) corners, Services.TilingPlaneHelper.PlaneInfo planeInfo)
     {     
-        var uCoordindates = CalcTextureCoordinates_Tile(side, textureSheet, triangle, position, corners);
+        var uCoordindates = CalcTextureCoordinates_Tile(side, textureSheet, triangle, position, planeInfo);
         var vCoordinates = CalcTextureCoordinates_FillSide(side, textureSheet, texture, position, corners);
 
         return new Vector2(uCoordindates.X, vCoordinates.Y);

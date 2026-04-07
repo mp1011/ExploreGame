@@ -20,10 +20,15 @@ public static class TextureStyleExtensions
     };
 }
 
-public record TextureInfo(Color Color, TextureKey Key, TextureStyle Style = TextureStyle.FillSide, float? TileSize = null)
+public record TilingInfo(float TileSize, Vector3? TilingOrigin = null)
 {
-    public TextureInfo(TextureKey Key, TextureStyle Style = TextureStyle.FillSide, float? TileSize = null) 
-        : this(Color.White, Key, Style, TileSize) { }
+    public Vector3 GetTilingOrigin() => TilingOrigin ?? Vector3.Zero;
+}
+
+public record TextureInfo(Color Color, TextureKey Key, TextureStyle Style = TextureStyle.FillSide, TilingInfo? TilingInfo = null)
+{
+    public TextureInfo(TextureKey Key, TextureStyle Style = TextureStyle.FillSide, TilingInfo? TilingInfo = null) 
+        : this(Color.White, Key, Style, TilingInfo) { }
 
     public TextureInfo(Color Color) : this(Color, TextureKey.None) { }
 
