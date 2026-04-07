@@ -9,7 +9,7 @@ public class RoadTheme : Theme
 
     public RoadTheme()
     {
-        SideTextures[Side.Bottom] = new TextureInfo(Color.DarkGray, TextureKey.Concrete, TextureStyle.Tile, TileSize: 2.0f);
+        SideTextures[Side.Bottom] = new TextureInfo(Color.DarkGray, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
         MainTexture = new TextureInfo(Color.White, TextureKey.Plain);
     }
 }
