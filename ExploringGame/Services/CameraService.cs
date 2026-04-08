@@ -8,7 +8,6 @@ namespace ExploringGame.Services;
 public class CameraService
 {
     private ICamera _current;
-    private readonly float FarPlaneDistance = Measure.Feet(100000);
 
     public Matrix View { get; private set; }
     public Matrix SkyboxView { get; private set; }
