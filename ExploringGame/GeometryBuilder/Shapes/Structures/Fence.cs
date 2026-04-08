@@ -12,6 +12,12 @@ public class Fence : Shape, ICollidable
     public readonly float Thickness = Measure.Inches(8);
     public readonly float FenceHeight = Measure.Feet(10);
 
+    /// <summary>
+    /// Tolerance (in world units) used when snapping post intervals and detecting duplicate posts.
+    /// Equivalent to ~2.5 mm, well within floating-point precision for fixed room geometry.
+    /// </summary>
+    private const float PostPositionTolerance = 0.001f;
+
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public CollisionGroup CollisionGroup => CollisionGroup.Environment;
@@ -70,7 +76,7 @@ public class Fence : Shape, ICollidable
         {
             // Only add this intermediate post if the remaining section is at least 6 ft,
             // so the last section is never shorter than 6 ft (one longer section rule).
-            if (end - pos >= postSpacing - 0.001f)
+            if (end - pos >= postSpacing - PostPositionTolerance)
                 yield return pos;
             pos += postSpacing;
         }
@@ -83,7 +89,7 @@ public class Fence : Shape, ICollidable
         return parent.WorldSegment
             .TraverseAllChildren()
             .OfType<FencePost>()
-            .Any(p => Vector3.DistanceSquared(p.Position, position) < 0.0001f);
+            .Any(p => Vector3.DistanceSquared(p.Position, position) < PostPositionTolerance * PostPositionTolerance);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
