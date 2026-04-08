@@ -40,7 +40,7 @@ public class SplitTrianglesForTiling
 
         var cornerVertices = sideTriangles.GetCornerVertices(side);
         var tilingOrigin = textureInfo.TilingInfo?.GetTilingOrigin();
-        var planeInfo = TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices, tilingOrigin);
+        var planeInfo = TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices, side, tilingOrigin);
 
         var tileSize = textureInfo.TilingInfo?.TileSize ?? 1.0f;
         return sideTriangles.SelectMany(t => SplitTriangleIntoTiles(t, new Vector2(tileSize, tileSize), planeInfo))

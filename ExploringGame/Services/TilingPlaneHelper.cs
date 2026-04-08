@@ -33,7 +33,7 @@ public static class TilingPlaneHelper
     /// The texture origin is the projection of the zero vector onto the plane (or a custom origin if provided),
     /// ensuring all shapes on the same plane share the same texture origin.
     /// </summary>
-    public static PlaneInfo ComputePlaneInfo(IEnumerable<Triangle> sideTriangles, (Vector3, Vector3) cornerVertices, Vector3? customOrigin = null)
+    public static PlaneInfo ComputePlaneInfo(IEnumerable<Triangle> sideTriangles, (Vector3, Vector3) cornerVertices, Side side, Vector3? customOrigin = null)
     {
         var triangleArray = sideTriangles.ToArray();
         if (!triangleArray.Any())
@@ -51,18 +51,44 @@ public static class TilingPlaneHelper
         // Create a consistent coordinate system using the same approach as GridTriangleSubdivider
         Vector3 normal = averageNormal;
 
-        // Choose a fixed world reference axis (same as GridTriangleSubdivider.ComputeCanonicalBasis)
-        Vector3 reference =
-            Math.Abs(normal.Y) < 0.999f ? Vector3.UnitY :
-            Math.Abs(normal.X) < 0.999f ? Vector3.UnitX :
-                                           Vector3.UnitZ;
+        // Use the existing GetAxisUV convention to determine U and V axes
+        // This ensures textures maintain their expected orientation on each side
+        var (uAxisEnum, vAxisEnum) = side.GetAxisUV();
 
-        // Project reference axis onto the plane → U
-        Vector3 uAxis = reference - Vector3.Dot(reference, normal) * normal;
+        // Convert axis enums to world-space vectors
+        Vector3 uAxisWorld = uAxisEnum switch
+        {
+            Axis.X => Vector3.UnitX,
+            Axis.Y => Vector3.UnitY,
+            Axis.Z => Vector3.UnitZ,
+            _ => Vector3.UnitX
+        };
+
+        Vector3 vAxisWorld = vAxisEnum switch
+        {
+            Axis.X => Vector3.UnitX,
+            Axis.Y => Vector3.UnitY,
+            Axis.Z => Vector3.UnitZ,
+            _ => Vector3.UnitY
+        };
+
+        // Project these axes onto the actual plane to handle slanted surfaces
+        // This ensures the U/V convention is maintained even when the surface is not axis-aligned
+        Vector3 uAxis = uAxisWorld - Vector3.Dot(uAxisWorld, normal) * normal;
+        if (uAxis.LengthSquared() < 1e-6f)
+        {
+            // If U axis is parallel to normal, fall back to cross product
+            uAxis = Vector3.Cross(normal, vAxisWorld);
+        }
         uAxis = Vector3.Normalize(uAxis);
 
-        // Derive V (guaranteed orthonormal and consistent)
-        Vector3 vAxis = Vector3.Cross(normal, uAxis);
+        Vector3 vAxis = vAxisWorld - Vector3.Dot(vAxisWorld, normal) * normal;
+        if (vAxis.LengthSquared() < 1e-6f)
+        {
+            // If V axis is parallel to normal, derive from U and normal
+            vAxis = Vector3.Cross(normal, uAxis);
+        }
+        vAxis = Vector3.Normalize(vAxis);
 
         // Use custom origin if provided, otherwise project the zero vector onto this plane
         Vector3 textureOrigin = customOrigin.HasValue 

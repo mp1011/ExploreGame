@@ -64,7 +64,7 @@ public class VertexBufferBuilder
         // Compute the plane info once for this side (for consistent texture coordinates)
         var textureInfo = shape.TextureInfoForSide(side);
         var tilingOrigin = textureInfo.TilingInfo?.GetTilingOrigin();
-        var planeInfo = Services.TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices, tilingOrigin);
+        var planeInfo = Services.TilingPlaneHelper.ComputePlaneInfo(sideTriangles, cornerVertices, side, tilingOrigin);
 
         foreach (var triangle in sideTriangles)
         {

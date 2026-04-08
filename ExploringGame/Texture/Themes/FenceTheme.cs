@@ -8,6 +8,6 @@ public class FenceTheme : Theme
 
     public FenceTheme()
     {
-        MainTexture = new TextureInfo(Color.White, TextureKey.Fence, TextureStyle.HorizontalRepeat, new TilingInfo(TileSize: 1.0f));
+        MainTexture = new TextureInfo(Color.White, TextureKey.Fence, TextureStyle.HorizontalRepeat, new TilingInfo(TileSize: 2.0f));
     }
 }
