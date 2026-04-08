@@ -1,7 +1,7 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;

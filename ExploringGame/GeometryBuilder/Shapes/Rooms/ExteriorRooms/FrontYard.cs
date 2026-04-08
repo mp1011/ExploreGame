@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Services;
@@ -60,5 +61,7 @@ public class FrontYard : Room
         houseNorthSide.Place().OnFloor();
         houseNorthSide.SetSide(Side.South, Deck.GetSide(Side.North));       
         houseNorthSide.AdjustShape().SetAxis(Axis.X, Deck.GetSide(Side.East), northPart.GetSide(Side.East));
+
+        var northFence = new Fence(northPart, Side.North);
     }
 }

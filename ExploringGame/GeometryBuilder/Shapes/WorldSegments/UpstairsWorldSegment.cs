@@ -1,8 +1,8 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;

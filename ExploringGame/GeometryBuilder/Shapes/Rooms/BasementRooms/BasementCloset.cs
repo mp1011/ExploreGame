@@ -1,5 +1,5 @@
 ﻿using ExploringGame.Extensions;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;

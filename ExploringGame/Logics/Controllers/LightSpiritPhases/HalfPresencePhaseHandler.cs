@@ -8,9 +8,9 @@ using System;
 using System.Linq;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 
 namespace ExploringGame.Logics.Controllers.LightSpiritPhases;
 

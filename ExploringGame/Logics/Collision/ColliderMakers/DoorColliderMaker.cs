@@ -1,4 +1,4 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+﻿using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.Services;
 using Jitter2.Dynamics;
 using System.Collections;

@@ -5,6 +5,7 @@ using ExploringGame.Texture;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using Microsoft.Xna.Framework;
 using ExploringGame.Services;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 

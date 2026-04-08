@@ -5,6 +5,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using Microsoft.Xna.Framework;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
@@ -26,8 +27,8 @@ public class Bedroom : Room
                 adjustPlacement: false);
 
         // Place windows on west and south walls
-        var windowWest = new Furniture.Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
-        var windowSouth = new Furniture.Window(this, Side.South, Measure.Feet(4), Measure.Feet(4));
+        var windowWest = new Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
+        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4));
 
         var light = new HighHatLight(this, 0f, 0f);
         var sw = new LightSwitch(this, Side.East, StateKey.BedroomLightOn);

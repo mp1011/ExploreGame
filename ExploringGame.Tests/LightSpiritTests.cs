@@ -1,6 +1,6 @@
 using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;

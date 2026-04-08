@@ -1,11 +1,3 @@
-﻿MAIN GOALS:
-- create Outdoor WorldSegment (placeholder)
-	- skybox
-	
-- semi-transparent windows
-- sliding door
-
-CURRENT:
-- create FrontDeck and placeholder, get into proper position
-- add door junction from LivingRoom
-- implement skybox
+﻿- create fence shape
+	- load texture
+	- apply to frontyard

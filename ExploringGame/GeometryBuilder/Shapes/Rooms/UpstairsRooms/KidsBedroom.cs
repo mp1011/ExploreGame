@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
@@ -27,8 +28,8 @@ public class KidsBedroom : Room
             adjustPlacement: false);
 
         // Place windows on south and east walls
-        var windowSouth = new Furniture.Window(this, Side.South, Measure.Feet(3), Measure.Feet(4));
-        var windowEast = new Furniture.Window(this, Side.East, Measure.Feet(3), Measure.Feet(4));
+        var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4));
+        var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4));
 
         // Add a high hat light to the kids bedroom
         var kidsLight = new HighHatLight(this, 0f, 0f);

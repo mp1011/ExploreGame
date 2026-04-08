@@ -1,7 +1,7 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
-using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;

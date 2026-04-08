@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Services;
@@ -30,7 +31,7 @@ public class Den : Room
         AddConnectingRoom(new RoomConnection(this, EastPart, Side.East, HAlign.Right));
 
         // Place window on south wall, align left, 2 feet from wall
-        var windowSouth = new Furniture.Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2));
+        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2));
 
         var closet = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
 
