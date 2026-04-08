@@ -51,6 +51,7 @@
 
   <ItemGroup>
     <Folder Include="TestWorldSegments\" />
+    <Folder Include="TextureCoordinateTests\" />
   </ItemGroup>
 
 </Project>

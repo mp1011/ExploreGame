@@ -10,7 +10,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Structures;
 public class Fence : Shape, ICollidable
 {
     public readonly float Thickness = Measure.Inches(8);
+    public readonly float PostThickness = Measure.Inches(12);
     public readonly float FenceHeight = Measure.Feet(10);
+    public readonly float PostHeight = Measure.Feet(12);
+    public readonly float PostSpacing = Measure.Feet(12);
+
 
     /// <summary>
     /// Tolerance (in world units) used when snapping post intervals and detecting duplicate posts.
@@ -57,28 +61,26 @@ public class Fence : Shape, ICollidable
             if (!PostExistsAt(parent, postCenter))
             {
                 var post = new FencePost(parent);
-                post.Width    = Thickness;
-                post.Depth    = Thickness;
-                post.Height   = FenceHeight;
+                post.Width    = PostThickness;
+                post.Depth    = PostThickness;
+                post.Height   = PostHeight;
                 post.Position = postCenter;
             }
         }
     }
 
-    private static IEnumerable<float> ComputePostPositions(float start, float end)
+    private IEnumerable<float> ComputePostPositions(float start, float end)
     {
-        float postSpacing = Measure.Feet(6);
-
         yield return start;
 
-        float pos = start + postSpacing;
+        float pos = start + PostSpacing;
         while (pos < end)
         {
             // Only add this intermediate post if the remaining section is at least 6 ft,
             // so the last section is never shorter than 6 ft (one longer section rule).
-            if (end - pos >= postSpacing - PostPositionTolerance)
+            if (end - pos >= PostSpacing - PostPositionTolerance)
                 yield return pos;
-            pos += postSpacing;
+            pos += PostSpacing;
         }
 
         yield return end;

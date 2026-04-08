@@ -1,6 +1,7 @@
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Structures;
 
@@ -12,7 +13,7 @@ public class FencePost : Shape, ICollidable
 
     public CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
-    public override Theme Theme => new FenceTheme();
+    public override Theme Theme => new Theme(TextureSheetKey.Outdoors, TextureKey.Plain, Color.White);
 
     public FencePost(Room parent)
     {
