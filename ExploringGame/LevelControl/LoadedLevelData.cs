@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Pathfinding;
@@ -102,6 +103,13 @@ public class LoadedLevelData
         var newLevelData = new LevelData(worldSegment, shapeBuffers, activeObjects);
         _setupColliderBodies.Execute(newLevelData.WorldSegment);
         newLevelData.Initialize();
+
+        // Create grass renderer if this segment contains a FrontYard
+        var frontYard = worldSegment.TraverseAllChildren().OfType<FrontYard>().FirstOrDefault();
+        if (frontYard != null)
+        {
+            newLevelData.GrassRenderer = new GrassRenderer(_game.GraphicsDevice, _game.Content, frontYard);
+        }
 
         LoadedSegments.Add(newLevelData);
     }

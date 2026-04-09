@@ -21,6 +21,9 @@ public class LevelData
     public Dictionary<Type, ShapeBuffer> StampShapeBuffers { get; } = new();
     public List<ShapeBuffer> StampedShapeBuffers { get; } = new();
 
+    /// <summary>Optional grass renderer for segments that include a FrontYard.</summary>
+    public GrassRenderer GrassRenderer { get; set; }
+
     public bool Initialized { get; private set; }
     public WorldSegment WorldSegment { get; }
 

@@ -191,6 +191,9 @@ public class Game1 : Game
         {
             _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
             _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
+
+            // Render grass blades if present
+            levelData.GrassRenderer?.Draw(graphicsDevice, _cameraService.View, _cameraService.Projection);
         }
 
         // Render skybox LAST with custom shader that forces depth to 1.0
