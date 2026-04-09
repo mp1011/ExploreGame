@@ -108,7 +108,8 @@ public class LoadedLevelData
         var frontYard = worldSegment.TraverseAllChildren().OfType<FrontYard>().FirstOrDefault();
         if (frontYard != null)
         {
-            newLevelData.GrassRenderer = new GrassRenderer(_game.GraphicsDevice, _game.Content, frontYard);
+            var outdoorsTexture = _loadedTextureSheets.Get(TextureSheetKey.Outdoors).Texture;
+            newLevelData.GrassRenderer = new GrassRenderer(_game.GraphicsDevice, _game.Content, frontYard, outdoorsTexture);
         }
 
         LoadedSegments.Add(newLevelData);
