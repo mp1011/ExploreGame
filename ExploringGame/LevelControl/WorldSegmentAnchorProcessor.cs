@@ -64,17 +64,20 @@ public class WorldSegmentAnchorProcessor
         }
     }
 
-    private void ReplacePlaceholderWithRealShape(PlaceholderShape placeholder, Room realShape, 
+    private void ReplacePlaceholderWithRealShape(PlaceholderShape placeholder, Shape realShape, 
         IEnumerable<LevelData> loadedSegments, RoomGraph roomGraph, WaypointGraph waypointGraph, 
         RoomLightingCalculator lightingCalculator)
     {        
         if (placeholder.Parent != null)
             placeholder.Parent.RemoveChild(placeholder);
 
-        roomGraph.ReplaceRoom(placeholder, realShape);
-        ReplaceRoomInConnections(placeholder, realShape, loadedSegments);
-        ReplaceRoomInWaypointGraph(placeholder, realShape, waypointGraph);
-        ReplaceRoomInLightingCalculator(placeholder, realShape, lightingCalculator);
+        if (realShape is Room roomShape)
+        {
+            roomGraph.ReplaceRoom(placeholder, roomShape);
+            ReplaceRoomInConnections(placeholder, roomShape, loadedSegments);
+            ReplaceRoomInWaypointGraph(placeholder, roomShape, waypointGraph);
+            ReplaceRoomInLightingCalculator(placeholder, roomShape, lightingCalculator);
+        }
     }
 
     private void ReplaceRoomInConnections(Room oldRoom, Room newRoom, IEnumerable<LevelData> loadedSegments)

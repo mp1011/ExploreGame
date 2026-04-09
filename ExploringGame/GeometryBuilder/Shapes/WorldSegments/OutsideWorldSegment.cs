@@ -17,6 +17,7 @@ public class OutsideWorldSegment : WorldSegment
     {
         new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
         new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
+        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
     };
 
     public OutsideWorldSegment() : base()

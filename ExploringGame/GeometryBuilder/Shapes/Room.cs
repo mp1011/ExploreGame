@@ -35,8 +35,6 @@ public class Room : Shape, ILightingGroup
 
     public virtual bool HasPathfindingWaypoint => true;
 
-    public string Tag { get; set; }
-
     public Room(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null,
         Theme theme = null)
     {

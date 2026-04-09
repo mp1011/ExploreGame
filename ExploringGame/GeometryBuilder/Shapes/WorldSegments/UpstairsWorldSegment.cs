@@ -23,6 +23,7 @@ public class UpstairsWorldSegment : WorldSegment
     {
         new WorldSegmentTransition(typeof(BasementWorldSegment)),
         new WorldSegmentTransition(typeof(OutsideWorldSegment)),
+        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
     };
 
     public UpstairsWorldSegment()

@@ -41,10 +41,12 @@ public class FrontYard : Room
         deckStairs.SetSide(Side.North, Deck.WestPart.GetSide(Side.South));
         deckStairs.SetSide(Side.East, Deck.WestPart.GetSide(Side.East));
 
-        var northPart = Copy(width: Width + Deck.Width + Measure.Feet(10), depth: Measure.Feet(6));   
+        var northPart = Copy(width: Width + Deck.Width + Measure.Feet(10), depth: Measure.Feet(6));
+        northPart.Tag = "FrontYardNorth";
         AddConnectingRoom(northPart, Side.North, HAlign.Left, 0f);
 
         var sidewalk = AddChild(new Box(Theme, TextureKey.Concrete));
+        sidewalk.Tag = "Sidewalk";
         sidewalk.Height = Measure.Inches(2);
         sidewalk.Width = Deck.Width;
         sidewalk.Depth = Measure.Feet(6);
