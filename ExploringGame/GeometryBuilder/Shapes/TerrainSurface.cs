@@ -14,11 +14,28 @@ public class TerrainSurface : Shape
     // Approximate grid cell size (~1 foot between vertices).
     private const float CellSize = 0.48f;
 
-    // Maximum height deviation from the baseline (~1.5 inches up or down).
+    // Maximum height deviation (~1.5 inches up or down from the baseline).
     private static readonly float MaxHeight = Measure.Inches(1.5f);
 
-    // Tiny baseline lift above the parent floor so the terrain never clips below it.
-    private static readonly float BaselineOffset = MaxHeight;
+    // Raises the terrain mesh's mean Y by MaxHeight so that even the lowest
+    // noise valleys sit at or above the parent floor, preventing geometry clipping.
+    private static readonly float AntiClipLift = MaxHeight;
+
+    // --- Noise layer parameters (frequency, phase, and relative amplitude) ---
+    // Layer 1: primary large-scale undulation (~16-foot wavelength)
+    private const float Layer1FreqX = 0.38f, Layer1PhaseX = 0.70f;
+    private const float Layer1FreqZ = 0.31f, Layer1PhaseZ = 1.10f;
+    private const float Layer1Amplitude = 0.50f;
+
+    // Layer 2: secondary medium-scale variation (~7-foot wavelength)
+    private const float Layer2FreqX = 0.87f, Layer2PhaseX = 2.30f;
+    private const float Layer2FreqZ = 0.73f, Layer2PhaseZ = 0.55f;
+    private const float Layer2Amplitude = 0.30f;
+
+    // Layer 3: fine detail (~4-foot wavelength)
+    private const float Layer3FreqX = 1.53f, Layer3PhaseX = 1.75f;
+    private const float Layer3FreqZ = 1.19f, Layer3PhaseZ = 3.00f;
+    private const float Layer3Amplitude = 0.20f;
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
@@ -36,7 +53,7 @@ public class TerrainSurface : Shape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        float baseY  = GetSide(Side.Bottom) + BaselineOffset;
+        float baseY  = GetSide(Side.Bottom) + AntiClipLift;
         float west   = GetSide(Side.West);
         float east   = GetSide(Side.East);
         float north  = GetSide(Side.North);
@@ -85,15 +102,14 @@ public class TerrainSurface : Shape
     }
 
     /// <summary>
-    /// Returns a smooth height offset for world position (x, z) by summing several
-    /// low-frequency sine waves.  The result always stays within [-MaxHeight, +MaxHeight].
+    /// Returns a smooth height offset for world position (x, z) by summing three
+    /// low-frequency sine-wave layers.  The result is within [-MaxHeight, +MaxHeight].
     /// </summary>
     private static float SampleNoise(float x, float z)
     {
-        // Three layers at different scales and phases for a natural look.
-        float h  = MathF.Sin(x * 0.38f + 0.70f) * MathF.Cos(z * 0.31f + 1.10f) * 0.50f;
-              h += MathF.Sin(x * 0.87f + 2.30f) * MathF.Sin(z * 0.73f + 0.55f) * 0.30f;
-              h += MathF.Cos(x * 1.53f + 1.75f) * MathF.Cos(z * 1.19f + 3.00f) * 0.20f;
+        float h  = MathF.Sin(x * Layer1FreqX + Layer1PhaseX) * MathF.Cos(z * Layer1FreqZ + Layer1PhaseZ) * Layer1Amplitude;
+              h += MathF.Sin(x * Layer2FreqX + Layer2PhaseX) * MathF.Sin(z * Layer2FreqZ + Layer2PhaseZ) * Layer2Amplitude;
+              h += MathF.Cos(x * Layer3FreqX + Layer3PhaseX) * MathF.Cos(z * Layer3FreqZ + Layer3PhaseZ) * Layer3Amplitude;
 
         return h * MaxHeight;
     }
