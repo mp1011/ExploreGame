@@ -37,6 +37,11 @@ public class GrassSurface : Shape
         _followTerrain = terrain != null;
     }
 
+    public GrassSurface(Shape parent, float terrainVariation) : this(parent, new TerrainSurface(parent, terrainVariation))
+    {
+    }
+
+
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         // Get the bounds of this grass surface

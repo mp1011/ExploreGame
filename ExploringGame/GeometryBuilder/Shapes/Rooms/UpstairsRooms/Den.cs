@@ -28,6 +28,7 @@ public class Den : Room
             this, Side.East, HAlign.Right, -1.0f, adjustPlacement: false);
         
         EastPart = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
+        EastPart.Tag = "DenEast";
         AddConnectingRoom(new RoomConnection(this, EastPart, Side.East, HAlign.Right));
 
         // Place window on south wall, align left, 2 feet from wall

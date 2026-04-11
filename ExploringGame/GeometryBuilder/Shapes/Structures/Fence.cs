@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Logics.Collision;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -27,6 +28,8 @@ public class Fence : Shape, ICollidable
     public CollisionGroup CollisionGroup => CollisionGroup.Environment;
 
     public CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
+
+    public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
 
     public override Theme Theme => new FenceTheme();
 
