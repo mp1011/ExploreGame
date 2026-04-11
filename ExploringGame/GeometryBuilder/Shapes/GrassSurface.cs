@@ -12,9 +12,12 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 /// </summary>
 public class GrassSurface : Shape
 {
+    private readonly TerrainSurface _terrain;
     private const float BladeHalfWidth = 0.01f;   // ~1 inch lateral spread
     private const float BladeHeight    = 0.25f;   // ~6 inches tall
     private const int   BladesPerUnit  = 25;      // 25x25 = 625 blades per 1.0x1.0 area
+
+    private readonly bool _followTerrain;
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
@@ -22,12 +25,16 @@ public class GrassSurface : Shape
 
     /// <summary>
     /// Creates a grass surface that covers the entire area defined by the shape's size.
+    /// When <paramref name="terrain"/> is provided, each blade root is raised to match
+    /// the terrain height at its world-space (x, z) position.
     /// </summary>
-    public GrassSurface(Shape parent)
+    public GrassSurface(Shape parent, TerrainSurface terrain = null)
     {
+        _terrain = terrain;
         parent.AddChild(this);
         Position = parent.Position;
         Size = parent.Size;
+        _followTerrain = terrain != null;
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -63,7 +70,11 @@ public class GrassSurface : Shape
                 float x = west  + (col + 0.5f) * cellW + jitterX;
                 float z = north + (row + 0.5f) * cellD + jitterZ;
 
-                var root = new Vector3(x, floorY, z);
+                float rootY = _followTerrain
+                    ? floorY + TerrainSurface.AntiClipLift + _terrain.SampleNoise(x, z)
+                    : floorY;
+
+                var root = new Vector3(x, rootY, z);
 
                 // Generate random rotation for this blade (0 to 2*PI radians)
                 // We'll encode this in the position X component offset
@@ -76,10 +87,10 @@ public class GrassSurface : Shape
 
                 // Define the 4 corners of the quad in local blade space
                 // We'll encode the rotation in a special way that GrassVertexBufferBuilder can extract
-                var bottomLeft  = new Vector3(root.X - BladeHalfWidth, floorY, root.Z);
-                var bottomRight = new Vector3(root.X + BladeHalfWidth, floorY, root.Z);
-                var topLeft     = new Vector3(root.X - BladeHalfWidth, floorY + topLeftHeight, root.Z);
-                var topRight    = new Vector3(root.X + BladeHalfWidth, floorY + topRightHeight, root.Z);
+                var bottomLeft  = new Vector3(root.X - BladeHalfWidth, rootY, root.Z);
+                var bottomRight = new Vector3(root.X + BladeHalfWidth, rootY, root.Z);
+                var topLeft     = new Vector3(root.X - BladeHalfWidth, rootY + topLeftHeight, root.Z);
+                var topRight    = new Vector3(root.X + BladeHalfWidth, rootY + topRightHeight, root.Z);
 
                 // First triangle (bottom-left, bottom-right, top-left)
                 triangles.Add(new Triangle(
