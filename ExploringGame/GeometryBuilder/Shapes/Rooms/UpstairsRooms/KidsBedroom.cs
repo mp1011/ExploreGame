@@ -10,12 +10,15 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class KidsBedroom : Room
 {
-    private UpstairsHall _upstairsHall;
+    private readonly UpstairsHall _upstairsHall;
+    private readonly Room _backyardMid, _backyardSouth;
 
-    public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom)
+    public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom, Room backyardMid, Room backyardSouth)
         : base(worldSegment, width: Measure.Feet(12), depth: Measure.Feet(12), height: Measure.Feet(7))
     {
         _upstairsHall = upstairsHall;
+        _backyardMid = backyardMid;
+        _backyardSouth = backyardSouth;
         this.Place().OnSideInner(Side.SouthWest)
             .OnSideOuter(Side.East, bedroom, 0.25f);
          
@@ -28,8 +31,8 @@ public class KidsBedroom : Room
             adjustPlacement: false);
 
         // Place windows on south and east walls
-        var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4));
-        var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4));
+        var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: _backyardSouth);
+        var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _backyardMid);
 
         // Add a high hat light to the kids bedroom
         var kidsLight = new HighHatLight(this, 0f, 0f);

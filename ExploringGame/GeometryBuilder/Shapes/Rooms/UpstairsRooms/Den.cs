@@ -26,10 +26,13 @@ public class Den : Room
     {
         _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, DoorDirection.Push, StateKey.DenDoorsOpen), 
             this, Side.East, HAlign.Right, -1.0f, adjustPlacement: false);
-        
+
+        SetSideUnanchored(Side.South, GetSide(Side.South) - Measure.Feet(6));
+
         EastPart = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
         EastPart.Tag = "DenEast";
         AddConnectingRoom(new RoomConnection(this, EastPart, Side.East, HAlign.Right));
+
 
         // Place window on south wall, align left, 2 feet from wall
         var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2));

@@ -63,6 +63,7 @@ public class BackYard : Room
         eastWall.SetSideUnanchored(Side.South, _den.GetSide(Side.South));
 
         var southSection = Copy();
+        southSection.Tag = "BackyardSouth";
         southSection.Place().At(this);
         southSection.SetSideUnanchored(Side.North, _bedroom.GetSide(Side.South) + 0.5f);
         southSection.SetSideUnanchored(Side.West, _bedroom.GetSide(Side.West));
@@ -74,6 +75,7 @@ public class BackYard : Room
         southSection.AddChild(new Fence(southSection, Side.West));
 
         var midSection = Copy();
+        midSection.Tag = "BackyardMid";
         midSection.Place().At(this);
         midSection.SetSideUnanchored(Side.West, _kitchen.GetSide(Side.East) + 0.5f);
         midSection.SetSideUnanchored(Side.East, eastSection.GetSide(Side.West));
@@ -81,6 +83,18 @@ public class BackYard : Room
         midSection.SetSideUnanchored(Side.North, _kitchen.GetSide(Side.South));
         new GrassSurface(midSection, TerrainSurface.DefaultLawn);
 
+        var deckArea = Copy();
+        deckArea.SetSideUnanchored(Side.North, _den.GetSide(Side.South));
+        deckArea.SetSideUnanchored(Side.West, midSection.GetSide(Side.West));
+        deckArea.SetSideUnanchored(Side.East, eastSection.GetSide(Side.West));
+        deckArea.SetSideUnanchored(Side.South, southSection.GetSide(Side.North));
+
+        var southEastWall = new OuterWall(midSection, Side.West);
+        southEastWall.SetSideUnanchored(Side.North, deckArea.GetSide(Side.North));
+        var southWall = new OuterWall(southSection, Side.North);
+        southWall.SetSideUnanchored(Side.East, _kitchen.GetSide(Side.East));
+
+        var deckNorthWall = new OuterWall(deckArea, Side.North);
 
     }
 }

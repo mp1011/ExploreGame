@@ -28,7 +28,7 @@ public class BackyardWorldSegment : WorldSegment
             size: new Vector3(17.279999f, 7.68f, 2.8799999f));
 
         var den = new PlaceholderShape<Room>(this, "DenEast",
-            position: new Vector3(13.2f, 6.48f, -2.8799992f),
+            position: new Vector3(13.2f, 6.48f, -5.7599998f),
             size: new Vector3(2.3999999f, 3.36f, 2.3999999f));
 
         var kidsBedroom = new PlaceholderShape<KidsBedroom>(this,

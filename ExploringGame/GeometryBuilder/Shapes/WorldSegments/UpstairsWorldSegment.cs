@@ -39,11 +39,19 @@ public class UpstairsWorldSegment : WorldSegment
             position: new Vector3(-13.94f, 7.6800003f, -9.839999f),
             size: new Vector3(2.8799999f, 5.7599998f, 10.559999f));
 
+        var backyardMid = new PlaceholderShape<Room>(this, "BackyardMid",
+            position: new Vector3(9.395f, 7.6800003f, 7.06f),
+            size: new Vector3(12.009999f, 9.599999f, 12.32f));
+
+        var backyardSouth = new PlaceholderShape<Room>(this, "BackyardSouth",
+          position: new Vector3(1.6999998f, 7.6800003f, 22.57f),
+          size: new Vector3(27.4f, 9.599999f, 18.699997f));
+
         var kitchen = new Kitchen(this, upstairsHall);
         var livingRoom = new LivingRoom(this, upstairsHall, kitchen, deck);
         var bedroom = new Bedroom(this, upstairsHall);
         var bathroom = new Bathroom(this, upstairsHall);
-        var kidsBedroom = new KidsBedroom(this, upstairsHall, bedroom);
+        var kidsBedroom = new KidsBedroom(this, upstairsHall, bedroom, backyardMid, backyardSouth);
         var spareRoom = new SpareRoom(this, upstairsHall, bedroom);
         var den = new Den(this, livingRoom);
         var halfBath = new HalfBathroom(this, den);

@@ -24,7 +24,7 @@ public class Bathroom : Room
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.East, HAlign.Right, DoorDirection.Pull, StateKey.BathroomDoorOpen), this, Side.East);
-
+        Z += 1.0f;
         var light = new HighHatLight(this, 0f, 0f, initialState: false);
         var sw = new LightSwitch(this, Side.North, StateKey.BathroomLightOn);
         sw.ControlledObjects.Add(light);

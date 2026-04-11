@@ -34,5 +34,14 @@ public class Kitchen : Room
 
         lightSwitch.Position = Position;
         lightSwitch.Place().OnSideInner(Side.West);
+
+        var southPart = Copy();
+        southPart.Depth = Measure.Feet(4);
+        southPart.Width = Width - Measure.Feet(4);
+        southPart.Place().OnSideOuter(Side.South, this)
+            .OnSideInner(Side.East, this);
+
+        AddConnectingRoom(southPart, Side.South);
+
     }
 }
