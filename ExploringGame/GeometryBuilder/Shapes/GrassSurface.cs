@@ -12,6 +12,7 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 /// </summary>
 public class GrassSurface : Shape
 {
+    private readonly TerrainSurface _terrain;
     private const float BladeHalfWidth = 0.01f;   // ~1 inch lateral spread
     private const float BladeHeight    = 0.25f;   // ~6 inches tall
     private const int   BladesPerUnit  = 25;      // 25x25 = 625 blades per 1.0x1.0 area
@@ -29,6 +30,7 @@ public class GrassSurface : Shape
     /// </summary>
     public GrassSurface(Shape parent, TerrainSurface terrain = null)
     {
+        _terrain = terrain;
         parent.AddChild(this);
         Position = parent.Position;
         Size = parent.Size;
@@ -69,7 +71,7 @@ public class GrassSurface : Shape
                 float z = north + (row + 0.5f) * cellD + jitterZ;
 
                 float rootY = _followTerrain
-                    ? floorY + TerrainSurface.AntiClipLift + TerrainSurface.SampleNoise(x, z)
+                    ? floorY + TerrainSurface.AntiClipLift + _terrain.SampleNoise(x, z)
                     : floorY;
 
                 var root = new Vector3(x, rootY, z);

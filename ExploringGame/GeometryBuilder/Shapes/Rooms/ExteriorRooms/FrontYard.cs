@@ -67,8 +67,8 @@ public class FrontYard : Room
         var northFence = new Fence(northPart, Side.North);
 
         // Add grass surfaces following terrain variation
-        var terrainMain  = new TerrainSurface(this);
-        var terrainNorth = new TerrainSurface(northPart);
+        var terrainMain  = new TerrainSurface(this, TerrainSurface.DefaultLawn);
+        var terrainNorth = new TerrainSurface(northPart, TerrainSurface.DefaultLawn);
         new GrassSurface(this, terrainMain);
         new GrassSurface(northPart, terrainNorth);
     }

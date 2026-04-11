@@ -2,6 +2,7 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
@@ -11,15 +12,16 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 /// </summary>
 public class TerrainSurface : Shape
 {
+    public static readonly float DefaultLawn = Measure.Inches(10.5f);
+    public float MaxHeight { get; }
+
     // Approximate grid cell size (~1 foot between vertices).
     private const float CellSize = 0.48f;
 
-    // Maximum height deviation (~1.5 inches up or down from the baseline).
-    private static readonly float MaxHeight = Measure.Inches(1.5f);
-
-    // Raises the terrain mesh's mean Y by MaxHeight so that even the lowest
+    // Raises the terrain mesh's mean Y by a fixed amount so that even the lowest
     // noise valleys sit at or above the parent floor, preventing geometry clipping.
-    internal static readonly float AntiClipLift = MaxHeight;
+    // This should remain constant regardless of MaxHeight changes.
+    internal static readonly float AntiClipLift = Measure.Inches(1.5f);
 
     // --- Noise layer parameters (frequency, phase, and relative amplitude) ---
     // Layer 1: primary large-scale undulation (~16-foot wavelength)
@@ -37,15 +39,16 @@ public class TerrainSurface : Shape
     private const float Layer3FreqZ = 1.19f, Layer3PhaseZ = 3.00f;
     private const float Layer3Amplitude = 0.20f;
 
-    public override ViewFrom ViewFrom => ViewFrom.Outside;
+    public override ViewFrom ViewFrom => ViewFrom.Inside;
 
-    public override Theme Theme => new YardTheme();
+    public override Theme Theme => new TerrainTheme();
 
     /// <summary>
     /// Creates a terrain surface that covers the floor area of the given parent shape.
     /// </summary>
-    public TerrainSurface(Shape parent)
+    public TerrainSurface(Shape parent, float maxHeight)
     {
+        MaxHeight = maxHeight;
         parent.AddChild(this);
         Position = parent.Position;
         Size = parent.Size;
@@ -98,6 +101,9 @@ public class TerrainSurface : Shape
             }
         }
 
+        var minY = triangles.Min(p => p.A.Y);
+        var maxY = triangles.Max(p => p.A.Y);
+
         return triangles.ToArray();
     }
 
@@ -105,7 +111,7 @@ public class TerrainSurface : Shape
     /// Returns a smooth height offset for world position (x, z) by summing three
     /// low-frequency sine-wave layers.  The result is within [-MaxHeight, +MaxHeight].
     /// </summary>
-    internal static float SampleNoise(float x, float z)
+    public float SampleNoise(float x, float z)
     {
         float h  = MathF.Sin(x * Layer1FreqX + Layer1PhaseX) * MathF.Cos(z * Layer1FreqZ + Layer1PhaseZ) * Layer1Amplitude;
               h += MathF.Sin(x * Layer2FreqX + Layer2PhaseX) * MathF.Sin(z * Layer2FreqZ + Layer2PhaseZ) * Layer2Amplitude;
