@@ -69,5 +69,9 @@ public class FrontYard : Room
         // Add grass surfaces
         new GrassSurface(this);
         new GrassSurface(northPart);
+
+        // Add terrain variation for a realistic yard feel
+        new TerrainSurface(this);
+        new TerrainSurface(northPart);
     }
 }

@@ -38,5 +38,6 @@ public class BackYard : Room
     {
         var fence = AddChild(new Fence(this, Side.North));
         new GrassSurface(this);
+        new TerrainSurface(this);
     }
 }
