@@ -2,12 +2,16 @@
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
 {
     public class OuterWall : Shape, ICollidable
     {
         public static float WallThickness = 0.1f;
+
+        private readonly Side _wallSide;
+        private readonly Room _parentRoom;
 
         public override ViewFrom ViewFrom => ViewFrom.Outside;
 
@@ -19,19 +23,34 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
 
         public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
 
-        public OuterWall(Shape ground, Side wallSide)
+        public OuterWall(Room room, Side wallSide)
         {
-            ground.AddChild(this);
-            Height = ground.Height;
-            Width = wallSide.GetAxis() == Axis.X ? WallThickness : ground.Width;
-            Depth = wallSide.GetAxis() == Axis.Z ? WallThickness : ground.Depth;
+            _parentRoom = room;
+            _wallSide = wallSide;
 
-            this.Place().At(ground).OnFloor().OnSideOuter(wallSide);
+            room.AddChild(this);
+            Height = room.Height;
+            Width = wallSide.GetAxis() == Axis.X ? WallThickness : room.Width;
+            Depth = wallSide.GetAxis() == Axis.Z ? WallThickness : room.Depth;
+
+            this.Place().At(room).OnFloor().OnSideOuter(wallSide);
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            return BuildCuboid();
+            var shape = BuildCuboid();
+
+            shape = new SideRemover().Execute(shape, _wallSide);
+
+            // Apply cutouts for windows/doors from room connections
+            var connections = _parentRoom.RoomConnections.Where(c => c.Side == _wallSide);
+            foreach (var connection in connections)
+            {
+                shape = new RemoveSurfaceRegion().Execute(shape, connection.Side,
+                    connection.CalcCutoutPlacement(shape), ViewFrom);
+            }
+
+            return shape;
         }
     }
 }

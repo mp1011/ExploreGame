@@ -17,7 +17,7 @@ public class BackYard : Room
 
     public override Theme Theme { get; } = new YardTheme();
 
-    public BackYard(WorldSegment worldSegment, Shape frontSidewalk, Shape northYard, Shape den, Shape bedroom, Shape kitchen) : base(worldSegment)
+    public   BackYard(WorldSegment worldSegment, Shape frontSidewalk, Shape northYard, Shape den, Shape bedroom, Shape kitchen) : base(worldSegment)
     {
         _den = den;
         _bedroom = bedroom;
