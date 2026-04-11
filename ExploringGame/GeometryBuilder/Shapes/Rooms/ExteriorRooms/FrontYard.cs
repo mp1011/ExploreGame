@@ -65,5 +65,9 @@ public class FrontYard : Room
         houseNorthSide.AdjustShape().SetAxis(Axis.X, Deck.GetSide(Side.East), northPart.GetSide(Side.East));
 
         var northFence = new Fence(northPart, Side.North);
+
+        // Add grass surfaces
+        new GrassSurface(this);
+        new GrassSurface(northPart);
     }
 }

@@ -30,6 +30,7 @@ internal class ShapeBufferCreator
     }
 
     private readonly VertexBufferBuilder _vertexBufferBuilder = new VertexBufferBuilder();
+    private readonly GrassVertexBufferBuilder _grassVertexBufferBuilder = new GrassVertexBufferBuilder();
 
     public ShapeBuffer[] Execute()
     {
@@ -49,10 +50,11 @@ internal class ShapeBufferCreator
             .Where(p => p.ViewFrom != ViewFrom.None)
             .ToArray();
 
-        // Separate ShapeStamps and StampedShapes from regular static shapes
+        // Separate ShapeStamps, StampedShapes, and GrassSurface from regular static shapes
         var shapeStamps = allShapes.OfType<ShapeStamp>().ToArray();
         var stampedShapes = allShapes.OfType<StampedShape>().ToArray();
-        var staticShapes = allShapes.Except(shapeStamps).Except(stampedShapes).ToArray();
+        var grassSurfaces = allShapes.OfType<GrassSurface>().ToArray();
+        var staticShapes = allShapes.Except(shapeStamps).Except(stampedShapes).Except(grassSurfaces).ToArray();
 
         // Get all rooms in the world segment
         var allRooms = worldSegment.TraverseAllChildren().OfType<Room>().ToArray();
@@ -137,8 +139,14 @@ internal class ShapeBufferCreator
             shapeStampBuffers[shapeStamp.GetType()] = buffer;
         }
 
+        // Create buffers for grass surfaces using GrassVertexBufferBuilder
+        if (grassSurfaces.Any())
+        {
+            yield return CreateGrassShapeBuffer(worldSegment, grassSurfaces);
+        }
+
         // Create buffers for active objects
-        foreach(var activeObject in activeObjects.Where(p => p.Self.ViewFrom != ViewFrom.None))
+        foreach (var activeObject in activeObjects.Where(p => p.Self.ViewFrom != ViewFrom.None))
         {
             if (activeObject.Self is StampedShape ss)
                 yield return CreateStampShapeBuffer(ss, shapeStampBuffers);
@@ -175,6 +183,19 @@ internal class ShapeBufferCreator
 
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup);
+    }
+
+    private ShapeBuffer CreateGrassShapeBuffer(WorldSegment worldSegment, GrassSurface[] grassSurfaces)
+    {
+        var grassTriangles = new Dictionary<Shape, Triangle[]>();
+        foreach (var grassSurface in grassSurfaces)
+            grassTriangles[grassSurface] = _shapeTriangles[grassSurface];
+
+        var grassTexture = _textureSheets.Get(TextureSheetKey.Outdoors);
+        var buffers = _grassVertexBufferBuilder.Build(grassTriangles, grassTexture, _graphicsDevice);
+
+        // Use worldSegment as the shape, Outdoors texture, and CullNone rasterizer state
+        return new ShapeBuffer(worldSegment, buffers.Item1, buffers.Item2, buffers.Item3, TextureSheetKey.Outdoors, RasterizerState.CullNone, null, Type: ShapeBufferType.Grass);
     }
 
     public ShapeBuffer CreateSkyboxBuffer(SkyboxShape skybox)
