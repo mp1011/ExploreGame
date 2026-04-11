@@ -5,6 +5,12 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 namespace ExploringGame.Rendering;
 
+public enum ShapeBufferType
+{
+    Normal,
+    Grass
+}
+
 public record ShapeBuffer(
     Shape Shape,
     VertexBuffer VertexBuffer,
@@ -13,5 +19,6 @@ public record ShapeBuffer(
     TextureSheetKey Texture,
     RasterizerState RasterizerState = null,
     ILightingGroup LightingGroup = null,
-    DepthStencilState DepthStencilState = null)
+    DepthStencilState DepthStencilState = null,
+    ShapeBufferType Type = ShapeBufferType.Normal)
 {}

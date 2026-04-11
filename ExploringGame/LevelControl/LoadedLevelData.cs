@@ -104,14 +104,6 @@ public class LoadedLevelData
         _setupColliderBodies.Execute(newLevelData.WorldSegment);
         newLevelData.Initialize();
 
-        // Create grass renderer if this segment contains a FrontYard
-        var frontYard = worldSegment.TraverseAllChildren().OfType<FrontYard>().FirstOrDefault();
-        if (frontYard != null)
-        {
-            var outdoorsTexture = _loadedTextureSheets.Get(TextureSheetKey.Outdoors).Texture;
-            newLevelData.GrassRenderer = new GrassRenderer(_game.GraphicsDevice, _game.Content, frontYard, outdoorsTexture);
-        }
-
         LoadedSegments.Add(newLevelData);
     }
 

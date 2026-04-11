@@ -24,20 +24,25 @@ public struct GrassVertex : IVertexType
     /// <summary>Random rotation angle (in radians) around the Y-axis for this blade.</summary>
     public float Rotation;
 
+    /// <summary>Vertex color to modulate the texture.</summary>
+    public Color Color;
+
     public static readonly VertexDeclaration VertexDeclaration = new(
-        new VertexElement(0,  VertexElementFormat.Vector3, VertexElementUsage.Position,         0),
-        new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-        new VertexElement(20, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
-        new VertexElement(28, VertexElementFormat.Single,  VertexElementUsage.TextureCoordinate, 2)
+        new VertexElement(0,  VertexElementFormat.Vector3, VertexElementUsage.Position,         0),  // RootPosition
+        new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),  // Offset
+        new VertexElement(20, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),  // TexCoord
+        new VertexElement(28, VertexElementFormat.Single,  VertexElementUsage.TextureCoordinate, 2),  // Rotation
+        new VertexElement(32, VertexElementFormat.Color,   VertexElementUsage.Color,            0)   // Color
     );
 
     VertexDeclaration IVertexType.VertexDeclaration => VertexDeclaration;
 
-    public GrassVertex(Vector3 rootPosition, Vector2 offset, Vector2 texCoord, float rotation)
+    public GrassVertex(Vector3 rootPosition, Vector2 offset, Vector2 texCoord, float rotation, Color color)
     {
         RootPosition = rootPosition;
         Offset       = offset;
         TexCoord     = texCoord;
         Rotation     = rotation;
+        Color        = color;
     }
 }

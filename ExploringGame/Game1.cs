@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq;
 
 namespace ExploringGame;
 
@@ -32,6 +33,7 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
     private IRenderEffect _renderEffect;
     private IRenderEffect _skyboxEffect;
+    private GrassRenderEffect _grassRenderEffect;
 
 
     private SpriteFont _debugFont;
@@ -131,6 +133,8 @@ public class Game1 : Game
         skyboxEffect.SetTextures(loadedTextures);
 
         _renderEffect = dualEffect;
+        _grassRenderEffect = new GrassRenderEffect(_cameraService, this);
+        _grassRenderEffect.SetTextures(loadedTextures);
         _skyboxEffect = skyboxEffect;
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
@@ -193,7 +197,8 @@ public class Game1 : Game
             _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
 
             // Render grass blades if present
-            levelData.GrassRenderer?.Draw(graphicsDevice, _cameraService.View, _cameraService.Projection);
+            foreach(var grassBuffer in levelData.GrassShapeBuffers)
+                _grassRenderEffect.Draw(graphicsDevice, grassBuffer, _cameraService.View, _cameraService.Projection);
         }
 
         // Render skybox LAST with custom shader that forces depth to 1.0

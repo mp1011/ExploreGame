@@ -7,6 +7,7 @@ using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +22,7 @@ public class LevelData
     public Dictionary<Type, ShapeBuffer> StampShapeBuffers { get; } = new();
     public List<ShapeBuffer> StampedShapeBuffers { get; } = new();
 
-    /// <summary>Optional grass renderer for segments that include a FrontYard.</summary>
-    public GrassRenderer GrassRenderer { get; set; }
+    public List<ShapeBuffer> GrassShapeBuffers { get; } = new();
 
     public bool Initialized { get; private set; }
     public WorldSegment WorldSegment { get; }
@@ -32,10 +32,12 @@ public class LevelData
         WorldSegment = worldSegment;
         ActiveObjects = activeObjects.ToArray();
         Initialized = false;
-        
-        // Separate stamp buffers from regular buffers
+
+        // Separate stamp buffers and grass buffers from regular buffers
         var stampBuffers = allShapeBuffers.Where(b => b.Shape is ShapeStamp).ToList();
-        ShapeBuffers = allShapeBuffers.Where(b => b.Shape is not ShapeStamp).ToArray();
+        GrassShapeBuffers.AddRange(allShapeBuffers.Where(p => p.Type == ShapeBufferType.Grass));
+
+        ShapeBuffers = allShapeBuffers.Where(b => b.Shape is not ShapeStamp && b.Type == ShapeBufferType.Normal).ToArray();
         
         // Index stamp buffers by their type
         foreach (var stampBuffer in stampBuffers)

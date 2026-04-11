@@ -16,13 +16,14 @@ sampler GrassSampler = sampler_state
     AddressV = Wrap;
 };
 
-// VSInput matches GrassVertex: RootPosition (float3), Offset (float2), TexCoord (float2), Rotation (float)
+// VSInput matches GrassVertex: RootPosition (float3), Offset (float2), TexCoord (float2), Rotation (float), Color (float4)
 struct VSInput
 {
     float3 RootPosition : POSITION0;
     float2 Offset       : TEXCOORD0; // x = lateral offset, y = height
     float2 TexCoord     : TEXCOORD1; // texture coordinates
     float Rotation      : TEXCOORD2; // random rotation angle (radians)
+    float4 Color        : COLOR0;    // vertex color
 };
 
 struct PSInput
@@ -30,6 +31,7 @@ struct PSInput
     float4 Position : SV_POSITION;
     float2 TexCoord : TEXCOORD0;
     float Brightness : TEXCOORD1; // Lighting factor
+    float4 Color : COLOR0;        // Vertex color
 };
 
 PSInput VSMain(VSInput input)
@@ -57,8 +59,8 @@ PSInput VSMain(VSInput input)
     pos += rotatedRight * input.Offset.x;  // Lateral offset along the rotated right vector
     pos.y += input.Offset.y;               // Height offset remains vertical
 
-    // Calculate blade normal based on the rotated orientation
-    float3 bladeNormal = normalize(rotatedRight);
+    // Calculate blade normal: perpendicular to the blade surface (cross product of blade width and height)
+    float3 bladeNormal = normalize(cross(rotatedRight, up));
 
     // Calculate lighting based on normal and height with more contrast
     float normalDot = dot(bladeNormal, normalize(-LightDirection));
@@ -68,11 +70,12 @@ PSInput VSMain(VSInput input)
     float ambientOcclusion = lerp(0.7, 1.0, heightFactor); // Subtle ground shadow
 
     // Combine lighting factors
-    output.Brightness = normalLighting * ambientOcclusion;
+    output.Brightness =  normalLighting * ambientOcclusion;
 
     float4 worldPos = mul(float4(pos, 1.0), World);
     output.Position = mul(mul(worldPos, View), Projection);
     output.TexCoord = input.TexCoord;
+    output.Color = input.Color;
 
     return output;
 }
@@ -84,8 +87,8 @@ float4 PSMain(PSInput input) : SV_Target
     // Ensure brightness has a minimum value to prevent it being too dark
     float finalBrightness = max(input.Brightness, 0.4) + 0.3; // Min 0.4, add ambient 0.3
 
-    // Apply lighting while preserving color
-    float3 litColor = texColor.rgb * finalBrightness;
+    // Apply vertex color and lighting
+    float3 litColor = texColor.rgb * input.Color.rgb * finalBrightness;
 
     return float4(litColor, texColor.a);
 }
