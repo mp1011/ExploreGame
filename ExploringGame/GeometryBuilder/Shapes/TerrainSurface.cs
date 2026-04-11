@@ -19,7 +19,7 @@ public class TerrainSurface : Shape
 
     // Raises the terrain mesh's mean Y by MaxHeight so that even the lowest
     // noise valleys sit at or above the parent floor, preventing geometry clipping.
-    private static readonly float AntiClipLift = MaxHeight;
+    internal static readonly float AntiClipLift = MaxHeight;
 
     // --- Noise layer parameters (frequency, phase, and relative amplitude) ---
     // Layer 1: primary large-scale undulation (~16-foot wavelength)
@@ -105,7 +105,7 @@ public class TerrainSurface : Shape
     /// Returns a smooth height offset for world position (x, z) by summing three
     /// low-frequency sine-wave layers.  The result is within [-MaxHeight, +MaxHeight].
     /// </summary>
-    private static float SampleNoise(float x, float z)
+    internal static float SampleNoise(float x, float z)
     {
         float h  = MathF.Sin(x * Layer1FreqX + Layer1PhaseX) * MathF.Cos(z * Layer1FreqZ + Layer1PhaseZ) * Layer1Amplitude;
               h += MathF.Sin(x * Layer2FreqX + Layer2PhaseX) * MathF.Sin(z * Layer2FreqZ + Layer2PhaseZ) * Layer2Amplitude;

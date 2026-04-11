@@ -37,7 +37,7 @@ public class BackYard : Room
     public override void LoadChildren()
     {
         var fence = AddChild(new Fence(this, Side.North));
-        new GrassSurface(this);
-        new TerrainSurface(this);
+        var terrain = new TerrainSurface(this);
+        new GrassSurface(this, terrain);
     }
 }
