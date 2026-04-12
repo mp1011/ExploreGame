@@ -39,7 +39,9 @@ public class WorldSegmentAnchorProcessor
 
         if (validationErrors.Count > 0)
         {
-            throw new InvalidOperationException(string.Join("\n\n", validationErrors));
+            throw new InvalidOperationException(
+                $"Placeholder validation failed with {validationErrors.Count} error(s):\n\n" +
+                string.Join("\n\n", validationErrors));
         }
     }
   
