@@ -40,8 +40,8 @@ public class UpstairsWorldSegment : WorldSegment
             size: new Vector3(2.8799999f, 5.7599998f, 10.559999f));
 
         var backyardMid = new PlaceholderShape<Room>(this, "BackyardMid",
-            position: new Vector3(9.395f, 7.6800003f, 7.06f),
-            size: new Vector3(12.009999f, 9.599999f, 12.32f));
+            position: new Vector3(9.145f, 7.6800003f, 7.06f),
+            size: new Vector3(12.509999f, 9.599999f, 12.32f));
 
         var backyardSouth = new PlaceholderShape<Room>(this, "BackyardSouth",
           position: new Vector3(1.6999998f, 7.6800003f, 22.57f),

@@ -12,7 +12,7 @@ public static class Debug
 
     public static bool SavePolygonImages = false;
 
-    public static bool PlaceholderStrictMode = false;
+    public static bool PlaceholderStrictMode = true;
 
     public static MovingEntityDebugger MovingEntityDebugger;
 }

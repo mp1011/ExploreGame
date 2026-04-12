@@ -34,8 +34,8 @@ public class BackyardWorldSegment : WorldSegment
             size: new Vector3(2.3999999f, 3.36f, 2.3999999f));
 
         var kidsBedroom = new PlaceholderShape<KidsBedroom>(this,
-            position: new Vector3(-0.7100003f, 6.48f, 9.839999f),
-            size: new Vector3(5.7599998f, 3.36f, 5.7599998f));
+            position: new Vector3(-0.46000028f, 6.48f, 9.839999f),
+            size: new Vector3(6.2599998f, 3.36f, 5.7599998f));
 
         var bedroom = new PlaceholderShape<Bedroom>(this,
             position: new Vector3(-7.92f, 6.48f, 9.839999f),
@@ -46,12 +46,12 @@ public class BackyardWorldSegment : WorldSegment
             size: new Vector3(4f, 3.36f, 5.4599996f));
 
         var kidsBedroomSouthWindow = new PlaceholderShape<Window>(this, "KidBedroomSouthWindow",
-            position: new Vector3(-0.7100003f, 6.7200003f, 12.97f),
+            position: new Vector3(-0.46000028f, 6.7200003f, 12.97f),
             size: new Vector3(1.4399999f, 1.92f, 0.50000113f));
 
         var kidBedroomEastWindow = new PlaceholderShape<Window>(this, "KidBedroomEastWindow",
            position: new Vector3(2.7800002f, 6.7200003f, 9.839999f),
-           size: new Vector3(1.2200015f, 1.92f, 1.4399999f));
+           size: new Vector3(0.22000141f, 1.92f, 1.4399999f));
 
         var backyard = new BackYard(this, frontSidewalk, northYard, den, bedroom, kitchen, kidsBedroomSouthWindow, kidBedroomEastWindow);
 
