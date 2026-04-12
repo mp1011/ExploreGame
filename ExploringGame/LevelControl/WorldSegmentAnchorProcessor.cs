@@ -21,19 +21,31 @@ public class WorldSegmentAnchorProcessor
             .OfType<PlaceholderShape>()
             .ToList();
 
+        var validationErrors = new List<string>();
+
         foreach (var placeholder in placeholders)
         {
             var realShape = placeholder.FindMatchingRealShape(loadedSegments);
 
             if (realShape != null)
             {
-                ValidatePlaceholderMatch(placeholder, realShape);
-                ReplacePlaceholderWithRealShape(placeholder, realShape, loadedSegments, roomGraph, waypointGraph, lightingCalculator);
+                var error = ValidatePlaceholderMatch(placeholder, realShape);
+                if (error != null)
+                    validationErrors.Add(error);
+                else
+                    ReplacePlaceholderWithRealShape(placeholder, realShape, loadedSegments, roomGraph, waypointGraph, lightingCalculator);
             }
+        }
+
+        if (validationErrors.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Placeholder validation failed with {validationErrors.Count} error(s):\n\n" +
+                string.Join("\n\n", validationErrors));
         }
     }
   
-    private void ValidatePlaceholderMatch(Shape placeholder, Shape realShape)
+    private string ValidatePlaceholderMatch(Shape placeholder, Shape realShape)
     {
         const float tolerance = 0.001f;
 
@@ -54,7 +66,7 @@ public class WorldSegmentAnchorProcessor
 
             if (Debug.PlaceholderStrictMode)
             {
-                throw new InvalidOperationException(errorMessage);
+                return errorMessage;
             }
             else
             {
@@ -62,6 +74,8 @@ public class WorldSegmentAnchorProcessor
                 System.Diagnostics.Debug.WriteLine($"WARNING: {errorMessage}");
             }
         }
+
+        return null;
     }
 
     private void ReplacePlaceholderWithRealShape(PlaceholderShape placeholder, Shape realShape, 
