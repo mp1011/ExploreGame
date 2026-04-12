@@ -23,7 +23,7 @@ public class Window : Room
 
     private readonly float RodThickness = Measure.Inches(2.0f);
     private readonly float RodLengthExtra = Measure.Inches(8.0f);
-    private readonly float RodWallOffset = Measure.Inches(8.0f);
+    private readonly float RodWallOffset = Measure.Inches(2.0f);
     private readonly float RodVerticalOffset = Measure.Inches(-2.0f);
     private readonly float RodEndcapRadius = Measure.Inches(3.0f);
 
@@ -81,7 +81,7 @@ public class Window : Room
             .SetAxis(_wallSide.GetPerpendicularAxis(), width + (RodLengthExtra * 2f));
         rod.Place()
             .AtParent()
-            .OnSideInner(wallSide, this, offset: -RodWallOffset * _wallSide.Sign())
+            .OnSideOuter(wallSide.Opposite(), this, offset: -RodWallOffset * _wallSide.Sign())
             .FromSide(Side.Top, RodVerticalOffset);
 
         // rod end-caps

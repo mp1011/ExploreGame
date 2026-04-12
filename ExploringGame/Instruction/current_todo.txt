@@ -1,3 +1,6 @@
-﻿- create fence shape
-	- load texture
-	- apply to frontyard
+﻿- finish walls and windows for backyard
+- finish house front
+- fix basement height and yard height for basement windows
+	- add basement windows
+- add back deck
+- add sliding door
