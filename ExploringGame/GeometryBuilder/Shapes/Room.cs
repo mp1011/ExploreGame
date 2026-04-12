@@ -180,10 +180,12 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
                 throw new System.ArgumentException("Invalid side");
         }
     }
-    
-    public Placement2D CalcCutoutPlacement(Triangle[] triangles)
+
+    public Placement2D CalcCutoutPlacement(Triangle[] triangles) => CalcCutoutPlacement(triangles, Side, Room, Other);
+
+    public static Placement2D CalcCutoutPlacement(Triangle[] triangles, Side side, Shape thisShape, Shape other)
     {
-        var vertices = triangles.Where(p => p.Side == Side).SelectMany(p => p.Vertices).ToArray();
+        var vertices = triangles.Where(p => p.Side == side).SelectMany(p => p.Vertices).ToArray();
         if (!vertices.Any())
             return new Placement2D(0, 0, 0, 0);
 
@@ -197,35 +199,38 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         float left, top, right, bottom;
 
         var thisFloor = wallBottom;
-        var otherFloor = Other.GetSide(Side.Bottom);
+        var otherFloor = other.GetSide(Side.Bottom);
 
         var thisCeiling = wallTop;
-        var otherCeiling = Other.GetSide(Side.Top);
+        var otherCeiling = other.GetSide(Side.Top);
 
         top = thisCeiling - otherCeiling;
         bottom = otherFloor - thisFloor;
         if (bottom < 0)
             bottom = 0;
 
-        switch(Side)
+        if (thisShape.ViewFrom == ViewFrom.Outside)
+            side = side.Opposite();
+
+        switch(side)
         {
             case Side.South:
                 // South faces opposite direction from North, so left/right are swapped
-                left = wallEast - Other.GetSide(Side.East);
-                right = Other.GetSide(Side.West) - wallWest;
+                left = wallEast - other.GetSide(Side.East);
+                right = other.GetSide(Side.West) - wallWest;
                 break;
             case Side.North:
-                left = Other.GetSide(Side.West) - wallWest;
-                right = wallEast - Other.GetSide(Side.East);
+                left = other.GetSide(Side.West) - wallWest;
+                right = wallEast - other.GetSide(Side.East);
                 break;
             case Side.West:
                 // West faces opposite direction from East, so left/right are swapped
-                left = wallSouth - Other.GetSide(Side.South);
-                right = Other.GetSide(Side.North) - wallNorth;
+                left = wallSouth - other.GetSide(Side.South);
+                right = other.GetSide(Side.North) - wallNorth;
                 break;
             case Side.East:
-                left = Other.GetSide(Side.North) - wallNorth;
-                right = wallSouth - Other.GetSide(Side.South);
+                left = other.GetSide(Side.North) - wallNorth;
+                right = wallSouth - other.GetSide(Side.South);
                 break;
             default:
                 throw new System.NotImplementedException("fix me");

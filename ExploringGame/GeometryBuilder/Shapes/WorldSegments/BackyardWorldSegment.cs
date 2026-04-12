@@ -2,15 +2,17 @@
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
 public class BackyardWorldSegment : WorldSegment
 {
     public override SkyboxShape Skybox => SkyDome.Instance;
-
+    public override Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<BackYard>().Single().Position;
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
     {
         new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
@@ -43,8 +45,15 @@ public class BackyardWorldSegment : WorldSegment
             position: new Vector3(0.89000034f, 6.4799995f, -1.8299997f),
             size: new Vector3(4f, 3.36f, 5.4599996f));
 
+        var kidsBedroomSouthWindow = new PlaceholderShape<Window>(this, "KidBedroomSouthWindow",
+            position: new Vector3(-0.7100003f, 6.7200003f, 12.97f),
+            size: new Vector3(1.4399999f, 1.92f, 0.50000113f));
 
-        var backyard = new BackYard(this, frontSidewalk, northYard, den, bedroom, kitchen);
+        var kidBedroomEastWindow = new PlaceholderShape<Window>(this, "KidBedroomEastWindow",
+           position: new Vector3(2.7800002f, 6.7200003f, 9.839999f),
+           size: new Vector3(1.2200015f, 1.92f, 1.4399999f));
+
+        var backyard = new BackYard(this, frontSidewalk, northYard, den, bedroom, kitchen, kidsBedroomSouthWindow, kidBedroomEastWindow);
 
 
         backyard.LoadChildren();

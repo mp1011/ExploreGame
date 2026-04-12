@@ -12,16 +12,21 @@ public class BackYard : Room
     private readonly Shape _den;
     private readonly Shape _bedroom;
     private readonly Shape _kitchen;
+    private readonly Room _kidsBedroomSouthWindow;
+    private readonly Room _kidsBedroomEastWindow;
 
     public override Side OmitSides => Side.South | Side.North | Side.East | Side.West | Side.Top;
 
     public override Theme Theme { get; } = new YardTheme();
 
-    public   BackYard(WorldSegment worldSegment, Shape frontSidewalk, Shape northYard, Shape den, Shape bedroom, Shape kitchen) : base(worldSegment)
+    public BackYard(WorldSegment worldSegment, Shape frontSidewalk, Shape northYard, Shape den, Shape bedroom, Shape kitchen,
+        Room kidsBedroomSouthWindow, Room kidsBedroomEastWindow) : base(worldSegment)
     {
         _den = den;
         _bedroom = bedroom;
         _kitchen = kitchen;
+        _kidsBedroomSouthWindow = kidsBedroomSouthWindow;
+        _kidsBedroomEastWindow = kidsBedroomEastWindow;
         Theme.SideTextures[Side.South] = Theme.GetTexture(TextureKey.Siding);
 
         Depth = Measure.Feet(20);
@@ -77,7 +82,7 @@ public class BackYard : Room
         var midSection = Copy();
         midSection.Tag = "BackyardMid";
         midSection.Place().At(this);
-        midSection.SetSideUnanchored(Side.West, _kitchen.GetSide(Side.East) + 0.5f);
+        midSection.SetSideUnanchored(Side.West, _kitchen.GetSide(Side.East) + 0.0f);
         midSection.SetSideUnanchored(Side.East, eastSection.GetSide(Side.West));
         midSection.SetSideUnanchored(Side.South, southSection.GetSide(Side.North));
         midSection.SetSideUnanchored(Side.North, _kitchen.GetSide(Side.South));
@@ -96,5 +101,7 @@ public class BackYard : Room
 
         var deckNorthWall = new OuterWall(deckArea, Side.North);
 
+        midSection.AddConnectingRoom(_kidsBedroomEastWindow, Side.West);
+        southSection.AddConnectingRoom(_kidsBedroomSouthWindow, Side.North);
     }
 }

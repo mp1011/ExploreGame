@@ -2,6 +2,7 @@
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
@@ -43,14 +44,16 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             shape = new SideRemover().Execute(shape, _wallSide);
 
             // Apply cutouts for windows/doors from room connections
-            var connections = _parentRoom.RoomConnections.Where(c => c.Side == _wallSide);
-            foreach (var connection in connections)
+            foreach (var connection in _parentRoom.RoomConnections.Where(c => c.Side == _wallSide))
             {
-                shape = new RemoveSurfaceRegion().Execute(shape, connection.Side,
-                    connection.CalcCutoutPlacement(shape), ViewFrom);
+                var cutoutPlacement = RoomConnection.CalcCutoutPlacement(shape, _wallSide.Opposite(), this, connection.GetOtherRoom(_parentRoom));
+                shape = new RemoveSurfaceRegion().Execute(shape, connection.Side.Opposite(), cutoutPlacement, ViewFrom);
             }
 
             return shape;
         }
+
+
+
     }
 }
