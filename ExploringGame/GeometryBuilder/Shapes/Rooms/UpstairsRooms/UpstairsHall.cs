@@ -22,6 +22,11 @@ public class UpstairsHall : Room
         Position = new Vector3(-2.0699997f,  6.4799995f, -0.060000002f);
     }
 
+    public void SetBasementStairsDoor(DoorJunction basementStairsDoor)
+    {
+        basementStairsDoor.AddConnectingRoom(this, Side.South);
+    }
+
     public override void LoadChildren()
     {
         SouthHall = Copy(width: Measure.Feet(7), depth: Measure.Feet(10));

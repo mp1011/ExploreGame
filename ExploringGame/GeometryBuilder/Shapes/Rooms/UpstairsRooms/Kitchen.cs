@@ -12,6 +12,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 public class Kitchen : Room
 {
     private readonly UpstairsHall _upstairsHall;
+    private Room _backDeckArea;
 
     public override Theme Theme => new KitchenTheme();
     public Kitchen(WorldSegment worldSegment, UpstairsHall upstairsHall) 
@@ -20,13 +21,19 @@ public class Kitchen : Room
         _upstairsHall = upstairsHall;
     }
 
+    public void SetBackDeckArea(Room backDeckArea)
+    {
+        _backDeckArea = backDeckArea;
+    }
+
     public override void LoadChildren()
     {
         _upstairsHall.AddConnectingRoom(new RoomConnection(_upstairsHall, this, Side.East, HAlign.Right));
         SetSideUnanchored(Side.North, _upstairsHall.NorthHall.GetSide(Side.North));
 
         // Place window on east wall, align right, 2 feet from wall
-        var windowEast = new Window(this, Side.East, Measure.Feet(4), Measure.Feet(4), HAlign.Right, -Measure.Feet(2));
+        var windowEast = new Window(this, Side.East, Measure.Feet(4), Measure.Feet(4), HAlign.Right, -Measure.Feet(2), otherRoom: _backDeckArea);
+        windowEast.Tag = "KitchenWindow";
 
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);

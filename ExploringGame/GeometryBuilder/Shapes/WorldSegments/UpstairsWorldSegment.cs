@@ -27,6 +27,16 @@ public class UpstairsWorldSegment : WorldSegment
         new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
     };
 
+    private Kitchen _kitchen;
+    private Bedroom _bedroom;
+    private KidsBedroom _kidsBedroom;
+    private Den _den;
+    private LivingRoom _livingRoom;
+    private UpstairsHall _upstairsHall;
+    private Bathroom _bathroom;
+    private SpareRoom _spareRoom;
+    private HalfBathroom _halfBath;
+
     public UpstairsWorldSegment()
     {
         Depth = Measure.Feet(53);
@@ -34,54 +44,37 @@ public class UpstairsWorldSegment : WorldSegment
         Height = Measure.Feet(10);
         SetSide(Side.Bottom, FloorY);
 
-        var upstairsHall = new UpstairsHall(this);
+        _upstairsHall = new UpstairsHall(this);
 
-        var deck = new PlaceholderShape<FrontDeck>(this,
-            position: new Vector3(-13.94f, 7.6800003f, -9.839999f),
-            size: new Vector3(2.8799999f, 5.7599998f, 10.559999f));
+        // Create rooms without cross-segment dependencies
+        _kitchen = new Kitchen(this, _upstairsHall);
+        _livingRoom = new LivingRoom(this, _upstairsHall, _kitchen);
+        _bedroom = new Bedroom(this, _upstairsHall);
+        _bathroom = new Bathroom(this, _upstairsHall);
+        _kidsBedroom = new KidsBedroom(this, _upstairsHall, _bedroom);
+        _spareRoom = new SpareRoom(this, _upstairsHall, _bedroom);
+        _den = new Den(this, _livingRoom);
+        _halfBath = new HalfBathroom(this, _den);
+    }
 
-        var backyardMid = new PlaceholderShape<Room>(this, "BackyardMid",
-            position: new Vector3(9.145f, 7.6800003f, 7.06f),
-            size: new Vector3(12.509999f, 9.599999f, 12.32f));
+    public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
+    {
+        // Find the real backyard rooms from BackyardWorldSegment
+        var backyardMid = FindShapeByTag<Room>(loadedSegments, "BackyardMid");
+        var backyardSouth = FindShapeByTag<Room>(loadedSegments, "BackyardSouth");
+        var backDeckArea = FindShapeByTag<Room>(loadedSegments, "BackDeckArea");
 
-        var backyardSouth = new PlaceholderShape<Room>(this, "BackyardSouth",
-          position: new Vector3(1.6999998f, 7.6800003f, 22.57f),
-          size: new Vector3(27.4f, 9.599999f, 18.699997f));
+        // Find the front deck from OutsideWorldSegment
+        var frontDeck = FindShape<FrontDeck>(loadedSegments);
 
-        var kitchen = new Kitchen(this, upstairsHall);
-        var livingRoom = new LivingRoom(this, upstairsHall, kitchen, deck);
-        var bedroom = new Bedroom(this, upstairsHall);
-        var bathroom = new Bathroom(this, upstairsHall);
-        var kidsBedroom = new KidsBedroom(this, upstairsHall, bedroom, backyardMid, backyardSouth);
-        var spareRoom = new SpareRoom(this, upstairsHall, bedroom);
-        var den = new Den(this, livingRoom);
-        var halfBath = new HalfBathroom(this, den);
+        // Find the basement stairs door from BasementWorldSegment
+        var basementStairsDoor = FindShapeByTag<DoorJunction>(loadedSegments, "BasementStairsDoor");
 
-        
-
-        livingRoom.SetSideUnanchored(Side.East, den.GetSide(Side.West) - 1.0f);
-
-        spareRoom.SetSide(Side.North, livingRoom.GetSide(Side.South) + 0.5f);
-
-        upstairsHall.SetSideUnanchored(Side.West, spareRoom.GetSide(Side.East) + 0.5f);
-        upstairsHall.LoadChildren();
-
-        upstairsHall.NorthHall.SetSideUnanchored(Side.North, livingRoom.GetSide(Side.South));
-        upstairsHall.SouthHall.SetSideUnanchored(Side.South, bedroom.GetSide(Side.North) - 0.5f);
-        
-        livingRoom.LoadChildren();
-        bedroom.LoadChildren();
-        bathroom.LoadChildren();
-        kidsBedroom.LoadChildren();
-        spareRoom.LoadChildren();
-        kitchen.LoadChildren();
-        den.LoadChildren();
-        halfBath.LoadChildren();
-
-        var dummyBasementStairsDoor = new PlaceholderShape<DoorJunction>(this, "BasementStairsDoor",
-            position: new Vector3(-2.0699997f, 6.72f, -1.27f),
-            size: new Vector3(1.22f, 3.84f, 0.5f)); 
-        dummyBasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South);
+        _livingRoom.SetSideUnanchored(Side.East, _den.GetSide(Side.West) - 1.0f);
+        _spareRoom.SetSide(Side.North, _livingRoom.GetSide(Side.South) + 0.5f);
+        _upstairsHall.SetSideUnanchored(Side.West, _spareRoom.GetSide(Side.East) + 0.5f);
+        _upstairsHall.NorthHall.SetSideUnanchored(Side.North, _livingRoom.GetSide(Side.South));
+        _upstairsHall.SouthHall.SetSideUnanchored(Side.South, _bedroom.GetSide(Side.North) - 0.5f);
 
         AddChild(new WallDecalStamp());
 
@@ -90,15 +83,24 @@ public class UpstairsWorldSegment : WorldSegment
         lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
         AddChild(lightSpirit);
 
-        var frontDoor = livingRoom.AddConnectingRoomWithJunction(
-            new DoorJunction(livingRoom, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
-            other: deck,
-            side: Side.West,
-            align: HAlign.Left,
-            offset: 0.2f,
-            adjustPlacement: false);
+        // Set dependencies for rooms that need cross-segment shapes
+        _bedroom.SetBackyardRoom(backyardSouth);
+        _kidsBedroom.SetBackyardRooms(backyardMid, backyardSouth);
+        _kitchen.SetBackDeckArea(backDeckArea);
+        _den.SetBackDeckArea(backDeckArea);
+        _livingRoom.SetFrontDeck(frontDeck);
+        _upstairsHall.SetBasementStairsDoor(basementStairsDoor);
 
-        frontDoor.Tag = "FrontDoor";
+        // Load children after all positioning is complete
+        _upstairsHall.LoadChildren();
+        _livingRoom.LoadChildren();
+        _bedroom.LoadChildren();
+        _bathroom.LoadChildren();
+        _kidsBedroom.LoadChildren();
+        _spareRoom.LoadChildren();
+        _kitchen.LoadChildren();
+        _den.LoadChildren();
+        _halfBath.LoadChildren();
     }
 
 }

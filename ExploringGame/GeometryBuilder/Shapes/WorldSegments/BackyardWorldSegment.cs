@@ -21,43 +21,31 @@ public class BackyardWorldSegment : WorldSegment
 
     };
 
+    private BackYard _backyard;
+
     public BackyardWorldSegment() : base()
     {
-        var frontSidewalk = new PlaceholderShape<Box>(this, "Sidewalk",
-            position: new Vector3(-11.540001f, 2.9200003f, -16.079998f),
-            size: new Vector3(7.6799994f, 0.08f, 2.8799999f));
+        // Create BackYard without any cross-segment dependencies
+        _backyard = new BackYard(this);
+    }
 
-        var northYard = new PlaceholderShape<Room>(this, "FrontYardNorth",
-            position: new Vector3(-16.34f, 6.7200003f, -18.96f),
-            size: new Vector3(17.279999f, 7.68f, 2.8799999f));
+    public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
+    {
+        // Find real shapes from OutsideWorldSegment
+        var frontSidewalk = FindShapeByTag<Box>(loadedSegments, "Sidewalk");
+        var northYard = FindShapeByTag<Room>(loadedSegments, "FrontYardNorth");
 
-        var den = new PlaceholderShape<Room>(this, "DenEast",
-            position: new Vector3(13.2f, 6.48f, -5.7599998f),
-            size: new Vector3(2.3999999f, 3.36f, 2.3999999f));
+        // Find real shapes from UpstairsWorldSegment
+        var denEast = FindShapeByTag<Room>(loadedSegments, "DenEast");
+        var bedroomSouthWindow = FindShapeByTag<Window>(loadedSegments, "BedroomSouthWindow");
+        var kitchenWindow = FindShapeByTag<Window>(loadedSegments, "KitchenWindow");
+        var kidsBedroomSouthWindow = FindShapeByTag<Window>(loadedSegments, "KidBedroomSouthWindow");
+        var kidBedroomEastWindow = FindShapeByTag<Window>(loadedSegments, "KidBedroomEastWindow");
 
-        var kidsBedroom = new PlaceholderShape<KidsBedroom>(this,
-            position: new Vector3(-0.46000028f, 6.48f, 9.839999f),
-            size: new Vector3(6.2599998f, 3.36f, 5.7599998f));
+        // Set all cross-segment dependencies
+        _backyard.SetDependencies(frontSidewalk, northYard, denEast, bedroomSouthWindow, kitchenWindow, kidsBedroomSouthWindow, kidBedroomEastWindow);
 
-        var bedroom = new PlaceholderShape<Bedroom>(this,
-            position: new Vector3(-7.92f, 6.48f, 9.839999f),
-            size: new Vector3(8.16f, 3.36f, 5.7599998f));
-
-        var kitchen = new PlaceholderShape<Kitchen>(this,
-            position: new Vector3(0.89000034f, 6.4799995f, -1.8299997f),
-            size: new Vector3(4f, 3.36f, 5.4599996f));
-
-        var kidsBedroomSouthWindow = new PlaceholderShape<Window>(this, "KidBedroomSouthWindow",
-            position: new Vector3(-0.46000028f, 6.7200003f, 12.97f),
-            size: new Vector3(1.4399999f, 1.92f, 0.50000113f));
-
-        var kidBedroomEastWindow = new PlaceholderShape<Window>(this, "KidBedroomEastWindow",
-           position: new Vector3(2.7800002f, 6.7200003f, 9.839999f),
-           size: new Vector3(0.22000141f, 1.92f, 1.4399999f));
-
-        var backyard = new BackYard(this, frontSidewalk, northYard, den, bedroom, kitchen, kidsBedroomSouthWindow, kidBedroomEastWindow);
-
-
-        backyard.LoadChildren();
+        // Load children after all positioning is complete
+        _backyard.LoadChildren();
     }
 }

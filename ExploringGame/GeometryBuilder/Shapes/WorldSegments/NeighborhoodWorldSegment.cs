@@ -17,38 +17,51 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 /// </summary>
 public class NeighborhoodWorldSegment : WorldSegment 
 {
+    private BgNeighborhood _westNeighborhoodBlock;
+    private BgNeighborhood _northNeighborhoodBlock;
+    private BgNeighborhood _southNeighborhoodBlock;
+
+    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
+    {
+        new WorldSegmentTransition(typeof(OutsideWorldSegment)),
+        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
+    };
+
     public NeighborhoodWorldSegment()
     {
-        var roadPlaceholder = new PlaceholderShape<Road>(this, tag: "HomeRoad",
-            position: new Vector3(-29.779997f, 6.7200003f, -9.839999f),
-            size: new Vector3(9.599999f, 7.68f, 65.36f));
+        _westNeighborhoodBlock = new BgNeighborhood(this);
+        _northNeighborhoodBlock = new BgNeighborhood(this);
+        _southNeighborhoodBlock = new BgNeighborhood(this);
+    }
 
-        var westNeighborhoodBlock = new BgNeighborhood(this);
-        westNeighborhoodBlock.Ground.Place()
-            .OnFloor(roadPlaceholder)
-            .OnSideOuter(Side.West, roadPlaceholder);
-        westNeighborhoodBlock.Ground.Y -= westNeighborhoodBlock.Ground.Height;
+    public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
+    {
+        // Find the road from OutsideWorldSegment
+        var homeRoad = FindShapeByTag<Road>(loadedSegments, "HomeRoad");
 
+        // Position neighborhood blocks relative to the road
+        _westNeighborhoodBlock.Ground.Place()
+            .OnFloor(homeRoad)
+            .OnSideOuter(Side.West, homeRoad);
+        _westNeighborhoodBlock.Ground.Y -= _westNeighborhoodBlock.Ground.Height;
 
-        var northNeighborhoodBlock = new BgNeighborhood(this);
-        northNeighborhoodBlock.Ground.Place()
-          .OnFloor(roadPlaceholder)
-          .OnSideOuter(Side.North, roadPlaceholder)
-          .OnSideOuter(Side.East, westNeighborhoodBlock.Ground);
-        northNeighborhoodBlock.Ground.Y -= northNeighborhoodBlock.Height;
-        northNeighborhoodBlock.Ground.Z -= 20f;
+        _northNeighborhoodBlock.Ground.Place()
+          .OnFloor(homeRoad)
+          .OnSideOuter(Side.North, homeRoad)
+          .OnSideOuter(Side.East, _westNeighborhoodBlock.Ground);
+        _northNeighborhoodBlock.Ground.Y -= _northNeighborhoodBlock.Height;
+        _northNeighborhoodBlock.Ground.Z -= 20f;
 
+        _southNeighborhoodBlock.Ground.Place()
+          .OnFloor(homeRoad)
+          .OnSideOuter(Side.South, homeRoad)
+          .OnSideOuter(Side.East, _westNeighborhoodBlock.Ground);
+        _southNeighborhoodBlock.Ground.Y -= _southNeighborhoodBlock.Height;
+        _southNeighborhoodBlock.Ground.Z += 20f;
 
-        var southNeighborhoodBlock = new BgNeighborhood(this);
-        southNeighborhoodBlock.Ground.Place()
-          .OnFloor(roadPlaceholder)
-          .OnSideOuter(Side.South, roadPlaceholder)
-          .OnSideOuter(Side.East, westNeighborhoodBlock.Ground);
-        southNeighborhoodBlock.Ground.Y -= southNeighborhoodBlock.Height;
-        southNeighborhoodBlock.Ground.Z += 20f;
-
-        westNeighborhoodBlock.LoadChildren();
-        northNeighborhoodBlock.LoadChildren();
-        southNeighborhoodBlock.LoadChildren();
+        // Load children after all positioning is complete
+        _westNeighborhoodBlock.LoadChildren();
+        _northNeighborhoodBlock.LoadChildren();
+        _southNeighborhoodBlock.LoadChildren();
     }
 }

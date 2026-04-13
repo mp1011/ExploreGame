@@ -24,6 +24,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
 
         public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
 
+        public Side WallSide => _wallSide;
+
         public OuterWall(Room room, Side wallSide)
         {
             _parentRoom = room;

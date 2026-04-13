@@ -16,6 +16,10 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             new WorldSegmentTransition(typeof(UpstairsWorldSegment))
         };
 
+        private Basement _basement;
+        private BasementOffice _office;
+        private Garage _garage;
+
         public BasementWorldSegment() : base()
         {
             Depth = Measure.Feet(53);
@@ -23,20 +27,23 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             Height = Measure.Feet(10);
             SetSide(Side.Bottom, 0f);
 
-            var office = AddChild(new BasementOffice(this));
-            var basement = AddChild(new Basement(this, office));
+            _office = AddChild(new BasementOffice(this));
+            _basement = AddChild(new Basement(this, _office));
+            _garage = AddChild(new Garage(this, _basement));
+        }
 
-            office.LoadChildren();
-            basement.LoadChildren();
+        public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
+        {
+            // Find the real UpstairsHall from UpstairsWorldSegment
+            var upstairsHall = FindShape<UpstairsHall>(loadedSegments);
 
-            var dummyUpstairsHall = new PlaceholderShape<UpstairsHall>(this,
-                position: new Vector3(-3.4249997f, 6.4799995f, -0.060000002f),
-                size: new Vector3(4.63f, 3.36f, 1.92f));
+            // Connect basement stairs door to upstairs hall
+            _basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South);
 
-            basement.BasementStairsDoor.AddConnectingRoom(dummyUpstairsHall, Side.South);
-
-            var garage = AddChild(new Garage(this, basement));
-            garage.LoadChildren();
+            // Load children after all positioning is complete
+            _office.LoadChildren();
+            _basement.LoadChildren();
+            _garage.LoadChildren();
         }
     }
 }

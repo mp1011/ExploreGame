@@ -20,6 +20,11 @@ public class OutsideWorldSegment : WorldSegment
         new WorldSegmentTransition(typeof(BackyardWorldSegment)),
     };
 
+    private FrontDeck _deck;
+    private FrontYard _frontYard;
+    private WestRoof _roof;
+    private Road _road;
+
     public OutsideWorldSegment() : base()
     {
         Depth = Measure.Feet(100);
@@ -27,45 +32,42 @@ public class OutsideWorldSegment : WorldSegment
         Height = Measure.Feet(20);
         SetSide(Side.Bottom, UpstairsWorldSegment.FloorY - Measure.Feet(4));
 
-        var deck = new FrontDeck(this);
+        _deck = new FrontDeck(this);
+        _frontYard = new FrontYard(this, _deck);
+        _roof = new WestRoof(this, _frontYard);
 
-        var livingRoom = new PlaceholderShape<LivingRoom>(this,
-            position: new Vector3(-4.58f, 6.48f, -9.839999f),
-            size: new Vector3(14.84f, 3.36f, 10.559999f));
+        _road = new Road(this);
+        _road.Tag = "HomeRoad";
+        _road.AdjustShape().From(_frontYard);
+        _road.Depth = Measure.Feet(32);
 
-        var frontDoor = new PlaceholderShape<DoorJunction>(this, "FrontDoor",
-           position: new Vector3(-12.25f, 6.48f, -5.37f),
-           size: new Vector3(0.49999923f, 3.36f, 1.22f));
+        _road.Place().OnFloor(_frontYard);
+        _road.Place().OnSideOuter(Side.West, _frontYard);
+        _road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
+    }
 
-        var livingRoomWindow = new PlaceholderShape<Window>(this, "LivingRoomWindow",
-            position: new Vector3(-12.25f, 6.7200003f, -9.359999f),
-            size: new Vector3(0.49999923f, 1.92f, 2.8799999f));
+    public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
+    {
+        // Find real shapes from UpstairsWorldSegment
+        var livingRoom = FindShape<LivingRoom>(loadedSegments);
+        var frontDoor = FindShapeByTag<DoorJunction>(loadedSegments, "FrontDoor");
+        var livingRoomWindow = FindShapeByTag<Window>(loadedSegments, "LivingRoomWindow");
 
-        deck.Depth = livingRoom.Depth;
-        deck.Width = Measure.Feet(6);
-        deck.Height = livingRoom.Height + Measure.Feet(5);
-        deck.Place().OnSideInner(Side.Bottom, livingRoom)
+        // Position and connect deck based on living room
+        _deck.Depth = livingRoom.Depth;
+        _deck.Width = Measure.Feet(6);
+        _deck.Height = livingRoom.Height + Measure.Feet(5);
+        _deck.Place().OnSideInner(Side.Bottom, livingRoom)
                     .OnSideOuter(Side.West, livingRoom, -0.5f)
                     .OnSideInner(Side.South, livingRoom);
-        deck.FixedAmbientLight = LightIntensity.Bright;
+        _deck.FixedAmbientLight = LightIntensity.Bright;
 
-        deck.AddConnectingRoom(frontDoor, Side.East);
-        deck.AddConnectingRoom(livingRoomWindow, Side.East);
+        _deck.AddConnectingRoom(frontDoor, Side.East);
+        _deck.AddConnectingRoom(livingRoomWindow, Side.East);
 
-        var frontYard = new FrontYard(this, deck);
-        var roof = new WestRoof(this, frontYard);
-
-        deck.LoadChildren();
-        frontYard.LoadChildren();
-        roof.LoadChildren();
-
-        var road = new Road(this);
-        road.Tag = "HomeRoad";
-        road.AdjustShape().From(frontYard);
-        road.Depth = Measure.Feet(32);
-
-        road.Place().OnFloor(frontYard);
-        road.Place().OnSideOuter(Side.West, frontYard);
-        road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
+        // Load children after positioning is complete
+        _deck.LoadChildren();
+        _frontYard.LoadChildren();
+        _roof.LoadChildren();
     }
 }

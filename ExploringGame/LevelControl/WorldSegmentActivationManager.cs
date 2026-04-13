@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ExploringGame.LevelControl;
@@ -13,19 +14,16 @@ public class WorldSegmentActivationManager
     private readonly EntityRoomFinder _entityRoomFinder;
     private readonly Player _player;
     private readonly ServiceContainer _serviceContainer;
-    private readonly WorldSegmentAnchorProcessor _anchorProcessor;
 
     public WorldSegmentActivationManager(LoadedLevelData loadedLevelData, 
         EntityRoomFinder entityRoomFinder, 
         Player player,
-        ServiceContainer serviceContainer,
-        WorldSegmentAnchorProcessor anchorProcessor)
+        ServiceContainer serviceContainer)
     {
         _loadedLevelData = loadedLevelData;
         _entityRoomFinder = entityRoomFinder;
         _player = player;
         _serviceContainer = serviceContainer;
-        _anchorProcessor = anchorProcessor;
     }
 
     public void Update()
@@ -43,27 +41,31 @@ public class WorldSegmentActivationManager
         // Clear and rebuild ActiveSegments
         _loadedLevelData.ActiveSegments.Clear();
 
-        // Add current segment first
-        ActivateSegment(worldSegment);
+        // PHASE 1: Create all segments (children are created in constructors)
+        var segmentsToActivate = new List<WorldSegment> { worldSegment };
 
-        // Add all neighboring segments
         foreach (var transition in worldSegment.Transitions)
         {
-            // Find the neighbor segment in already loaded segments
             var neighborSegment = _loadedLevelData.LoadedSegments
                 .Select(ld => ld.WorldSegment)
                 .FirstOrDefault(ws => ws.GetType() == transition.WorldSegmentType) 
                 ?? Activator.CreateInstance(transition.WorldSegmentType) as WorldSegment;
-            
-            ActivateSegment(neighborSegment);            
+
+            segmentsToActivate.Add(neighborSegment);
         }
 
-        // Process placeholders after all segments are loaded
-        _anchorProcessor.ProcessPlaceholders(
-            _loadedLevelData.LoadedSegments,
-            _loadedLevelData.RoomGraph,
-            _loadedLevelData.WaypointGraph,
-            _loadedLevelData.LightingCalculator);
+        // Activate all segments (loads geometry but doesn't position cross-segment dependencies)
+        foreach (var segment in segmentsToActivate)
+        {
+            ActivateSegment(segment);
+        }
+
+        // PHASE 2: Position children now that all shapes exist
+        var loadedSegments = _loadedLevelData.LoadedSegments.Select(ld => ld.WorldSegment).ToList();
+        foreach (var segment in segmentsToActivate)
+        {
+            segment.PositionChildren(loadedSegments);
+        }
     }
 
     private void UpdateActiveSegments(Vector3 playerPosition)

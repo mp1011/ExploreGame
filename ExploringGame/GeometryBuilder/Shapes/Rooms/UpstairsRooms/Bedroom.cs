@@ -12,12 +12,18 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 public class Bedroom : Room
 {
     private UpstairsHall _upstairsHall;
+    private Room _backyardSouth;
 
     public Bedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) 
         : base(worldSegment, width: Measure.Feet(17 ), depth: Measure.Feet(12), height: Measure.Feet(7))
     {
         _upstairsHall = upstairsHall;
         this.Place().OnSideInner(Side.SouthWest);
+    }
+
+    public void SetBackyardRoom(Room backyardSouth)
+    {
+        _backyardSouth = backyardSouth;
     }
 
     public override void LoadChildren()
@@ -28,7 +34,8 @@ public class Bedroom : Room
 
         // Place windows on west and south walls
         var windowWest = new Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
-        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4));
+        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _backyardSouth);
+        windowSouth.Tag = "BedroomSouthWindow";
 
         var light = new HighHatLight(this, 0f, 0f);
         var sw = new LightSwitch(this, Side.East, StateKey.BedroomLightOn);

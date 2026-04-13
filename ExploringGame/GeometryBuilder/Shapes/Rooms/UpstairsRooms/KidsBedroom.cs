@@ -11,17 +11,21 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 public class KidsBedroom : Room
 {
     private readonly UpstairsHall _upstairsHall;
-    private readonly Room _backyardMid, _backyardSouth;
+    private Room _backyardMid, _backyardSouth;
 
-    public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom, Room backyardMid, Room backyardSouth)
+    public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom)
         : base(worldSegment, width: Measure.Feet(12), depth: Measure.Feet(12), height: Measure.Feet(7))
     {
         _upstairsHall = upstairsHall;
-        _backyardMid = backyardMid;
-        _backyardSouth = backyardSouth;
         this.Place().OnSideInner(Side.SouthWest)
             .OnSideOuter(Side.East, bedroom, 0.25f);
-         
+
+    }
+
+    public void SetBackyardRooms(Room backyardMid, Room backyardSouth)
+    {
+        _backyardMid = backyardMid;
+        _backyardSouth = backyardSouth;
     }
 
     public override void LoadChildren()
