@@ -27,6 +27,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             Height = Measure.Feet(8);
             Depth = Measure.Feet(28);
             SetSide(Side.Bottom, 0f);
+
+            // Create BasementStairsDoor in constructor so it's available as a dependency
+            BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
+                { Depth = 0.5f };
+            BasementStairsDoor.Tag = "BasementStairsDoor";
         }
 
         public override void LoadChildren()
@@ -73,11 +78,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             var wall8 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(35) });
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
-            BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
-                { Depth =0.5f };
-
-            BasementStairsDoor.Tag = "BasementStairsDoor";
-
+            // Position BasementStairsDoor (already created in constructor)
             BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
             BasementStairsDoor.SetSide(Side.North, GetSide(Side.South));
 

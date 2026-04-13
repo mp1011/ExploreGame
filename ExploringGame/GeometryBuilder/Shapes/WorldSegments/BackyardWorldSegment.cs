@@ -38,12 +38,12 @@ public class BackyardWorldSegment : WorldSegment
         // Find real shapes from UpstairsWorldSegment
         var denEast = FindShapeByTag<Room>(loadedSegments, "DenEast");
         var bedroomSouthWindow = FindShapeByTag<Window>(loadedSegments, "BedroomSouthWindow");
-        var kitchenWindow = FindShapeByTag<Window>(loadedSegments, "KitchenWindow");
+        var kitchen = FindShape<Kitchen>(loadedSegments);
         var kidsBedroomSouthWindow = FindShapeByTag<Window>(loadedSegments, "KidBedroomSouthWindow");
         var kidBedroomEastWindow = FindShapeByTag<Window>(loadedSegments, "KidBedroomEastWindow");
 
         // Set all cross-segment dependencies
-        _backyard.SetDependencies(frontSidewalk, northYard, denEast, bedroomSouthWindow, kitchenWindow, kidsBedroomSouthWindow, kidBedroomEastWindow);
+        _backyard.SetDependencies(frontSidewalk, northYard, denEast, bedroomSouthWindow, kitchen, kidsBedroomSouthWindow, kidBedroomEastWindow);
 
         // Load children after all positioning is complete
         _backyard.LoadChildren();

@@ -4,6 +4,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
 {
@@ -32,11 +33,16 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             _wallSide = wallSide;
 
             room.AddChild(this);
-            Height = room.Height;
-            Width = wallSide.GetAxis() == Axis.X ? WallThickness : room.Width;
-            Depth = wallSide.GetAxis() == Axis.Z ? WallThickness : room.Depth;
+            
+        }
 
-            this.Place().At(room).OnFloor().OnSideOuter(wallSide);
+        protected override void BeforeBuild()
+        {
+            Height = _parentRoom.Height;
+            Width = _wallSide.GetAxis() == Axis.X ? WallThickness : _parentRoom.Width;
+            Depth = _wallSide.GetAxis() == Axis.Z ? WallThickness : _parentRoom.Depth;
+
+            this.Place().At(_parentRoom).OnFloor().OnSideOuter(_wallSide);
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)

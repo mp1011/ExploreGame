@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;

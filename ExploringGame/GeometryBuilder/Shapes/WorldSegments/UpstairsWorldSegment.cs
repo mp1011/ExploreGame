@@ -22,9 +22,9 @@ public class UpstairsWorldSegment : WorldSegment
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
     {
         new WorldSegmentTransition(typeof(BasementWorldSegment)),
-        new WorldSegmentTransition(typeof(OutsideWorldSegment)),
-        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
-        new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
+      //  new WorldSegmentTransition(typeof(OutsideWorldSegment)),
+      //  new WorldSegmentTransition(typeof(BackyardWorldSegment)),
+      //  new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
     };
 
     private Kitchen _kitchen;
@@ -60,12 +60,12 @@ public class UpstairsWorldSegment : WorldSegment
     public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
     {
         // Find the real backyard rooms from BackyardWorldSegment
-        var backyardMid = FindShapeByTag<Room>(loadedSegments, "BackyardMid");
-        var backyardSouth = FindShapeByTag<Room>(loadedSegments, "BackyardSouth");
-        var backDeckArea = FindShapeByTag<Room>(loadedSegments, "BackDeckArea");
+        //var backyardMid = FindShapeByTag<Room>(loadedSegments, "BackyardMid");
+        //var backyardSouth = FindShapeByTag<Room>(loadedSegments, "BackyardSouth");
+        //var backDeckArea = FindShapeByTag<Room>(loadedSegments, "BackDeckArea");
 
         // Find the front deck from OutsideWorldSegment
-        var frontDeck = FindShape<FrontDeck>(loadedSegments);
+        // var frontDeck = FindShape<FrontDeck>(loadedSegments);
 
         // Find the basement stairs door from BasementWorldSegment
         var basementStairsDoor = FindShapeByTag<DoorJunction>(loadedSegments, "BasementStairsDoor");
@@ -79,16 +79,16 @@ public class UpstairsWorldSegment : WorldSegment
         AddChild(new WallDecalStamp());
 
         // Add the Light Spirit
-        var lightSpirit = new LightSpirit();
-        lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
-        AddChild(lightSpirit);
+        //var lightSpirit = new LightSpirit();
+        //lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
+        //AddChild(lightSpirit);
 
         // Set dependencies for rooms that need cross-segment shapes
-        _bedroom.SetBackyardRoom(backyardSouth);
-        _kidsBedroom.SetBackyardRooms(backyardMid, backyardSouth);
-        _kitchen.SetBackDeckArea(backDeckArea);
-        _den.SetBackDeckArea(backDeckArea);
-        _livingRoom.SetFrontDeck(frontDeck);
+       // _bedroom.SetBackyardRoom(backyardSouth);
+      //  _kidsBedroom.SetBackyardRooms(backyardMid, backyardSouth);
+      //  _kitchen.SetBackDeckArea(backDeckArea);
+     //   _den.SetBackDeckArea(backDeckArea);
+      //  _livingRoom.SetFrontDeck(frontDeck);
         _upstairsHall.SetBasementStairsDoor(basementStairsDoor);
 
         // Load children after all positioning is complete

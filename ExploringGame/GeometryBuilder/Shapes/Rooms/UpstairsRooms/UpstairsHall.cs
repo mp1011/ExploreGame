@@ -20,6 +20,12 @@ public class UpstairsHall : Room
     {
         Size = new Vector3(1.92f,  3.36f,  1.92f);
         Position = new Vector3(-2.0699997f,  6.4799995f, -0.060000002f);
+
+        // Create SouthHall and NorthHall in constructor so they're available as dependencies
+        SouthHall = Copy(width: Measure.Feet(7), depth: Measure.Feet(10));
+
+        NorthHall = Copy(width: Measure.Feet(4), depth: Measure.Feet(14));
+        NorthHall.MainTexture = new TextureInfo(Microsoft.Xna.Framework.Color.White, TextureKey.Plain);
     }
 
     public void SetBasementStairsDoor(DoorJunction basementStairsDoor)
@@ -29,11 +35,8 @@ public class UpstairsHall : Room
 
     public override void LoadChildren()
     {
-        SouthHall = Copy(width: Measure.Feet(7), depth: Measure.Feet(10));
+        // SouthHall and NorthHall already created in constructor, now add connections and children
         AddConnectingRoom(new RoomConnection(this, SouthHall, Side.South, HAlign.Right));
-
-        NorthHall = Copy(width: Measure.Feet(4), depth: Measure.Feet(14));
-        NorthHall.MainTexture = new TextureInfo(Microsoft.Xna.Framework.Color.White, TextureKey.Plain);
         AddConnectingRoom(new RoomConnection(this, NorthHall, Side.North, HAlign.Left));
 
         var linenCloset = Copy(width: Measure.Feet(1), depth: Door.StandardWidth);

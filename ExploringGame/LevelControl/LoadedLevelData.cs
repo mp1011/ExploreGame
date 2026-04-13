@@ -2,6 +2,7 @@
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Rendering;
@@ -57,6 +58,20 @@ public class LoadedLevelData
         if (IsSegmentLoaded(worldSegment))
             return;
 
+        // Phase 1: Just register the segment without building geometry
+        // Geometry will be built later in BuildSegmentGeometry after positioning
+        var newLevelData = new LevelData(worldSegment, Array.Empty<ShapeBuffer>(), Array.Empty<IActiveObject>());
+        LoadedSegments.Add(newLevelData);
+    }
+
+    public void BuildSegmentGeometry(WorldSegment worldSegment)
+    {
+        var levelData = FindLevelDataForWorldSegment(worldSegment);
+        if (levelData == null)
+            return;
+
+        // Phase 3: Build geometry after all positioning is complete
+
         // Build room graph for this segment
         var rooms = worldSegment.TraverseAllChildren().OfType<Room>().ToList();
         foreach (var room in rooms)
@@ -80,7 +95,7 @@ public class LoadedLevelData
         _lightingCalculator.SetRoomGraph(RoomGraph);
         _lightingCalculator.AddSegments(new List<WorldSegment> { worldSegment });
 
-        // Build geometry and create level data
+        // Build geometry and create buffers
         var triangles = worldSegment.Build((QualityLevel)8); //todo, quality level
 
         AssignRoomsToPlaceableShapes(worldSegment);
@@ -97,11 +112,10 @@ public class LoadedLevelData
             SkyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
         }
 
-        var newLevelData = new LevelData(worldSegment, shapeBuffers, activeObjects);
-        _setupColliderBodies.Execute(newLevelData.WorldSegment);
-        newLevelData.Initialize();
-
-        LoadedSegments.Add(newLevelData);
+        // Update level data with geometry using SetBuffers to properly process stamp/grass buffers
+        levelData.SetBuffers(shapeBuffers, activeObjects);
+        _setupColliderBodies.Execute(levelData.WorldSegment);
+        levelData.Initialize();
     }
 
     private bool IsSegmentLoaded(WorldSegment worldSegment)

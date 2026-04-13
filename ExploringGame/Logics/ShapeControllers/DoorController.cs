@@ -60,6 +60,10 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
 
     public void Update(GameTime gameTime)
     {
+        // todo, this shouldn't be
+        if (_rigidBody == null)
+            return;
+
         var targetDegrees = Shape.Open ? Shape.OpenAngle : Shape.ClosedAngle;
 
         // door translate door angle to world angle

@@ -16,9 +16,9 @@ namespace ExploringGame.LevelControl;
 
 public class LevelData
 {
-    public IActiveObject[] ActiveObjects { get; } 
+    public IActiveObject[] ActiveObjects { get; set; } 
 
-    public ShapeBuffer[] ShapeBuffers { get; private set; }
+    public ShapeBuffer[] ShapeBuffers { get; set; }
     public Dictionary<Type, ShapeBuffer> StampShapeBuffers { get; } = new();
     public List<ShapeBuffer> StampedShapeBuffers { get; } = new();
 
@@ -55,6 +55,27 @@ public class LevelData
             obj.Initialize();
 
         Initialized = true;        
+    }
+
+    public void SetBuffers(ShapeBuffer[] allShapeBuffers, IActiveObject[] activeObjects)
+    {
+        // Clear existing buffers
+        StampShapeBuffers.Clear();
+        GrassShapeBuffers.Clear();
+
+        ActiveObjects = activeObjects.ToArray();
+
+        // Separate stamp buffers and grass buffers from regular buffers
+        var stampBuffers = allShapeBuffers.Where(b => b.Shape is ShapeStamp).ToList();
+        GrassShapeBuffers.AddRange(allShapeBuffers.Where(p => p.Type == ShapeBufferType.Grass));
+
+        ShapeBuffers = allShapeBuffers.Where(b => b.Shape is not ShapeStamp && b.Type == ShapeBufferType.Normal).ToArray();
+
+        // Index stamp buffers by their type
+        foreach (var stampBuffer in stampBuffers)
+        {
+            StampShapeBuffers[stampBuffer.Shape.GetType()] = stampBuffer;
+        }
     }
 
     public void Stop()

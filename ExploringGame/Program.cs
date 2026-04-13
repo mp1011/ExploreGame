@@ -5,7 +5,7 @@ using ExploringGame.Logics;
 using ExploringGame.Testing;
 using System.Linq;
 
-using var game = new Game1(new UpstairsWorldSegment());
+using var game = new Game1(new BasementWorldSegment());
 
 //var testMap = TestMaps.CircleCutoutTest();
 //var testMap = TestMaps.SkyboxTest();

@@ -41,7 +41,7 @@ public class WorldSegmentActivationManager
         // Clear and rebuild ActiveSegments
         _loadedLevelData.ActiveSegments.Clear();
 
-        // PHASE 1: Create all segments (children are created in constructors)
+        // PHASE 1: Create all segment instances (constructors only - no geometry)
         var segmentsToActivate = new List<WorldSegment> { worldSegment };
 
         foreach (var transition in worldSegment.Transitions)
@@ -54,17 +54,33 @@ public class WorldSegmentActivationManager
             segmentsToActivate.Add(neighborSegment);
         }
 
-        // Activate all segments (loads geometry but doesn't position cross-segment dependencies)
+        // Load segment instances (no geometry yet)
         foreach (var segment in segmentsToActivate)
         {
-            ActivateSegment(segment);
+            _loadedLevelData.LoadSegment(segment);
         }
 
-        // PHASE 2: Position children now that all shapes exist
+        // PHASE 2: Position children and set dependencies
         var loadedSegments = _loadedLevelData.LoadedSegments.Select(ld => ld.WorldSegment).ToList();
         foreach (var segment in segmentsToActivate)
         {
             segment.PositionChildren(loadedSegments);
+        }
+
+        // PHASE 3: Build geometry buffers now that everything is positioned
+        foreach (var segment in segmentsToActivate)
+        {
+            _loadedLevelData.BuildSegmentGeometry(segment);
+        }
+
+        // Add to active segments
+        foreach (var segment in segmentsToActivate)
+        {
+            var levelData = _loadedLevelData.FindLevelDataForWorldSegment(segment);
+            if (levelData != null && !_loadedLevelData.ActiveSegments.Contains(levelData))
+            {
+                _loadedLevelData.ActiveSegments.Add(levelData);
+            }
         }
     }
 
@@ -81,18 +97,5 @@ public class WorldSegmentActivationManager
 
         // Activate this segment and its neighbors
         ActivateSegmentAndNeighbors(currentSegment);
-    }
-
-    private void ActivateSegment(GeometryBuilder.Shapes.WorldSegments.WorldSegment worldSegment)
-    {
-        // Load the segment if not already loaded
-        _loadedLevelData.LoadSegment(worldSegment);
-
-        // Add to active segments if not already active
-        var levelData = _loadedLevelData.FindLevelDataForWorldSegment(worldSegment);
-        if (levelData != null && !_loadedLevelData.ActiveSegments.Contains(levelData))
-        {
-            _loadedLevelData.ActiveSegments.Add(levelData);
-        }
     }
 }
