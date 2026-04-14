@@ -20,7 +20,7 @@ public class HalfBathroom : Room
         _den = den;
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         _den.EastPart.AddConnectingRoomWithJunction(new DoorJunction(this, Side.North, HAlign.Left, DoorDirection.Pull, StateKey.HalfBathroomDoorOpen),
             this, Side.North);

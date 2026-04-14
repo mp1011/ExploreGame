@@ -31,7 +31,7 @@ public class BasementOffice : Room
         this.Place().OnSideInner(Side.NorthEast);
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         var westPart = Copy(depth: Depth + 1.0f, width: 2.0f);
         AddConnectingRoom(new RoomConnection(this, westPart, Side.West, Align: HAlign.Left));

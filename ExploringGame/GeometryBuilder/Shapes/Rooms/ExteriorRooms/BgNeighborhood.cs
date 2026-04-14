@@ -27,7 +27,7 @@ public class BgNeighborhood : Room
         Ground.Height = 1.0f;       
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         CreateHouseGrid();
     }

@@ -12,7 +12,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 public class Bedroom : Room
 {
     private UpstairsHall _upstairsHall;
-    private Room _backyardSouth;
 
     public Bedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) 
         : base(worldSegment, width: Measure.Feet(17 ), depth: Measure.Feet(12), height: Measure.Feet(7))
@@ -21,12 +20,7 @@ public class Bedroom : Room
         this.Place().OnSideInner(Side.SouthWest);
     }
 
-    public void SetBackyardRoom(Room backyardSouth)
-    {
-        _backyardSouth = backyardSouth;
-    }
-
-    public override void LoadChildren()
+    public void LoadChildren(Room backyardSouth)
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
@@ -34,7 +28,7 @@ public class Bedroom : Room
 
         // Place windows on west and south walls
         var windowWest = new Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
-        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _backyardSouth);
+        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: backyardSouth);
         windowSouth.Tag = "BedroomSouthWindow";
 
         var light = new HighHatLight(this, 0f, 0f);

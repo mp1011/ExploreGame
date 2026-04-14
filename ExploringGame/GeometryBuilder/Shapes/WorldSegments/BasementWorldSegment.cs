@@ -13,7 +13,9 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 
         public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
         {
-            new WorldSegmentTransition(typeof(UpstairsWorldSegment))
+            new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
+            new WorldSegmentTransition(typeof(OutsideWorldSegment)),
+            new WorldSegmentTransition(typeof(BackyardWorldSegment)),
         };
 
         private Basement _basement;

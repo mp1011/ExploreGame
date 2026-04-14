@@ -68,6 +68,5 @@ public class OutsideWorldSegment : WorldSegment
         // Load children after positioning is complete
         _deck.LoadChildren();
         _frontYard.LoadChildren();
-        _roof.LoadChildren();
     }
 }

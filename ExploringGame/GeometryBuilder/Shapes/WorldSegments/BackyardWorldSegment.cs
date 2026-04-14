@@ -46,6 +46,6 @@ public class BackyardWorldSegment : WorldSegment
         _backyard.SetDependencies(frontSidewalk, northYard, denEast, bedroomSouthWindow, kitchen, kidsBedroomSouthWindow, kidBedroomEastWindow);
 
         // Load children after all positioning is complete
-        _backyard.LoadChildren();
+        //_backyard.LoadChildren();
     }
 }

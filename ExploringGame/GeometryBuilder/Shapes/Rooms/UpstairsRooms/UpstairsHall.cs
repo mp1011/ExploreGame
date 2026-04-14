@@ -28,13 +28,10 @@ public class UpstairsHall : Room
         NorthHall.MainTexture = new TextureInfo(Microsoft.Xna.Framework.Color.White, TextureKey.Plain);
     }
 
-    public void SetBasementStairsDoor(DoorJunction basementStairsDoor)
+    public void LoadChildren(DoorJunction basementStairsDoor)
     {
         basementStairsDoor.AddConnectingRoom(this, Side.South);
-    }
 
-    public override void LoadChildren()
-    {
         // SouthHall and NorthHall already created in constructor, now add connections and children
         AddConnectingRoom(new RoomConnection(this, SouthHall, Side.South, HAlign.Right));
         AddConnectingRoom(new RoomConnection(this, NorthHall, Side.North, HAlign.Left));

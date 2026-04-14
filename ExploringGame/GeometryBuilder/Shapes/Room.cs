@@ -58,11 +58,6 @@ public class Room : Shape, ILightingGroup
 
     public virtual Room LightingGroup => this;
 
-    public virtual void LoadChildren()
-    {
-
-    }
-
     public void AddConnectingRoom(Room other, Side side, float? placement = null)
     {
         AddConnectingRoom(new RoomConnection(this, other, side, placement.GetValueOrDefault()),

@@ -14,7 +14,6 @@ public class LivingRoom : Room
 {
     private readonly UpstairsHall _upstairsHall;
     private readonly Kitchen _kitchen;
-    private Room _frontDeck;
     public override Theme Theme => new LivingRoomTheme();
 
     public LivingRoom(WorldSegment segment, UpstairsHall upstairs, Kitchen kitchen) 
@@ -26,28 +25,12 @@ public class LivingRoom : Room
         this.Place().OnSideInner(Side.NorthWest);
     }
 
-    public void SetFrontDeck(Room frontDeck)
-    {
-        _frontDeck = frontDeck;
-
-        // Create front door connection now that we have the deck
-        var frontDoor = AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
-            other: _frontDeck,
-            side: Side.West,
-            align: HAlign.Left,
-            offset: 0.2f,
-            adjustPlacement: false);
-
-        frontDoor.Tag = "FrontDoor";
-    }
-
-    public override void LoadChildren()
+    public void LoadChildren(FrontDeck frontDeck)
     {
         AddConnectingRoom(new RoomConnection(this, _kitchen, Side.South), adjustPlacement: false);
         AddConnectingRoom(new RoomConnection(this, _upstairsHall.NorthHall, Side.South), adjustPlacement: false);
 
-        var windowWest = new Window(this, Side.West, Measure.Feet(6), Measure.Feet(4), HAlign.Right, -Measure.Feet(4), otherRoom: _frontDeck);
+        var windowWest = new Window(this, Side.West, Measure.Feet(6), Measure.Feet(4), HAlign.Right, -Measure.Feet(4), otherRoom: frontDeck);
         windowWest.Tag = "LivingRoomWindow";
 
         var light = new HighHatLight(this, 0f, 0f);
@@ -58,5 +41,16 @@ public class LivingRoom : Room
         lightSwitch.Place().OnSideInner(Side.East);
 
         SetSideUnanchored(Side.North, GetSide(Side.North) - Measure.Feet(5));
+
+        // Create front door connection now that we have the deck
+        var frontDoor = AddConnectingRoomWithJunction(
+            new DoorJunction(this, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
+            other: frontDeck,
+            side: Side.West,
+            align: HAlign.Left,
+            offset: 0.2f,
+            adjustPlacement: false);
+
+        frontDoor.Tag = "FrontDoor";
     }
 }

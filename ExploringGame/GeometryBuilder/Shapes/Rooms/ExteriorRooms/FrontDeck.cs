@@ -25,7 +25,7 @@ public class FrontDeck : Room
     {
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         WestPart = AddChild(new Box(Theme));
         WestPart.SideTextures[Side.Top] = Theme.GetTexture(TextureKey.Wood);

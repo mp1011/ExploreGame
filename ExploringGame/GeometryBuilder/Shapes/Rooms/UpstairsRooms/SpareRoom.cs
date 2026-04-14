@@ -20,7 +20,7 @@ public class SpareRoom : Room
         this.Place().OnSideInner(Side.West);
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(_upstairsHall.SouthHall, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.SpareRoomDoorOpen),        

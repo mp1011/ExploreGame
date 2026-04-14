@@ -28,7 +28,7 @@ public class Den : Room
         _backDeckArea = backDeckArea;
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, DoorDirection.Push, StateKey.DenDoorsOpen), 
             this, Side.East, HAlign.Right, -1.0f, adjustPlacement: false);

@@ -41,7 +41,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             _upstairsHall = upstairsHall;
         }
 
-        public override void LoadChildren()
+        public void LoadChildren()
         {
             SetSide(Side.East, _office.Exit.GetSide(Side.West));
             SetSide(Side.North, _office.Exit.GetSide(Side.North) - Measure.Inches(31));

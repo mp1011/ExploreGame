@@ -61,9 +61,7 @@ public class Window : Room
         {
             _exteriorRoom = otherRoom;
             _parentRoom.AddConnectingRoomWithJunction(this, otherRoom, _wallSide, align, offset, adjustPlacement: false);
-
         }
-
 
         this.Place().FromSide(Side.Bottom, SillHeight);
 

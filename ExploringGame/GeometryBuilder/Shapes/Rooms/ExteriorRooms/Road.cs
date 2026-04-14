@@ -14,8 +14,4 @@ public class Road : Room
     {
         FixedAmbientLight = LightIntensity.Bright;
     }
-
-    public override void LoadChildren()
-    {
-    }
 }

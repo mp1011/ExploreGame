@@ -27,7 +27,7 @@ public class Garage : Room
         Depth = 10f;
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         _basement.AddConnectingRoomWithJunction(new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Pull, StateKey.GarageInnerDoorOpen),
             this, Side.South, HAlign.Right, offset: -0.5f);

@@ -67,10 +67,6 @@ public class BackYard : Room
         _kidsBedroomEastWindow = kidsBedroomEastWindow;
     }
 
-    public override void LoadChildren()
-    {
-    }
-
     private void LoadChildrenX()
     { 
         // Position THIS BackYard shape based on cross-segment dependencies

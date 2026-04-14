@@ -34,7 +34,7 @@ public class FrontYard : Room
         Deck = deck;
     }
 
-    public override void LoadChildren()
+    public void LoadChildren()
     {
         var deckStairs = Deck.AddChild(new FrontDeckStairs(this, Deck));
         deckStairs.SetSide(Side.Bottom, GetSide(Side.Bottom));

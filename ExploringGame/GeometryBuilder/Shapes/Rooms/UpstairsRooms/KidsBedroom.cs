@@ -11,7 +11,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 public class KidsBedroom : Room
 {
     private readonly UpstairsHall _upstairsHall;
-    private Room _backyardMid, _backyardSouth;
 
     public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom)
         : base(worldSegment, width: Measure.Feet(12), depth: Measure.Feet(12), height: Measure.Feet(7))
@@ -22,13 +21,7 @@ public class KidsBedroom : Room
 
     }
 
-    public void SetBackyardRooms(Room backyardMid, Room backyardSouth)
-    {
-        _backyardMid = backyardMid;
-        _backyardSouth = backyardSouth;
-    }
-
-    public override void LoadChildren()
+    public void LoadChildren(Room backyardMid, Room backyardSouth)
     {
         SetSideUnanchored(Side.East, GetSide(Side.East) + 0.5f);
 
@@ -37,9 +30,8 @@ public class KidsBedroom : Room
             adjustPlacement: false);
 
         // Place windows on south and east walls
-        var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: _backyardSouth);
-        var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _backyardMid);
-
+        var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardSouth);
+        var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardMid);
         windowSouth.Tag = "KidBedroomSouthWindow";
         windowEast.Tag = "KidBedroomEastWindow";
 
