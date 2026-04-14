@@ -36,9 +36,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
         {
             // Find the real UpstairsHall from UpstairsWorldSegment
             var upstairsHall = FindShape<UpstairsHall>(loadedSegments);
-
-            // Connect basement stairs door to upstairs hall
-            _basement.BasementStairsDoor.AddConnectingRoom(upstairsHall, Side.South);
+            _basement.SetDependencies(upstairsHall);
 
             // Load children after all positioning is complete
             _office.LoadChildren();

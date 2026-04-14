@@ -54,12 +54,9 @@ public class LoadedLevelData
 
     public void LoadSegment(WorldSegment worldSegment)
     {
-        // Check if segment is already loaded
-        if (IsSegmentLoaded(worldSegment))
-            return;
-
         // Phase 1: Just register the segment without building geometry
         // Geometry will be built later in BuildSegmentGeometry after positioning
+        // Note: Caller should check IsSegmentLoaded before calling this
         var newLevelData = new LevelData(worldSegment, Array.Empty<ShapeBuffer>(), Array.Empty<IActiveObject>());
         LoadedSegments.Add(newLevelData);
     }
@@ -118,7 +115,7 @@ public class LoadedLevelData
         levelData.Initialize();
     }
 
-    private bool IsSegmentLoaded(WorldSegment worldSegment)
+    public bool IsSegmentLoaded(WorldSegment worldSegment)
     {
         return LoadedSegments.Any(ld => ld.WorldSegment.GetType() == worldSegment.GetType());
     }

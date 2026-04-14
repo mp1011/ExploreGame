@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -11,6 +12,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
     public class Basement : Room
     {
         private BasementOffice _office;
+        private UpstairsHall _upstairsHall;
 
         public static readonly float InnerWallWidth = Measure.Inches(3);
         public override Theme Theme => new BasementRoomTheme();
@@ -32,6 +34,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
                 { Depth = 0.5f };
             BasementStairsDoor.Tag = "BasementStairsDoor";
+        }
+
+        public void SetDependencies(UpstairsHall upstairsHall)
+        {
+            _upstairsHall = upstairsHall;
         }
 
         public override void LoadChildren()
@@ -128,6 +135,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             lightSwitch2.Position = wall2.Position;
             lightSwitch2.Place().OnSideOuter(Side.West, wall2);
             lightSwitch2.Y -= 0.5f;
+
+            BasementStairsDoor.AddConnectingRoom(_upstairsHall, Side.South);
         }
     }
 }

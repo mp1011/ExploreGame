@@ -41,8 +41,8 @@ public class WorldSegmentActivationManager
         // Clear and rebuild ActiveSegments
         _loadedLevelData.ActiveSegments.Clear();
 
-        // PHASE 1: Create all segment instances (constructors only - no geometry)
-        var segmentsToActivate = new List<WorldSegment> { worldSegment };
+        // Collect all segments (current + neighbors)
+        var allSegments = new List<WorldSegment> { worldSegment };
 
         foreach (var transition in worldSegment.Transitions)
         {
@@ -51,30 +51,39 @@ public class WorldSegmentActivationManager
                 .FirstOrDefault(ws => ws.GetType() == transition.WorldSegmentType) 
                 ?? Activator.CreateInstance(transition.WorldSegmentType) as WorldSegment;
 
-            segmentsToActivate.Add(neighborSegment);
+            allSegments.Add(neighborSegment);
         }
 
-        // Load segment instances (no geometry yet)
-        foreach (var segment in segmentsToActivate)
+        // Filter to only process new segments that haven't been loaded yet
+        var newSegments = allSegments
+            .Where(segment => !_loadedLevelData.IsSegmentLoaded(segment))
+            .ToList();
+
+        // Only process new segments through the three phases
+        if (newSegments.Any())
         {
-            _loadedLevelData.LoadSegment(segment);
+            // PHASE 1: Create segment instances (constructors only - no geometry)
+            foreach (var segment in newSegments)
+            {
+                _loadedLevelData.LoadSegment(segment);
+            }
+
+            // PHASE 2: Position children and set dependencies
+            var loadedSegments = _loadedLevelData.LoadedSegments.Select(ld => ld.WorldSegment).ToList();
+            foreach (var segment in newSegments)
+            {
+                segment.PositionChildren(loadedSegments);
+            }
+
+            // PHASE 3: Build geometry buffers now that everything is positioned
+            foreach (var segment in newSegments)
+            {
+                _loadedLevelData.BuildSegmentGeometry(segment);
+            }
         }
 
-        // PHASE 2: Position children and set dependencies
-        var loadedSegments = _loadedLevelData.LoadedSegments.Select(ld => ld.WorldSegment).ToList();
-        foreach (var segment in segmentsToActivate)
-        {
-            segment.PositionChildren(loadedSegments);
-        }
-
-        // PHASE 3: Build geometry buffers now that everything is positioned
-        foreach (var segment in segmentsToActivate)
-        {
-            _loadedLevelData.BuildSegmentGeometry(segment);
-        }
-
-        // Add to active segments
-        foreach (var segment in segmentsToActivate)
+        // Add all segments (both new and already-loaded) to active segments
+        foreach (var segment in allSegments)
         {
             var levelData = _loadedLevelData.FindLevelDataForWorldSegment(segment);
             if (levelData != null && !_loadedLevelData.ActiveSegments.Contains(levelData))

@@ -36,7 +36,7 @@ public class UpstairsWorldSegment : WorldSegment
     private Bathroom _bathroom;
     private SpareRoom _spareRoom;
     private HalfBathroom _halfBath;
-
+    
     public UpstairsWorldSegment()
     {
         Depth = Measure.Feet(53);
@@ -58,7 +58,47 @@ public class UpstairsWorldSegment : WorldSegment
     }
 
     public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
-    {
+    {        
+        _livingRoom.SetSideUnanchored(Side.East, _den.GetSide(Side.West) - 1.0f);
+
+        _spareRoom.SetSide(Side.North, _livingRoom.GetSide(Side.South) + 0.5f);
+
+        _upstairsHall.SetSideUnanchored(Side.West, _spareRoom.GetSide(Side.East) + 0.5f);
+        _upstairsHall.LoadChildren();
+
+        _upstairsHall.NorthHall.SetSideUnanchored(Side.North, _livingRoom.GetSide(Side.South));
+        _upstairsHall.SouthHall.SetSideUnanchored(Side.South, _bedroom.GetSide(Side.North) - 0.5f);
+
+        //upstairs hall north = -4.5
+        _livingRoom.LoadChildren();
+        _bedroom.LoadChildren();
+        _bathroom.LoadChildren();
+        _kidsBedroom.LoadChildren();
+        _spareRoom.LoadChildren();
+        _kitchen.LoadChildren();
+        _den.LoadChildren();
+        _halfBath.LoadChildren();
+
+        AddChild(new WallDecalStamp());
+
+        // Add the Light Spirit
+        var lightSpirit = new LightSpirit();
+        lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
+        AddChild(lightSpirit);
+
+        //var frontDoor = _livingRoom.AddConnectingRoomWithJunction(
+        //    new DoorJunction(_livingRoom, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
+        //    other: _deck,
+        //    side: Side.West,
+        //    align: HAlign.Left,
+        //    offset: 0.2f,
+        //    adjustPlacement: false);
+
+        //// kitchen north = -4.55
+        //frontDoor.Tag = "FrontDoor";
+    }
+    private void Foo(IEnumerable<WorldSegment> loadedSegments)
+    { 
         // Find the real backyard rooms from BackyardWorldSegment
         //var backyardMid = FindShapeByTag<Room>(loadedSegments, "BackyardMid");
         //var backyardSouth = FindShapeByTag<Room>(loadedSegments, "BackyardSouth");

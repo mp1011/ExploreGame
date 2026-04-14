@@ -15,7 +15,6 @@ public class LivingRoom : Room
     private readonly UpstairsHall _upstairsHall;
     private readonly Kitchen _kitchen;
     private Room _frontDeck;
-
     public override Theme Theme => new LivingRoomTheme();
 
     public LivingRoom(WorldSegment segment, UpstairsHall upstairs, Kitchen kitchen) 
