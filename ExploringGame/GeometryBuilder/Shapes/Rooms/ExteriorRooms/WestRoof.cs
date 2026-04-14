@@ -13,8 +13,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class WestRoof : Room
 {
-    private static readonly float RoofHeight = Measure.Feet(3.0f);
-    private static readonly float RoofOverhang = Measure.Feet(1);
+    public static readonly float RoofHeight = Measure.Feet(5.0f);
+    public static readonly float RoofOverhang = Measure.Feet(1);
 
     public override Theme Theme { get; } = new RoofTheme();
 
@@ -24,19 +24,10 @@ public class WestRoof : Room
     {
         FixedAmbientLight = LightIntensity.Bright;
 
-        Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
-        Theme.SideTextures[Side.Top] = new TextureInfo(Color.Green, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+        Theme.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+        Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
 
-        //Theme.SideTextures[Side.Bottom] = new TextureInfo(Color.Red, TextureKey.Concrete, TextureStyle.FillSide);
-
-        Height = Measure.Feet(1);
-        Depth = yard.Depth;
-        Width = Measure.Feet(20);
-
-        this.Place().OnSideOuter(Side.East, yard.Deck, -RoofOverhang)
-                    .OnSideOuter(Side.Top, yard)
-                    .OnSideInner(Side.North, yard.Deck, -RoofOverhang);
-
+        Size = Vector3.One;       
         VertexOffsets.Add(new VertexOffset(Side.East, new Vector3(0, RoofHeight, 0)));
     }
 

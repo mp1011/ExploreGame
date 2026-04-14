@@ -30,9 +30,7 @@ public class LivingRoom : Room
         AddConnectingRoom(new RoomConnection(this, _kitchen, Side.South), adjustPlacement: false);
         AddConnectingRoom(new RoomConnection(this, _upstairsHall.NorthHall, Side.South), adjustPlacement: false);
 
-        var windowWest = new Window(this, Side.West, Measure.Feet(6), Measure.Feet(4), HAlign.Right, -Measure.Feet(4), otherRoom: frontDeck);
-        windowWest.Tag = "LivingRoomWindow";
-
+       
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.East, StateKey.LivingRoomLightOn);
         lightSwitch.ControlledObjects.Add(light);
@@ -41,16 +39,5 @@ public class LivingRoom : Room
         lightSwitch.Place().OnSideInner(Side.East);
 
         SetSideUnanchored(Side.North, GetSide(Side.North) - Measure.Feet(5));
-
-        // Create front door connection now that we have the deck
-        var frontDoor = AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
-            other: frontDeck,
-            side: Side.West,
-            align: HAlign.Left,
-            offset: 0.2f,
-            adjustPlacement: false);
-
-        frontDoor.Tag = "FrontDoor";
     }
 }

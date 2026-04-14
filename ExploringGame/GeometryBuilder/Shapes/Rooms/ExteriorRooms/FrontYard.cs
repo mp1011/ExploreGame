@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -20,22 +21,23 @@ public class FrontYard : Room
 
     public FrontYard(WorldSegment worldSegment, FrontDeck deck) : base(worldSegment)
     {
-        Depth = deck.Depth + Measure.Feet(10);
-        Width = Measure.Feet(20);
-        Height = deck.Height + Measure.Feet(4);
-
-        SetSide(Side.Bottom, deck.GetSide(Side.Bottom) - Measure.Feet(4));
-        SetSide(Side.South, deck.GetSide(Side.South) + Measure.Feet(5));
-        SetSide(Side.East, deck.GetSide(Side.West));
-
-        AddConnectingRoom(deck, Side.East);
-
+        Size = Vector3.One;
         FixedAmbientLight = LightIntensity.Bright;
         Deck = deck;
     }
 
     public void LoadChildren()
     {
+        Depth = Deck.Depth + Measure.Feet(10);
+        Width = Measure.Feet(20);
+        Height = Deck.Height + Measure.Feet(4);
+
+        SetSide(Side.Bottom, Deck.GetSide(Side.Bottom) - Measure.Feet(4));
+        SetSide(Side.South, Deck.GetSide(Side.South) + Measure.Feet(5));
+        SetSide(Side.East, Deck.GetSide(Side.West));
+
+        AddConnectingRoom(Deck, Side.East);
+
         var deckStairs = Deck.AddChild(new FrontDeckStairs(this, Deck));
         deckStairs.SetSide(Side.Bottom, GetSide(Side.Bottom));
         deckStairs.SetSide(Side.North, Deck.WestPart.GetSide(Side.South));
@@ -71,5 +73,7 @@ public class FrontYard : Room
         var terrainNorth = new TerrainSurface(northPart, TerrainSurface.DefaultLawn);
         new GrassSurface(this, terrainMain);
         new GrassSurface(northPart, terrainNorth);
+
+        DebugShapeLogger.LogShape("Yard north", northPart);
     }
 }

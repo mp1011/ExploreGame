@@ -1,5 +1,8 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using ExploringGame.Texture.Themes;
@@ -25,7 +28,7 @@ public class FrontDeck : Room
     {
     }
 
-    public void LoadChildren()
+    public void LoadChildren(LivingRoom livingRoom)
     {
         WestPart = AddChild(new Box(Theme));
         WestPart.SideTextures[Side.Top] = Theme.GetTexture(TextureKey.Wood);
@@ -81,6 +84,16 @@ public class FrontDeck : Room
         CreateRailing(westMiddlePost, southWestPost);
         CreateRailing(southWestPost, southEastPost);
         CreateRailing(northWestPost, northEastPost);
+
+        new Window(livingRoom, Side.West, Measure.Feet(6), Measure.Feet(4), HAlign.Right, -Measure.Feet(4), otherRoom: this);
+
+        livingRoom.AddConnectingRoomWithJunction(
+            new DoorJunction(this, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
+            other: this,
+            side: Side.West,
+            align: HAlign.Left,
+            offset: 0.2f,
+            adjustPlacement: false);
     }
 
     private Shape CreatePost()

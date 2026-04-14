@@ -70,13 +70,11 @@ public class UpstairsWorldSegment : WorldSegment
         _upstairsHall.SouthHall.SetSideUnanchored(Side.South, _bedroom.GetSide(Side.North) - 0.5f);
 
         _livingRoom.LoadChildren(FindShape<FrontDeck>(loadedSegments));
-        _bedroom.LoadChildren(FindShapeByTag<Room>(loadedSegments, "BackyardSouth"));
+        _bedroom.LoadChildren();
         _bathroom.LoadChildren();
-        _kidsBedroom.LoadChildren(
-            backyardMid: FindShapeByTag<Room>(loadedSegments, "BackyardMid"),
-            backyardSouth: FindShapeByTag<Room>(loadedSegments, "BackyardSouth"));
+        _kidsBedroom.LoadChildren();
         _spareRoom.LoadChildren();
-        _kitchen.LoadChildren(FindShapeByTag<Room>(loadedSegments, "BackDeckArea"));
+        _kitchen.LoadChildren();
         _den.LoadChildren();
         _halfBath.LoadChildren();
 

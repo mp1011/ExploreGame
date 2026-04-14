@@ -21,7 +21,7 @@ public class KidsBedroom : Room
 
     }
 
-    public void LoadChildren(Room backyardMid, Room backyardSouth)
+    public void LoadChildren()
     {
         SetSideUnanchored(Side.East, GetSide(Side.East) + 0.5f);
 
@@ -30,10 +30,8 @@ public class KidsBedroom : Room
             adjustPlacement: false);
 
         // Place windows on south and east walls
-        var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardSouth);
-        var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardMid);
-        windowSouth.Tag = "KidBedroomSouthWindow";
-        windowEast.Tag = "KidBedroomEastWindow";
+        //var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardSouth);
+        //var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardMid);
 
         // Add a high hat light to the kids bedroom
         var kidsLight = new HighHatLight(this, 0f, 0f);

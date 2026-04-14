@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
+﻿using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -38,21 +39,15 @@ public class OutsideWorldSegment : WorldSegment
 
         _road = new Road(this);
         _road.Tag = "HomeRoad";
-        _road.AdjustShape().From(_frontYard);
-        _road.Depth = Measure.Feet(32);
-
-        _road.Place().OnFloor(_frontYard);
-        _road.Place().OnSideOuter(Side.West, _frontYard);
-        _road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
+       
+        DebugShapeLogger.LogShape("OutsideWorldSegment ctor", _frontYard);
     }
 
     public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
     {
         // Find real shapes from UpstairsWorldSegment
         var livingRoom = FindShape<LivingRoom>(loadedSegments);
-        var frontDoor = FindShapeByTag<DoorJunction>(loadedSegments, "FrontDoor");
-        var livingRoomWindow = FindShapeByTag<Window>(loadedSegments, "LivingRoomWindow");
-
+      
         // Position and connect deck based on living room
         _deck.Depth = livingRoom.Depth;
         _deck.Width = Measure.Feet(6);
@@ -62,11 +57,25 @@ public class OutsideWorldSegment : WorldSegment
                     .OnSideInner(Side.South, livingRoom);
         _deck.FixedAmbientLight = LightIntensity.Bright;
 
-        _deck.AddConnectingRoom(frontDoor, Side.East);
-        _deck.AddConnectingRoom(livingRoomWindow, Side.East);
-
         // Load children after positioning is complete
-        _deck.LoadChildren();
+        _deck.LoadChildren(livingRoom);
         _frontYard.LoadChildren();
+
+        _road.AdjustShape().From(_frontYard);
+        _road.Depth = Measure.Feet(32);
+        _road.Place().OnFloor(_frontYard);
+        _road.Place().OnSideOuter(Side.West, _frontYard);
+        _road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
+
+
+        _roof.Height = Measure.Feet(1);
+        _roof.Depth = _frontYard.Depth;
+        _roof.Width = Measure.Feet(20);
+
+        _roof.Place().OnSideOuter(Side.East, _frontYard.Deck, -WestRoof.RoofOverhang)
+                    .OnSideOuter(Side.Top, _frontYard)
+                    .OnSideInner(Side.North, _frontYard.Deck, -WestRoof.RoofOverhang);
+
+        DebugShapeLogger.LogShape("OutsideWorldSegment PositionChildren end", _frontYard);
     }
 }
