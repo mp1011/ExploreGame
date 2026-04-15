@@ -29,10 +29,6 @@ public class KidsBedroom : Room
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left,
             adjustPlacement: false);
 
-        // Place windows on south and east walls
-        //var windowSouth = new Window(this, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardSouth);
-        //var windowEast = new Window(this, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: backyardMid);
-
         // Add a high hat light to the kids bedroom
         var kidsLight = new HighHatLight(this, 0f, 0f);
 

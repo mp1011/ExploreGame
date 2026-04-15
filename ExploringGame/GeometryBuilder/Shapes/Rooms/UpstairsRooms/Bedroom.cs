@@ -26,11 +26,8 @@ public class Bedroom : Room
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
                 adjustPlacement: false);
 
-        // Place windows on west and south walls
-       // var windowWest = new Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
-       // var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: backyardSouth);
+        var windowWest = new Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
        
-
         var light = new HighHatLight(this, 0f, 0f);
         var sw = new LightSwitch(this, Side.East, StateKey.BedroomLightOn);
         sw.ControlledObjects.Add(light);

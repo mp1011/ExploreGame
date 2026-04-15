@@ -11,7 +11,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 public class Den : Room
 {
     private LivingRoom _livingRoom;
-    private Room _backDeckArea;
 
     public Room EastPart { get; private set;  }
     public override Theme Theme => new UpstairsHallTheme();
@@ -21,11 +20,6 @@ public class Den : Room
     {
         _livingRoom = livingRoom;
         this.Place().OnSideInner(Side.NorthEast);
-    }
-
-    public void SetBackDeckArea(Room backDeckArea)
-    {
-        _backDeckArea = backDeckArea;
     }
 
     public void LoadChildren()
@@ -38,11 +32,6 @@ public class Den : Room
         EastPart = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
         EastPart.Tag = "DenEast";
         AddConnectingRoom(new RoomConnection(this, EastPart, Side.East, HAlign.Right));
-
-
-        // Place window on south wall, align left, 2 feet from wall
-        var windowSouth = new Window(this, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2), otherRoom: _backDeckArea);
-        windowSouth.Tag = "DenSouthWindow";
 
         var closet = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
 

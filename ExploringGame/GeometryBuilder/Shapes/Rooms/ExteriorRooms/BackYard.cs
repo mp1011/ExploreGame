@@ -101,13 +101,24 @@ public class BackYard : Room
         _deckArea.SetSideUnanchored(Side.North, den.GetSide(Side.South) + OuterWall.StandardSpacingForGround);
         eastWall.SetSideUnanchored(Side.South, _deckArea.GetSide(Side.North));
 
+        new OuterWall(_deckArea, Side.West);
+
         var southEastWall = new OuterWall(_midSection, Side.West);
-        southEastWall.SetSideUnanchored(Side.North, _deckArea.GetSide(Side.North));
+        southEastWall.Tag = "SE";
 
         var southWall = new OuterWall(_southSection, Side.North);
         southWall.SetSideUnanchored(Side.East, southEastWall.GetSide(Side.West));
 
         new OuterWall(_deckArea, Side.North);
+
+//        new Window(kitchen, Side.East, Measure.Feet(4), Measure.Feet(4), HAlign.Right, -Measure.Feet(2), otherRoom: _deckArea);
+  //      new Window(den, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2), otherRoom: _deckArea);
+    //    new Window(kidsBedroom, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: _southSection);
+        new Window(kidsBedroom, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _midSection);
+        
+      //  new Window(bedroom, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _southSection);
+
+
     }
 
 }
