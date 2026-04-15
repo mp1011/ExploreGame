@@ -11,6 +11,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
     public class OuterWall : Shape, ICollidable
     {
         public static float WallThickness = 0.1f;
+        public static float StandardSpacingForGround = 0.5f;
 
         private readonly Side _wallSide;
         private readonly Room _parentRoom;
@@ -33,11 +34,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             _wallSide = wallSide;
 
             room.AddChild(this);
-            
-        }
-
-        protected override void BeforeBuild()
-        {
             Height = _parentRoom.Height;
             Width = _wallSide.GetAxis() == Axis.X ? WallThickness : _parentRoom.Width;
             Depth = _wallSide.GetAxis() == Axis.Z ? WallThickness : _parentRoom.Depth;

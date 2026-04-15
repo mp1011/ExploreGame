@@ -39,7 +39,9 @@ public class BackyardWorldSegment : WorldSegment
         var denEast = FindShapeByTag<Room>(loadedSegments, "DenEast");
         var kitchen = FindShape<Kitchen>(loadedSegments);
         var den = FindShape<Den>(loadedSegments);
+        var kidsBedroom = FindShape<KidsBedroom>(loadedSegments);
+        var bedroom = FindShape<Bedroom>(loadedSegments);
 
-        _backyard.LoadChildren(frontSidewalk, northYard, den, kitchen);
+        _backyard.LoadChildren(frontSidewalk, northYard, den, kitchen, kidsBedroom, bedroom);
     }
 }
