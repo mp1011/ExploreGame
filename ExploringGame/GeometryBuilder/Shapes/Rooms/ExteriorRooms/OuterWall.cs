@@ -48,10 +48,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             shape = new SideRemover().Execute(shape, _wallSide);
 
             // Apply cutouts for windows/doors from room connections
+            // Simple approach: just subtract each cutout shape from the triangles
             foreach (var connection in _parentRoom.RoomConnections.Where(c => c.Side == _wallSide))
             {
-                var cutoutPlacement = RoomConnection.CalcCutoutPlacement(shape, _wallSide.Opposite(), this, connection.GetOtherRoom(_parentRoom));
-                shape = new RemoveSurfaceRegion().Execute(shape, connection.Side.Opposite(), cutoutPlacement, ViewFrom);
+                var cutoutShape = connection.GetOtherRoom(_parentRoom);
+                shape = new RemoveSurfaceRegion().SubtractShape(shape, cutoutShape);
             }
 
             return shape;
