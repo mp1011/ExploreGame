@@ -31,9 +31,7 @@ public class Game1 : Game
 
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private IRenderEffect _renderEffect;
-    private IRenderEffect _skyboxEffect;
-    private GrassRenderEffect _grassRenderEffect;
+    protected RenderPassRegistry _renderPassRegistry;
 
 
     private SpriteFont _debugFont;
@@ -117,25 +115,30 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
-        var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
-        var dualEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
-
-        var skyboxEffect = new SkyboxRenderEffect(this);
-
         var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();
         loadedTextures.AddTexture(new BasementTextureSheet(Content));
         loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
         loadedTextures.AddTexture(new SkyTextureSheet(Content));
         loadedTextures.AddTexture(new OutdoorsTextureSheet(Content));
 
-        dualEffect.SetTextures(loadedTextures);
-        skyboxEffect.SetTextures(loadedTextures);
+        _renderPassRegistry = new RenderPassRegistry();
 
-        _renderEffect = dualEffect;
-        _grassRenderEffect = new GrassRenderEffect(_cameraService, this);
-        _grassRenderEffect.SetTextures(loadedTextures);
-        _skyboxEffect = skyboxEffect;
+        var opaquePass = new OpaqueRenderPass(
+            _serviceContainer.Get<RoomLightingCalculator>(),
+            _serviceContainer.Get<PointLights>());
+        var grassPass = new GrassRenderPass(_cameraService);
+        var skyboxPass = new SkyboxRenderPass(_cameraService);
+
+        opaquePass.LoadContent(this, loadedTextures);
+        grassPass.LoadContent(this, loadedTextures);
+        skyboxPass.LoadContent(this, loadedTextures);
+
+        _renderPassRegistry.Register(opaquePass);
+        _renderPassRegistry.Register(grassPass);
+        _renderPassRegistry.Register(skyboxPass);
+
+        _loadedLevelData.RenderPassRegistry = _renderPassRegistry;
+
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
@@ -190,21 +193,16 @@ public class Game1 : Game
         graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
         graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
-        // Render geometry first
-        foreach (var levelData in _loadedLevelData.ActiveSegments)
-        {
-            _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
-            _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
+        if (_renderPassRegistry == null)
+            return;
 
-            // Render grass blades if present
-            foreach(var grassBuffer in levelData.GrassShapeBuffers)
-                _grassRenderEffect.Draw(graphicsDevice, grassBuffer, _cameraService.View, _cameraService.Projection);
-        }
-
-        // Render skybox LAST with custom shader that forces depth to 1.0
-        if (_loadedLevelData.SkyboxBuffer != null)
+        foreach (var pass in _renderPassRegistry.Passes)
         {
-            _skyboxEffect.Draw(graphicsDevice, new[] { _loadedLevelData.SkyboxBuffer }, _cameraService.SkyboxView, _cameraService.Projection);
+            foreach (var levelData in _loadedLevelData.ActiveSegments)
+            {
+                if (levelData.BuffersByPass.TryGetValue(pass, out var buffers) && buffers.Count > 0)
+                    pass.Draw(graphicsDevice, buffers, _cameraService.View, _cameraService.Projection);
+            }
         }
     }
 

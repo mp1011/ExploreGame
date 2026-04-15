@@ -1,15 +1,8 @@
-﻿using ExploringGame.GeometryBuilder;
-using ExploringGame.GeometryBuilder.Shapes;
+﻿using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 namespace ExploringGame.Rendering;
-
-public enum ShapeBufferType
-{
-    Normal,
-    Grass
-}
 
 public record ShapeBuffer(
     Shape Shape,
@@ -17,8 +10,8 @@ public record ShapeBuffer(
     IndexBuffer IndexBuffer,
     int TriangleCount,
     TextureSheetKey Texture,
+    IRenderPass RenderPass,
     RasterizerState RasterizerState = null,
     ILightingGroup LightingGroup = null,
-    DepthStencilState DepthStencilState = null,
-    ShapeBufferType Type = ShapeBufferType.Normal)
+    DepthStencilState DepthStencilState = null)
 {}

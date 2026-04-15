@@ -29,10 +29,15 @@ public class LoadedLevelData
     public RoomGraph RoomGraph { get; private set; }
     public WaypointGraph WaypointGraph { get; private set; }
     public RoomLightingCalculator LightingCalculator => _lightingCalculator;
-    public ShapeBuffer SkyboxBuffer { get; set; }
 
-    public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
-        LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer, 
+    /// <summary>
+    /// The render pass registry used when building level data.
+    /// Must be set (from Game1.LoadContent) before the first segment loads.
+    /// </summary>
+    public RenderPassRegistry RenderPassRegistry { get; set; }
+
+    public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics,
+        LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer,
         RoomLightingCalculator lightingCalculator,
         WorldSegmentAnchorProcessor anchorProcessor)
     {
@@ -50,13 +55,12 @@ public class LoadedLevelData
 
     public void Update(GameTime gameTime)
     {
-        foreach(var segment in ActiveSegments)
+        foreach (var segment in ActiveSegments)
             segment.Update(gameTime);
     }
 
     public void LoadSegment(WorldSegment worldSegment)
     {
-        // Check if segment is already loaded
         if (IsSegmentLoaded(worldSegment))
             return;
 
@@ -76,31 +80,41 @@ public class LoadedLevelData
             }
         }
 
-        // Add waypoints for this segment
         WaypointGraph.AddRoomsAndWaypoints(rooms, worldSegment);
 
-        // Update lighting calculator
         _lightingCalculator.SetRoomGraph(RoomGraph);
         _lightingCalculator.AddSegments(new List<WorldSegment> { worldSegment });
 
-        // Build geometry and create level data
-        var triangles = worldSegment.Build((QualityLevel)8); //todo, quality level
+        var triangles = worldSegment.Build((QualityLevel)8);
 
         AssignRoomsToPlaceableShapes(worldSegment);
 
-        var shapeBufferCreator = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice);
+        var shapeBufferCreator = new ShapeBufferCreator(triangles, _loadedTextureSheets,
+            _game.GraphicsDevice, registry: RenderPassRegistry);
         var shapeBuffers = shapeBufferCreator.Execute();
-        var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
 
-        // Build skybox if this segment has one and we don't already have a skybox
-        if (worldSegment.Skybox != null && SkyboxBuffer == null)
+        // Build skybox buffer via the registry when this segment has a skybox and
+        // no segment has been given one yet. The skybox shape is not a child of the
+        // WorldSegment tree, so ShapeBufferCreator won't process it automatically.
+        if (worldSegment.Skybox != null && RenderPassRegistry != null)
         {
-            var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
-            var skyboxBufferCreator = new ShapeBufferCreator(skyboxTriangles, _loadedTextureSheets, _game.GraphicsDevice);
-            SkyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
+            var skyboxPass = RenderPassRegistry.FindSpecializedPassForShape(worldSegment.Skybox);
+            bool alreadyHasSkybox = skyboxPass != null && LoadedSegments.Any(s =>
+                s.BuffersByPass.TryGetValue(skyboxPass, out var list) && list.Count > 0);
+
+            if (!alreadyHasSkybox && skyboxPass != null)
+            {
+                var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
+                var skyboxBuffer = skyboxPass.BuildBuffer(worldSegment.Skybox, skyboxTriangles,
+                    _loadedTextureSheets, _game.GraphicsDevice);
+                if (skyboxBuffer != null)
+                    shapeBuffers = shapeBuffers.Append(skyboxBuffer).ToArray();
+            }
         }
 
-        var newLevelData = new LevelData(worldSegment, shapeBuffers, activeObjects);
+        var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
+
+        var newLevelData = new LevelData(worldSegment, shapeBuffers, activeObjects, RenderPassRegistry);
         _setupColliderBodies.Execute(newLevelData.WorldSegment);
         newLevelData.Initialize();
 
@@ -114,7 +128,6 @@ public class LoadedLevelData
 
     private void AssignRoomsToPlaceableShapes(WorldSegment segment)
     {
-        // Find all PlaceableShapes in the segments
         var placeableShapes = segment.TraverseAllChildren()
             .OfType<PlaceableShape>()
             .Where(p => p.ViewFrom != ViewFrom.None)
@@ -123,22 +136,18 @@ public class LoadedLevelData
         foreach (var shape in placeableShapes)
         {
             var room = FindRoomContainingPosition(shape.Position);
-
-            // Use the LightingGroup for consistency (RoomParts point to their parent room)
             shape.Room = room?.LightingGroup;
         }
     }
 
     private Room FindRoomContainingPosition(Vector3 position)
     {
-        // Check each room to see if it contains the position
         foreach (var room in RoomGraph.GetAllRooms())
         {
             if (room.ContainsPoint(position))
                 return room;
         }
 
-        // If no room contains the point, find the nearest room
         Room nearestRoom = null;
         float nearestDistance = float.MaxValue;
 
@@ -177,4 +186,3 @@ public class LoadedLevelData
         AddStampedShape<GeometryBuilder.Shapes.Decals.WallDecalStamp>(worldSegment, wallDecal);
     }
 }
-
