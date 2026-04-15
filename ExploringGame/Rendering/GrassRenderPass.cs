@@ -3,7 +3,6 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
@@ -16,7 +15,6 @@ namespace ExploringGame.Rendering;
 public class GrassRenderPass : IRenderPass
 {
     private readonly CameraService _cameraService;
-    private ContentManager _contentManager;
     private Effect _grassEffect;
     private Texture2D _grassTexture;
 
@@ -34,6 +32,7 @@ public class GrassRenderPass : IRenderPass
     {
         _contentManager = game.Content;
         _grassTexture = textures.Get(TextureSheetKey.Outdoors).Texture;
+        _grassEffect = _contentManager.Load<Effect>("GrassEffect");
     }
 
     public ShapeBuffer BuildBuffer(Shape shape, Dictionary<Shape, Triangle[]> shapeTriangles,
@@ -52,9 +51,6 @@ public class GrassRenderPass : IRenderPass
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers,
         Matrix view, Matrix projection)
     {
-        if (_grassEffect == null)
-            _grassEffect = _contentManager.Load<Effect>("GrassEffect");
-
         var inverseView = Matrix.Invert(view);
         var cameraPosition = inverseView.Translation;
 

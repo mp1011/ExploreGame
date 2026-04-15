@@ -30,6 +30,8 @@ public class LoadedLevelData
     public WaypointGraph WaypointGraph { get; private set; }
     public RoomLightingCalculator LightingCalculator => _lightingCalculator;
 
+    private bool _hasSkybox;
+
     /// <summary>
     /// The render pass registry used when building level data.
     /// Must be set (from Game1.LoadContent) before the first segment loads.
@@ -96,19 +98,19 @@ public class LoadedLevelData
         // Build skybox buffer via the registry when this segment has a skybox and
         // no segment has been given one yet. The skybox shape is not a child of the
         // WorldSegment tree, so ShapeBufferCreator won't process it automatically.
-        if (worldSegment.Skybox != null && RenderPassRegistry != null)
+        if (!_hasSkybox && worldSegment.Skybox != null && RenderPassRegistry != null)
         {
             var skyboxPass = RenderPassRegistry.FindSpecializedPassForShape(worldSegment.Skybox);
-            bool alreadyHasSkybox = skyboxPass != null && LoadedSegments.Any(s =>
-                s.BuffersByPass.TryGetValue(skyboxPass, out var list) && list.Count > 0);
-
-            if (!alreadyHasSkybox && skyboxPass != null)
+            if (skyboxPass != null)
             {
                 var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
                 var skyboxBuffer = skyboxPass.BuildBuffer(worldSegment.Skybox, skyboxTriangles,
                     _loadedTextureSheets, _game.GraphicsDevice);
                 if (skyboxBuffer != null)
+                {
                     shapeBuffers = shapeBuffers.Append(skyboxBuffer).ToArray();
+                    _hasSkybox = true;
+                }
             }
         }
 
