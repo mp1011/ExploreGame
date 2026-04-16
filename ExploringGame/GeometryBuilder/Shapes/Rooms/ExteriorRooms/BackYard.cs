@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
@@ -44,7 +45,8 @@ public class BackYard : Room
         _deckArea.Tag = "BackDeckArea";
     }
 
-    public void LoadChildren(Shape frontSidewalk, Shape northYard, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom)
+    public void LoadChildren(Shape frontSidewalk, Shape northYard, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
+        Basement basement, BasementOffice basementOffice)
     {
         this.Place().At(frontSidewalk)
                    .OnSideOuter(Side.East, frontSidewalk)
@@ -117,7 +119,8 @@ public class BackYard : Room
         
         new Window(bedroom, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _southSection);
 
-
+        new BasementWindow(basement, this, Side.North, HAlign.Right, -0.5f);
+        new BasementWindow(basementOffice.EastPart, _eastSection, Side.East, HAlign.Left, 0.0f);
     }
 
 }

@@ -19,6 +19,8 @@ public class BasementOffice : Room
 
     public HighHatLight[] Lights { get; private set; }
 
+    public Room EastPart { get; private set; }
+
     public BasementOffice(WorldSegment worldSegment) : base(worldSegment)
     {
         Width = Measure.Feet(17) - 2.0f;
@@ -45,6 +47,8 @@ public class BasementOffice : Room
 
         var eastPart2 = Copy(depth: 2.0f, width: 2.0f);
         eastPart.AddConnectingRoom(new RoomConnection(eastPart, eastPart2, Side.North, 0.5f));
+
+        EastPart = eastPart;
 
         var closet1 = new BasementCloset(westPart, Side.East);
         closet1.Place().OnFloor().OnSideInner(Side.SouthWest);

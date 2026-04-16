@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
@@ -17,6 +18,7 @@ public class BackyardWorldSegment : WorldSegment
     {
         new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
         new WorldSegmentTransition(typeof(OutsideWorldSegment)),
+        new WorldSegmentTransition(typeof(BasementWorldSegment)),
         new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
 
     };
@@ -41,7 +43,9 @@ public class BackyardWorldSegment : WorldSegment
         var den = FindShape<Den>(loadedSegments);
         var kidsBedroom = FindShape<KidsBedroom>(loadedSegments);
         var bedroom = FindShape<Bedroom>(loadedSegments);
+        var basement = FindShape<Basement>(loadedSegments);
+        var basementOffice = FindShape<BasementOffice>(loadedSegments);
 
-        _backyard.LoadChildren(frontSidewalk, northYard, den, kitchen, kidsBedroom, bedroom);
+        _backyard.LoadChildren(frontSidewalk, northYard, den, kitchen, kidsBedroom, bedroom, basement, basementOffice);
     }
 }
