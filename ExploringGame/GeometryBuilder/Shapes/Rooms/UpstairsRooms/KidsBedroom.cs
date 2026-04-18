@@ -36,7 +36,7 @@ public class KidsBedroom : Room
         var lightSwitch = new LightSwitch(this, Side.North, StateKey.KidsBedroomLightOn);
         lightSwitch.ControlledObjects.Add(kidsLight);
         lightSwitch.Position = Position;
-        lightSwitch.Place().OnSideInner(Side.North);
+        lightSwitch.Place().OnSideInner(Side.North).AtEyeLevel(this, -Measure.Inches(5));
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();

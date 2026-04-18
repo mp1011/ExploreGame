@@ -39,6 +39,7 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>, ICollida
        
 
         Position = room.Position;
+        Y += Measure.Inches(20);
         StateKey = key;
     }
 

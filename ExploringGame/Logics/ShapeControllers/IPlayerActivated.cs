@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,7 @@ public interface IPlayerActivated
 public static class IPlayerActivatedExtensions
 {
     public static bool CheckPlayerActivation(this IPlayerActivated playerActivated, Physics physics)
-    {      
+    {
         if (playerActivated.Player.Position.SquaredDistance(playerActivated.Shape.Position) > playerActivated.ActivationRange * playerActivated.ActivationRange)
             return false;
 
@@ -28,7 +29,7 @@ public static class IPlayerActivatedExtensions
             return false;
 
         // Angular check: ensure player is looking roughly at the shape
-        var forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(playerActivated.Player.Rotation.Yaw, playerActivated.Player.Rotation.Pitch, 0f));
+        var forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(playerActivated.Player.Rotation.Yaw, 0f, 0f));
         var toTarget = playerActivated.Shape.Position - playerActivated.Player.Position;
         forward.Normalize();
         toTarget.Normalize();

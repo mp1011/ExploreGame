@@ -1,4 +1,5 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using System.Numerics;
 
@@ -24,5 +25,12 @@ public class BasementWindow : Room
         SetSide(Side.Bottom, basementRoom.GetSide(Side.Top) - Height);
         SetSideUnanchored(Side.Top, basementRoom.GetSide(Side.Top));
 
+        // glass pane - thin transparent glass in the window opening
+        var glassPane = AddChild(new GlassPane());
+        glassPane.AdjustShape()
+            .SetAxis(basementRoomWindowSide.GetAxis(), 0.02f) // Very thin glass
+            .SetAxis(basementRoomWindowSide.GetPerpendicularAxis(), Width)
+            .SetAxis(Axis.Y, Height);
+        glassPane.Place().AtParent(); // Center in the window opening
     }
 }

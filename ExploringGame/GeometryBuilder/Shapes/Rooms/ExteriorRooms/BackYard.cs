@@ -100,7 +100,7 @@ public class BackYard : Room
         _deckArea.SetSideUnanchored(Side.West, _midSection.GetSide(Side.West));
         _deckArea.SetSideUnanchored(Side.East, _eastSection.GetSide(Side.West));
         _deckArea.SetSideUnanchored(Side.South, _midSection.GetSide(Side.North));
-        _deckArea.SetSideUnanchored(Side.North, den.GetSide(Side.South) + OuterWall.StandardSpacingForGround);
+        _deckArea.SetSideUnanchored(Side.North, den.GetSide(Side.South) + OuterWall.StandardSpacingForGround * 1.5f);
         eastWall.SetSideUnanchored(Side.South, _deckArea.GetSide(Side.North));
 
         new OuterWall(_deckArea, Side.West);

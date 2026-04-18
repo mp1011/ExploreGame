@@ -5,11 +5,20 @@ using Jitter2.Collision;
 using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using System;
+using System.Text;
 
 namespace ExploringGame.Extensions;
 
 public static class JitterExtensions
 {
+    public static string DiagnosticInfo(this RigidBody body)
+    {
+        if (body.Tag is CollisionInfo collisionInfo && collisionInfo.Shape != null)
+           return collisionInfo.Shape.GetType().Name;
+        else
+            return null;
+    }
+
     public static bool BelongsTo(this IDynamicTreeProxy proxy, ICollidable collidable)
     {
         if (proxy is RigidBodyShape bodyShape)

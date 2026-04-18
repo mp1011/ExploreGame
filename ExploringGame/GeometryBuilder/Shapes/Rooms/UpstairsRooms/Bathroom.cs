@@ -29,6 +29,6 @@ public class Bathroom : Room
         var sw = new LightSwitch(this, Side.North, StateKey.BathroomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.North);
+        sw.Place().OnSideInner(Side.North).AtEyeLevel(this, -Measure.Inches(5));
     }
 }

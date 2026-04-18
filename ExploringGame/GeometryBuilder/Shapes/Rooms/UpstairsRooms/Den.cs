@@ -42,6 +42,6 @@ public class Den : Room
         lightSwitch.ControlledObjects.Add(light);
 
         lightSwitch.Position = Position;
-        lightSwitch.Place().OnSideInner(Side.South);
+        lightSwitch.Place().OnSideInner(Side.South).AtEyeLevel(this, -Measure.Inches(5));
     }
 }

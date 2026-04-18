@@ -1,4 +1,5 @@
-﻿using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Decals;
@@ -41,6 +42,12 @@ public class ShapePlacer
     public ShapePlacer At(Shape other)
     {
         _shape.Position = other.Position;
+        return this;
+    }
+
+    public ShapePlacer AtEyeLevel(Shape container, float offset)
+    {
+        _shape.Y = container.GetSide(Side.Bottom) + Player.EyeHeight + offset;
         return this;
     }
 

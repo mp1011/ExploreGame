@@ -1,5 +1,10 @@
-1. texture on oil tank doesn't look right
-	- textures on the end caps don't show the correct region of the texture sheet
-2. door light should interopolate
-3. no collision on furniture
-4. doors, when unlocked, should be moveable
+[x] backyard clips through basement
+[x] furniture has no collision
+[x] light switches too low on wall
+[ ] add glass pane to basement window
+[x] reposition light in basement
+[x] basement door stuck
+[x] front door glitched
+[x] fences have no collision
+[x] basement not loaded from frontyard
+[x] house walls have no collision

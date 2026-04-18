@@ -17,7 +17,7 @@ public class Player : ICollidable, ICamera
     public Vector3 Size => new Vector3(0.5f, 1.8f, 0.5f);
 
     private float PhysicsCapsuleHeight => 2.8f; // Capsule length (2.0) + 2 * radius (0.4) from Physics.CreateCapsule
-    private float EyeHeight => Measure.Feet(5.5f);
+    public static readonly float EyeHeight = Measure.Feet(5.5f);
 
     public CollisionGroup CollisionGroup => CollisionGroup.Player;
 

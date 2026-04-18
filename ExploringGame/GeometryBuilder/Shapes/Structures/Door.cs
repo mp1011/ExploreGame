@@ -110,4 +110,9 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
         var delta = newHingePosition - currentHingePosition;
         Position = Position + delta;
     }
+
+    public override string ToString()
+    {
+        return $"Door ({StateKey})";
+    }
 }

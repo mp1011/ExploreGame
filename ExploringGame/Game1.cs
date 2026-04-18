@@ -188,7 +188,7 @@ public class Game1 : Game
         }
 
         // Update debug display with player health
-        GameDebug.Debug.Watch1 = $"Player Health: {_player.Health}";
+       // GameDebug.Debug.Watch1 = $"Player Health: {_player.Health}";
         
         // Check if player is dead
         if (_player.Health <= 0)

@@ -30,7 +30,7 @@ public class SpareRoom : Room
         var sw = new LightSwitch(this, Side.East, StateKey.SpareRoomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.East);
+        sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5)); 
     }
 
     public override Theme Theme => new UpstairsHallTheme();

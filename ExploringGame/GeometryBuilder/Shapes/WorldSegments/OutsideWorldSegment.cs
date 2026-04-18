@@ -15,8 +15,9 @@ public class OutsideWorldSegment : WorldSegment
     public override SkyboxShape Skybox => SkyDome.Instance;
 
     public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-    {
+    {  
         new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
+        new WorldSegmentTransition(typeof(BasementWorldSegment)),
         new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
         new WorldSegmentTransition(typeof(BackyardWorldSegment)),
     };

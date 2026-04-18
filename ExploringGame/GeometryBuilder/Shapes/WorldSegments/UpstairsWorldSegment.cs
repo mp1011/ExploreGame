@@ -83,15 +83,6 @@ public class UpstairsWorldSegment : WorldSegment
         // Add the Light Spirit
         var lightSpirit = new LightSpirit();
         lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
-        AddChild(lightSpirit);
-
-        var deck = FindShape<FrontDeck>(loadedSegments);
-        _livingRoom.AddConnectingRoomWithJunction(
-            new DoorJunction(_livingRoom, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
-            other: deck,
-            side: Side.West,
-            align: HAlign.Left,
-            offset: 0.2f,
-            adjustPlacement: false);
+        AddChild(lightSpirit);       
     }
 }

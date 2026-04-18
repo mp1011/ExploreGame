@@ -150,7 +150,12 @@ public class Physics
         return body;
     }
 
-    public RigidBody CreateStaticBody(ICollidable shape) => CreateStaticBody(shape, shape.CollisionGroup, shape.CollidesWithGroups);
+    public RigidBody CreateStaticBody(ICollidable shape)
+    {
+        var body = CreateStaticBody(shape, shape.CollisionGroup, shape.CollidesWithGroups);
+        body.Tag = (body.Tag as CollisionInfo) with { Shape = shape };
+        return body;
+    }
 
     public RigidBody CreateStaticBody(IWithPosition shape, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
@@ -291,6 +296,11 @@ public class Physics
             _world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
     }
 
+    public string RigidBodyDiagnostics()
+    {
+        return String.Join(Environment.NewLine,
+            _world.RigidBodies.Select(p => p.DiagnosticInfo()).ToArray());
+    }
 
     class CollisionGroupFilter : IBroadPhaseFilter
     {
@@ -300,7 +310,14 @@ public class Physics
             {
                 var infoA = bodyA.RigidBody.Tag as CollisionInfo;
                 var infoB = bodyB.RigidBody.Tag as CollisionInfo;
-                
+
+                if(infoA!.Shape?.GetType()?.Name == "OfficeDesk"
+                    || infoB!.Shape?.GetType()?.Name == "OfficeDesk")
+                {
+                    Console.Write(".");
+                }
+                    
+
                 if (infoA == null || infoB == null)
                     return false;
 
