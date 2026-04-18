@@ -130,6 +130,12 @@ public class Game1 : Game
         opaquePass.LoadContent(this, loadedTextures);
         _renderPassRegistry.Register(opaquePass);
 
+        // Create and register glass pass (DrawOrder = 5)
+        var glassEffect = new GlassRenderEffect(this);
+        var glassPass = new GlassRenderPass(glassEffect);
+        glassPass.LoadContent(this, loadedTextures);
+        _renderPassRegistry.Register(glassPass);
+
         // Create and register grass pass (DrawOrder = 10)
         var grassEffect = new GrassRenderEffect(_cameraService, this);
         var grassPass = new GrassRenderPass(grassEffect);

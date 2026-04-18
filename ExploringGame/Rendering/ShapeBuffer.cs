@@ -8,6 +8,7 @@ public enum ShapeBufferType
 {
     Normal,
     Grass,
+    Glass,
     Skybox
 }
 

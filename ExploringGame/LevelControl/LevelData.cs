@@ -24,8 +24,7 @@ public class LevelData
 
     // Legacy properties for backward compatibility during migration
     public ShapeBuffer[] ShapeBuffers => BuffersByPass.Values.SelectMany(list => list).Where(b => b.Shape is not ShapeStamp && b.Type == ShapeBufferType.Normal).ToArray();
-    public List<ShapeBuffer> GrassShapeBuffers => BuffersByPass.Values.SelectMany(list => list).Where(b => b.Type == ShapeBufferType.Grass).ToList();
-
+    
     public bool Initialized { get; private set; }
     public WorldSegment WorldSegment { get; }
     private readonly RenderPassRegistry _renderPassRegistry;

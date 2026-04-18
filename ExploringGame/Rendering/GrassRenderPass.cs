@@ -19,7 +19,7 @@ public class GrassRenderPass : IRenderPass
     private readonly GrassVertexBufferBuilder _vertexBufferBuilder = new();
     private LoadedTextureSheets _textureSheets;
 
-    public int DrawOrder => 10; // Draw after opaque geometry
+    public DrawOrder DrawOrder => DrawOrder.Grass;
 
     public GrassRenderPass(GrassRenderEffect grassEffect)
     {

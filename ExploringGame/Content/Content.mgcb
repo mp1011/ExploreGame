@@ -74,6 +74,12 @@
 /processorParam:DebugMode=Auto
 /build:GrassEffect.fx
 
+#begin GlassEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:GlassEffect.fx
+
 #begin Sound/DoorClose.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

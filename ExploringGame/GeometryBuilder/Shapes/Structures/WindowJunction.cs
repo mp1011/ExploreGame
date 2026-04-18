@@ -90,6 +90,14 @@ public class Window : Room
         cap1.Place().At(rod).OnSideOuter(wallSide.ClockwiseTurn(), rod);
         cap2.Place().At(rod).OnSideOuter(wallSide.CounterClockwiseTurn(), rod);
 
+        // glass pane - thin transparent glass in the window opening
+        var glassPane = AddChild(new GlassPane());
+        glassPane.AdjustShape()
+            .SetAxis(_wallSide.GetAxis(), 0.02f) // Very thin glass
+            .SetAxis(_wallSide.GetPerpendicularAxis(), width)
+            .SetAxis(Axis.Y, height);
+        glassPane.Place().AtParent(); // Center in the window opening
+
         // curtains
         CreateCurtain(rod, wallSide, wallSide.ClockwiseTurn());
         CreateCurtain(rod, wallSide, wallSide.CounterClockwiseTurn());

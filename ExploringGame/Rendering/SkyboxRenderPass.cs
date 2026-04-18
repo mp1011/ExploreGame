@@ -19,7 +19,7 @@ public class SkyboxRenderPass : IRenderPass
     private readonly VertexBufferBuilder _vertexBufferBuilder = new();
     private LoadedTextureSheets _textureSheets;
 
-    public int DrawOrder => 90; // Draw skybox near the end (before HUD/transparent)
+    public DrawOrder DrawOrder => DrawOrder.Skybox;
 
     public SkyboxRenderPass(SkyboxRenderEffect skyboxEffect)
     {

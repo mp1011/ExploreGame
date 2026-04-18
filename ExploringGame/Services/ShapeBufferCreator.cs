@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Pathfinding;
@@ -54,7 +55,13 @@ internal class ShapeBufferCreator
         var shapeStamps = allShapes.OfType<ShapeStamp>().ToArray();
         var stampedShapes = allShapes.OfType<StampedShape>().ToArray();
         var grassSurfaces = allShapes.OfType<GrassSurface>().ToArray();
-        var staticShapes = allShapes.Except(shapeStamps).Except(stampedShapes).Except(grassSurfaces).ToArray();
+        var glassPanes = allShapes.OfType<GlassPane>().ToArray();
+
+        var staticShapes = allShapes
+            .Except(shapeStamps)
+            .Except(stampedShapes)
+            .Except(grassSurfaces)
+            .Except(glassPanes).ToArray();
 
         // Get all rooms in the world segment
         var allRooms = worldSegment.TraverseAllChildren().OfType<Room>().ToArray();
@@ -139,10 +146,14 @@ internal class ShapeBufferCreator
             shapeStampBuffers[shapeStamp.GetType()] = buffer;
         }
 
-        // Create buffers for grass surfaces using GrassVertexBufferBuilder
         if (grassSurfaces.Any())
         {
             yield return CreateGrassShapeBuffer(worldSegment, grassSurfaces);
+        }
+
+        if (glassPanes.Any())
+        {
+            yield return CreateGlassPaneBuffer(worldSegment, glassPanes);
         }
 
         // Create buffers for active objects
@@ -196,6 +207,19 @@ internal class ShapeBufferCreator
 
         // Use worldSegment as the shape, Outdoors texture, and CullNone rasterizer state
         return new ShapeBuffer(worldSegment, buffers.Item1, buffers.Item2, buffers.Item3, TextureSheetKey.Outdoors, RasterizerState.CullNone, null, Type: ShapeBufferType.Grass);
+    }
+
+    private ShapeBuffer CreateGlassPaneBuffer(WorldSegment worldSegment, GlassPane[] glassPanes)
+    {
+        var triangles = new Dictionary<Shape, Triangle[]>();
+        foreach (var glassPane in glassPanes)
+            triangles[glassPane] = _shapeTriangles[glassPane];
+
+        var texture = _textureSheets.Get(TextureSheetKey.Basement);
+        var buffers = _vertexBufferBuilder.Build(triangles, texture, _graphicsDevice);
+
+        // Use worldSegment as the shape, Outdoors texture, and CullNone rasterizer state
+        return new ShapeBuffer(worldSegment, buffers.Item1, buffers.Item2, buffers.Item3, TextureSheetKey.Basement, RasterizerState.CullNone, null, Type: ShapeBufferType.Glass);
     }
 
     public ShapeBuffer CreateSkyboxBuffer(SkyboxShape skybox)

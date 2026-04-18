@@ -6,6 +6,14 @@ using System.Collections.Generic;
 
 namespace ExploringGame.Rendering;
 
+public enum DrawOrder
+{
+    Opaque,
+    Grass,
+    Skybox,
+    Glass
+}
+
 /// <summary>
 /// Represents a rendering pass that handles specific types of shapes.
 /// Each pass declares which shapes it owns, how to build buffers for them, and how to render them.
@@ -14,9 +22,8 @@ public interface IRenderPass
 {
     /// <summary>
     /// Controls draw sequence; lower values are drawn earlier.
-    /// 0 = opaque geometry, 10 = grass, 50 = transparent/glass, 90 = skybox, 100 = post-process/HUD
     /// </summary>
-    int DrawOrder { get; }
+    DrawOrder DrawOrder { get; }
 
     /// <summary>
     /// Determines what type of shape buffer is processed by this render pass
