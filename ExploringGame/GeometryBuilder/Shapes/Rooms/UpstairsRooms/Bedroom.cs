@@ -25,8 +25,6 @@ public class Bedroom : Room
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
                 adjustPlacement: false);
-
-        var windowWest = new Window(this, Side.West, Measure.Feet(4), Measure.Feet(4));
        
         var light = new HighHatLight(this, 0f, 0f);
         var sw = new LightSwitch(this, Side.East, StateKey.BedroomLightOn);

@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
@@ -14,13 +15,7 @@ public class OutsideWorldSegment : WorldSegment
 {
     public override SkyboxShape Skybox => SkyDome.Instance;
 
-    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-    {  
-        new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
-        new WorldSegmentTransition(typeof(BasementWorldSegment)),
-        new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
-        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
-    };
+    public static Vector3 DefaultPlayerStart => new Vector3(-21, 5, -9);
 
     private FrontDeck _deck;
     private FrontYard _frontYard;
@@ -48,7 +43,10 @@ public class OutsideWorldSegment : WorldSegment
     {
         // Find real shapes from UpstairsWorldSegment
         var livingRoom = FindShape<LivingRoom>(loadedSegments);
-      
+        var garage = FindShape<Garage>(loadedSegments);
+        var bedroom = FindShape<Bedroom>(loadedSegments);
+        var spareRoom = FindShape<SpareRoom>(loadedSegments);
+
         // Position and connect deck based on living room
         _deck.Depth = livingRoom.Depth;
         _deck.Width = Measure.Feet(6);
@@ -60,7 +58,7 @@ public class OutsideWorldSegment : WorldSegment
 
         // Load children after positioning is complete
         _deck.LoadChildren(livingRoom);
-        _frontYard.LoadChildren();
+        _frontYard.LoadChildren(garage, bedroom, spareRoom);
 
         _road.AdjustShape().From(_frontYard);
         _road.Depth = Measure.Feet(32);

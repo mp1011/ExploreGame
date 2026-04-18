@@ -9,11 +9,8 @@ public class WorldSegment : Shape
 {
     public override ViewFrom ViewFrom => ViewFrom.None;
 
+    public virtual Vector3 DefaultPlayerStart { get; }
     public virtual SkyboxShape Skybox => null;
-
-    public virtual Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<Room>().FirstOrDefault().Position;
-
-    public virtual IReadOnlyList<WorldSegmentTransition> Transitions { get; } = Array.Empty<WorldSegmentTransition>();
 
     public WorldSegment(params Shape[] contents)
     {

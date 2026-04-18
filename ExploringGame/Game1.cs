@@ -27,7 +27,7 @@ public class Game1 : Game
     private EntityMover _playerMover;
     protected LoadedLevelData _loadedLevelData;
     private WorldSegmentActivationManager _segmentActivationManager;
-    private WorldSegment _mainShape;
+    private WorldSegmentGroup _currentSegmentGroup;
 
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -40,13 +40,22 @@ public class Game1 : Game
 
     public virtual Random Random { get; }  = new Random();
 
-    public Game1(WorldSegment mainWorldSegment)
+    public Game1(WorldSegmentGroup currentGroup)
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = false;
         _graphics.IsFullScreen = false;
-        _mainShape = mainWorldSegment;
+        _currentSegmentGroup = currentGroup;
+    }
+
+    public Game1(WorldSegment worldSegment)
+    {
+        _graphics = new GraphicsDeviceManager(this);
+        Content.RootDirectory = "Content";
+        IsMouseVisible = false;
+        _graphics.IsFullScreen = false;
+        _currentSegmentGroup = new SingleSegmentGroup(worldSegment);
     }
 
     protected virtual bool AlwaysActive => false;
@@ -168,9 +177,9 @@ public class Game1 : Game
         if(!_ranInit)
         {
             _ranInit = true;
-            _player.Position = _mainShape.DefaultPlayerStart;
+            _player.Position = _currentSegmentGroup.DefaultPlayerStart;
             _playerMover.Initialize();
-            _segmentActivationManager.ActivateSegmentAndNeighbors(_mainShape);
+            _segmentActivationManager.ActivateGroup(_currentSegmentGroup);          
         }
 
         _playerMover.Update(gameTime);

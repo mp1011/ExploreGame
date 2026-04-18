@@ -13,7 +13,7 @@ public static partial class TestMaps
     public static WorldSegment ShapeStampTest()
     {
         var worldSegment = new TestWorldSegment();
-        worldSegment.PlayerStart = new Vector3(0, 0, 5);
+       // worldSegment.PlayerStart = new Vector3(0, 0, 5);
 
         // Create a simple room
         var room = new Room(worldSegment, theme: new UpstairsHallTheme());

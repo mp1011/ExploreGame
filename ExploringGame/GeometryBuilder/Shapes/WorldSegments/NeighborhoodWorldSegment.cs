@@ -21,12 +21,6 @@ public class NeighborhoodWorldSegment : WorldSegment
     private BgNeighborhood _northNeighborhoodBlock;
     private BgNeighborhood _southNeighborhoodBlock;
 
-    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-    {
-        new WorldSegmentTransition(typeof(OutsideWorldSegment)),
-        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
-    };
-
     public NeighborhoodWorldSegment()
     {
         _westNeighborhoodBlock = new BgNeighborhood(this);

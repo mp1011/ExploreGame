@@ -13,15 +13,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 public class BackyardWorldSegment : WorldSegment
 {
     public override SkyboxShape Skybox => SkyDome.Instance;
-    public override Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<BackYard>().Single().Position;
-    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-    {
-        new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
-        new WorldSegmentTransition(typeof(OutsideWorldSegment)),
-        new WorldSegmentTransition(typeof(BasementWorldSegment)),
-        new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
-
-    };
 
     private BackYard _backyard;
 

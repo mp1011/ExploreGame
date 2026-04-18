@@ -9,14 +9,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
 {
     public class BasementWorldSegment : WorldSegment
     {
-        public override Vector3 DefaultPlayerStart => new Vector3(7.4f, 1.4f, -7.0f);
-
-        public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-        {
-            new WorldSegmentTransition(typeof(UpstairsWorldSegment)),
-            new WorldSegmentTransition(typeof(OutsideWorldSegment)),
-            new WorldSegmentTransition(typeof(BackyardWorldSegment)),
-        };
+        public static Vector3 DefaultPlayerStart => new Vector3(7.4f, 1.4f, -7.0f);
 
         private Basement _basement;
         private BasementOffice _office;

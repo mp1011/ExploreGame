@@ -16,16 +16,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
 public class UpstairsWorldSegment : WorldSegment
 {
-
-    public override Vector3 DefaultPlayerStart => TraverseAllChildren().OfType<LivingRoom>().Single().Position;
     public static readonly float FloorY = Measure.Feet(10);
-    public override IReadOnlyList<WorldSegmentTransition> Transitions { get; } = new[]
-    {
-        new WorldSegmentTransition(typeof(BasementWorldSegment)),
-        new WorldSegmentTransition(typeof(OutsideWorldSegment)),
-        new WorldSegmentTransition(typeof(BackyardWorldSegment)),
-        new WorldSegmentTransition(typeof(NeighborhoodWorldSegment)),
-    };
 
     private Kitchen _kitchen;
     private Bedroom _bedroom;

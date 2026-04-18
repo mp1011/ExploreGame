@@ -31,28 +31,11 @@ public class WorldSegmentActivationManager
         UpdateActiveSegments(_player.Position);
     }
 
-    public void ActivateSegmentAndNeighbors(WorldSegment worldSegment)
+    public void ActivateGroup(WorldSegmentGroup worldSegmentGroup)
     {
-        // If the current segment matches the first active segment, we're already set up correctly
-        if (_loadedLevelData.ActiveSegments.Count > 0 && 
-            _loadedLevelData.ActiveSegments[0].WorldSegment == worldSegment)
-            return;
-
-        // Clear and rebuild ActiveSegments
         _loadedLevelData.ActiveSegments.Clear();
 
-        // Collect all segments (current + neighbors)
-        var allSegments = new List<WorldSegment> { worldSegment };
-
-        foreach (var transition in worldSegment.Transitions)
-        {
-            var neighborSegment = _loadedLevelData.LoadedSegments
-                .Select(ld => ld.WorldSegment)
-                .FirstOrDefault(ws => ws.GetType() == transition.WorldSegmentType) 
-                ?? Activator.CreateInstance(transition.WorldSegmentType) as WorldSegment;
-
-            allSegments.Add(neighborSegment);
-        }
+        var allSegments = worldSegmentGroup.CreateSegments().ToArray();
 
         // Filter to only process new segments that haven't been loaded yet
         var newSegments = allSegments
@@ -94,7 +77,7 @@ public class WorldSegmentActivationManager
     }
 
     private void UpdateActiveSegments(Vector3 playerPosition)
-    {
+    {        
         // Find the room containing the player, then get its WorldSegment
         var currentRoom = _entityRoomFinder.FindRoom(playerPosition);
         if (currentRoom == null)
@@ -104,7 +87,6 @@ public class WorldSegmentActivationManager
         if (currentSegment == null)
             return;
 
-        // Activate this segment and its neighbors
-        ActivateSegmentAndNeighbors(currentSegment);
+        // placeholder for when we have segment transitions
     }
 }
