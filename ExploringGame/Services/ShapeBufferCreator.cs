@@ -216,6 +216,6 @@ internal class ShapeBufferCreator
         };
 
         var buffers = _vertexBufferBuilder.Build(skyboxTriangles, _textureSheets.Get(skybox.Theme.TextureSheetKey), _graphicsDevice);
-        return new ShapeBuffer(skybox, buffers.Item1, buffers.Item2, buffers.Item3, skybox.Theme.TextureSheetKey, skybox.RasterizerState, skybox, skyboxDepthStencilState);
+        return new ShapeBuffer(skybox, buffers.Item1, buffers.Item2, buffers.Item3, skybox.Theme.TextureSheetKey, skybox.RasterizerState, skybox, skyboxDepthStencilState, ShapeBufferType.Skybox);
     }
 }

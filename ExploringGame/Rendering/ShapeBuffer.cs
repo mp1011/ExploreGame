@@ -1,5 +1,4 @@
 ﻿using ExploringGame.GeometryBuilder;
-using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.Logics;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +7,8 @@ namespace ExploringGame.Rendering;
 public enum ShapeBufferType
 {
     Normal,
-    Grass
+    Grass,
+    Skybox
 }
 
 public record ShapeBuffer(

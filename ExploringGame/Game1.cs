@@ -31,10 +31,7 @@ public class Game1 : Game
 
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private IRenderEffect _renderEffect;
-    private IRenderEffect _skyboxEffect;
-    private GrassRenderEffect _grassRenderEffect;
-
+    private RenderPassRegistry _renderPassRegistry;
 
     private SpriteFont _debugFont;
 
@@ -116,11 +113,8 @@ public class Game1 : Game
         // Load debug font
         _debugFont = Content.Load<SpriteFont>("Font");
 
-        var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
-        var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
-        var dualEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
-
-        var skyboxEffect = new SkyboxRenderEffect(this);
+        // Set up render passes
+        _renderPassRegistry = new RenderPassRegistry();
 
         var loadedTextures = _serviceContainer.Get<LoadedTextureSheets>();
         loadedTextures.AddTexture(new BasementTextureSheet(Content));
@@ -128,13 +122,29 @@ public class Game1 : Game
         loadedTextures.AddTexture(new SkyTextureSheet(Content));
         loadedTextures.AddTexture(new OutdoorsTextureSheet(Content));
 
-        dualEffect.SetTextures(loadedTextures);
-        skyboxEffect.SetTextures(loadedTextures);
+        // Create and register opaque pass (DrawOrder = 0)
+        var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
+        var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
+        var twoPassEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
+        var opaquePass = new OpaqueRenderPass(twoPassEffect);
+        opaquePass.LoadContent(this, loadedTextures);
+        _renderPassRegistry.Register(opaquePass);
 
-        _renderEffect = dualEffect;
-        _grassRenderEffect = new GrassRenderEffect(_cameraService, this);
-        _grassRenderEffect.SetTextures(loadedTextures);
-        _skyboxEffect = skyboxEffect;
+        // Create and register grass pass (DrawOrder = 10)
+        var grassEffect = new GrassRenderEffect(_cameraService, this);
+        var grassPass = new GrassRenderPass(grassEffect);
+        grassPass.LoadContent(this, loadedTextures);
+        _renderPassRegistry.Register(grassPass);
+
+        // Create and register skybox pass (DrawOrder = 90)
+        var skyboxEffect = new SkyboxRenderEffect(this);
+        var skyboxPass = new SkyboxRenderPass(skyboxEffect);
+        skyboxPass.LoadContent(this, loadedTextures);
+        _renderPassRegistry.Register(skyboxPass);
+
+        // Provide registry to LoadedLevelData so it can group buffers by pass
+        _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
+
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
@@ -189,21 +199,25 @@ public class Game1 : Game
         graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
         graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
-        // Render geometry first
-        foreach (var levelData in _loadedLevelData.ActiveSegments)
+        // Draw using render pass registry - each pass draws all its buffers across all segments
+        foreach (var pass in _renderPassRegistry.Passes)
         {
-            _renderEffect.Draw(graphicsDevice, levelData.ShapeBuffers, _cameraService.View, _cameraService.Projection);
-            _renderEffect.Draw(graphicsDevice, levelData.StampedShapeBuffers.ToArray(), _cameraService.View, _cameraService.Projection);
+            foreach (var levelData in _loadedLevelData.ActiveSegments)
+            {
+                // Get buffers for this pass
+                if (levelData.BuffersByPass.TryGetValue(pass, out var buffers) && buffers.Count > 0)
+                {
+                    // Use skybox view for skybox pass, regular view for others
+                    var view = pass is SkyboxRenderPass ? _cameraService.SkyboxView : _cameraService.View;
+                    pass.Draw(graphicsDevice, buffers, view, _cameraService.Projection);
+                }
 
-            // Render grass blades if present
-            foreach(var grassBuffer in levelData.GrassShapeBuffers)
-                _grassRenderEffect.Draw(graphicsDevice, grassBuffer, _cameraService.View, _cameraService.Projection);
-        }
-
-        // Render skybox LAST with custom shader that forces depth to 1.0
-        if (_loadedLevelData.SkyboxBuffer != null)
-        {
-            _skyboxEffect.Draw(graphicsDevice, new[] { _loadedLevelData.SkyboxBuffer }, _cameraService.SkyboxView, _cameraService.Projection);
+                // Also draw stamped shapes for non-skybox passes
+                if (pass is OpaqueRenderPass && levelData.StampedShapeBuffers.Any())
+                {
+                    pass.Draw(graphicsDevice, levelData.StampedShapeBuffers, _cameraService.View, _cameraService.Projection);
+                }
+            }
         }
     }
 

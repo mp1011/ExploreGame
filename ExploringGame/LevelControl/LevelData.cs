@@ -18,31 +18,69 @@ public class LevelData
 {
     public IActiveObject[] ActiveObjects { get; set; } 
 
-    public ShapeBuffer[] ShapeBuffers { get; set; }
+    public Dictionary<IRenderPass, List<ShapeBuffer>> BuffersByPass { get; } = new();
     public Dictionary<Type, ShapeBuffer> StampShapeBuffers { get; } = new();
     public List<ShapeBuffer> StampedShapeBuffers { get; } = new();
 
-    public List<ShapeBuffer> GrassShapeBuffers { get; } = new();
+    // Legacy properties for backward compatibility during migration
+    public ShapeBuffer[] ShapeBuffers => BuffersByPass.Values.SelectMany(list => list).Where(b => b.Shape is not ShapeStamp && b.Type == ShapeBufferType.Normal).ToArray();
+    public List<ShapeBuffer> GrassShapeBuffers => BuffersByPass.Values.SelectMany(list => list).Where(b => b.Type == ShapeBufferType.Grass).ToList();
 
     public bool Initialized { get; private set; }
     public WorldSegment WorldSegment { get; }
+    private readonly RenderPassRegistry _renderPassRegistry;
 
-    public LevelData(WorldSegment worldSegment, ShapeBuffer[] allShapeBuffers, IActiveObject[] activeObjects)
+    public LevelData(WorldSegment worldSegment, RenderPassRegistry renderPassRegistry = null)
     {
         WorldSegment = worldSegment;
-        ActiveObjects = activeObjects.ToArray();
         Initialized = false;
+        _renderPassRegistry = renderPassRegistry;
+    }
 
-        // Separate stamp buffers and grass buffers from regular buffers
+    private void PopulateBuffers(ShapeBuffer[] allShapeBuffers)
+    {
+        // Clear existing buffers
+        BuffersByPass.Clear();
+        StampShapeBuffers.Clear();
+
+        // Separate stamp buffers from regular buffers
         var stampBuffers = allShapeBuffers.Where(b => b.Shape is ShapeStamp).ToList();
-        GrassShapeBuffers.AddRange(allShapeBuffers.Where(p => p.Type == ShapeBufferType.Grass));
+        var regularBuffers = allShapeBuffers.Where(b => b.Shape is not ShapeStamp).ToArray();
 
-        ShapeBuffers = allShapeBuffers.Where(b => b.Shape is not ShapeStamp && b.Type == ShapeBufferType.Normal).ToArray();
-        
         // Index stamp buffers by their type
         foreach (var stampBuffer in stampBuffers)
         {
             StampShapeBuffers[stampBuffer.Shape.GetType()] = stampBuffer;
+        }
+
+        // Group regular buffers by render pass
+        if (_renderPassRegistry != null)
+        {
+            foreach (var buffer in regularBuffers)
+            {
+                var pass = _renderPassRegistry.Passes.FirstOrDefault(p => p.ShapeBufferType == buffer.Type);
+                if (pass != null)
+                {
+                    if (!BuffersByPass.ContainsKey(pass))
+                        BuffersByPass[pass] = new List<ShapeBuffer>();
+
+                    BuffersByPass[pass].Add(buffer);
+                }
+            }
+        }
+        else
+        {
+            // Fallback: if no registry, use legacy Type-based grouping
+            // This supports gradual migration
+            foreach (var buffer in regularBuffers)
+            {
+                // Create a dummy "pass" key - we'll use null for now
+                IRenderPass legacyPass = null;
+                if (!BuffersByPass.ContainsKey(legacyPass))
+                    BuffersByPass[legacyPass] = new List<ShapeBuffer>();
+
+                BuffersByPass[legacyPass].Add(buffer);
+            }
         }
     }
 
@@ -59,23 +97,8 @@ public class LevelData
 
     public void SetBuffers(ShapeBuffer[] allShapeBuffers, IActiveObject[] activeObjects)
     {
-        // Clear existing buffers
-        StampShapeBuffers.Clear();
-        GrassShapeBuffers.Clear();
-
         ActiveObjects = activeObjects.ToArray();
-
-        // Separate stamp buffers and grass buffers from regular buffers
-        var stampBuffers = allShapeBuffers.Where(b => b.Shape is ShapeStamp).ToList();
-        GrassShapeBuffers.AddRange(allShapeBuffers.Where(p => p.Type == ShapeBufferType.Grass));
-
-        ShapeBuffers = allShapeBuffers.Where(b => b.Shape is not ShapeStamp && b.Type == ShapeBufferType.Normal).ToArray();
-
-        // Index stamp buffers by their type
-        foreach (var stampBuffer in stampBuffers)
-        {
-            StampShapeBuffers[stampBuffer.Shape.GetType()] = stampBuffer;
-        }
+        PopulateBuffers(allShapeBuffers);
     }
 
     public void Stop()

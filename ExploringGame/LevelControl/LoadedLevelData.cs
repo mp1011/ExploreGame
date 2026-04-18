@@ -23,13 +23,19 @@ public class LoadedLevelData
     private readonly Physics _physics;
     private readonly LoadedTextureSheets _loadedTextureSheets;
     private readonly RoomLightingCalculator _lightingCalculator;
+    private RenderPassRegistry _renderPassRegistry;
 
     public List<LevelData> LoadedSegments { get; } = new();
     public List<LevelData> ActiveSegments { get; } = new();
     public RoomGraph RoomGraph { get; private set; }
     public WaypointGraph WaypointGraph { get; private set; }
     public RoomLightingCalculator LightingCalculator => _lightingCalculator;
-    public ShapeBuffer SkyboxBuffer { get; set; }
+
+    // Legacy property for backward compatibility - now computed from BuffersByPass
+    public ShapeBuffer SkyboxBuffer => LoadedSegments
+        .SelectMany(ld => ld.BuffersByPass.Values)
+        .SelectMany(list => list)
+        .FirstOrDefault(b => b.Shape is SkyboxShape);
 
     public LoadedLevelData(Game game, SetupColliderBodies setupColliderBodies, Physics physics, 
         LoadedTextureSheets loadedTextureSheets, ServiceContainer serviceContainer, 
@@ -46,6 +52,11 @@ public class LoadedLevelData
         WaypointGraph = new WaypointGraph(RoomGraph);
     }
 
+    public void SetRenderPassRegistry(RenderPassRegistry registry)
+    {
+        _renderPassRegistry = registry;
+    }
+
     public void Update(GameTime gameTime)
     {
         foreach(var segment in ActiveSegments)
@@ -57,7 +68,7 @@ public class LoadedLevelData
         // Phase 1: Just register the segment without building geometry
         // Geometry will be built later in BuildSegmentGeometry after positioning
         // Note: Caller should check IsSegmentLoaded before calling this
-        var newLevelData = new LevelData(worldSegment, Array.Empty<ShapeBuffer>(), Array.Empty<IActiveObject>());
+        var newLevelData = new LevelData(worldSegment, _renderPassRegistry);
         LoadedSegments.Add(newLevelData);
     }
 
@@ -99,15 +110,21 @@ public class LoadedLevelData
 
         var shapeBufferCreator = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice);
         var shapeBuffers = shapeBufferCreator.Execute();
-        var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
 
-        // Build skybox if this segment has one and we don't already have a skybox
-        if (worldSegment.Skybox != null && SkyboxBuffer == null)
+        // Build skybox if this segment has one
+        if (worldSegment.Skybox != null)
         {
             var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
             var skyboxBufferCreator = new ShapeBufferCreator(skyboxTriangles, _loadedTextureSheets, _game.GraphicsDevice);
-            SkyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
+            var skyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
+            if (skyboxBuffer != null)
+            {
+                // Add skybox buffer to the regular buffers array so it gets grouped by pass
+                shapeBuffers = shapeBuffers.Concat(new[] { skyboxBuffer }).ToArray();
+            }
         }
+
+        var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
 
         // Update level data with geometry using SetBuffers to properly process stamp/grass buffers
         levelData.SetBuffers(shapeBuffers, activeObjects);
