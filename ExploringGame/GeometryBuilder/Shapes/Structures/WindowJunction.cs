@@ -1,4 +1,5 @@
 using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
@@ -101,6 +102,23 @@ public class Window : Room
         // curtains
         CreateCurtain(rod, wallSide, wallSide.ClockwiseTurn());
         CreateCurtain(rod, wallSide, wallSide.CounterClockwiseTurn());
+
+        // moulding
+        AddChild(new Moulding(
+            parent: this,
+            parentSide: _wallSide,
+            mouldingSides: _wallSide.ClockwiseTurn() | _wallSide.CounterClockwiseTurn() | Side.Top,
+            color: Color.White,
+            size: Measure.Inches(4),
+            thickness: Measure.Inches(0.5f)));
+
+        AddChild(new Moulding(
+            parent: this,
+            parentSide: _wallSide.Opposite(),
+            mouldingSides: _wallSide.ClockwiseTurn() | _wallSide.CounterClockwiseTurn() | Side.Top,
+            color: Color.White,
+            size: Measure.Inches(4),
+            thickness: Measure.Inches(0.5f)));  
     }
 
     private Box CreateCurtain(Shape rod, Side wallSide, Side curtainSide)

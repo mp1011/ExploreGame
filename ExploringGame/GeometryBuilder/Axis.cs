@@ -8,6 +8,7 @@ public enum Axis
     X = 1,
     Y = 2,
     Z = 4,
+    All = X | Y | Z
 }
 
 public static class AxisExtensions
