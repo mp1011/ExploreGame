@@ -1,4 +1,6 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -9,18 +11,22 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class FrontWalkway : Room
 {
+    public Shape WestPart { get; private set; }
     public override ViewFrom ViewFrom => ViewFrom.None;
 
     public override Theme Theme { get; }
 
 
-    public FrontWalkway(FrontYard yard, Driveway driveway) : base(yard.WorldSegment)
+    public FrontWalkway(FrontYard yard) : base(yard.WorldSegment)
     {
         Size = Vector3.One;
         FixedAmbientLight = LightIntensity.Bright;
         Theme = yard.Theme;
         yard.AddChild(this);
+    }
 
+    public void LoadChildren(FrontYard yard, Driveway driveway)
+    {
         var walkway = AddChild(new Box(Theme, TextureKey.Concrete));
         walkway.Height = Measure.Feet(1);
         walkway.Depth = Measure.Feet(10);
@@ -83,6 +89,8 @@ public class FrontWalkway : Room
 
         SetSideUnanchored(Side.East, walkway.GetSide(Side.East));
         SetSideUnanchored(Side.South, walkway2.GetSide(Side.South));
+
+        WestPart = walkway2;
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

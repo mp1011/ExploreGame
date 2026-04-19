@@ -17,6 +17,7 @@ public class FrontYard : Room
 {
     public FrontDeck Deck { get; }
 
+    public FrontWalkway FrontWalkway { get; private set;  }
     public override Side OmitSides => Side.North | Side.South | Side.East | Side.West | Side.Top;
 
     public override Theme Theme => new YardTheme();
@@ -30,7 +31,7 @@ public class FrontYard : Room
 
     public void LoadChildren(Garage garage, Bedroom bedRoom, SpareRoom spareRoom)
     {
-        Depth = Deck.Depth + Measure.Feet(10);
+        Depth = Deck.Depth + Measure.Feet(0);
         Width = Measure.Feet(40);
         Height = Deck.Height + Measure.Feet(4);
 
@@ -72,7 +73,7 @@ public class FrontYard : Room
 
        
 
-        var driveway = AddChild(new Driveway(this.WorldSegment, this, garage));
+        var driveway = AddChild(new Driveway(WorldSegment, garage, this));
         AddChild(new GarageDoor(WorldSegment, garage, driveway, HAlign.Left, 1.0f));
         AddChild(new GarageDoor(WorldSegment, garage, driveway, HAlign.Right, -1.0f));
 
@@ -80,7 +81,11 @@ public class FrontYard : Room
         westWall.SetSideUnanchored(Side.Top, GetSide(Side.Top));
         westWall.SetSideUnanchored(Side.North, Deck.GetSide(Side.South));
 
-        var walkway = new FrontWalkway(this, driveway);
+        FrontWalkway = new FrontWalkway(this);
+
+        FrontWalkway.LoadChildren(this, driveway);
+        driveway.LoadChildren(this, garage);
+
 
         new Window(bedRoom, Side.West, Measure.Feet(4), Measure.Feet(4), otherRoom: driveway);
         new Window(spareRoom, Side.West, Measure.Feet(4), Measure.Feet(4), otherRoom: driveway);
@@ -88,11 +93,13 @@ public class FrontYard : Room
       
 
         var westOfWalkway = Copy();
-        westOfWalkway.Place().OnSideOuter(Side.West, walkway)
+        westOfWalkway.Place().OnSideOuter(Side.West, FrontWalkway)
             .OnSideOuter(Side.South, this);
         westOfWalkway.SetSideUnanchored(Side.South, driveway.GetSide(Side.North));
         westOfWalkway.SetSideUnanchored(Side.West, GetSide(Side.West));
 
+
+        var flowerBed = new FlowerBed(WorldSegment, this, driveway);
 
         // Add grass surfaces following terrain variation
         var terrainMain = new TerrainSurface(this, TerrainSurface.DefaultLawn);
