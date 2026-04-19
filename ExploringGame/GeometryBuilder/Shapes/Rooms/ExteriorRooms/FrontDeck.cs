@@ -87,13 +87,15 @@ public class FrontDeck : Room
 
         new Window(livingRoom, Side.West, Measure.Feet(6), Measure.Feet(4), HAlign.Right, -Measure.Feet(4), otherRoom: this);
 
-        livingRoom.AddConnectingRoomWithJunction(
+        var frontDoor = livingRoom.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.West, HAlign.Left, DoorDirection.Pull, StateKey.FrontDoorOpen),
             other: this,
             side: Side.West,
             align: HAlign.Left,
             offset: 0.2f,
             adjustPlacement: false);
+
+        frontDoor.SetSideUnanchored(Side.Top, livingRoom.GetSide(Side.Top));
     }
 
     private Shape CreatePost()

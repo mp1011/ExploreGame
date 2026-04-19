@@ -1,19 +1,13 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
-using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class WestRoof : Room
 {
-    public static readonly float RoofHeight = Measure.Feet(5.0f);
+    public static readonly float RoofHeight = Measure.Feet(15.0f);
     public static readonly float RoofOverhang = Measure.Feet(1);
 
     public override Theme Theme { get; } = new RoofTheme();

@@ -67,6 +67,12 @@ public class ShapePlacer
         return this;
     }
 
+    public ShapePlacer AlignSideWith(Side side, Shape other)
+    {
+        _shape.SetSideUnanchored(side, other.GetSide(side));
+        return this;
+    }
+
     public ShapePlacer OnSideOuter(Side side, Shape other = null, float offset = 0f)
     {
         other = other ?? _shape.Parent;

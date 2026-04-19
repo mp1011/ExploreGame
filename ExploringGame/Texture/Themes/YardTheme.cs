@@ -14,5 +14,6 @@ public class YardTheme : Theme
 
         AdditionalTextures[TextureKey.Concrete] = new TextureInfo(Color.White, TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
         AdditionalTextures[TextureKey.Siding] = new TextureInfo(Color.White, TextureKey.Siding, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
+        AdditionalTextures[TextureKey.Brick] = new TextureInfo(Color.White, TextureKey.Brick, TextureStyle.Tile, new TilingInfo(TileSize: 1.0f));
     }
 }

@@ -9,16 +9,12 @@ public class GarageDoor : Room
 {
     public override Theme Theme => new BasementRoomTheme();
 
-    public GarageDoor(WorldSegment worldSegment, Garage garage, Driveway driveway, float zOffset) : base(worldSegment)
+    public GarageDoor(WorldSegment worldSegment, Garage garage, Driveway driveway, HAlign align, float offset) : base(worldSegment)
     {
         Depth = Measure.Feet(10);
         Height = garage.Height;
         Width = Measure.Feet(1);
-
         Position = garage.Position;
-
-        garage.AddConnectingRoomWithJunction(this, driveway, Side.West, HAlign.Center, adjustPlacement: false);
-
-        Z += zOffset;
+        garage.AddConnectingRoomWithJunction(this, driveway, Side.West, align, offset, adjustPlacement: false);        
     }
 }

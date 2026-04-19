@@ -25,6 +25,12 @@ public class ShapeAdjuster
         return this;
     }
 
+    public ShapeAdjuster AddToSide(Side side, float amount)
+    {
+        _shape.SetSideUnanchored(side, _shape.GetSide(side) + amount);
+        return this;
+    }
+
     public ShapeAdjuster WithInnerOffset(Placement2D placement, Side face)
     {
         AddSideLeft(face, placement.Left);

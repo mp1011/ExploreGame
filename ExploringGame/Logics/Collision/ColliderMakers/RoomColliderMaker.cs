@@ -16,9 +16,9 @@ public class RoomColliderMaker : IColliderMaker
 {
     public static bool DebugDisplaySideColliders = false;
 
-    private Room _room;
+    private Shape _room;
 
-    public RoomColliderMaker(Room room)
+    public RoomColliderMaker(Shape room)
     {
         _room = room;
     }

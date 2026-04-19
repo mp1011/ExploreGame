@@ -20,7 +20,7 @@ public class FrontYard : Room
     public override Side OmitSides => Side.North | Side.South | Side.East | Side.West | Side.Top;
 
     public override Theme Theme => new YardTheme();
-
+    
     public FrontYard(WorldSegment worldSegment, FrontDeck deck) : base(worldSegment)
     {
         Size = Vector3.One;
@@ -70,36 +70,40 @@ public class FrontYard : Room
 
         var northFence = new Fence(northPart, Side.North);
 
-        var walkway = AddChild(new Box(Theme, TextureKey.Concrete));
-        walkway.Height = Measure.Inches(2);
-        walkway.Depth = Measure.Feet(10);       
-        walkway.SetSide(Side.Top, GetSide(Side.Bottom));
-
-        walkway.Place().OnSideOuter(Side.South, this)
-                       .OnSideOuter(Side.West, Deck);            
-        walkway.SetSideUnanchored(Side.West, GetSide(Side.West));
-        walkway.SetSideUnanchored(Side.South, Deck.GetSide(Side.South));
+       
 
         var driveway = AddChild(new Driveway(this.WorldSegment, this, garage));
-        AddChild(new GarageDoor(WorldSegment, garage, driveway, -4.0f));
-        AddChild(new GarageDoor(WorldSegment, garage, driveway, 2.0f));
-
+        AddChild(new GarageDoor(WorldSegment, garage, driveway, HAlign.Left, 1.0f));
+        AddChild(new GarageDoor(WorldSegment, garage, driveway, HAlign.Right, -1.0f));
 
         var westWall = new OuterWall(driveway, Side.East);
         westWall.SetSideUnanchored(Side.Top, GetSide(Side.Top));
         westWall.SetSideUnanchored(Side.North, Deck.GetSide(Side.South));
 
+        var walkway = new FrontWalkway(this, driveway);
+
         new Window(bedRoom, Side.West, Measure.Feet(4), Measure.Feet(4), otherRoom: driveway);
         new Window(spareRoom, Side.West, Measure.Feet(4), Measure.Feet(4), otherRoom: driveway);
 
+      
+
+        var westOfWalkway = Copy();
+        westOfWalkway.Place().OnSideOuter(Side.West, walkway)
+            .OnSideOuter(Side.South, this);
+        westOfWalkway.SetSideUnanchored(Side.South, driveway.GetSide(Side.North));
+        westOfWalkway.SetSideUnanchored(Side.West, GetSide(Side.West));
+
 
         // Add grass surfaces following terrain variation
-        var terrainMain  = new TerrainSurface(this, TerrainSurface.DefaultLawn);
+        var terrainMain = new TerrainSurface(this, TerrainSurface.DefaultLawn);
         var terrainNorth = new TerrainSurface(northPart, TerrainSurface.DefaultLawn);
+        var terrainWestOfWalkway = new TerrainSurface(westOfWalkway, TerrainSurface.DefaultLawn);
+
         new GrassSurface(this, terrainMain);
         new GrassSurface(northPart, terrainNorth);
+        new GrassSurface(westOfWalkway, terrainWestOfWalkway);
 
 
-        DebugShapeLogger.LogShape("Yard north", northPart);
+
     }
 }

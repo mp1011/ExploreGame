@@ -24,7 +24,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
 
         public CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
-        public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
+        public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
 
         public Side WallSide => _wallSide;
 

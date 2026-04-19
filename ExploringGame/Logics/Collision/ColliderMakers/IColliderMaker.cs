@@ -19,7 +19,7 @@ public static class ColliderMakers
     public static IColliderMaker BoundingBox(ICollidable shape) => new BoundingBoxColliderMaker(shape);
     public static IColliderMaker BoundingBox(IWithPosition shape) => new LegacyBoundingBoxColliderMaker(shape);
 
-    public static IColliderMaker Room(Room room) => new RoomColliderMaker(room);
+    public static IColliderMaker Room(Shape room) => new RoomColliderMaker(room);
 
     public static IColliderMaker Step(StairStep step) => new StepColliderMaker(step);
 
