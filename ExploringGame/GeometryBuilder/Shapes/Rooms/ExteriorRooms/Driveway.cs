@@ -56,5 +56,15 @@ public class Driveway : Room
             .OnSideInner(Side.East, this);
         retainingWallNorth2.SetSide(Side.Top, yard.GetSide(Side.Bottom) + Measure.Inches(4));
         retainingWallNorth2.SetSideUnanchored(Side.West, yard.FrontWalkway.WestPart.GetSide(Side.East) - Measure.Feet(1));
+
+        var retainingWallSouth = AddChild(new Box(yard.Theme, TextureKey.Brick));
+        retainingWallSouth.Width = Width;
+        retainingWallSouth.Depth = Measure.Feet(1);
+        retainingWallSouth.Height = Measure.Feet(6);
+        retainingWallSouth.Place().At(this)
+            .OnSideInner(Side.South, this)
+            .OnSideInner(Side.West, this);
+        retainingWallSouth.SetSide(Side.Top, yard.GetSide(Side.Bottom) + Measure.Inches(4));
+        retainingWallSouth.SetSideUnanchored(Side.East, GetSide(Side.East));
     }
 }

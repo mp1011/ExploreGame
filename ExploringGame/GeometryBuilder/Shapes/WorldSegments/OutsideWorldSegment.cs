@@ -50,7 +50,7 @@ public class OutsideWorldSegment : WorldSegment
         // Position and connect deck based on living room
         _deck.Depth = livingRoom.Depth;
         _deck.Width = Measure.Feet(6);
-        _deck.Height = livingRoom.Height + Measure.Feet(5);
+        _deck.Height = livingRoom.Height + Measure.Inches(6);
         _deck.Place().OnSideInner(Side.Bottom, livingRoom)
                     .OnSideOuter(Side.West, livingRoom, -0.5f)
                     .OnSideInner(Side.South, livingRoom);

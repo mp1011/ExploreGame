@@ -90,14 +90,18 @@ public class FrontYard : Room
         new Window(bedRoom, Side.West, Measure.Feet(4), Measure.Feet(4), otherRoom: driveway);
         new Window(spareRoom, Side.West, Measure.Feet(4), Measure.Feet(4), otherRoom: driveway);
 
-      
-
         var westOfWalkway = Copy();
         westOfWalkway.Place().OnSideOuter(Side.West, FrontWalkway)
             .OnSideOuter(Side.South, this);
         westOfWalkway.SetSideUnanchored(Side.South, driveway.GetSide(Side.North));
         westOfWalkway.SetSideUnanchored(Side.West, GetSide(Side.West));
 
+
+        var southSection = Copy();
+        southSection.Depth = driveway.Depth;
+        southSection.Width = driveway.Width;
+        southSection.Place().OnSideOuter(Side.South, driveway)
+            .OnSideInner(Side.East, driveway);
 
         var flowerBed = new FlowerBed(WorldSegment, this, driveway);
 

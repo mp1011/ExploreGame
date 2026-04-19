@@ -51,8 +51,17 @@ public class FrontDeck : Room
         northPart.Place().OnSideInner(Side.North)
             .OnSideInner(Side.West);
         northPart.SetSide(Side.Top, WestPart.GetSide(Side.Top));
-            
- 
+
+
+        var southPart = AddChild(new Box(Theme));
+        southPart.SideTextures[Side.Top] = Theme.GetTexture(TextureKey.Wood);
+        southPart.Height = Height;
+        southPart.Depth = Measure.Feet(2);
+        southPart.Width = Width + WestPart.Width;
+        southPart.Place().OnSideInner(Side.South)
+           .OnSideInner(Side.East);
+        southPart.SetSide(Side.Top, WestPart.GetSide(Side.Top));
+
         // posts
         var northWestPost = CreatePost().Place()
             .OnSideInner(Side.North, WestPart, PostInset)
@@ -79,11 +88,22 @@ public class FrontDeck : Room
           .OnSideInner(Side.East, WestPart, -PostInset)
           .Shape();
 
+        var southPost1 = CreatePost().Place()
+            .OnSideInner(Side.South, this, -PostInset)
+            .OnSideInner(Side.East, this, -PostInset)
+            .Shape();
+
+        var southPost2 = CreatePost().Place()
+           .OnSideInner(Side.South, southPart, -PostInset)
+           .OnSideInner(Side.West, southPart, +PostInset)
+           .Shape();
+
         // railing
         CreateRailing(northWestPost, westMiddlePost);
         CreateRailing(westMiddlePost, southWestPost);
         CreateRailing(southWestPost, southEastPost);
         CreateRailing(northWestPost, northEastPost);
+        CreateRailing(southPost1, southPost2);
 
         new Window(livingRoom, Side.West, Measure.Feet(6), Measure.Feet(4), HAlign.Right, -Measure.Feet(4), otherRoom: this);
 
@@ -92,7 +112,7 @@ public class FrontDeck : Room
             other: this,
             side: Side.West,
             align: HAlign.Left,
-            offset: 0.2f,
+            offset: 1.0f,
             adjustPlacement: false);
 
         frontDoor.SetSideUnanchored(Side.Top, livingRoom.GetSide(Side.Top));
@@ -198,7 +218,7 @@ public class FrontDeckStairs : Stairs
     private static float CalcStairsWidth(FrontDeck deck) => deck.WestPart.Width;
 
     private static float CalcStairsDepth(FrontYard yard, FrontDeck deck) =>
-        deck.Depth - deck.WestPart.Depth;
+        deck.Depth - deck.WestPart.Depth - Measure.Feet(2);
 
     protected override Side StartSide => Side.West;
 
