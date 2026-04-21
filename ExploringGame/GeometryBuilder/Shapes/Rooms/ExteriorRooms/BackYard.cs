@@ -27,7 +27,7 @@ public class BackYard : Room
 
         Depth = Measure.Feet(20);
         Width = Measure.Feet(20);
-        Height = Measure.Feet(20);
+        Height = 5.52f;
 
         FixedAmbientLight = LightIntensity.Bright;
 
@@ -45,22 +45,23 @@ public class BackYard : Room
         _deckArea.Tag = "BackDeckArea";
     }
 
-    public void LoadChildren(Shape frontSidewalk, Shape northYard, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
+    public void LoadChildren(Shape frontSidewalk, Shape northYard, FrontDeck frontDeck, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
         Basement basement, BasementOffice basementOffice)
     {
         this.Place().At(frontSidewalk)
+                    .OnFloor()
                    .OnSideOuter(Side.East, frontSidewalk)
                    .OnSideInner(Side.North, northYard);
 
         SetSide(Side.Bottom, northYard.GetSide(Side.Bottom));
-        SetSideUnanchored(Side.South, frontSidewalk.GetSide(Side.South) - 0.6f);
+        SetSideUnanchored(Side.South, frontSidewalk.GetSide(Side.South) - 0.1f);
         SetSideUnanchored(Side.North, northYard.GetSide(Side.North));
         SetSideUnanchored(Side.East, den.EastPart.GetSide(Side.East) + 1.0f);
 
         AddChild(new Fence(this, Side.North));
         new GrassSurface(this, TerrainSurface.DefaultLawn);
-        new OuterWall(this, Side.South);
-
+        var northWall = new OuterWall(this, Side.South);
+        northWall.SetSideUnanchored(Side.West, frontDeck.GetSide(Side.East));
 
         _eastSection.Place().At(this)
             .OnSideInner(Side.North, this)
@@ -108,15 +109,15 @@ public class BackYard : Room
         var southEastWall = new OuterWall(_midSection, Side.West);
 
         var southWall = new OuterWall(_southSection, Side.North);
-        southWall.SetSideUnanchored(Side.East, southEastWall.GetSide(Side.West));
+        southWall.SetSideUnanchored(Side.East, southEastWall.GetSide(Side.East));
+        southWall.Tag = "SouthWall";
 
         new OuterWall(_deckArea, Side.North);
 
         new Window(kitchen, Side.East, Measure.Feet(4), Measure.Feet(4), HAlign.Right, -Measure.Feet(2), otherRoom: _deckArea);
         new Window(den, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2), otherRoom: _deckArea);
         new Window(kidsBedroom, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: _southSection);
-        new Window(kidsBedroom, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _midSection);
-        
+        new Window(kidsBedroom, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _midSection);       
         new Window(bedroom, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _southSection);
 
         new BasementWindow(basement, this, Side.North, HAlign.Right, -0.5f);

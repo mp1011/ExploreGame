@@ -21,6 +21,7 @@ public class Moulding : Shape
     private readonly float _size;
     private readonly float _thickness;
     private Theme _theme;
+    private bool _inner;
 
     public override Theme Theme => _theme;
 
@@ -33,8 +34,9 @@ public class Moulding : Shape
     /// <param name="color">Color/shade of the moulding</param>
     /// <param name="size">Width or height of each moulding piece (e.g., Measure.Inches(3))</param>
     /// <param name="thickness">How far the moulding extends from the parent surface (e.g., Measure.Inches(0.5))</param>
-    public Moulding(Shape parent, Side parentSide, Side mouldingSides, Color color, float size, float thickness)
+    public Moulding(Shape parent, Side parentSide, Side mouldingSides, Color color, float size, float thickness, bool inner)
     {
+        _inner = inner;
         _parentSide = parentSide;
         _mouldingSides = mouldingSides;
         _color = color;
@@ -102,10 +104,20 @@ public class Moulding : Shape
             .SetAxis(vAxis, vSize)
             .SetAxis(thicknessAxis, _thickness);
 
-        piece.Place()
-            .At(Parent)
-            .OnSideOuter(mouldingSide)
-            .OnSideOuter(_parentSide, offset: 0f);
+        if (_inner)
+        {
+            piece.Place()
+                .At(Parent)
+                .OnSideInner(mouldingSide)
+                .OnSideOuter(_parentSide, offset: 0f);
+        }
+        else
+        {
+            piece.Place()
+                .At(Parent)
+                .OnSideOuter(mouldingSide)
+                .OnSideOuter(_parentSide, offset: 0f);
+        }
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

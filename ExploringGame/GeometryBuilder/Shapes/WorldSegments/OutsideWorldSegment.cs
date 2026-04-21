@@ -77,6 +77,7 @@ public class OutsideWorldSegment : WorldSegment
 
         _roof.SetSideUnanchored(Side.South, garage.GetSide(Side.South));
 
+
         DebugShapeLogger.LogShape("OutsideWorldSegment PositionChildren end", _frontYard);
     }
 }

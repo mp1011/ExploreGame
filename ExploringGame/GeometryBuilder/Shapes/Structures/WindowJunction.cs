@@ -110,6 +110,7 @@ public class Window : Room
             mouldingSides: _wallSide.ClockwiseTurn() | _wallSide.CounterClockwiseTurn() | Side.Top,
             color: Color.White,
             size: Measure.Inches(4),
+            inner: false,
             thickness: Measure.Inches(0.5f)));
 
         AddChild(new Moulding(
@@ -118,6 +119,7 @@ public class Window : Room
             mouldingSides: _wallSide.ClockwiseTurn() | _wallSide.CounterClockwiseTurn() | Side.Top,
             color: Color.White,
             size: Measure.Inches(4),
+            inner: false,
             thickness: Measure.Inches(0.5f)));  
     }
 

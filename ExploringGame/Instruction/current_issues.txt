@@ -1,10 +1,3 @@
-[x] backyard clips through basement
-[x] furniture has no collision
-[x] light switches too low on wall
-[ ] add glass pane to basement window
-[x] reposition light in basement
-[x] basement door stuck
-[x] front door glitched
-[x] fences have no collision
-[x] basement not loaded from frontyard
-[x] house walls have no collision
+[ ] DoesCutoutIntersectSurface - implemented incorrectly
+[ ] Southwall not showing due to triangle tiling
+[ ] need better solution for stepping up short distances

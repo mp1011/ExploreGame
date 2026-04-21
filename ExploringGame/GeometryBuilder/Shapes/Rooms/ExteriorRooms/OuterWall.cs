@@ -1,7 +1,10 @@
-﻿using ExploringGame.Logics.Collision;
+﻿using ExploringGame.GeometryBuilder.Shapes.Structures;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,7 +18,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
 
         private readonly Side _wallSide;
         private readonly Room _parentRoom;
-
+        private bool _addedSiding = false;
         public override ViewFrom ViewFrom => ViewFrom.Outside;
 
         public override Theme Theme => new OuterWallTheme();
@@ -39,12 +42,28 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             Depth = _wallSide.GetAxis() == Axis.Z ? WallThickness : _parentRoom.Depth;
 
             this.Place().At(_parentRoom).OnFloor().OnSideOuter(_wallSide);
+
+           
+        }
+
+        protected override void BeforeBuild()
+        {
+            if (_addedSiding)
+                return;
+
+            new Moulding(this, _wallSide.Opposite(), _wallSide.ClockwiseTurn() | _wallSide.CounterClockwiseTurn(),
+                color: Color.White,
+                size: Measure.Feet(1),
+                thickness: Measure.Inches(2),
+                inner: true);
+
+            _addedSiding = true;
         }
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
             var shape = BuildCuboid();
-
+          
             shape = new SideRemover().Execute(shape, _wallSide);
 
             // Apply cutouts for windows/doors from room connections
@@ -55,7 +74,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
                 shape = new RemoveSurfaceRegion().SubtractShape(shape, cutoutShape);
             }
 
-            return shape;
+            return shape;          
         }
 
 

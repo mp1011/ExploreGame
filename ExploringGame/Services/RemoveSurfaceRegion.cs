@@ -123,7 +123,7 @@ class RemoveSurfaceRegion
             }
         }
 
-        return result.ToArray();
+        return result.Where(p=> !p.IsDegenerate).ToArray();
     }
 
     /// <summary>

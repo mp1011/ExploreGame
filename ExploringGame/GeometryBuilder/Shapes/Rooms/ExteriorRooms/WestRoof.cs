@@ -7,7 +7,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class WestRoof : Room
 {
-    public static readonly float RoofHeight = Measure.Feet(15.0f);
+    public static readonly float RoofHeight = Measure.Feet(10.0f);
     public static readonly float RoofOverhang = Measure.Feet(1);
 
     public override Theme Theme { get; } = new RoofTheme();

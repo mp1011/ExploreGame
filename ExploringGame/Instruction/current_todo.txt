@@ -1,9 +1,6 @@
-﻿- rework dependencies
-	- get upstairs region to display correctly
-
-- finish walls and windows for backyard
-- finish house front
-- fix basement height and yard height for basement windows
-	- add basement windows
+﻿- fix backyard height and properly join all wall edges
+- add trimming to house walls (may require inner vs outer distinction)
+- complete roof
 - add back deck
 - add sliding door
+- add garage door (maybe?)
