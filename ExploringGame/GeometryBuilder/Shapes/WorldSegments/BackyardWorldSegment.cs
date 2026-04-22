@@ -39,5 +39,6 @@ public class BackyardWorldSegment : WorldSegment
         var frontDeck = FindShape<FrontDeck>(loadedSegments);
 
         _backyard.LoadChildren(frontSidewalk, northYard, frontDeck, den, kitchen, kidsBedroom, bedroom, basement, basementOffice);
+    
     }
 }

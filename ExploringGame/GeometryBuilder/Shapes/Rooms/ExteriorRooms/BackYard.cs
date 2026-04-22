@@ -122,6 +122,8 @@ public class BackYard : Room
 
         new BasementWindow(basement, this, Side.North, HAlign.Right, -0.5f);
         new BasementWindow(basementOffice.EastPart, _eastSection, Side.East, HAlign.Left, 0.0f);
+
+        new BackDeck(WorldSegment, _deckArea, den);
     }
 
 }
