@@ -15,13 +15,14 @@ public class GlassPane : Shape
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
 
-    public Side OmitSides { get; set; }
+    private Side _wallSide;
 
     private Theme _theme = new Theme();
     public override Theme Theme => _theme;
 
-    public GlassPane()
+    public GlassPane(Side wallSide)
     {
+        _wallSide = wallSide;
         // Glass should be slightly transparent/white tinted
         MainTexture = new TextureInfo(new Color(255, 255, 255, 240), TextureKey.Wall);
     }
@@ -29,6 +30,6 @@ public class GlassPane : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         var shape = BuildCuboid();
-        return new SideRemover().Execute(shape, OmitSides);
+        return new SideRemover().Execute(shape, Side.Top | Side.Bottom | _wallSide.ClockwiseTurn() | _wallSide.CounterClockwiseTurn());
     }
 }

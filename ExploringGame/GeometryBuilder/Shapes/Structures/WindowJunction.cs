@@ -92,7 +92,7 @@ public class Window : Room
         cap2.Place().At(rod).OnSideOuter(wallSide.CounterClockwiseTurn(), rod);
 
         // glass pane - thin transparent glass in the window opening
-        var glassPane = AddChild(new GlassPane());
+        var glassPane = AddChild(new GlassPane(wallSide));
         glassPane.AdjustShape()
             .SetAxis(_wallSide.GetAxis(), 0.02f) // Very thin glass
             .SetAxis(_wallSide.GetPerpendicularAxis(), width)

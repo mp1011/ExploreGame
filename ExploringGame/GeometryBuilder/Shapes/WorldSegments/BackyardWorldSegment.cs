@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
+using ExploringGame.LevelControl;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,12 @@ public class BackyardWorldSegment : WorldSegment
         var frontDeck = FindShape<FrontDeck>(loadedSegments);
 
         _backyard.LoadChildren(frontSidewalk, northYard, frontDeck, den, kitchen, kidsBedroom, bedroom, basement, basementOffice);
-    
+
+        var slidingDoorJunction = _backyard.DeckArea.AddConnectingRoomWithJunction(new SlidingDoorJunction(_backyard.DeckArea, Side.North, HAlign.Right, StateKey.DeckSlidingDoorOpen),
+            den, Side.North, HAlign.Left, 1.0f, adjustPlacement: false);
+
+        slidingDoorJunction.SetSide(Side.Top, den.GetSide(Side.Top) - Measure.Feet(1));
+        slidingDoorJunction.SetSideUnanchored(Side.Bottom, _backyard.BackDeck.GetSide(Side.Bottom));
+
     }
 }

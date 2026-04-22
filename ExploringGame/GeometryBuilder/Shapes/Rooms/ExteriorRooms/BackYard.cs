@@ -21,6 +21,10 @@ public class BackYard : Room
 
     public override Theme Theme { get; } = new YardTheme();
 
+    public BackDeck BackDeck { get; private set; }
+
+    public Room DeckArea => _deckArea;
+
     public BackYard(WorldSegment worldSegment) : base(worldSegment)
     {
         Theme.SideTextures[Side.South] = Theme.GetTexture(TextureKey.Siding);
@@ -123,7 +127,8 @@ public class BackYard : Room
         new BasementWindow(basement, this, Side.North, HAlign.Right, -0.5f);
         new BasementWindow(basementOffice.EastPart, _eastSection, Side.East, HAlign.Left, 0.0f);
 
-        new BackDeck(WorldSegment, _deckArea, den);
+        BackDeck = new BackDeck(WorldSegment, _deckArea, den);
+
     }
 
 }
