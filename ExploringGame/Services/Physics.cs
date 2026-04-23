@@ -237,6 +237,21 @@ public class Physics
     }
 
 
+    public RigidBody CreateSlidingDoor(SlidingDoorPane pane)
+    {
+        var doorBody = CreateDynamicBody(pane);
+        doorBody.SetMassInertia(10.0f);
+
+        var constraint = _world.CreateConstraint<PointOnLine>(doorBody, _world.NullBody);
+        constraint.Initialize(
+            new JVector(0f, 1f, 0f), 
+            pane.Position.ToJVector(), 
+            new JVector(pane.Position.X - 1.0f, pane.Position.Y, pane.Position.Z), 
+            LinearLimit.Fixed);
+
+        return doorBody;
+    }
+
     public RigidBody CreateHingedDoor(Door door)
     {
         var hinge = new Box();

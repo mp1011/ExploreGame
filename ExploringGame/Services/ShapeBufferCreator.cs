@@ -165,7 +165,7 @@ internal class ShapeBufferCreator
             {
                 // Use the Room's LightingGroup if the active object has a room assigned
                 Room lightingGroup = activeObject.Room?.LightingGroup;
-                yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, worldSegment.Theme.TextureSheetKey, lightingGroup);
+                yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, activeObject.Self.Theme.TextureSheetKey, lightingGroup);
             }
         }
 
@@ -215,7 +215,7 @@ internal class ShapeBufferCreator
         foreach (var glassPane in glassPanes)
             triangles[glassPane] = _shapeTriangles[glassPane];
 
-        var texture = _textureSheets.Get(TextureSheetKey.Basement);
+        var texture = _textureSheets.Get(TextureSheetKey.Upstairs);
         var buffers = _vertexBufferBuilder.Build(triangles, texture, _graphicsDevice);
 
         // Use worldSegment as the shape, Outdoors texture, and CullNone rasterizer state

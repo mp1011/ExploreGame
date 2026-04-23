@@ -1,5 +1,8 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics;
+using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -44,14 +47,20 @@ public class SlidingDoorJunction : Room
     }    
 }
 
-public class SlidingDoorPane : Shape
+public class SlidingDoorPane : PlaceableShape, IPlaceableObject, IControllable<SlidingDoorController>
 {
     private readonly float PartSize = Measure.Inches(6);
     private Side _wallSide;
 
-    public override ViewFrom ViewFrom => ViewFrom.None;     
+    public override ViewFrom ViewFrom => ViewFrom.Outside;     
 
     public override Theme Theme => new UpstairsHallTheme();
+
+    public override IColliderMaker ColliderMaker => new SlidingDoorColliderMaker(this);
+    public override CollisionGroup CollisionGroup => CollisionGroup.Doors;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
+
+    public SlidingDoorController Controller { get; private set; }
 
     public SlidingDoorPane(SlidingDoorJunction junction, Side wallSide)
     {
@@ -61,18 +70,15 @@ public class SlidingDoorPane : Shape
 
     public void PlacePane()
     {
+        Position = Vector3.Zero;
+
         var sideAxis = _wallSide.ClockwiseTurn().GetAxis();
         var thicknessAxis = _wallSide.GetAxis();
 
         this.AdjustShape().SetAxis(sideAxis, Parent.GetAxisSize(sideAxis) * 0.6f)
             .SetAxis(thicknessAxis, Parent.GetAxisSize(thicknessAxis) * 0.3f)
             .SetAxis(Axis.Y, Parent.Height);
-
-        this.Place()
-            .At(Parent)
-            .OnFloor()
-            .OnSideInner(_wallSide.ClockwiseTurn());
-
+      
         var bottom = AddChild(new Box(Theme, TextureKey.Plain));
         bottom.AdjustShape().From(this).SliceFromBottom(0, PartSize);
         bottom.Place().OnFloor(this);
@@ -108,10 +114,22 @@ public class SlidingDoorPane : Shape
                 .SliceFromSouth(0, PartSize);
         }
 
+        this.Place()
+           .At(Parent)
+           .OnFloor()
+           .OnSideInner(_wallSide.ClockwiseTurn());
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return BuildCuboid();
+        return Array.Empty<Triangle>();
+    }
+
+    public IActiveObject CreateController(ServiceContainer serviceContainer)
+    {
+        var controller = serviceContainer.Get<SlidingDoorController>();
+        controller.Shape = this;
+        Controller = controller;
+        return controller;
     }
 }

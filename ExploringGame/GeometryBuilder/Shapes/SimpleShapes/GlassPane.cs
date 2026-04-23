@@ -17,14 +17,12 @@ public class GlassPane : Shape
 
     private Side _wallSide;
 
-    private Theme _theme = new Theme();
+    private Theme _theme = new Theme(TextureSheetKey.Upstairs, TextureKey.Plain, new Color(255, 255, 255, 240));
     public override Theme Theme => _theme;
 
     public GlassPane(Side wallSide)
     {
         _wallSide = wallSide;
-        // Glass should be slightly transparent/white tinted
-        MainTexture = new TextureInfo(new Color(255, 255, 255, 240), TextureKey.Wall);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
