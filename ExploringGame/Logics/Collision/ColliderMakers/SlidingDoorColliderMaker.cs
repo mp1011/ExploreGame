@@ -7,15 +7,15 @@ namespace ExploringGame.Logics.Collision.ColliderMakers;
 
 public class SlidingDoorColliderMaker : IColliderMaker
 {
-    private readonly SlidingDoorPane _door;
+    private readonly MovingSlidingDoorPane _door;
 
-    public SlidingDoorColliderMaker(SlidingDoorPane door)
+    public SlidingDoorColliderMaker(MovingSlidingDoorPane door)
     {
         _door = door;
     }
 
     public IEnumerable<RigidBody> CreateColliders(Physics physics)
     {
-        yield return physics.CreateSlidingDoor(_door);      
+        yield return physics.CreateSlidingDoor(_door, _door.OpenSide);      
     }
 }

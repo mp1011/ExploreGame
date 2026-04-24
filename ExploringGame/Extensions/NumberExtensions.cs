@@ -6,6 +6,7 @@ public static class NumberExtensions
 {
     const float Epsilon = 1e-6f;
 
+    public static float Abs(this float number) => Math.Abs(number);
 
     public static bool IsValidPositive(this float number)
     {

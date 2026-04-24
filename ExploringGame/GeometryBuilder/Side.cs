@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExploringGame.Extensions;
+using Microsoft.Xna.Framework;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -57,6 +59,12 @@ public static class SideExtensions
 
     
     public static Axis GetPerpendicularAxis(this Side side) => side.ClockwiseTurn().GetAxis();  
+
+    public static Vector3 AsVector(this Side s)
+    {
+        var axis = s.GetAxis();
+        return Vector3.Zero.SetAxis(axis, 1.0f * s.Sign());       
+    }
 
     public static (Axis,Axis) GetAxisUV(this Side side) =>
        side switch

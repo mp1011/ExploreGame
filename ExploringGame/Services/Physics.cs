@@ -14,6 +14,7 @@ using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GShape = ExploringGame.GeometryBuilder.Shape;
 using MathHelper = Microsoft.Xna.Framework.MathHelper;
@@ -103,8 +104,10 @@ public class Physics
             new JVector(t.C.X, t.C.Y, t.C.Z)
             )).ToArray();
 
-        var mesh = new TriangleMesh(jTriangles);
-        body.AddShape(Enumerable.Range(0, mesh.Indices.Length).Select(i => new TriangleShape(mesh, i)), setMassInertia: false);
+        var mesh = new TriangleMesh((IEnumerable<JTriangle>)jTriangles, ignoreDegenerated: false);
+
+        body.AddShapes(Enumerable.Range(0, mesh.Indices.Length).Select(i => new TriangleShape(mesh, i)), MassInertiaUpdateMode.Preserve);
+
         body.MotionType = MotionType.Static;
         body.Tag = new CollisionInfo(CollisionGroup.Environment, CollisionGroup.Player | CollisionGroup.SolidEntity, null);
         return body;
@@ -237,17 +240,27 @@ public class Physics
     }
 
 
-    public RigidBody CreateSlidingDoor(SlidingDoorPane pane)
+    public RigidBody CreateSlidingDoor(SlidingDoorPane pane, Side openSide)
     {
         var doorBody = CreateDynamicBody(pane);
-        doorBody.SetMassInertia(10.0f);
+        doorBody.SetMassInertia(1.0f);
 
-        var constraint = _world.CreateConstraint<PointOnLine>(doorBody, _world.NullBody);
-        constraint.Initialize(
-            new JVector(0f, 1f, 0f), 
-            pane.Position.ToJVector(), 
-            new JVector(pane.Position.X - 1.0f, pane.Position.Y, pane.Position.Z), 
-            LinearLimit.Fixed);
+        var openAnchor = new Box();
+        openAnchor.Height = 0.01f;
+        openAnchor.Width = 0.01f;
+        openAnchor.Depth = 0.01f;
+        openAnchor.Position = pane.Position + openSide.AsVector() * 2.0f;
+
+        var anchorBody = CreateStaticBody(openAnchor, CollisionGroup.Environment, CollisionGroup.None);
+        
+        new PrismaticJoint(_world, doorBody, anchorBody, doorBody.Position, openSide.AsVector().ToJVector(), pinned: true, hasMotor: false);
+
+        //var constraint = _world.CreateConstraint<PointOnLine>(doorBody, _world.NullBody);
+        //constraint.Initialize(
+        //    new JVector(0f, 1f, 0f), 
+        //    pane.Position.ToJVector(), 
+        //    new JVector(pane.Position.X - 1.0f, pane.Position.Y, pane.Position.Z), 
+        //    LinearLimit.Fixed);
 
         return doorBody;
     }

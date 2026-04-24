@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics.Collision;
@@ -14,19 +15,28 @@ using System.Threading.Tasks;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
-public class SlidingDoorController : IShapeController<SlidingDoorPane>, IPlayerActivated
+public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IPlayerActivated
 {
+    private readonly float OpenSpeed = 3.0f;
     private readonly Physics _physics;
     private readonly GameState _gameState;
+    private float _closedPosition, _openPosition;
+  
     private RigidBody _rigidBody;
 
-    public SlidingDoorPane Shape { get; set; }
+    public MovingSlidingDoorPane Shape { get; set; }
 
     public float ActivationRange => 2.0f;
 
     public IPlayerInput PlayerInput { get; }
 
     public Player Player { get; }
+
+    public bool Open { get; set; }
+
+    public float TargetPosition => Open ? _openPosition : _closedPosition;
+
+    public float CurrentAxisPosition => Shape.GetAxisPosition(Shape.OpenAxis);
 
     ICollidable IPlayerActivated.Shape => Shape;
     public SlidingDoorController(IPlayerInput playerInput, Player player, AudioService audioService, Physics physics,
@@ -43,6 +53,9 @@ public class SlidingDoorController : IShapeController<SlidingDoorPane>, IPlayerA
     {
         _rigidBody = Shape.ColliderBodies.First();
         _rigidBody.Position = Shape.Position.ToJVector();
+
+        _closedPosition = Shape.Position.AxisValue(Shape.OpenAxis);
+        _openPosition = (Shape.Position + (Shape.OpenSide.AsVector() * 1.0f)).AxisValue(Shape.OpenAxis);
     }
 
     public void Stop()
@@ -53,5 +66,19 @@ public class SlidingDoorController : IShapeController<SlidingDoorPane>, IPlayerA
     {
         Shape.Position = _rigidBody.Position.ToVector3();
 
+        if (this.CheckPlayerActivation(_physics))
+            Open = !Open;
+
+        var distance = (CurrentAxisPosition - TargetPosition).Abs();
+        if(distance < 0.01f)
+        {
+            _rigidBody.Position = Shape.Position.SetAxis(Shape.OpenAxis, TargetPosition).ToJVector();
+            _rigidBody.Velocity = new Jitter2.LinearMath.JVector(0, 0, 0);
+        }
+        else
+        {
+            var speed = OpenSpeed * float.Sign(TargetPosition - CurrentAxisPosition);
+            _rigidBody.Velocity = Vector3.Zero.SetAxis(Shape.OpenAxis, speed).ToJVector();
+        }
     }
 }

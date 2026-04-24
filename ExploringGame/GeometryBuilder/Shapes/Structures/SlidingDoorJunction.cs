@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
@@ -15,7 +16,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Structures;
 public class SlidingDoorJunction : Room
 {
     private Side _wallSide;
-    private SlidingDoorPane _pane1, _pane2;
+    private SlidingDoorPane _fixedPane;
+    private MovingSlidingDoorPane _movingPane;
 
     public SlidingDoorJunction(Room room, Side wallSide, HAlign closedDirection, StateKey doorStateKey) : base(room.WorldSegment)
     {
@@ -35,32 +37,35 @@ public class SlidingDoorJunction : Room
 
         MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
 
-        _pane1 = new SlidingDoorPane(this, wallSide);
-      //  _pane2 = new SlidingDoorPane(this, wallSide);
-
+        _fixedPane = new SlidingDoorPane(this, wallSide);
+        _movingPane = new MovingSlidingDoorPane(this, wallSide);
     }
 
 
     protected override void BeforeBuild()
     {
-        _pane1.PlacePane();
-    }    
+        _fixedPane.PlacePane(_wallSide.CounterClockwiseTurn());
+        _movingPane.PlacePane(_wallSide.ClockwiseTurn());
+
+        _fixedPane.Position = _fixedPane.Position + _wallSide.AsVector() * -0.1f;
+        _movingPane.Position = _movingPane.Position + _wallSide.AsVector() * 0.1f;
+
+    }
 }
 
-public class SlidingDoorPane : PlaceableShape, IPlaceableObject, IControllable<SlidingDoorController>
+public class SlidingDoorPane : PlaceableShape, IPlaceableObject
 {
     private readonly float PartSize = Measure.Inches(6);
-    private Side _wallSide;
+    protected Side _wallSide;
 
-    public override ViewFrom ViewFrom => ViewFrom.Outside;     
+    public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override Theme Theme => new UpstairsHallTheme();
 
-    public override IColliderMaker ColliderMaker => new SlidingDoorColliderMaker(this);
+    public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
     public override CollisionGroup CollisionGroup => CollisionGroup.Doors;
     public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
-    public SlidingDoorController Controller { get; private set; }
 
     public SlidingDoorPane(SlidingDoorJunction junction, Side wallSide)
     {
@@ -68,7 +73,7 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject, IControllable<S
         _wallSide = wallSide;
     }
 
-    public void PlacePane()
+    public void PlacePane(Side placementSide)
     {
         Position = Vector3.Zero;
 
@@ -78,7 +83,7 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject, IControllable<S
         this.AdjustShape().SetAxis(sideAxis, Parent.GetAxisSize(sideAxis) * 0.6f)
             .SetAxis(thicknessAxis, Parent.GetAxisSize(thicknessAxis) * 0.3f)
             .SetAxis(Axis.Y, Parent.Height);
-      
+
         var bottom = AddChild(new Box(Theme, TextureKey.Plain));
         bottom.AdjustShape().From(this).SliceFromBottom(0, PartSize);
         bottom.Place().OnFloor(this);
@@ -117,12 +122,27 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject, IControllable<S
         this.Place()
            .At(Parent)
            .OnFloor()
-           .OnSideInner(_wallSide.ClockwiseTurn());
+           .OnSideInner(placementSide);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         return Array.Empty<Triangle>();
+    }
+}
+
+public class MovingSlidingDoorPane : SlidingDoorPane, IPlaceableObject, IControllable<SlidingDoorController>
+{
+    public Side OpenSide => _wallSide.CounterClockwiseTurn();
+
+    public Axis OpenAxis => OpenSide.GetAxis();
+
+    public SlidingDoorController Controller { get; private set; }
+
+    public override IColliderMaker ColliderMaker => new SlidingDoorColliderMaker(this);
+
+    public MovingSlidingDoorPane(SlidingDoorJunction junction, Side wallSide) : base(junction, wallSide)
+    {
     }
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
