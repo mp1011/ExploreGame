@@ -1,4 +1,4 @@
-﻿- complete roof
+﻿[x] complete roof
 - extend road
 - side road
 - match south yard to backyard

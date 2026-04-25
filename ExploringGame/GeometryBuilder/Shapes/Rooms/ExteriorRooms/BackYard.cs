@@ -5,6 +5,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
@@ -50,7 +51,7 @@ public class BackYard : Room
     }
 
     public void LoadChildren(Shape frontSidewalk, Shape northYard, FrontDeck frontDeck, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
-        Basement basement, BasementOffice basementOffice)
+        Basement basement, BasementOffice basementOffice, Roof eastRoof, Roof denRoof)
     {
         this.Place().At(frontSidewalk)
                     .OnFloor()
@@ -64,8 +65,22 @@ public class BackYard : Room
 
         AddChild(new Fence(this, Side.North));
         new GrassSurface(this, TerrainSurface.DefaultLawn);
-        var northWall = new OuterWall(this, Side.South);
+
+        var northWall = new OuterWall(this, Side.South, moulding: Side.East);
         northWall.SetSideUnanchored(Side.West, frontDeck.GetSide(Side.East));
+
+        var northWall_West = new OuterWall(this, Side.South, moulding: Side.West);        
+        northWall_West.AdjustShape().From(northWall);
+        northWall_West.SetSideUnanchored(Side.East, eastRoof.GetSide(Side.West));
+        northWall_West.VertexOffsets.Add(new VertexOffset(Side.Top | Side.East, new Vector3(0, Roof.RoofHeight, 0)));
+
+        var northWall_Mid = new OuterWall(this, Side.South, moulding: Side.None);
+        northWall_Mid.AdjustShape().From(northWall);
+        northWall_Mid.SetSideUnanchored(Side.West, eastRoof.GetSide(Side.West));
+        northWall_Mid.SetSideUnanchored(Side.East, eastRoof.GetSide(Side.East));
+        northWall_Mid.VertexOffsets.Add(new VertexOffset(Side.Top | Side.West, new Vector3(0, Roof.RoofHeight, 0)));
+
+        northWall.SetSideUnanchored(Side.West, northWall_Mid.GetSide(Side.East));
 
         _eastSection.Place().At(this)
             .OnSideInner(Side.North, this)
@@ -78,9 +93,17 @@ public class BackYard : Room
         _eastSection.AddChild(new Fence(_eastSection, Side.East));
         new GrassSurface(_eastSection, TerrainSurface.DefaultLawn);
 
-        var eastWall = new OuterWall(_eastSection, Side.West);
+        var eastWall = new OuterWall(_eastSection, Side.West, moulding: Side.South);
         eastWall.SetSideUnanchored(Side.North, GetSide(Side.South));
       
+        var eastWall2 = new OuterWall(_eastSection, Side.West, moulding: Side.None);
+        eastWall2.AdjustShape().From(eastWall);
+        eastWall2.SetSideUnanchored(Side.South, denRoof.GetSide(Side.South));
+        eastWall2.VertexOffsets.Add(new VertexOffset(Side.Top | Side.South, new Vector3(0, Roof.RoofHeight, 0)));
+
+        eastWall.SetSideUnanchored(Side.North, denRoof.GetSide(Side.South));
+        eastWall.VertexOffsets.Add(new VertexOffset(Side.Top | Side.North, new Vector3(0, Roof.RoofHeight, 0)));
+
         _southSection.Place().At(this);
         _southSection.SetSideUnanchored(Side.East, _eastSection.GetSide(Side.West));
         _southSection.SetSideUnanchored(Side.South, _eastSection.GetSide(Side.South));
@@ -112,9 +135,22 @@ public class BackYard : Room
 
         var southEastWall = new OuterWall(_midSection, Side.West);
 
-        var southWall = new OuterWall(_southSection, Side.North);
+        var southWall = new OuterWall(_southSection, Side.North, moulding: Side.West);
         southWall.SetSideUnanchored(Side.East, southEastWall.GetSide(Side.East));
-        southWall.Tag = "SouthWall";
+     
+        var southWall2 = new OuterWall(_southSection, Side.North, moulding: Side.East);
+        southWall2.AdjustShape().From(southWall);
+
+        southWall2.SetSideUnanchored(Side.West, eastRoof.GetSide(Side.West));
+        southWall.SetSideUnanchored(Side.East, eastRoof.GetSide(Side.West));
+        
+        southWall.VertexOffsets.Add(new VertexOffset(Side.Top | Side.East, new Vector3(0, Roof.RoofHeight, 0)));
+        southWall2.VertexOffsets.Add(new VertexOffset(Side.Top | Side.West, new Vector3(0, Roof.RoofHeight, 0)));
+
+
+        southWall2.Tag = "SouthWall";
+
+
 
         new OuterWall(_deckArea, Side.North);
 

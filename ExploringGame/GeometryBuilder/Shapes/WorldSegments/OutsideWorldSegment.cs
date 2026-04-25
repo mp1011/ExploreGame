@@ -32,10 +32,10 @@ public class OutsideWorldSegment : WorldSegment
 
         _deck = new FrontDeck(this);
         _frontYard = new FrontYard(this, _deck);
-        _westRoof = new Roof(this, Side.East);
-        _eastRoof = new Roof(this, Side.West);
-        _denRoof1 = new Roof(this, Side.South);
-        _denRoof2 = new Roof(this, Side.North);
+        _westRoof = new Roof(this, Side.East) { Tag = "WestRoof" };
+        _eastRoof = new Roof(this, Side.West) { Tag = "EastRoof" };
+        _denRoof1 = new Roof(this, Side.South) { Tag = "DenRoofNorth" };
+        _denRoof2 = new Roof(this, Side.North) { Tag = "DenRoofSouth" };
 
         _road = new Road(this) { Tag = "HomeRoad" };      
     }
@@ -83,14 +83,13 @@ public class OutsideWorldSegment : WorldSegment
 
         _eastRoof.Depth = _westRoof.Depth;
         _eastRoof.Place().At(_westRoof).OnSideOuter(Side.East, _westRoof);
-        // _eastRoof.SetSide(Side.Bottom, _frontYard.GetSide(Side.Top));
-
+       
 
         _denRoof1.AdjustShape().From(den);
         _denRoof1.Height = Measure.Feet(1);
         _denRoof1.Depth = den.Depth / 2f;
         _denRoof1.Place().OnSideOuter(Side.Top, den)
-            .OnSideInner(Side.North, den, -Measure.Feet(2));
+            .OnSideInner(Side.North, den, -Measure.Feet(1.2f));
 
         _denRoof1.Place().AlignSideWith(Side.East, den.EastPart, Measure.Feet(3));
 

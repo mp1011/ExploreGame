@@ -28,6 +28,8 @@ public class BackyardWorldSegment : WorldSegment
         // Find real shapes from OutsideWorldSegment
         var frontSidewalk = FindShapeByTag<Box>(loadedSegments, "Sidewalk");
         var northYard = FindShapeByTag<Room>(loadedSegments, "FrontYardNorth");
+        var eastRoof = FindShapeByTag<Roof>(loadedSegments, "EastRoof");
+        var denRoof = FindShapeByTag<Roof>(loadedSegments, "DenRoofNorth");
 
         // Find real shapes from UpstairsWorldSegment
         var denEast = FindShapeByTag<Room>(loadedSegments, "DenEast");
@@ -39,7 +41,7 @@ public class BackyardWorldSegment : WorldSegment
         var basementOffice = FindShape<BasementOffice>(loadedSegments);
         var frontDeck = FindShape<FrontDeck>(loadedSegments);
 
-        _backyard.LoadChildren(frontSidewalk, northYard, frontDeck, den, kitchen, kidsBedroom, bedroom, basement, basementOffice);
+        _backyard.LoadChildren(frontSidewalk, northYard, frontDeck, den, kitchen, kidsBedroom, bedroom, basement, basementOffice, eastRoof, denRoof);
 
         var slidingDoorJunction = _backyard.DeckArea.AddConnectingRoomWithJunction(new SlidingDoorJunction(_backyard.DeckArea, Side.North, HAlign.Right, StateKey.DeckSlidingDoorOpen),
             den, Side.North, HAlign.Left, 1.0f, adjustPlacement: false);
