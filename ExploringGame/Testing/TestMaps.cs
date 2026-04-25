@@ -48,7 +48,6 @@ public static partial class TestMaps
         var world = new SkyDomeTestWorldSegment();
         var room = new SkyDomeTestRoom(world, width: 20f, depth: 20f, height: 10f);
         room.Y = 0f;
-        room.FixedAmbientLight = LightIntensity.Bright;
 
         return world;
     }

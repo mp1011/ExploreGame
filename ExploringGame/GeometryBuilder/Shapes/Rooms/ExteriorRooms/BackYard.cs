@@ -34,8 +34,6 @@ public class BackYard : Room
         Width = Measure.Feet(20);
         Height = 5.52f;
 
-        FixedAmbientLight = LightIntensity.Bright;
-
         // Create child sections (positioning will happen in LoadChildren and SetDependencies)
         _eastSection = Copy();
         _eastSection.Tag = "BackyardEast";

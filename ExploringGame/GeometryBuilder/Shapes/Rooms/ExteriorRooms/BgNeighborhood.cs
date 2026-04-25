@@ -15,8 +15,6 @@ public class BgNeighborhood : Room
 
     public BgNeighborhood(WorldSegment worldSegment) : base(worldSegment)
     {
-        FixedAmbientLight = LightIntensity.Bright;
-
         Ground = AddChild(new Box(new Theme(TextureSheetKey.Outdoors, TextureKey.Grass, Color.White)));
 
         Ground.Height = Measure.Feet(20);

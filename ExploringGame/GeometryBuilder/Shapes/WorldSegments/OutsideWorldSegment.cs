@@ -60,8 +60,6 @@ public class OutsideWorldSegment : WorldSegment
                     .OnSideOuter(Side.West, livingRoom, -0.5f)
                     .OnSideInner(Side.South, livingRoom);
 
-        _deck.FixedAmbientLight = LightIntensity.Bright;
-
         // Load children after positioning is complete
         _deck.LoadChildren(livingRoom);
         _frontYard.LoadChildren(garage, bedroom, spareRoom);

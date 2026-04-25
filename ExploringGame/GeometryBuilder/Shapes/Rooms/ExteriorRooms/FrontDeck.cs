@@ -120,7 +120,6 @@ public class FrontDeckStairs : Stairs
             CalcStairsWidth(topFloor),
             CalcStairsDepth(bottomFloor, topFloor))
     {
-        FixedAmbientLight = topFloor.FixedAmbientLight;
     }
 
     private static Vector2 CalcStepSize(FrontYard yard, FrontDeck deck)

@@ -91,7 +91,6 @@ public class BackDeckStairs : Stairs
             topFloor.StepWidth,
             StepDepth * 4)
     {
-        FixedAmbientLight = topFloor.FixedAmbientLight;
     }   
     protected override Side StartSide => Side.South;
 
@@ -112,8 +111,8 @@ public class BackDeckSideStairs : Stairs
             topFloor.SideStepWidth,
             StepDepth * 4)
     {
-        FixedAmbientLight = topFloor.FixedAmbientLight;
     }
+
     protected override Side StartSide => Side.North;
 
     protected override StairStep CreateStep()

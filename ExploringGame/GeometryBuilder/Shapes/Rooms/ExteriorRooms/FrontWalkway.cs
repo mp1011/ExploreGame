@@ -20,9 +20,7 @@ public class FrontWalkway : Room
     public FrontWalkway(FrontYard yard) : base(yard.WorldSegment)
     {
         Size = Vector3.One;
-        FixedAmbientLight = LightIntensity.Bright;
         Theme = yard.Theme;
-        yard.AddChild(this);
     }
 
     public void LoadChildren(FrontYard yard, Driveway driveway)

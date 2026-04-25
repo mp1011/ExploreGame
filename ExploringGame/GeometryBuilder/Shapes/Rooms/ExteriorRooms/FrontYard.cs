@@ -28,7 +28,6 @@ public class FrontYard : Room
     public FrontYard(WorldSegment worldSegment, FrontDeck deck) : base(worldSegment)
     {
         Size = Vector3.One;
-        FixedAmbientLight = LightIntensity.Bright;
         Deck = deck;
     }
 

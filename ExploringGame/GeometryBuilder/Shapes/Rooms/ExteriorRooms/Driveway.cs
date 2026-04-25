@@ -17,8 +17,6 @@ public class Driveway : Room
 
     public Driveway(WorldSegment worldSegment, Garage garage, FrontYard yard) : base(worldSegment)
     {
-        FixedAmbientLight = LightIntensity.Bright;
-
         Depth = garage.Depth;
         Height = 0.5f;
         Width = 1.0f;

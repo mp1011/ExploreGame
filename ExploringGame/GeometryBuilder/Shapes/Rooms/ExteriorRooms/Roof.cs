@@ -16,8 +16,6 @@ public class Roof : Room
 
     public Roof(OutsideWorldSegment worldSegment, Side raiseSide) : base(worldSegment)
     {
-        FixedAmbientLight = LightIntensity.Bright;
-
         Theme.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
         Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
 

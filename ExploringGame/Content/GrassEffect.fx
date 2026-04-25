@@ -70,7 +70,7 @@ PSInput VSMain(VSInput input)
     float ambientOcclusion = lerp(0.7, 1.0, heightFactor); // Subtle ground shadow
 
     // Combine lighting factors
-    output.Brightness =  normalLighting * ambientOcclusion;
+    output.Brightness = normalLighting * ambientOcclusion;
 
     float4 worldPos = mul(float4(pos, 1.0), World);
     output.Position = mul(mul(worldPos, View), Projection);
@@ -85,7 +85,7 @@ float4 PSMain(PSInput input) : SV_Target
     float4 texColor = tex2D(GrassSampler, input.TexCoord);
 
     // Ensure brightness has a minimum value to prevent it being too dark
-    float finalBrightness = max(input.Brightness, 0.4) + 0.3; // Min 0.4, add ambient 0.3
+    float finalBrightness = max(input.Brightness, 0.4) * 0.2;
 
     // Apply vertex color and lighting
     float3 litColor = texColor.rgb * input.Color.rgb * finalBrightness;

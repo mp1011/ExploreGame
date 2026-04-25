@@ -12,6 +12,5 @@ public class Road : Room
 
     public Road(WorldSegment worldSegment) : base(worldSegment)
     {
-        FixedAmbientLight = LightIntensity.Bright;
     }
 }

@@ -14,7 +14,7 @@ using var game = new Game1(new HomeWorldSegmentGroup());
 
 //var testMap = TestMaps.PathfindingTest();
 //testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;
-LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
+//LightIntensity.DefaultAmbientLight = LightIntensity.Bright;
 //using var game = new Game1(testMap);
 
 
