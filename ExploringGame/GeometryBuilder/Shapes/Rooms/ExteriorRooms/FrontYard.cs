@@ -63,14 +63,6 @@ public class FrontYard : Room
             .OnSideOuter(Side.East, this);
         sidewalk.SetSideUnanchored(Side.East, northPart.GetSide(Side.East));
 
-        //var houseNorthSide = AddChild(new Box(Theme, TextureKey.Siding));
-        //houseNorthSide.OmitSides = Side.South;
-        //houseNorthSide.Width = Measure.Inches(6);
-        //houseNorthSide.Height = Height;
-        //houseNorthSide.Depth = Measure.Inches(4);
-        //houseNorthSide.Place().OnFloor();
-        //houseNorthSide.SetSide(Side.South, Deck.GetSide(Side.North));       
-        //houseNorthSide.AdjustShape().SetAxis(Axis.X, Deck.GetSide(Side.East), northPart.GetSide(Side.East));
 
         var northFence = new Fence(northPart, Side.North);
 

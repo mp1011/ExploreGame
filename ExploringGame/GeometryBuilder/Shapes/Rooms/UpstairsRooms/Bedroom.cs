@@ -31,6 +31,12 @@ public class Bedroom : Room
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
         sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5));
+
+        var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(4));
+        closet.Place().OnSideOuter(Side.North, this, -Measure.Inches(6))
+            .OnSideInner(Side.West, this, 0.5f);
+        closet.AddConnectingRoomWithJunction(new DoorJunction(closet, Side.South, HAlign.Center, DoorDirection.Push, StateKey.BedroomClosetDoorOpen),
+            this, Side.South, HAlign.Center, adjustPlacement: false);
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();

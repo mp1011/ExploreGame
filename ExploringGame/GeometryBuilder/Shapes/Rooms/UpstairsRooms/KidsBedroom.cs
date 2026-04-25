@@ -36,7 +36,15 @@ public class KidsBedroom : Room
         var lightSwitch = new LightSwitch(this, Side.North, StateKey.KidsBedroomLightOn);
         lightSwitch.ControlledObjects.Add(kidsLight);
         lightSwitch.Position = Position;
-        lightSwitch.Place().OnSideInner(Side.North).AtEyeLevel(this, -Measure.Inches(5));
+        lightSwitch.Place().OnSideInner(Side.North)
+            .OnSideInner(Side.West, this, 1.5f)
+            .AtEyeLevel(this, -Measure.Inches(5));
+
+        var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(1.4f));
+        closet.Place().OnSideOuter(Side.North, this, -Measure.Inches(6))
+            .OnSideInner(Side.West, this, 1.7f);
+        closet.AddConnectingRoomWithJunction(new DoorJunction(closet, Side.South, HAlign.Center, DoorDirection.Push, StateKey.KidsBedroomClosetDoorOpen),
+            this, Side.South, HAlign.Center, adjustPlacement: false);
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();

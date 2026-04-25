@@ -18,6 +18,8 @@ public class BackDeck : Deck
     public float StepWidth { get; }
     public float SideStepWidth => Measure.Feet(4);
 
+    public BackDeckSideStairs SideStairs { get; private set; }
+
     public BackDeck(WorldSegment worldSegment, Room backDeckArea, Den den) : base(worldSegment)
     {
         var floor = AddChild(new Box(Theme));
@@ -73,6 +75,8 @@ public class BackDeck : Deck
         sideStairs.Place().OnFloor(backDeckArea)
             .OnSideOuter(Side.North, this)
             .OnSideInner(Side.East, this);
+
+        SideStairs = sideStairs;
     }
 }
 

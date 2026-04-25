@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
@@ -50,7 +51,7 @@ public class BackYard : Room
     }
 
     public void LoadChildren(Shape frontSidewalk, Shape northYard, FrontDeck frontDeck, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
-        Basement basement, BasementOffice basementOffice, Roof eastRoof, Roof denRoof, Room southFrontYard)
+        Basement basement, BasementOffice basementOffice, Roof eastRoof, Roof denRoof, Room southFrontYard, HalfBathroom halfBath)
     {
         this.Place().At(frontSidewalk)
                     .OnFloor()
@@ -62,8 +63,17 @@ public class BackYard : Room
         SetSideUnanchored(Side.North, northYard.GetSide(Side.North));
         SetSideUnanchored(Side.East, den.EastPart.GetSide(Side.East) + 1.0f);
 
+
+        var backSidewalk = AddChild(new Box(Theme, TextureKey.Concrete));
+        backSidewalk.AdjustShape().From(frontSidewalk);
+        backSidewalk.Place().OnSideOuter(Side.East, frontSidewalk);
+        backSidewalk.SetSideUnanchored(Side.East, GetSide(Side.East));
+
+        
         AddChild(new Fence(this, Side.North));
-        new GrassSurface(this, TerrainSurface.DefaultLawn);
+        var northGrass = new GrassSurface(this, TerrainSurface.DefaultLawn);
+        northGrass.SetSideUnanchored(Side.South, backSidewalk.GetSide(Side.North));
+        northGrass.Terrain.SetSideUnanchored(Side.South, backSidewalk.GetSide(Side.North));
 
         var northWall = new OuterWall(this, Side.South, moulding: Side.East);
         northWall.SetSideUnanchored(Side.West, frontDeck.GetSide(Side.East));
@@ -90,7 +100,7 @@ public class BackYard : Room
 
         _eastSection.AddChild(new Fence(_eastSection, Side.North));
         _eastSection.AddChild(new Fence(_eastSection, Side.East));
-        new GrassSurface(_eastSection, TerrainSurface.DefaultLawn);
+        var eastGrass = new GrassSurface(_eastSection, TerrainSurface.DefaultLawn);
 
         var eastWall = new OuterWall(_eastSection, Side.West, moulding: Side.South);
         eastWall.SetSideUnanchored(Side.North, GetSide(Side.South));
@@ -109,7 +119,7 @@ public class BackYard : Room
         _southSection.SetSideUnanchored(Side.North, bedroom.GetSide(Side.South) + OuterWall.StandardSpacingForGround);
         _southSection.SetSideUnanchored(Side.West, southFrontYard.GetSide(Side.East));
 
-        new GrassSurface(_southSection, TerrainSurface.DefaultLawn);
+        var southGrass = new GrassSurface(_southSection, TerrainSurface.DefaultLawn);
         
         var southFence = _southSection.AddChild(new Fence(_southSection, Side.South));
         southFence.SetSideUnanchored(Side.East, _eastSection.GetSide(Side.East));
@@ -129,7 +139,7 @@ public class BackYard : Room
         _midSection.SetSideUnanchored(Side.West, kitchen.GetSide(Side.East) + OuterWall.StandardSpacingForGround);
         _midSection.SetSideUnanchored(Side.North, kitchen.GetSide(Side.South));
 
-        new GrassSurface(_midSection, TerrainSurface.DefaultLawn);
+        var midGrass = new GrassSurface(_midSection, TerrainSurface.DefaultLawn);
 
         // Position deckArea
         _deckArea.Place().At(this);
@@ -167,12 +177,25 @@ public class BackYard : Room
         new Window(kidsBedroom, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: _southSection);
         new Window(kidsBedroom, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _midSection);       
         new Window(bedroom, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _southSection);
+        new Window(halfBath, Side.East, Measure.Feet(4), Measure.Feet(4), otherRoom: _eastSection);
 
         new BasementWindow(basement, this, Side.North, HAlign.Right, -0.5f);
         new BasementWindow(basementOffice.EastPart, _eastSection, Side.East, HAlign.Left, 0.0f);
 
         BackDeck = new BackDeck(WorldSegment, _deckArea, den);
 
+        var eastSidewalk = AddChild(new Box(Theme, TextureKey.Concrete));
+        eastSidewalk.AdjustShape().From(backSidewalk).SetAxis(Axis.X, BackDeck.SideStairs.Depth);
+        eastSidewalk.Place().OnSideInner(Side.North, backSidewalk)
+            .OnSideOuter(Side.East, backSidewalk);
+        eastSidewalk.SetSideUnanchored(Side.South, BackDeck.SideStairs.GetSide(Side.North));
+        eastGrass.SetSideUnanchored(Side.West, eastSidewalk.GetSide(Side.East));
+        eastGrass.Terrain.SetSideUnanchored(Side.West, eastSidewalk.GetSide(Side.East));
+
+        northGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
+
+        midGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
+        southGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
     }
 
 }

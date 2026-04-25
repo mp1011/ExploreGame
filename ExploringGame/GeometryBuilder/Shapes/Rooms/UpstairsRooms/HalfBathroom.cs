@@ -29,6 +29,6 @@ public class HalfBathroom : Room
         var sw = new LightSwitch(this, Side.West, StateKey.HalfBathroomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5)); 
+        sw.Place().OnSideInner(Side.West).AtEyeLevel(this, -Measure.Inches(5)); 
     }
 }

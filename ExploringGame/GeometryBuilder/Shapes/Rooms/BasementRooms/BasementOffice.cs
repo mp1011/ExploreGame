@@ -25,7 +25,7 @@ public class BasementOffice : Room
     {
         Width = Measure.Feet(17) - 2.0f;
         Height = Measure.Feet(7);
-        Depth = Measure.Feet(22) - 1.9f;
+        Depth = Measure.Feet(22) - 3.0f;
 
         SetSide(Side.North, worldSegment.GetSide(Side.North) + 1.9f);
         SetSide(Side.Bottom, 0f);

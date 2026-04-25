@@ -23,6 +23,8 @@ public class GrassSurface : Shape
 
     public override Theme Theme => new GrassTheme();
 
+    public TerrainSurface Terrain => _terrain;
+
     /// <summary>
     /// Creates a grass surface that covers the entire area defined by the shape's size.
     /// When <paramref name="terrain"/> is provided, each blade root is raised to match

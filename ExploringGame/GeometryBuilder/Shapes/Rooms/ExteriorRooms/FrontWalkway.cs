@@ -35,6 +35,7 @@ public class FrontWalkway : Room
         walkway.Place().OnSideOuter(Side.South, yard)
                        .OnSideOuter(Side.West, yard.Deck);
         walkway.SetSideUnanchored(Side.South, yard.Deck.GetSide(Side.South));
+        walkway.SetSideUnanchored(Side.East, yard.Deck.WestPart.GetSide(Side.West));
 
         var walkway2 = AddChild(new Box(Theme, TextureKey.Concrete));
         walkway2.Height = Measure.Feet(2);

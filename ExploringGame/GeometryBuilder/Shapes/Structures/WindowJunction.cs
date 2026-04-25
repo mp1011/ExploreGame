@@ -38,6 +38,8 @@ public class Window : Room
 
     public override bool HasPathfindingWaypoint => false;
 
+    public override Side OmitSides => _wallSide | _wallSide.Opposite();
+
     public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f, Room otherRoom = null) : base(room.WorldSegment)
     {
         room.AddChild(this);

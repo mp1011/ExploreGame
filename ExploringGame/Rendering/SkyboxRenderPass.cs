@@ -1,3 +1,4 @@
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -37,6 +38,9 @@ public class SkyboxRenderPass : IRenderPass
 
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
+        if (Debug.NoDepthStencil)
+            return;
+
         // Take only the first skybox buffer to avoid rendering duplicates across segments
         var skyboxBuffer = shapeBuffers.FirstOrDefault();
         if (skyboxBuffer != null)

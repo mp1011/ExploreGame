@@ -30,7 +30,13 @@ public class SpareRoom : Room
         var sw = new LightSwitch(this, Side.East, StateKey.SpareRoomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5)); 
+        sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5));
+
+        var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(4));
+        closet.Place().OnSideOuter(Side.South, this, Measure.Inches(6))
+            .OnSideInner(Side.East, this, -0.5f);
+        closet.AddConnectingRoomWithJunction(new DoorJunction(closet, Side.North, HAlign.Center, DoorDirection.Push, StateKey.SpareRoomClosetDoorOpen),
+            this, Side.North, HAlign.Center, adjustPlacement: false);
     }
 
     public override Theme Theme => new UpstairsHallTheme();
