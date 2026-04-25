@@ -1,6 +1,20 @@
-﻿- fix backyard height and properly join all wall edges
-- add trimming to house walls (may require inner vs outer distinction)
-- complete roof
-- add back deck
-- add sliding door
-- add garage door (maybe?)
+﻿- complete roof
+- extend road
+- side road
+- match south yard to backyard
+- patch up house corner
+- side of house and side gate entrance
+- garage sizing
+- office closets have no collision
+- fix bathroom position
+- bathroom shape and closet in kid's room
+- increase kitchen depth by stretching basement stairs and moving bathroom
+- closets to bedroom and spare room
+- bedroom and spare room windows to front not see-through
+- textures on curtain rod spheres
+- sidewalk on back
+- remove grass from under deck
+- don't render skybox in debug no-depth mode
+- side of front deck conflicts with side of brick
+- move boiler room back to give more space for the corner
+- add half bath window, move den closer to wall

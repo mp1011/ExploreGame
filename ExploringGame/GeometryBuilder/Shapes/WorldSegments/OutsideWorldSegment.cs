@@ -1,4 +1,5 @@
-﻿using ExploringGame.GameDebug;
+﻿using ExploringGame.Entities;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
@@ -19,7 +20,7 @@ public class OutsideWorldSegment : WorldSegment
 
     private FrontDeck _deck;
     private FrontYard _frontYard;
-    private WestRoof _roof;
+    private Roof _westRoof, _eastRoof, _denRoof1, _denRoof2;
     private Road _road;
 
     public OutsideWorldSegment() : base()
@@ -31,12 +32,12 @@ public class OutsideWorldSegment : WorldSegment
 
         _deck = new FrontDeck(this);
         _frontYard = new FrontYard(this, _deck);
-        _roof = new WestRoof(this, _frontYard);
+        _westRoof = new Roof(this, Side.East);
+        _eastRoof = new Roof(this, Side.West);
+        _denRoof1 = new Roof(this, Side.South);
+        _denRoof2 = new Roof(this, Side.North);
 
-        _road = new Road(this);
-        _road.Tag = "HomeRoad";
-       
-        DebugShapeLogger.LogShape("OutsideWorldSegment ctor", _frontYard);
+        _road = new Road(this) { Tag = "HomeRoad" };      
     }
 
     public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
@@ -46,6 +47,7 @@ public class OutsideWorldSegment : WorldSegment
         var garage = FindShape<Garage>(loadedSegments);
         var bedroom = FindShape<Bedroom>(loadedSegments);
         var spareRoom = FindShape<SpareRoom>(loadedSegments);
+        var den = FindShape<Den>(loadedSegments);
 
         // Position and connect deck based on living room
         _deck.Depth = livingRoom.Depth;
@@ -67,15 +69,37 @@ public class OutsideWorldSegment : WorldSegment
         _road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
 
 
-        _roof.Height = Measure.Feet(1);
-        _roof.Depth = _frontYard.Depth;
-        _roof.Width = Measure.Feet(20);
+        _westRoof.Depth = _frontYard.Depth;
+        _eastRoof.Depth = _frontYard.Depth;
 
-        _roof.Place().OnSideOuter(Side.East, _frontYard.Deck, -WestRoof.RoofOverhang)
-                    .OnSideOuter(Side.Top, _frontYard)
-                    .OnSideInner(Side.North, _frontYard.Deck, -WestRoof.RoofOverhang);
+        _westRoof.Width = Measure.Feet(17.5f);
+        _eastRoof.Width = _westRoof.Width;
 
-        _roof.SetSideUnanchored(Side.South, garage.GetSide(Side.South));
+        _westRoof.Place().OnSideOuter(Side.East, _frontYard.Deck, -Roof.RoofOverhang)
+                    .OnSideOuter(Side.Top, _frontYard, -Measure.Inches(6))
+                    .OnSideInner(Side.North, _frontYard.Deck, -Roof.RoofOverhang);
+
+        _westRoof.SetSideUnanchored(Side.South, garage.GetSide(Side.South) + Roof.RoofOverhang);
+
+        _eastRoof.Depth = _westRoof.Depth;
+        _eastRoof.Place().At(_westRoof).OnSideOuter(Side.East, _westRoof);
+        // _eastRoof.SetSide(Side.Bottom, _frontYard.GetSide(Side.Top));
+
+
+        _denRoof1.AdjustShape().From(den);
+        _denRoof1.Height = Measure.Feet(1);
+        _denRoof1.Depth = den.Depth / 2f;
+        _denRoof1.Place().OnSideOuter(Side.Top, den)
+            .OnSideInner(Side.North, den, -Measure.Feet(2));
+
+        _denRoof1.Place().AlignSideWith(Side.East, den.EastPart, Measure.Feet(3));
+
+        _denRoof2.AdjustShape().From(_denRoof1);
+        _denRoof2.Place().OnSideInner(Side.South, den, Measure.Feet(2));
+        _denRoof2.SetSideUnanchored(Side.North, _denRoof1.GetSide(Side.South));
+
+        _denRoof1.VertexOffsets.Add(new VertexOffset(Side.South | Side.West, new Vector3(-8.5f, 0f, 0f)));
+        _denRoof2.VertexOffsets.Add(new VertexOffset(Side.North | Side.West, new Vector3(-8.5f, 0f, 0f)));
 
 
         DebugShapeLogger.LogShape("OutsideWorldSegment PositionChildren end", _frontYard);
