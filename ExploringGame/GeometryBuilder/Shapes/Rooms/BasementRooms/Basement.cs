@@ -87,12 +87,15 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
             // Position BasementStairsDoor (already created in constructor)
             BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
-            BasementStairsDoor.SetSide(Side.North, GetSide(Side.South));
+           
+            BasementStairsDoor.SetSide(Side.North, GetSide(Side.South) + Measure.Feet(1.5f));
 
             Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: BasementStairsDoor));
-            Stairs.Place().OnFloor().OnSideInner(Side.South, this).OnSideOuter(Side.West, wall6);
+            Stairs.Place().OnFloor().OnSideInner(Side.South, this, Measure.Feet(1.5f)).OnSideOuter(Side.West, wall6);
             
             BasementStairsDoor.SetSide(Side.East, Stairs.GetSide(Side.East) - 0.1f);
+            BasementStairsDoor.SetSide(Side.North, Stairs.GetSide(Side.South));
+
 
             var pillar = AddChild(new Box(TextureKey.Ceiling) { Width = Measure.Inches(7), Depth = Measure.Inches(7), Height = Height - ceilingBar.Height });
             pillar.Place().At(ceilingBar).OnFloor().OnSideInner(Side.East, ceilingBar);

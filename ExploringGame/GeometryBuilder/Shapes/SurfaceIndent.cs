@@ -1,4 +1,5 @@
-﻿using ExploringGame.Services;
+﻿using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Services;
 using ExploringGame.Texture;
 using System.Linq;
 
@@ -13,7 +14,8 @@ class SurfaceIndent : Shape
 
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
-     
+    public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
+
 
     public SurfaceIndent(Shape parent, Side face, Placement2D placement, float depth, Side displayFaces = Side.All)
     {

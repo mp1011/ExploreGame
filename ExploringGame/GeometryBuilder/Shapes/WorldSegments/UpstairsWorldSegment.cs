@@ -65,7 +65,7 @@ public class UpstairsWorldSegment : WorldSegment
         _bathroom.LoadChildren();
         _kidsBedroom.LoadChildren();
         _spareRoom.LoadChildren();
-        _kitchen.LoadChildren();
+        _kitchen.LoadChildren(_bathroom);
         _den.LoadChildren();
         _halfBath.LoadChildren();
 

@@ -17,16 +17,18 @@ public class Kitchen : Room
 
     public override Theme Theme => new KitchenTheme();
     public Kitchen(WorldSegment worldSegment, UpstairsHall upstairsHall) 
-        : base(worldSegment, height: upstairsHall.Height, width: 4f, depth: 4f)
+        : base(worldSegment, height: upstairsHall.Height, width: 4f)
     {
         _upstairsHall = upstairsHall;
     }
 
-    public void LoadChildren()
+    public void LoadChildren(Bathroom bathroom)
     {
         _upstairsHall.AddConnectingRoom(new RoomConnection(_upstairsHall, this, Side.East, HAlign.Right));
         SetSideUnanchored(Side.North, _upstairsHall.NorthHall.GetSide(Side.North));
-      
+
+        this.SetSideUnanchored(Side.South, bathroom.GetSide(Side.North) - Measure.Feet(4.2f));
+
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);
         lightSwitch.ControlledObjects.Add(light);

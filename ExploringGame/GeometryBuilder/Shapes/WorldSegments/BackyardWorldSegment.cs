@@ -41,7 +41,9 @@ public class BackyardWorldSegment : WorldSegment
         var basementOffice = FindShape<BasementOffice>(loadedSegments);
         var frontDeck = FindShape<FrontDeck>(loadedSegments);
 
-        _backyard.LoadChildren(frontSidewalk, northYard, frontDeck, den, kitchen, kidsBedroom, bedroom, basement, basementOffice, eastRoof, denRoof);
+        var southFrontYard = FindShapeByTag<Room>(loadedSegments, "SouthFrontYard");
+
+        _backyard.LoadChildren(frontSidewalk, northYard, frontDeck, den, kitchen, kidsBedroom, bedroom, basement, basementOffice, eastRoof, denRoof, southFrontYard);
 
         var slidingDoorJunction = _backyard.DeckArea.AddConnectingRoomWithJunction(new SlidingDoorJunction(_backyard.DeckArea, Side.North, HAlign.Right, StateKey.DeckSlidingDoorOpen),
             den, Side.North, HAlign.Left, 1.0f, adjustPlacement: false);

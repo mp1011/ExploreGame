@@ -35,5 +35,6 @@ public class Garage : Room
         SetSideUnanchored(Side.West, WorldSegment.GetSide(Side.West));
         SetSideUnanchored(Side.South, WorldSegment.GetSide(Side.South));
 
+        this.Place().AlignSideWith(Side.East, _basement);
     }
 }

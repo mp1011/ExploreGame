@@ -14,7 +14,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
     public class OuterWall : Shape, ICollidable
     {
         public static float WallThickness = 0.1f;
-        public static float StandardSpacingForGround = 0.5f;
+        public static float StandardSpacingForGround = 0.2f; //5
 
         private readonly Side _wallSide;
         private readonly Side _moulding;

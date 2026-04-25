@@ -18,7 +18,7 @@ public class BasementStairs : Stairs, ICutoutShape
 
     public BasementStairs(WorldSegment worldSegment, Shape bottomFloor, Shape topFloor) 
         : base(worldSegment, new Vector2(x: Measure.Feet(3), y: Measure.Inches(10)), bottomFloor, topFloor, 
-            width: Measure.Feet(3), depth: Measure.Feet(8))
+            width: Measure.Feet(3), depth: Measure.Feet(10))
     {
 
         var offset = topFloor.GetSide(Side.Top) - bottomFloor.GetSide(Side.Top);

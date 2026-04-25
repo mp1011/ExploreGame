@@ -19,7 +19,9 @@ public class UpstairsHall : Room
     public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
     {
         Size = new Vector3(1.92f,  3.36f,  1.92f);
-        Position = new Vector3(-2.0699997f,  6.4799995f, -0.060000002f);
+        Position = new Vector3(-2.0699997f, 6.4799995f, -0.060000002f);
+
+        Z += 0.7f;
 
         // Create SouthHall and NorthHall in constructor so they're available as dependencies
         SouthHall = Copy(width: Measure.Feet(7), depth: Measure.Feet(10));
@@ -31,6 +33,7 @@ public class UpstairsHall : Room
     public void LoadChildren(DoorJunction basementStairsDoor)
     {
         basementStairsDoor.AddConnectingRoom(this, Side.South);
+
 
         // SouthHall and NorthHall already created in constructor, now add connections and children
         AddConnectingRoom(new RoomConnection(this, SouthHall, Side.South, HAlign.Right));
@@ -47,5 +50,8 @@ public class UpstairsHall : Room
 
         hallLightSwitch.Position = Position;
         hallLightSwitch.Place().OnSideInner(Side.West);
+
+
+        basementStairsDoor.SetSide(Side.South, GetSide(Side.North));
     }
 }

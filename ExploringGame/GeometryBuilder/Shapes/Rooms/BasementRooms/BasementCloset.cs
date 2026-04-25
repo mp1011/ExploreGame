@@ -1,6 +1,8 @@
 ﻿using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics.Collision;
+using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -14,6 +16,9 @@ public class BasementCloset : Shape
     private Placement2D _doorPlacement = new Placement2D(Left: Measure.Inches(3), Right: Measure.Inches(7),
                 Bottom: 0, Top: 0);
     private Door _door;
+
+    public override IColliderMaker ColliderMaker => ColliderMakers.Room(this);
+
 
     public BasementCloset(Shape parent, Side doorSide)
     {

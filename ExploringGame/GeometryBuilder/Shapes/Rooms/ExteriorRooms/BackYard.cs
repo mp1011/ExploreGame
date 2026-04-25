@@ -12,7 +12,6 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class BackYard : Room
 {
-    private static readonly float MainYardDepth = Measure.Feet(40);
     private Room _eastSection;
     private Room _southSection;
     private Room _midSection;
@@ -51,7 +50,7 @@ public class BackYard : Room
     }
 
     public void LoadChildren(Shape frontSidewalk, Shape northYard, FrontDeck frontDeck, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
-        Basement basement, BasementOffice basementOffice, Roof eastRoof, Roof denRoof)
+        Basement basement, BasementOffice basementOffice, Roof eastRoof, Roof denRoof, Room southFrontYard)
     {
         this.Place().At(frontSidewalk)
                     .OnFloor()
@@ -87,7 +86,7 @@ public class BackYard : Room
             .OnSideOuter(Side.East, this);
         _eastSection.AdjustShape()
             .SliceFromWest(0, Measure.Feet(10));
-        _eastSection.SetSideUnanchored(Side.South, bedroom.GetSide(Side.South) + MainYardDepth);
+        _eastSection.SetSideUnanchored(Side.South, southFrontYard.GetSide(Side.South));
 
         _eastSection.AddChild(new Fence(_eastSection, Side.North));
         _eastSection.AddChild(new Fence(_eastSection, Side.East));
@@ -108,11 +107,20 @@ public class BackYard : Room
         _southSection.SetSideUnanchored(Side.East, _eastSection.GetSide(Side.West));
         _southSection.SetSideUnanchored(Side.South, _eastSection.GetSide(Side.South));
         _southSection.SetSideUnanchored(Side.North, bedroom.GetSide(Side.South) + OuterWall.StandardSpacingForGround);
-        _southSection.SetSideUnanchored(Side.West, bedroom.GetSide(Side.West));
+        _southSection.SetSideUnanchored(Side.West, southFrontYard.GetSide(Side.East));
 
         new GrassSurface(_southSection, TerrainSurface.DefaultLawn);
+        
         var southFence = _southSection.AddChild(new Fence(_southSection, Side.South));
         southFence.SetSideUnanchored(Side.East, _eastSection.GetSide(Side.East));
+
+        var southFence2 = _southSection.AddChild(new Fence(_southSection, Side.South));
+        southFence2.AdjustShape().From(southFence)
+            .AddToSide(Side.West, Measure.Feet(30));
+
+        southFence.SetSideUnanchored(Side.East, southFence2.GetSide(Side.West) - Measure.Feet(6));
+
+
         _southSection.AddChild(new Fence(_southSection, Side.West));
 
         _midSection.Place().At(this);

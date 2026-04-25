@@ -23,12 +23,23 @@ public class Bathroom : Room
     public void LoadChildren()
     {
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
-            new DoorJunction(this, Side.East, HAlign.Right, DoorDirection.Pull, StateKey.BathroomDoorOpen), this, Side.East);
-        Z += 1.0f;
+            new DoorJunction(this, Side.East, HAlign.Right, DoorDirection.Pull, StateKey.BathroomDoorOpen), this, Side.East, HAlign.Right, offset: -1.0f);
+        // Z += 1.0f;
         var light = new HighHatLight(this, 0f, 0f, initialState: false);
         var sw = new LightSwitch(this, Side.North, StateKey.BathroomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
         sw.Place().OnSideInner(Side.North).AtEyeLevel(this, -Measure.Inches(5));
+
+        var sinkArea = Copy(depth: Measure.Feet(2), width: Measure.Feet(5));
+        sinkArea.Place().OnSideOuter(Side.North, this)
+            .OnSideInner(Side.West, this, 0.1f);
+        AddConnectingRoom(sinkArea, Side.North);
+
+        var southArea = Copy(depth: Measure.Feet(1.5f), width: Measure.Feet(5));
+        southArea.Place().OnSideOuter(Side.South, this)
+            .OnSideInner(Side.East, this);
+        AddConnectingRoom(southArea, Side.South);
+
     }
 }

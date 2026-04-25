@@ -1,14 +1,15 @@
 ﻿[x] complete roof
-- extend road
-- side road
-- match south yard to backyard
-- patch up house corner
-- side of house and side gate entrance
-- garage sizing
-- office closets have no collision
-- fix bathroom position
-- bathroom shape and closet in kid's room
-- increase kitchen depth by stretching basement stairs and moving bathroom
+[x] extend road
+[x] side road
+[x] match south yard to backyard
+[x] patch up house corner
+[x] side of house and side gate entrance
+[x] garage sizing
+[x] office closets have no collision
+[x] fix bathroom position
+[x] bathroom shape 
+-  closet in kid's room
+[x] increase kitchen depth by stretching basement stairs and moving bathroom
 - closets to bedroom and spare room
 - bedroom and spare room windows to front not see-through
 - textures on curtain rod spheres

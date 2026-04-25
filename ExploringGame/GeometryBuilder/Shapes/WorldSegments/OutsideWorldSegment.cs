@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
@@ -21,7 +22,7 @@ public class OutsideWorldSegment : WorldSegment
     private FrontDeck _deck;
     private FrontYard _frontYard;
     private Roof _westRoof, _eastRoof, _denRoof1, _denRoof2;
-    private Road _road;
+    private Road _road, _sideRoad;
 
     public OutsideWorldSegment() : base()
     {
@@ -37,7 +38,9 @@ public class OutsideWorldSegment : WorldSegment
         _denRoof1 = new Roof(this, Side.South) { Tag = "DenRoofNorth" };
         _denRoof2 = new Roof(this, Side.North) { Tag = "DenRoofSouth" };
 
-        _road = new Road(this) { Tag = "HomeRoad" };      
+        _road = new Road(this) { Tag = "HomeRoad" };
+        _sideRoad = new Road(this) { Tag = "SideRoad" };
+
     }
 
     public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
@@ -63,11 +66,17 @@ public class OutsideWorldSegment : WorldSegment
         _frontYard.LoadChildren(garage, bedroom, spareRoom);
 
         _road.AdjustShape().From(_frontYard);
-        _road.Depth = Measure.Feet(32);
+        _road.Width = Measure.Feet(32);
         _road.Place().OnFloor(_frontYard);
         _road.Place().OnSideOuter(Side.West, _frontYard);
-        _road.AdjustShape().AxisStretch(Axis.Z, 50.0f);
+        _road.AdjustShape().AxisStretch(Axis.Z, 200.0f);
 
+        _sideRoad.Depth = Measure.Feet(32);
+        _sideRoad.Height = _road.Height;
+        _sideRoad.AdjustShape().AxisStretch(Axis.X, 200.0f);
+
+        _sideRoad.Place().OnSideOuter(Side.East, _road).OnFloor(_frontYard);
+        _sideRoad.Z = _frontYard.GetSide(Side.South) + Measure.Feet(110);
 
         _westRoof.Depth = _frontYard.Depth;
         _eastRoof.Depth = _frontYard.Depth;
@@ -99,6 +108,23 @@ public class OutsideWorldSegment : WorldSegment
 
         _denRoof1.VertexOffsets.Add(new VertexOffset(Side.South | Side.West, new Vector3(-8.5f, 0f, 0f)));
         _denRoof2.VertexOffsets.Add(new VertexOffset(Side.North | Side.West, new Vector3(-8.5f, 0f, 0f)));
+
+
+        var sideSection = _frontYard.Copy();
+        sideSection.Place().OnSideOuter(Side.South, _frontYard.SouthSection)
+            .OnSideInner(Side.West, _frontYard.SouthSection);
+
+        sideSection.SetSideUnanchored(Side.South, _sideRoad.GetSide(Side.North));
+        sideSection.SetSideUnanchored(Side.East, _sideRoad.GetSide(Side.East));
+
+
+        var sideSection2 = sideSection.Copy();
+        sideSection2.Place().OnSideOuter(Side.South, _sideRoad);
+
+        new Fence(sideSection2, Side.South);
+
+        new GrassSurface(sideSection, TerrainSurface.DefaultLawn);
+        new GrassSurface(sideSection2, TerrainSurface.DefaultLawn);
 
 
         DebugShapeLogger.LogShape("OutsideWorldSegment PositionChildren end", _frontYard);

@@ -20,6 +20,9 @@ public class FrontYard : Room
     public FrontWalkway FrontWalkway { get; private set;  }
     public override Side OmitSides => Side.North | Side.South | Side.East | Side.West | Side.Top;
 
+
+    public Room SouthSection { get; private set; }
+
     public override Theme Theme => new YardTheme();
     
     public FrontYard(WorldSegment worldSegment, FrontDeck deck) : base(worldSegment)
@@ -98,10 +101,13 @@ public class FrontYard : Room
 
 
         var southSection = Copy();
-        southSection.Depth = driveway.Depth;
+        southSection.Tag = "SouthFrontYard";
+        southSection.Depth = driveway.Depth * 1.6f;
         southSection.Width = driveway.Width;
         southSection.Place().OnSideOuter(Side.South, driveway)
             .OnSideInner(Side.East, driveway);
+
+        new GrassSurface(southSection, TerrainSurface.DefaultLawn);
 
         var flowerBed = new FlowerBed(WorldSegment, this, driveway);
 
@@ -115,6 +121,7 @@ public class FrontYard : Room
         new GrassSurface(westOfWalkway, terrainWestOfWalkway);
 
 
+        SouthSection = southSection;
 
     }
 }
