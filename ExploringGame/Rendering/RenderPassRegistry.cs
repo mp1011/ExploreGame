@@ -20,7 +20,7 @@ public class RenderPassRegistry
         {
             if (!_isSorted)
             {
-                _passes.Sort((a, b) => a.DrawOrder.CompareTo(b.DrawOrder));
+                _passes.Sort((a, b) => a.ShapeBufferType.CompareTo(b.ShapeBufferType));
                 _isSorted = true;
             }
             return _passes;

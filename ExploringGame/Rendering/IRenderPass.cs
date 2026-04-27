@@ -21,12 +21,8 @@ public enum DrawOrder
 public interface IRenderPass
 {
     /// <summary>
-    /// Controls draw sequence; lower values are drawn earlier.
-    /// </summary>
-    DrawOrder DrawOrder { get; }
-
-    /// <summary>
-    /// Determines what type of shape buffer is processed by this render pass
+    /// Determines what type of shape buffer is processed by this render pass.
+    /// This also determines ordering.
     /// </summary>
     ShapeBufferType ShapeBufferType { get; }
 

@@ -4,12 +4,13 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 namespace ExploringGame.Rendering;
 
+// lower entries are drawn first
 public enum ShapeBufferType
 {
     Normal,
     Grass,
+    Skybox,
     Glass,
-    Skybox
 }
 
 public record ShapeBuffer(

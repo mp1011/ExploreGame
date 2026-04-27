@@ -7,6 +7,8 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
+using ExploringGame.Story;
+using ExploringGame.Story.Scene01;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,6 +30,8 @@ public class Game1 : Game
     protected LoadedLevelData _loadedLevelData;
     private WorldSegmentActivationManager _segmentActivationManager;
     private WorldSegmentGroup _currentSegmentGroup;
+    private SceneManager _sceneManager;
+    private DialogueManager _dialogueManager;
 
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -112,6 +116,15 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<WorldSegmentActivationManager>();
         _segmentActivationManager = _serviceContainer.Get<WorldSegmentActivationManager>();
 
+        _serviceContainer.BindSingleton<SceneManager>();
+        _sceneManager = _serviceContainer.Get<SceneManager>();
+
+        _serviceContainer.BindSingleton<DialogueManager>();
+        _dialogueManager = _serviceContainer.Get<DialogueManager>();
+
+        var initialScene = _serviceContainer.Get<SceneOne>();
+        _sceneManager.Initialize(initialScene);
+
         base.Initialize();
     }
 
@@ -185,6 +198,8 @@ public class Game1 : Game
         _playerMover.Update(gameTime);
         _segmentActivationManager.Update();
         _loadedLevelData.Update(gameTime);
+        _sceneManager.Update(gameTime);
+        _dialogueManager.Update(gameTime);
 
         _playerInput.Update(Window);
         if (_playerInput.IsKeyDown(GameKey.DebugKey))
