@@ -6,6 +6,8 @@ using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
+using ExploringGame.Story;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

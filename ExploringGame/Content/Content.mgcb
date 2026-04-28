@@ -25,12 +25,31 @@
 /processorParam:TextureFormat=Color
 /build:basement.png
 
+#begin DialogueFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:DialogueFont.spritefont
+
 #begin Font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Font.spritefont
+
+#begin GlassEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:GlassEffect.fx
+
+#begin GrassEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:GrassEffect.fx
 
 #begin outdoors.png
 /importer:TextureImporter
@@ -67,18 +86,6 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:SkyboxEffect.fx
-
-#begin GrassEffect.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:GrassEffect.fx
-
-#begin GlassEffect.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:GlassEffect.fx
 
 #begin Sound/DoorClose.wav
 /importer:WavImporter

@@ -19,8 +19,6 @@ public class GrassRenderPass : IRenderPass
     private readonly GrassVertexBufferBuilder _vertexBufferBuilder = new();
     private LoadedTextureSheets _textureSheets;
 
-    public DrawOrder DrawOrder => DrawOrder.Grass;
-
     public GrassRenderPass(GrassRenderEffect grassEffect)
     {
         _grassEffect = grassEffect;

@@ -14,7 +14,7 @@ namespace ExploringGame.Story.PlotPoints
         {
             _dialogueManager = dialogueManager;
             _actor = debugActor;
-            Message = "Hello World";
+            Message = "Hello World1 Hello World2 Hello World3 Hello World4 Hello World5 Hello World6 Hello World7 Hello World8 Hello World9 Hello World10 Hello World11";
         }
 
         public override PlotUpdate UpdateActive(GameTime gameTime)

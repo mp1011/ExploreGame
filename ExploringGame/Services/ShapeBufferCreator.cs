@@ -5,6 +5,7 @@ using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Rendering;
+using ExploringGame.Story;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -174,6 +175,8 @@ internal class ShapeBufferCreator
         {
             yield return CreateStampShapeBuffer(stampedShape, shapeStampBuffers);
         }
+
+
     }
 
     private ShapeBuffer CreateStampShapeBuffer(StampedShape stampedShape, Dictionary<Type, ShapeBuffer> shapeStampBuffers)

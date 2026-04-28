@@ -21,8 +21,6 @@ public class OpaqueRenderPass : IRenderPass
     private readonly VertexBufferBuilder _vertexBufferBuilder = new();
     private LoadedTextureSheets _textureSheets;
 
-    public DrawOrder DrawOrder => DrawOrder.Opaque;
-
     public OpaqueRenderPass(TwoPassRenderEffect renderEffect)
     {
         _renderEffect = renderEffect;

@@ -170,6 +170,10 @@ public class Game1 : Game
         skyboxPass.LoadContent(this, loadedTextures);
         _renderPassRegistry.Register(skyboxPass);
 
+        var dialogueRenderPass = _serviceContainer.Get<DialogueRenderPass>();
+        dialogueRenderPass.LoadContent(this, loadedTextures);
+        _renderPassRegistry.Register(dialogueRenderPass);
+
         // Provide registry to LoadedLevelData so it can group buffers by pass
         _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
 
@@ -247,6 +251,13 @@ public class Game1 : Game
                 {
                     pass.Draw(graphicsDevice, levelData.StampedShapeBuffers, _cameraService.View, _cameraService.Projection);
                 }
+            }
+
+            // dialogue pass is special
+            if(pass is DialogueRenderPass)
+            {
+                // note - probably want a different view
+                pass.Draw(graphicsDevice, null, _cameraService.View, _cameraService.Projection);
             }
         }
     }

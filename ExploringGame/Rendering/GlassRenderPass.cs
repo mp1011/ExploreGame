@@ -17,8 +17,6 @@ public class GlassRenderPass : IRenderPass
     private readonly GlassRenderEffect _glassEffect;
     private LoadedTextureSheets _textureSheets;
 
-    public DrawOrder DrawOrder => DrawOrder.Glass;
-
     public ShapeBufferType ShapeBufferType => ShapeBufferType.Glass;
 
     public GlassRenderPass(GlassRenderEffect glassEffect)

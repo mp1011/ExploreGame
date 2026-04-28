@@ -36,4 +36,7 @@ Show text to the user, for flavor text and dialoge
     - existing text will be cleared and the new text will appear
 
 # CODE
-- TextManager class 
+- should we create a Shape class for ui?
+    - could help with positions
+            
+  yield return new ShapeBuffer(new DialogueSurface(), null, null, 0, TextureSheetKey.Basement, Type: ShapeBufferType.UI);
