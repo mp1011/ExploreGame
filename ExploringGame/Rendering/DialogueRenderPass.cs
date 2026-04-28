@@ -56,10 +56,22 @@ public class DialogueRenderPass : IRenderPass
 
         var cursor = new Vector2(graphicsDevice.Viewport.Width * _horizontalPaddingPercent, _bottomMargin - linesHeight);
 
+        int index = 0;
         foreach (var word in _dialogueManager.PreviousWords)
+        {
             cursor = DrawWord(word, cursor);
+            if (cursor.X == 0 && cursor.Y == 0)
+            {
+                _dialogueManager.LimitReached(index);
+                break;
+            }
+            index++;
+        }
 
         cursor = DrawWord(_dialogueManager.CurrentWord, cursor, _dialogueManager.LetterIndex+1);
+
+        if (cursor.X == 0 && cursor.Y == 0)
+            _dialogueManager.LimitReached();
 
         _spriteBatch.End();
     }
@@ -72,6 +84,9 @@ public class DialogueRenderPass : IRenderPass
         {
             cursor.X = _leftMargin;
             cursor.Y += _lineHeight;
+
+            if (cursor.Y >= _bottomMargin)
+                return Vector2.Zero;
         }
 
         foreach (var letter in word.Letters.Take(maxLetters))

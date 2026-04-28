@@ -1,4 +1,5 @@
-﻿using ExploringGame.Logics.Controllers;
+﻿using ExploringGame.Logics;
+using ExploringGame.Logics.Controllers;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ public record Word(string[] Letters, Color Color)
 
 public class DialogueManager
 {
-    private static readonly TimeSpan NextLetterTime = TimeSpan.FromMilliseconds(50);
+    private static readonly TimeSpan NextLetterTime = TimeSpan.FromMilliseconds(10);
+    private readonly IPlayerInput _playerInput;
 
     private Queue<DialogueEntry> _lines = new();
 
@@ -23,8 +25,9 @@ public class DialogueManager
     private Word[] _currentWords = null;
     private int _wordIndex = 0;
     private int _letterIndex = 0;
+    private bool _limitedReached;
 
-    public bool HasDialogue => _currentWords != null;
+    public bool HasDialogue => _currentWords != null && _currentWords.Length > 0;
 
     public IEnumerable<Word> PreviousWords => _currentWords.Take(_wordIndex);
 
@@ -33,9 +36,17 @@ public class DialogueManager
 
     public void Enqueue(DialogueEntry entry) => _lines.Enqueue(entry);
 
-    public DialogueManager()
+    public DialogueManager(IPlayerInput playerInput)
     {
+        _playerInput = playerInput;
         _nextLetter = new TimedAction(NextLetterTime, NextLetter);
+    }
+
+    public void LimitReached(int limitWord=-1)
+    {
+        _limitedReached = true;
+        if (limitWord > -1)
+            _wordIndex = limitWord;
     }
 
     private void NextLetter()
@@ -66,15 +77,67 @@ public class DialogueManager
 
     public void Update(GameTime gameTime)
     {
-        if(_currentWords == null && _lines.Any())
+        if (_currentWords == null && _lines.Any())
+            NextDialogue();
+
+        if (_limitedReached)
         {
-            var entry = _lines.Dequeue();
-            _currentWords = LoadWords(entry).ToArray();
+            if (_playerInput.IsKeyPressed(GameKey.DialogueAdvance))
+            {
+                if (AtEndOfDialogue())
+                    NextDialogue();
+                else
+                    ContinueDialogue();
+            }
+        }
+        else if(HasDialogue)
+        {
+            _nextLetter.Update(gameTime);
+
+            if (_playerInput.IsKeyPressed(GameKey.DialogueAdvance))
+            {
+                if (AtEndOfDialogue())
+                    NextDialogue();
+                else 
+                    FastForwardDialogue();
+            }
+        }
+    }
+
+    private void NextDialogue()
+    {
+        _limitedReached = false;
+        if(!_lines.Any())
+        {
+            _currentWords = Array.Empty<Word>();
             _wordIndex = 0;
             _letterIndex = 0;
+            return;
         }
 
-        _nextLetter.Update(gameTime);
+        var entry = _lines.Dequeue();
+        _currentWords = LoadWords(entry).ToArray();
+        _wordIndex = 0;
+        _letterIndex = 0;
+    }
+
+    private void FastForwardDialogue()
+    {
+        _letterIndex = 1000;
+        _wordIndex = _currentWords.Length - 1;
+    }
+
+    private bool AtEndOfDialogue()
+    {
+        return _wordIndex == _currentWords.Length - 1 && _letterIndex >= CurrentWord.Letters.Length-1;
+    }
+
+    private void ContinueDialogue()
+    {
+        _currentWords = _currentWords.Skip(_wordIndex).ToArray();
+        _wordIndex = 0;
+        _letterIndex = 0;
+        _limitedReached = false;     
     }
 
     private static IEnumerable<Word> LoadWords(DialogueEntry dialogueEntry)

@@ -1,20 +1,3 @@
-﻿[x] complete roof
-[x] extend road
-[x] side road
-[x] match south yard to backyard
-[x] patch up house corner
-[x] side of house and side gate entrance
-[x] garage sizing
-[x] office closets have no collision
-[x] fix bathroom position
-[x] bathroom shape 
-[x] closet in kid's room
-[x] increase kitchen depth by stretching basement stairs and moving bathroom
-[x] closets to bedroom and spare room
-[x] bedroom and spare room windows to front not see-through
-[x] sidewalk on back
-[x] remove grass from under deck
-[x] don't render skybox in debug no-depth mode
-[x] side of front deck conflicts with side of brick
-[x] move boiler room back to give more space for the corner
-[x] add half bath window, move den closer to wall
+﻿- text limited to 3 lines
+- click to advance
+- flavor text

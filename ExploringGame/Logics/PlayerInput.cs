@@ -16,6 +16,7 @@ public enum GameKey
     Forward,
     Backward,
     DebugKey,
+    DialogueAdvance
 }
 
 public class PlayerInput : IPlayerInput
@@ -39,7 +40,8 @@ public class PlayerInput : IPlayerInput
         _keyMap[GameKey.Backward] = Keys.S;
         _keyMap[GameKey.StrafeLeft] = Keys.A;
         _keyMap[GameKey.StrafeRight] = Keys.D;
-        
+        _keyMap[GameKey.DialogueAdvance] = Keys.Enter;
+
         _keyMap[GameKey.DebugKey] = Keys.RightAlt;
     }
 
