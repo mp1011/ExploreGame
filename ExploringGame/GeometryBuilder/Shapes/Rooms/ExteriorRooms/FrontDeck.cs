@@ -7,6 +7,7 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using ExploringGame.Texture.Themes;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
@@ -105,6 +106,8 @@ public class FrontDeck : Deck
             align: HAlign.Left,
             offset: 1.0f,
             adjustPlacement: false);
+
+        frontDoor.TraverseAllChildren().OfType<Door>().First().Tag = "FrontDoor";
 
         frontDoor.SetSideUnanchored(Side.Top, livingRoom.GetSide(Side.Top));
     }

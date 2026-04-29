@@ -8,6 +8,7 @@ using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Story;
+using ExploringGame.Story.PlotPoints;
 using ExploringGame.Story.Scene01;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -177,6 +178,7 @@ public class Game1 : Game
         // Provide registry to LoadedLevelData so it can group buffers by pass
         _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
 
+        _serviceContainer.BindSingleton<FlavorTextFactory>();
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 

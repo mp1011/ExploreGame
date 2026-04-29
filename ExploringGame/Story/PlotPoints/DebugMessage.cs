@@ -17,10 +17,15 @@ namespace ExploringGame.Story.PlotPoints
             Message = "One Two Three Four Five Six Seven Eight Nine Ten 1One 1Two 1Three 1Four 1Five 1Six 1Seven 1Eight 1Nine 1Ten 2One 2Two 2Three 2Four 2Five 2Six 2Seven 2Eight 2Nine 2Ten";
         }
 
-        public override PlotUpdate UpdateActive(GameTime gameTime)
+        protected override PlotUpdate UpdateActive(GameTime gameTime)
         {
             _dialogueManager.Enqueue(new DialogueEntry(_actor, Message));
             return PlotUpdate.End;
+        }
+
+        protected override bool CheckActivation(GameTime gameTime)
+        {
+            return true;
         }
     }
 }

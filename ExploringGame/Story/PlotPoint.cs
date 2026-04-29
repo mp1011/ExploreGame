@@ -16,6 +16,7 @@ public enum PlotUpdate
 {
     Continue,
     End,
+    Reset
 }
 
 public static class PlotPointExtensions
@@ -49,14 +50,21 @@ public abstract class PlotPoint
                 if (RequiredDone.Any(p => p.State != PlotPointState.Done))
                     return PlotPointState.Idle;
                 else
+                {
+                    OnReady();
                     return PlotPointState.Ready;
+                }
             case PlotPointState.Ready:
-                //todo
-                return PlotPointState.Active;
+                if (CheckActivation(gameTime))
+                    return PlotPointState.Active;
+                else 
+                    return PlotPointState.Ready;
             case PlotPointState.Active:
                 var updateResult = UpdateActive(gameTime);
                 if (updateResult == PlotUpdate.End)
                     return PlotPointState.Done;
+                else if (updateResult == PlotUpdate.Reset)
+                    return PlotPointState.Ready;
                 else
                     return PlotPointState.Active;
             default:
@@ -64,6 +72,12 @@ public abstract class PlotPoint
         }
     }
 
+    protected virtual void OnReady()
+    {
 
-    public abstract PlotUpdate UpdateActive(GameTime gameTime);
+    }
+
+    protected abstract bool CheckActivation(GameTime gameTime);
+
+    protected abstract PlotUpdate UpdateActive(GameTime gameTime);
 }

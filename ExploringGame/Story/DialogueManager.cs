@@ -77,7 +77,7 @@ public class DialogueManager
 
     public void Update(GameTime gameTime)
     {
-        if (_currentWords == null && _lines.Any())
+        if (!HasDialogue && _lines.Any())
             NextDialogue();
 
         if (_limitedReached)
