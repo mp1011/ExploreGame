@@ -9,7 +9,8 @@ namespace ExploringGame.Services;
 public enum SoundEffectKey
 {
      DoorOpen,
-     DoorClose
+     DoorClose,
+     TextBeep
 }
 public class AudioService
 {

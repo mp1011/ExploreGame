@@ -79,7 +79,7 @@ public class FlavorText<TShape> : PlotPoint, IPlayerActivated
 
     protected override bool CheckActivation(GameTime gameTime)
     {
-        return this.CheckPlayerActivation(_physics);
+        return this.CheckPlayerActivation(_physics, GameKey.DialogueAdvance);
     }
 
     protected override void OnReady()

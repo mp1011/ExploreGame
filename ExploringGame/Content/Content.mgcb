@@ -99,6 +99,12 @@
 /processorParam:Quality=Best
 /build:Sound/DoorOpen.wav
 
+#begin Sound/text_beep.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/text_beep.wav;Sound/TextBeep.wav
+
 #begin upstairs.png
 /importer:TextureImporter
 /processor:TextureProcessor

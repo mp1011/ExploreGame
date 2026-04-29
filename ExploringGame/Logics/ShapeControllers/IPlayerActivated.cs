@@ -17,12 +17,12 @@ public interface IPlayerActivated
 
 public static class IPlayerActivatedExtensions
 {
-    public static bool CheckPlayerActivation(this IPlayerActivated playerActivated, Physics physics)
+    public static bool CheckPlayerActivation(this IPlayerActivated playerActivated, Physics physics, GameKey key = GameKey.Use)
     {
         if (playerActivated.Player.Position.SquaredDistance(playerActivated.Shape.Position) > playerActivated.ActivationRange * playerActivated.ActivationRange)
             return false;
 
-        if (!playerActivated.PlayerInput.IsKeyPressed(GameKey.Use))
+        if (!playerActivated.PlayerInput.IsKeyPressed(key))
             return false;
 
         if (!physics.HasLineOfSight(playerActivated.Player, playerActivated.Shape))

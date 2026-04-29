@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Logics;
 using ExploringGame.Logics.Controllers;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,9 @@ public record Word(string[] Letters, Color Color)
 
 public class DialogueManager
 {
-    private static readonly TimeSpan NextLetterTime = TimeSpan.FromMilliseconds(10);
+    private static readonly TimeSpan NextLetterTime = TimeSpan.FromMilliseconds(20);
     private readonly IPlayerInput _playerInput;
+    private readonly AudioService _audio;
 
     private Queue<DialogueEntry> _lines = new();
 
@@ -36,8 +38,9 @@ public class DialogueManager
 
     public void Enqueue(DialogueEntry entry) => _lines.Enqueue(entry);
 
-    public DialogueManager(IPlayerInput playerInput)
+    public DialogueManager(IPlayerInput playerInput, AudioService audioService)
     {
+        _audio = audioService;
         _playerInput = playerInput;
         _nextLetter = new TimedAction(NextLetterTime, NextLetter);
     }
@@ -70,6 +73,9 @@ public class DialogueManager
             newWordIndex = _currentWords.Length - 1;
             newLetterIndex = word.Letters.Length - 1;
         }
+
+        if (newLetterIndex > _letterIndex)
+            _audio.Play(SoundEffectKey.TextBeep);
 
         _letterIndex = newLetterIndex;
         _wordIndex = newWordIndex;
