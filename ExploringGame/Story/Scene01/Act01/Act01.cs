@@ -15,8 +15,8 @@ public class ActOne : Act
     protected override IEnumerable<PlotPoint> CreatePlotPoints(ServiceContainer serviceContainer)
     {
         var flavorTextFactory = serviceContainer.Get<FlavorTextFactory>();
-
-        yield return serviceContainer.Get<DebugMessage>();        
+    
         yield return flavorTextFactory.Create<Door>(tag: "FrontDoor", text: "hello world");
+        yield return serviceContainer.Get<UpstairsLightsOff>();
     }
 }

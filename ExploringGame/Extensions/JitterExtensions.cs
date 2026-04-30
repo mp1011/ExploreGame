@@ -35,6 +35,19 @@ public static class JitterExtensions
         return false;
     }
 
+    public static bool BelongsTo(this RigidBody bodyShape, ICollidable collidable)
+    {        
+        for (int i = 0; i < collidable.ColliderBodies.Length; i++)
+        {
+            if (bodyShape == collidable.ColliderBodies[i])
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public static CollisionInfo CollisionInfo(this IDynamicTreeProxy proxy)
     {
         if (proxy is RigidBodyShape bodyShape && bodyShape.RigidBody.Tag is CollisionInfo info)

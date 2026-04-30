@@ -16,6 +16,24 @@ using System.Linq;
 
 namespace ExploringGame.LevelControl;
 
+
+public static class LevelDataExtensions
+{
+    public static TShape FindShape<TShape>(this List<LevelData> levelData, string tag = null)
+        where TShape : Shape
+    {
+        return levelData.FindShapes<TShape>(tag).Single(p => p.Tag == tag);
+
+    }
+
+    public static IEnumerable<TShape> FindShapes<TShape>(this List<LevelData> levelData, string tag = null)
+        where TShape : Shape
+    {
+        return levelData.SelectMany(p => p.WorldSegment.TraverseAllChildren())
+            .OfType<TShape>();
+
+    }
+}
 public class LevelData
 {
     public IActiveObject[] ActiveObjects { get; set; } 

@@ -2,6 +2,7 @@
 using ExploringGame.GeometryBuilder.Shapes.Decals;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics.Pathfinding;
@@ -74,6 +75,13 @@ public class UpstairsWorldSegment : WorldSegment
         // Add the Light Spirit
         var lightSpirit = new LightSpirit();
         lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
-        AddChild(lightSpirit);       
+        AddChild(lightSpirit);
+
+        var bedroomDoor = TraverseAllChildren().OfType<Door>().Where(p => p.StateKey == StateKey.BedroomDoorOpen).Single().Parent;
+
+        var bedroomDoorBlocker = _upstairsHall.AddChild(new Blocker("BedroomDoorBlocker"));
+        bedroomDoorBlocker.AdjustShape().From(bedroomDoor)
+            .AxisStretch(Axis.X, 1.0f)
+            .AxisStretch(Axis.Z, 1.0f);         
     }
 }

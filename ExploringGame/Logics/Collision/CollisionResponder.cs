@@ -45,9 +45,11 @@ public class CollisionResponder
         _activeArbiters.Remove(obj);
     }
 
-    public void AddResponse(ICollisionResponse response)
+    public TResponse AddResponse<TResponse>(TResponse response)
+        where TResponse: ICollisionResponse
     {
         _responses.Add(response);
+        return response;
     }
 
     private void BeginCollide(Arbiter obj)

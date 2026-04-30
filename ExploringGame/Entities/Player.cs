@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
@@ -24,6 +25,8 @@ public class Player : ICollidable, ICamera
     public CollisionGroup CollidesWithGroups => CollisionGroup.All & ~CollisionGroup.Player;
 
     public RigidBody[] ColliderBodies { get; }
+
+    public EntityMover Mover { get; set; }
 
     public Matrix CreateViewMatrix()
     {

@@ -21,6 +21,7 @@ public class DialogueManager
     private readonly AudioService _audio;
 
     private Queue<DialogueEntry> _lines = new();
+    private DialogueEntry _current;
 
     private TimedAction _nextLetter;
 
@@ -37,6 +38,16 @@ public class DialogueManager
     public int LetterIndex => _letterIndex;
 
     public void Enqueue(DialogueEntry entry) => _lines.Enqueue(entry);
+    public void EnqueueIfNeeded(DialogueEntry entry)
+    {
+        if (_current == entry)
+            return;
+
+        if (_lines.Any(p => p.Equals(entry)))
+            return;
+
+        _lines.Enqueue(entry);
+    }
 
     public DialogueManager(IPlayerInput playerInput, AudioService audioService)
     {
@@ -116,12 +127,14 @@ public class DialogueManager
         if(!_lines.Any())
         {
             _currentWords = Array.Empty<Word>();
+            _current = null;
             _wordIndex = 0;
             _letterIndex = 0;
             return;
         }
 
         var entry = _lines.Dequeue();
+        _current = entry;
         _currentWords = LoadWords(entry).ToArray();
         _wordIndex = 0;
         _letterIndex = 0;

@@ -97,6 +97,7 @@ public class Game1 : Game
         _player = _serviceContainer.Get<Player>();
 
         _playerMover = new EntityMover(_player, _physics);
+        _player.Mover = _playerMover;
         _playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(_playerMover));
 
         
@@ -121,7 +122,8 @@ public class Game1 : Game
         _sceneManager = _serviceContainer.Get<SceneManager>();
 
         _serviceContainer.BindSingleton<DialogueManager>();
-        _dialogueManager = _serviceContainer.Get<DialogueManager>();
+        _dialogueManager = _serviceContainer.Get<
+            DialogueManager>();
 
         var initialScene = _serviceContainer.Get<SceneOne>();
         _sceneManager.Initialize(initialScene);
