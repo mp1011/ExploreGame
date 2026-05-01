@@ -11,6 +11,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class UpstairsHall : Room
 {
+    public static readonly string LightSwitchTag = StateKey.HallLightOn.ToString();
     public override Theme Theme => new UpstairsHallTheme();
 
     public Room SouthHall { get; private set; }
@@ -46,6 +47,7 @@ public class UpstairsHall : Room
         var hallLight = new HighHatLight(SouthHall, 0f, 0f);
 
         var hallLightSwitch = new LightSwitch(this, Side.West, StateKey.HallLightOn);
+        hallLightSwitch.Tag = LightSwitchTag;
         hallLightSwitch.ControlledObjects.Add(hallLight);
 
         hallLightSwitch.Position = Position;

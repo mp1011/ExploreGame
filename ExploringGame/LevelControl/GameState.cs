@@ -45,10 +45,7 @@ public class GameState
     
 
     public GameState()
-    {
-        Set(StateKey.OfficeLightOn, true);
-        Set(StateKey.HallLightOn, true);
-        Set(StateKey.BasementLightOn, true);
+    {        
     }
 
     public int Get(StateKey key)

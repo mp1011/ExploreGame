@@ -28,7 +28,7 @@ public class UpstairsWorldSegment : WorldSegment
     private Bathroom _bathroom;
     private SpareRoom _spareRoom;
     private HalfBathroom _halfBath;
-    
+
     public UpstairsWorldSegment()
     {
         Depth = Measure.Feet(53);

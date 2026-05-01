@@ -10,6 +10,9 @@ public class WorldSegment : Shape
     public override ViewFrom ViewFrom => ViewFrom.None;
 
     public virtual Vector3 DefaultPlayerStart { get; }
+
+
+
     public virtual SkyboxShape Skybox => null;
 
     public WorldSegment(params Shape[] contents)

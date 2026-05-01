@@ -23,8 +23,11 @@ public class EntityMover : IActiveObject
 
     public CollisionResponder CollisionResponder { get; }
 
+    public bool Active { get; set; }
+
     public EntityMover(ICollidable entity, Physics physics, bool ignoreY = true)
     {
+        Active = true;
         Motion = new AcceleratedMotion();
         _entity = entity;
         _physics = physics;
@@ -46,6 +49,12 @@ public class EntityMover : IActiveObject
 
     public void Update(GameTime gameTime)
     {
+        if(!Active)
+        {
+            _body.Velocity = JVector.Zero;
+            return;
+        }
+
         if (!_initialPositionSet)
             SetInitialPosition();
 

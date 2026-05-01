@@ -1,4 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder;
+using ExploringGame.LevelControl;
+using ExploringGame.Logics;
+using ExploringGame.Logics.Collision;
+using ExploringGame.Services;
+using ExploringGame.Story.Character;
+using ExploringGame.Story.PlotPoints;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,6 +31,51 @@ public static class PlotPointExtensions
 {
     public static IEnumerable<PlotPoint> ByState(this IEnumerable<PlotPoint> points, PlotPointState state) =>
         points.Where(p => p.State == state);
+}
+
+public class PlotPointFactory
+{
+    private readonly ServiceContainer _serviceContainer;
+    private readonly LoadedLevelData _loadedLevelData;
+    private readonly Player _player;
+    private readonly IPlayerInput _playerInput;
+    private readonly Physics _physics;
+    private readonly DialogueManager _dialogueManager;
+    private readonly PlayerActor _actor;
+
+    public PlotPointFactory(ServiceContainer serviceContainer, LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, Physics physics,
+        DialogueManager dialogueManager, PlayerActor playerActor)
+    {
+        _serviceContainer = serviceContainer;
+        _loadedLevelData = loadedLevelData;
+        _player = player;
+        _playerInput = playerInput;
+        _physics = physics;
+        _actor = playerActor;
+        _dialogueManager = dialogueManager;
+    }
+
+    public FlavorText<TShape> FlavorText<TShape>(string text, string tag = null)
+        where TShape : Shape, ICollidable
+    {
+        return new FlavorText<TShape>(_loadedLevelData, _playerInput, _player, _physics, _actor, _dialogueManager, text, tag);
+    }
+
+    public Narration Narration(string text)
+    {
+        return new Narration(_loadedLevelData, _actor, _dialogueManager, text);
+    }
+
+    public CameraLookAt<TShape> LookAt<TShape>(string tag = null, params PlotPoint[] requiredDone)
+        where TShape : Shape
+    {
+        return new CameraLookAt<TShape>(tag, _loadedLevelData, requiredDone);
+    }
+
+    public T Get<T>() where T:PlotPoint
+    {
+        return _serviceContainer.Get<T>();
+    }
 }
 
 public abstract class PlotPoint
@@ -56,8 +109,11 @@ public abstract class PlotPoint
                 }
             case PlotPointState.Ready:
                 if (CheckActivation(gameTime))
+                {
+                    OnActivated();
                     return PlotPointState.Active;
-                else 
+                }
+                else
                     return PlotPointState.Ready;
             case PlotPointState.Active:
                 var updateResult = UpdateActive(gameTime);
@@ -73,6 +129,11 @@ public abstract class PlotPoint
     }
 
     protected virtual void OnReady()
+    {
+
+    }
+
+    protected virtual void OnActivated()
     {
 
     }

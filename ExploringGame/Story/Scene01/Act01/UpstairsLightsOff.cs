@@ -22,6 +22,9 @@ internal class UpstairsLightsOff : ConditionalBlocker
         _switches = _loadedLevelData.LoadedSegments.FindShapes<LightSwitch>()
             .Where(p => p.StateKey == StateKey.LivingRoomLightOn || p.StateKey == StateKey.KitchenLightOn || p.StateKey == StateKey.HallLightOn)
             .ToArray();
+
+        foreach (var lightSwitch in _switches)
+            lightSwitch.Controller.On = true;
     }
 
     protected override bool CheckActivation_Inner(GameTime gameTime)

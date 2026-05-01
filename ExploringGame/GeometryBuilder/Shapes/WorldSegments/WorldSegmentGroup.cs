@@ -8,11 +8,15 @@ public abstract class WorldSegmentGroup
     public abstract IEnumerable<WorldSegment> CreateSegments();
 
     public virtual Vector3 DefaultPlayerStart { get; }
+
+    public virtual float DefaultPlayerAngle { get; }
 }
 
 public class HomeWorldSegmentGroup : WorldSegmentGroup
 {
-    public override Vector3 DefaultPlayerStart => OutsideWorldSegment.DefaultPlayerStart;
+    public override Vector3 DefaultPlayerStart => new Vector3(-2.33f, 6.20f, -0.09f);
+
+    public override float DefaultPlayerAngle => -3.60f;
     public override IEnumerable<WorldSegment> CreateSegments()
     {
         yield return new BasementWorldSegment();

@@ -11,34 +11,6 @@ using System.Linq;
 
 namespace ExploringGame.Story.PlotPoints;
 
-
-public class FlavorTextFactory
-{
-    private readonly LoadedLevelData _loadedLevelData;
-    private readonly Player _player;
-    private readonly IPlayerInput _playerInput;
-    private readonly Physics _physics;
-    private readonly DialogueManager _dialogueManager;
-    private readonly PlayerActor _actor;
-
-    public FlavorTextFactory(LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, Physics physics, 
-        DialogueManager dialogueManager, PlayerActor playerActor)
-    {
-        _loadedLevelData= loadedLevelData;
-        _player = player;
-        _playerInput = playerInput;
-        _physics = physics;
-        _actor = playerActor;
-        _dialogueManager = dialogueManager;
-    }
-
-    public FlavorText<TShape> Create<TShape>(string text, string tag = null)
-        where TShape : Shape, ICollidable
-    {
-        return new FlavorText<TShape>(_loadedLevelData, _playerInput, _player, _physics, _actor, _dialogueManager, text, tag);
-    }
-}
-
 public class FlavorText<TShape> : PlotPoint, IPlayerActivated
     where TShape : Shape, ICollidable
 {

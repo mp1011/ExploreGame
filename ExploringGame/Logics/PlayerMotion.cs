@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Logics;
 
-internal class PlayerMotion
+public class PlayerMotion
 {
     public const float RunSpeed = 12.0f;
     public const float WalkSpeed = 6.0f;
@@ -20,15 +20,21 @@ internal class PlayerMotion
     private Player _player;
     private EntityMover _playerMotion;
 
+    public bool Active { get; set; }
+
     public PlayerMotion(Player player, IPlayerInput playerInput, EntityMover playerMotion)
     {
         _playerInput = playerInput;
         _player = player;
         _playerMotion = playerMotion;
+        Active = true;
     }
 
     public void Update(GameTime gameTime, GameWindow window)
     {
+        if (!Active)
+            return;
+
         var cameraPosition = _player.Position;
         var yaw = _player.Rotation.Yaw;
         var pitch = _player.Rotation.Pitch;

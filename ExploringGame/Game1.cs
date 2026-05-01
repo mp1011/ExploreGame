@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
@@ -104,6 +105,7 @@ public class Game1 : Game
         _serviceContainer.BindTransient<DoorController>();
 
         _playerMotion = new PlayerMotion(_player, _playerInput, _playerMover);
+        _serviceContainer.Bind(_playerMotion);
         _setupColliderBodies = _serviceContainer.Get<SetupColliderBodies>();
 
         _graphics.PreferredDepthStencilFormat = DepthFormat.Depth24;
@@ -180,7 +182,7 @@ public class Game1 : Game
         // Provide registry to LoadedLevelData so it can group buffers by pass
         _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
 
-        _serviceContainer.BindSingleton<FlavorTextFactory>();
+        _serviceContainer.BindSingleton<PlotPointFactory>();
         _serviceContainer.Get<AudioService>().LoadContent(Content);
     }
 
@@ -199,6 +201,7 @@ public class Game1 : Game
         {
             _ranInit = true;
             _player.Position = _currentSegmentGroup.DefaultPlayerStart;
+            _player.Rotation = new Rotation(Yaw: _currentSegmentGroup.DefaultPlayerAngle);
             _playerMover.Initialize();
             _segmentActivationManager.ActivateGroup(_currentSegmentGroup);          
         }

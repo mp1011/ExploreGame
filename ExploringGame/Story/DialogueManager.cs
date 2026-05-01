@@ -34,8 +34,21 @@ public class DialogueManager
 
     public IEnumerable<Word> PreviousWords => _currentWords.Take(_wordIndex);
 
+    public DialogueEntry Current => _current;
     public Word CurrentWord => _currentWords[_wordIndex];
     public int LetterIndex => _letterIndex;
+
+    public bool HasText(string text)
+    {
+        if (!HasDialogue)
+            return false;
+
+        if (Current?.Line == text)
+            return true;
+
+        return _lines.Any(p => p.Line == text);
+    }
+
 
     public void Enqueue(DialogueEntry entry) => _lines.Enqueue(entry);
     public void EnqueueIfNeeded(DialogueEntry entry)
