@@ -1,4 +1,5 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Camera;
+using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
 

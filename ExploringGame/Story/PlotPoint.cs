@@ -42,11 +42,13 @@ public class PlotPointFactory
     private readonly Physics _physics;
     private readonly DialogueManager _dialogueManager;
     private readonly PlayerActor _actor;
+    private readonly CameraService _cameraService;
 
-    public PlotPointFactory(ServiceContainer serviceContainer, LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, Physics physics,
-        DialogueManager dialogueManager, PlayerActor playerActor)
+    public PlotPointFactory(ServiceContainer serviceContainer, LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, 
+        Physics physics, DialogueManager dialogueManager, PlayerActor playerActor, CameraService cameraService)
     {
         _serviceContainer = serviceContainer;
+        _cameraService = cameraService;
         _loadedLevelData = loadedLevelData;
         _player = player;
         _playerInput = playerInput;
@@ -69,7 +71,7 @@ public class PlotPointFactory
     public CameraLookAt<TShape> LookAt<TShape>(string tag = null, params PlotPoint[] requiredDone)
         where TShape : Shape
     {
-        return new CameraLookAt<TShape>(tag, _loadedLevelData, requiredDone);
+        return new CameraLookAt<TShape>(tag, _loadedLevelData, _cameraService, requiredDone);
     }
 
     public T Get<T>() where T:PlotPoint

@@ -1,4 +1,5 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Camera;
+using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
 using System;
@@ -12,7 +13,7 @@ public class CameraService
     public Matrix View { get; private set; }
     public Matrix SkyboxView { get; private set; }
     public Matrix Projection { get; private set; }
-
+    public ICamera Current => _current;
 
     public CameraService(Player player, Game game)
     {

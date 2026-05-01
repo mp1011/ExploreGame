@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Camera;
+using ExploringGame.GeometryBuilder;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
