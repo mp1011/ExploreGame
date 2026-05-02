@@ -13,7 +13,7 @@ internal class UpstairsLightsOff : ConditionalBlocker
     private LightSwitch[] _switches;
 
     public UpstairsLightsOff(Player player, PlayerActor playerActor, DialogueManager dialogueManager, LoadedLevelData loadedLevelData) :
-        base("BedroomDoorBlocker", "test 123", player, playerActor, dialogueManager, loadedLevelData)
+        base("BedroomDoorBlocker", "I still have to turn off more lights", player, playerActor, dialogueManager, loadedLevelData)
     {
     }
 

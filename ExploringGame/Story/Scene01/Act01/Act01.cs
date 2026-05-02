@@ -27,5 +27,6 @@ public class ActOne : Act
 
         yield return plotPointFactory.FlavorText<Door>(tag: "FrontDoor", text: "hello world");
         yield return plotPointFactory.Get<UpstairsLightsOff>();
+        yield return plotPointFactory.Get<PlayerResume>(lookAtHallLight, nar2);
     }
 }

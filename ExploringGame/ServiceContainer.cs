@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using Ninject;
+using Ninject.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,9 +41,9 @@ public class ServiceContainer
         return objects.OfType<IControllable>().Select(p => p.CreateController(this)).ToArray();          
     }
 
-    public T Get<T>()
+    public T Get<T>(params IParameter[] parameters)
     {
-        return _kernel.Get<T>();
+        return _kernel.Get<T>(parameters);
     }
 
     public object Get(Type t)

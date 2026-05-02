@@ -37,7 +37,7 @@ public class DebugFixedCamera : ICamera
     {
         var direction = Vector3.Normalize(target - Position);
         Rotation = new Rotation(
-            Yaw: (float)System.Math.Atan2(direction.X, direction.Z),
+            Yaw: (float)System.Math.Atan2(-direction.X, -direction.Z),
             Pitch: (float)System.Math.Asin(direction.Y),
             Roll: 0f
         );

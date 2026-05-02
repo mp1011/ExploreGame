@@ -74,9 +74,9 @@ public class PlotPointFactory
         return new CameraLookAt<TShape>(tag, _loadedLevelData, _cameraService, requiredDone);
     }
 
-    public T Get<T>() where T:PlotPoint
+    public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {
-        return _serviceContainer.Get<T>();
+        return _serviceContainer.Get<T>(new Ninject.Parameters.ConstructorArgument("requiredDone", requiredDone));
     }
 }
 

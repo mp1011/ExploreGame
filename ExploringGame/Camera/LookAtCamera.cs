@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using Microsoft.Xna.Framework;
 using System;
@@ -44,7 +45,7 @@ public class LookAtCamera : ICamera
         if (angularDistance <= _deltaPerFrame)
         {
             _lastView = targetView;
-            Rotation = RotationFromView(_lastView);
+            Rotation = _lastView.RotationFromView();
             return _lastView;
         }
 
@@ -55,7 +56,7 @@ public class LookAtCamera : ICamera
         var up = Vector3.Normalize(Vector3.Transform(Vector3.Up, rotationMatrix));
 
         _lastView = Matrix.CreateLookAt(cameraPosition, cameraPosition + forward, up);
-        Rotation = RotationFromView(_lastView);
+        Rotation = _lastView.RotationFromView();
         return _lastView;
     }
 
@@ -65,14 +66,5 @@ public class LookAtCamera : ICamera
         return 2f * MathF.Acos(dot);
     }
 
-    private static Rotation RotationFromView(Matrix view)
-    {
-        var world = Matrix.Invert(view);
-        var forward = Vector3.Normalize(Vector3.Transform(Vector3.Forward, world));
-
-        return new Rotation(
-            Yaw: MathF.Atan2(forward.X, forward.Z),
-            Pitch: MathF.Asin(Math.Clamp(forward.Y, -1f, 1f)),
-            Roll: 0f);
-    }
+   
 }
