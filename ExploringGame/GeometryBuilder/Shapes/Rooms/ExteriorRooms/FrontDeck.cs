@@ -108,7 +108,6 @@ public class FrontDeck : Deck
             adjustPlacement: false);
 
         frontDoor.TraverseAllChildren().OfType<Door>().First().Tag = "FrontDoor";
-
         frontDoor.SetSideUnanchored(Side.Top, livingRoom.GetSide(Side.Top));
     }
 }

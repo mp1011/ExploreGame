@@ -35,12 +35,13 @@ public abstract class ConditionalBlocker : PlotPoint
     protected sealed override void OnReady()
     {
         _blocker = _loadedLevelData.ActiveSegments.FindShape<Blocker>(_blockerTag);
+        _blocker.Enabled = true;
         _blockerCollision = _player.Mover.CollisionResponder.AddResponse(new CollidesWithShape(_blocker));
-        _blockerCollision.CollisionOccured += BlockerCollision_CollisionOccured;
+        _blockerCollision.CollisionOccured += BlockerCollision_CollisionOccurred;
         OnReady_Inner();
     }
 
-    private void BlockerCollision_CollisionOccured(object sender, System.EventArgs e)
+    private void BlockerCollision_CollisionOccurred(object sender, System.EventArgs e)
     {
         _dialogueManager.EnqueueIfNeeded(new DialogueEntry(_playerActor, _messageWhenBlocked));
     }
@@ -65,7 +66,7 @@ public abstract class ConditionalBlocker : PlotPoint
 
     protected override PlotUpdate UpdateActive(GameTime gameTime)
     {
-        _blocker.Remove();
+        _blocker.Enabled = false;
         return PlotUpdate.End;
     }
 }

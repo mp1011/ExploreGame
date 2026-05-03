@@ -74,6 +74,16 @@ public class PlotPointFactory
         return new CameraLookAt<TShape>(tag, _loadedLevelData, _cameraService, requiredDone);
     }
 
+    public DoorBlocker DoorBlocker(Dictionary<StateKey, string> blockMessages, params PlotPoint[] requiredDone)
+    {
+        return new DoorBlocker(blockMessages, _player, _actor, _dialogueManager, _loadedLevelData, _playerInput, _physics, requiredDone);
+    }
+
+    public SwitchBlocker SwitchBlocker(Dictionary<StateKey, string> blockMessages, params PlotPoint[] requiredDone)
+    {
+        return new SwitchBlocker(blockMessages, _player, _actor, _dialogueManager, _loadedLevelData, _playerInput, _physics, requiredDone);
+    }
+
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {
         return _serviceContainer.Get<T>(new Ninject.Parameters.ConstructorArgument("requiredDone", requiredDone));

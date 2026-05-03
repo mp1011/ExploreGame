@@ -16,7 +16,19 @@ public class ActOne : Act
 
     protected override IEnumerable<PlotPoint> CreatePlotPoints(PlotPointFactory plotPointFactory)
     {
-        PlotPoint nar1, nar2, lookAtHallLight;
+        PlotPoint nar1, nar2, lookAtHallLight, upstairsLightsOff;
+
+        yield return plotPointFactory.DoorBlocker(
+            new()
+            {
+                [StateKey.KidsBedroomDoorOpen] = "And wake the kid? Not a chance.",
+                [StateKey.BathroomDoorOpen] = "I don't need to go in there",
+                [StateKey.FrontDoorOpen] = "I don't need to go outside",
+                [StateKey.DenDoorsOpen] = "I don't need to go in there",
+                [StateKey.SpareRoomDoorOpen] = "I don't need to go in there",
+                [StateKey.LinenClosetDoorOpen] = "Now is not the time for a towel",
+                [StateKey.BasementStairsDoorOpen] = "My wife is down there playing her games",
+            });
 
         yield return plotPointFactory.Get<PlayerFreeze>();
 
@@ -25,8 +37,15 @@ public class ActOne : Act
 
         yield return lookAtHallLight = plotPointFactory.LookAt<LightSwitch>(UpstairsHall.LightSwitchTag, nar1);
 
-        yield return plotPointFactory.FlavorText<Door>(tag: "FrontDoor", text: "hello world");
-        yield return plotPointFactory.Get<UpstairsLightsOff>();
+        yield return upstairsLightsOff = plotPointFactory.Get<UpstairsLightsOff>();
         yield return plotPointFactory.Get<PlayerResume>(lookAtHallLight, nar2);
+
+        yield return plotPointFactory.SwitchBlocker(
+            new()
+            {
+                [StateKey.HallLightOn] = "This should stay off",
+                [StateKey.KitchenLightOn] = "This should stay off",
+                [StateKey.LivingRoomLightOn] = "This should stay off",
+            }, upstairsLightsOff);
     }
 }

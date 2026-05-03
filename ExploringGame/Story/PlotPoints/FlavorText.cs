@@ -21,10 +21,11 @@ public class FlavorText<TShape> : PlotPoint, IPlayerActivated
     private readonly IPlayerInput _playerInput;
     private readonly Player _player;
     private Shape _shape;
+    private GameKey _activationKey;
 
     public FlavorText(LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, Physics physics,
         PlayerActor playerActor, DialogueManager dialogueManager,
-        string text, string shapeTag, params PlotPoint[] requiredDone) 
+        string text, string shapeTag, GameKey activationKey = GameKey.DialogueAdvance, params PlotPoint[] requiredDone) 
         : base(requiredDone)
     {
         _loadedLevelData = loadedLevelData;
@@ -34,6 +35,23 @@ public class FlavorText<TShape> : PlotPoint, IPlayerActivated
         _playerActor = playerActor;
         _dialogueManager = dialogueManager;
         ShapeTag = shapeTag;
+        Text = text;
+    }
+
+    public FlavorText(LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, Physics physics,
+       PlayerActor playerActor, DialogueManager dialogueManager,
+       string text, Shape shape, GameKey activationKey = GameKey.DialogueAdvance, params PlotPoint[] requiredDone)
+       : base(requiredDone)
+    {
+        _loadedLevelData = loadedLevelData;
+        _player = player;
+        _playerInput = playerInput;
+        _physics = physics;
+        _playerActor = playerActor;
+        _dialogueManager = dialogueManager;
+        ShapeTag = string.Empty;
+        _shape = shape;
+        _activationKey = activationKey;
         Text = text;
     }
 
@@ -51,19 +69,22 @@ public class FlavorText<TShape> : PlotPoint, IPlayerActivated
 
     protected override bool CheckActivation(GameTime gameTime)
     {
-        return this.CheckPlayerActivation(_physics, GameKey.DialogueAdvance);
+        return this.CheckPlayerActivation(_physics, _activationKey);
     }
 
     protected override void OnReady()
     {
+        if (_shape != null)
+            return;
+
         _shape = _loadedLevelData.ActiveSegments.SelectMany(p => p.WorldSegment.TraverseAllChildren())
             .OfType<TShape>()
-            .FirstOrDefault(p => ShapeTag == null || ShapeTag == p.Tag);
+            .Single(p => ShapeTag == null || ShapeTag == p.Tag);
     }
 
     protected override PlotUpdate UpdateActive(GameTime gameTime)
     {
-        _dialogueManager.Enqueue(new DialogueEntry(_playerActor, Text));
+        _dialogueManager.EnqueueIfNeeded(new DialogueEntry(_playerActor, Text));
         return PlotUpdate.Reset;
     }
 }

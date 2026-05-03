@@ -1,26 +1,57 @@
-﻿using ExploringGame.Logics.Collision;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
+using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Services;
 using Jitter2.LinearMath;
 using System;
+using System.Numerics;
 
 namespace ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 
 /// <summary>
 /// invisible shape which blocks the player
 /// </summary>
-public class Blocker : Shape, ICollidable
+public class Blocker : PlaceableShape, ICollidable
 {
+    public Shape BlockingShape { get; }
     public override ViewFrom ViewFrom => ViewFrom.None;
 
-    public CollisionGroup CollisionGroup => CollisionGroup.Environment;
-    public CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
+    public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
     public override IColliderMaker ColliderMaker => new BoundingBoxColliderMaker(this);
 
-    public Blocker(string tag)
+    private bool _enabled;
+    public bool Enabled
     {
-        Tag = tag;
+        get => _enabled;
+        set
+        {
+            _enabled = value;
+            RefreshCollider();
+        }
+    }
+
+    public Blocker(Shape blockingShape)
+    {
+        BlockingShape = blockingShape;
+        RefreshCollider();
+    }
+
+    public void RefreshCollider()
+    {
+        this.AdjustShape().From(BlockingShape)
+                .AxisStretch(Axis.X, 0.1f)
+                .AxisStretch(Axis.Z, 0.1f);
+
+        if (!_enabled)
+            Y += 10000;
+
+        Rotation = BlockingShape.Rotation;
+
+        if(ColliderBodies != null)
+            ColliderBodies[0].Position = Position.ToJVector();
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -28,8 +59,8 @@ public class Blocker : Shape, ICollidable
         return BuildCuboid();
     }
 
-    public void Remove()
+    public override string ToString()
     {
-        ColliderBodies[0].Position = new JVector(0, -100000, 0);
+        return $"Blocker for {BlockingShape}";
     }
 }

@@ -6,6 +6,7 @@ using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
@@ -127,5 +128,7 @@ public class OutsideWorldSegment : WorldSegment
 
 
         DebugShapeLogger.LogShape("OutsideWorldSegment PositionChildren end", _frontYard);
+
+        new BlockerCreator().ExecuteForDoors(this, StateKey.FrontDoorOpen);
     }
 }

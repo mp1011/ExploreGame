@@ -1,5 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using ExploringGame.LevelControl;
+using ExploringGame.Services;
 using Jitter2.Dynamics.Constraints;
 using Microsoft.Xna.Framework;
 using System;
@@ -37,6 +39,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             _office.LoadChildren();
             _basement.LoadChildren();
             _garage.LoadChildren();
+
+            new BlockerCreator().ExecuteForDoors(this, StateKey.BasementStairsDoorOpen);
         }
     }
 }

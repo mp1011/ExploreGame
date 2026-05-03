@@ -7,6 +7,7 @@ using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Services;
+using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
@@ -79,9 +80,13 @@ public class UpstairsWorldSegment : WorldSegment
 
         var bedroomDoor = TraverseAllChildren().OfType<Door>().Where(p => p.StateKey == StateKey.BedroomDoorOpen).Single().Parent;
 
-        var bedroomDoorBlocker = _upstairsHall.AddChild(new Blocker("BedroomDoorBlocker"));
+        var bedroomDoorBlocker = _upstairsHall.AddChild(new Blocker(bedroomDoor) { Tag = "BedroomDoorBlocker" });
         bedroomDoorBlocker.AdjustShape().From(bedroomDoor)
             .AxisStretch(Axis.X, 1.0f)
-            .AxisStretch(Axis.Z, 1.0f);         
+            .AxisStretch(Axis.Z, 1.0f);
+
+        new BlockerCreator().ExecuteForDoors(this, StateKey.KidsBedroomDoorOpen, StateKey.BathroomDoorOpen, StateKey.DenDoorsOpen, StateKey.SpareRoomDoorOpen, StateKey.LinenClosetDoorOpen);
+        new BlockerCreator().ExecuteForSwitches(this, StateKey.HallLightOn, StateKey.KitchenLightOn, StateKey.LivingRoomLightOn);
+
     }
 }
