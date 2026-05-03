@@ -37,6 +37,12 @@ public class Bedroom : Room
             .OnSideInner(Side.West, this, 0.5f);
         closet.AddConnectingRoomWithJunction(new DoorJunction(closet, Side.South, HAlign.Center, DoorDirection.Push, StateKey.BedroomClosetDoorOpen),
             this, Side.South, HAlign.Center, adjustPlacement: false);
+
+
+        var bed = AddChild(new Bed());
+        bed.Place().At(this).OnFloor()
+            .OnSideInner(Side.West, offset: 0.2f);
+        bed.Rotation = Rotation.YawFromDegrees(90);
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();
