@@ -34,7 +34,7 @@ public class Bedroom : Room
 
         var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(4));
         closet.Place().OnSideOuter(Side.North, this, -Measure.Inches(6))
-            .OnSideInner(Side.West, this, 0.5f);
+            .OnSideInner(Side.West, this, 1.0f);
         closet.AddConnectingRoomWithJunction(new DoorJunction(closet, Side.South, HAlign.Center, DoorDirection.Push, StateKey.BedroomClosetDoorOpen),
             this, Side.South, HAlign.Center, adjustPlacement: false);
 
@@ -43,6 +43,18 @@ public class Bedroom : Room
         bed.Place().At(this).OnFloor()
             .OnSideInner(Side.West, offset: 0.2f);
         bed.Rotation = Rotation.YawFromDegrees(90);
+
+        var leftEndTable = AddChild(new EndTable());
+        leftEndTable.Place().At(this).OnFloor()
+            .OnSideInner(Side.West, offset: 0.2f)
+            .OnSideInner(Side.South, offset: -0.4f);
+        leftEndTable.Rotation = Rotation.YawFromDegrees(90);
+
+        var rightEndTable = AddChild(new EndTable());
+        rightEndTable.Place().At(this).OnFloor()
+            .OnSideInner(Side.West, offset: 0.2f)
+            .OnSideInner(Side.North, offset: 0.4f);
+        rightEndTable.Rotation = Rotation.YawFromDegrees(90);
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();
