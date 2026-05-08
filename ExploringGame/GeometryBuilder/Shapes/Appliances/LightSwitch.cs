@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
-public class LightSwitch : Shape, IControllable<LightSwitchController>, ICollidable
+public class LightSwitch : Shape, IControllable<LightSwitchController<LightSwitch>>, ICollidable, ISwitchShape
 {
     public override Theme Theme => new Theme(Color.Red);
     public override ViewFrom ViewFrom => ViewFrom.Outside;
@@ -48,7 +48,7 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>, ICollida
         return BuildCuboid();
     }
 
-    public LightSwitchController Controller { get; private set; }
+    public LightSwitchController<LightSwitch> Controller { get; private set; }
 
     public CollisionGroup CollisionGroup => CollisionGroup.Environment;
 
@@ -56,7 +56,7 @@ public class LightSwitch : Shape, IControllable<LightSwitchController>, ICollida
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        var controller = serviceContainer.Get<LightSwitchController>();
+        var controller = serviceContainer.Get<LightSwitchController<LightSwitch>>();
         controller.Shape = this;
         Controller = controller;
         return controller;

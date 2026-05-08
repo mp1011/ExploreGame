@@ -6,8 +6,10 @@ public class BasicFurnitureTheme : Theme
 {
     public override TextureSheetKey TextureSheetKey => TextureSheetKey.Basement;
 
-    public BasicFurnitureTheme()
+    public BasicFurnitureTheme() : this(Color.Tan) { }
+    
+    public BasicFurnitureTheme(Color color)
     {
-        MainTexture = new TextureInfo(Color.Tan, TextureKey.Wood);
+        MainTexture = new TextureInfo(color, TextureKey.Wood);
     }
 }

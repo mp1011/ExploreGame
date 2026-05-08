@@ -26,12 +26,6 @@ public class Bedroom : Room
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
                 adjustPlacement: false);
        
-        var light = new HighHatLight(this, 0f, 0f);
-        var sw = new LightSwitch(this, Side.East, StateKey.BedroomLightOn);
-        sw.ControlledObjects.Add(light);
-        sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5));
-
         var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(4));
         closet.Place().OnSideOuter(Side.North, this, -Measure.Inches(6))
             .OnSideInner(Side.West, this, 1.0f);
@@ -55,6 +49,17 @@ public class Bedroom : Room
             .OnSideInner(Side.West, offset: 0.2f)
             .OnSideInner(Side.North, offset: 0.4f);
         rightEndTable.Rotation = Rotation.YawFromDegrees(90);
+
+        var leftLamp = leftEndTable.AddChild(new Lamp(this, StateKey.LeftBedroomLightOn));
+        leftLamp.Place()
+            .AtParent()
+            .OnSideOuter(Side.Top);
+
+        rightEndTable.AddChild(new Lamp(this, StateKey.RightBedroomLightOn))
+            .Place()
+            .AtParent()
+            .OnSideOuter(Side.Top);
+
     }
 
     public override Theme Theme =>  new UpstairsHallTheme();

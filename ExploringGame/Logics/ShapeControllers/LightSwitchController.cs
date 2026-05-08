@@ -6,10 +6,19 @@ using ExploringGame.LevelControl;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
-public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPlayerActivated
+
+public interface ISwitchShape : ICollidable
+{
+    List<IOnOff> ControlledObjects { get; }
+    StateKey StateKey { get; }
+}
+
+public class LightSwitchController<TSwitch> : IShapeController<TSwitch>, IOnOff, IPlayerActivated
+    where TSwitch:Shape, ISwitchShape
 {
     private readonly IPlayerInput _playerInput;
     private readonly Player _player;
@@ -26,7 +35,7 @@ public class LightSwitchController : IShapeController<LightSwitch>, IOnOff, IPla
         _gameState = gameState;
     }
 
-    public LightSwitch Shape { get; set; }
+    public TSwitch Shape { get; set; }
 
     private bool _on;
     public bool On

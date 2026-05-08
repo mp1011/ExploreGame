@@ -1,11 +1,12 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.LevelControl;
 using ExploringGame.Rendering;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Logics.ShapeControllers;
 
-public class LightController : IShapeController<HighHatLight>, IOnOff
+public class LightController<T> : IShapeController<T>, IOnOff
+    where T:Shape, ILightSource
 {
     private readonly PointLights _pointLights;
 
@@ -14,7 +15,7 @@ public class LightController : IShapeController<HighHatLight>, IOnOff
         _pointLights = pointLights;
     }
 
-    public HighHatLight Shape { get; set; }
+    public T Shape { get; set; }
 
     public Vector3 LightPosition => Shape.Position + new Vector3(0, -Shape.Height/2f, 0);
 

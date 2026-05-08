@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
+// may deprecate this
 public class ComplexShapePart : Shape
 {
     private Action<ShapeAdjuster> _adjust;

@@ -8,7 +8,7 @@ using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
-public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>, IOnOff, ILightSource
+public class HighHatLight : Shape, ICutoutShape, IControllable<LightController<HighHatLight>>, IOnOff, ILightSource
 {
 
     public override Theme Theme => new Theme(Color.White);
@@ -49,7 +49,7 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
         return TriangleMaker.BuildCylinder(this, detail: 20, Axis.Y);
     }
 
-    public LightController Controller { get; private set; }
+    public LightController<HighHatLight> Controller { get; private set; }
 
 
     private bool _on;
@@ -73,10 +73,11 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController>,
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        var controller = serviceContainer.Get<LightController>();
+        var controller = serviceContainer.Get<LightController<HighHatLight>>();
         controller.Shape = this;
         Controller = controller;
         On = _on; // Apply the stored state
+        On = true; //temporary
         return controller;
     }
 }
