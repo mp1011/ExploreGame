@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Tests.TestHelpers;
@@ -25,7 +26,7 @@ public class LightingVisualTests
     [InlineData(LightIntensity.ExtremelyBright)]
     public void Basement_PointLightVisual(double lightIntensity)
     {
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
 
         // Generate screenshot name from test name and parameters
         var testName = nameof(Basement_PointLightVisual);
@@ -37,6 +38,8 @@ public class LightingVisualTests
             screenshotName: screenshotName,
             testAssertion: (g, gameTime) =>
         {
+            var basement = g.GetService<LoadedLevelData>().ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
+
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
                 LightIntensity.DefaultAmbientLight = LightIntensity.Darkness;

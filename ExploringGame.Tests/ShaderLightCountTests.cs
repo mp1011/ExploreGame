@@ -18,10 +18,11 @@ public class ShaderLightCountTests
     [Fact]
     public void WhenRenderingBasementOffice_ShaderGetsZeroLights()
     {
-        var basement = new BasementWorldSegment();
-
-        using var game = new TestGame(basement, simulationTime: TimeSpan.FromSeconds(0.1));
+        using var game = new TestGame(new HomeWorldSegmentGroup(), simulationTime: TimeSpan.FromSeconds(0.1));
         game.Run();
+
+
+        var basement = game.GetService<LoadedLevelData>().ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
 
         var basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
         var basementLight = basementRoom.TraverseAllChildren().OfType<HighHatLight>().First();
@@ -53,10 +54,10 @@ public class ShaderLightCountTests
     [Fact]
     public void WhenRenderingBasement_ShaderGetsOneLight()
     {
-        var basement = new BasementWorldSegment();
-
-        using var game = new TestGame(basement, simulationTime: TimeSpan.FromSeconds(0.1));
+        using var game = new TestGame(new HomeWorldSegmentGroup(), simulationTime: TimeSpan.FromSeconds(0.1));
         game.Run();
+
+        var basement = game.GetService<LoadedLevelData>().ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
 
         var basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
         var basementLight = basementRoom.TraverseAllChildren().OfType<HighHatLight>().First();

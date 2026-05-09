@@ -25,7 +25,7 @@ public class LightSpiritTests
         var worldSegment = CreateTestWorldWithLightSpirit();
         
         // Run for 1 second (60 frames at 60 FPS)
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(1));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(1));
         
         // Act
         game.Run();
@@ -52,7 +52,7 @@ public class LightSpiritTests
         var worldSegment = CreateTestWorldWithLightSpirit();
         
         // Run for up to 2 minutes, but test will pass as soon as phase changes
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(2), (testGame, gameTime) =>
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromMinutes(2), (testGame, gameTime) =>
         {
             var loadedLevelData = testGame.GetService<LevelControl.LoadedLevelData>();
             var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
@@ -86,7 +86,7 @@ public class LightSpiritTests
         var worldSegment = CreateTestWorldWithLightSpirit();
         
         // Run for up to 2 minutes, checking if any gatemarks are created
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (testGame, gameTime) =>
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromMinutes(10), (testGame, gameTime) =>
         {
             var loadedLevelData = testGame.GetService<LevelControl.LoadedLevelData>();
             var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
@@ -117,7 +117,7 @@ public class LightSpiritTests
         var worldSegment = CreateTestWorldWithLightSpirit();
         
         // Run for up to 3 minutes, checking if any gatemarks become active
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (testGame, gameTime) =>
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromMinutes(10), (testGame, gameTime) =>
         {
             var loadedLevelData = testGame.GetService<LevelControl.LoadedLevelData>();
             var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
@@ -149,7 +149,7 @@ public class LightSpiritTests
         var worldSegment = CreateTestWorldWithLightSpirit();
         
         // Run for up to 5 minutes, checking if LS reaches Half-Presence phase
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(20), (testGame, gameTime) =>
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromMinutes(20), (testGame, gameTime) =>
         {
             var loadedLevelData = testGame.GetService<LevelControl.LoadedLevelData>();
             var levelData = loadedLevelData.LoadedSegments.FirstOrDefault();
@@ -179,7 +179,7 @@ public class LightSpiritTests
     [Fact]
     public void LightSpirit_CanOpenDoors_JunctionTest()
     {
-        var worldSegment = new BasementWorldSegment();
+        var worldSegment = new HomeWorldSegmentGroup();
         using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(20), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
@@ -205,8 +205,7 @@ public class LightSpiritTests
     public void LightSpirit_CanTurnOnLightSwitches_Basement()
     {
         // Arrange: Use BasementWorldSegment and turn all lights off
-        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment();
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(5), (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), TimeSpan.FromMinutes(5), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
@@ -233,8 +232,7 @@ public class LightSpiritTests
     public void LightSpirit_CausesLightsToFlicker_Basement()
     {
         // Arrange: Use BasementWorldSegment with all lights turned on
-        var worldSegment = new ExploringGame.GeometryBuilder.Shapes.WorldSegments.BasementWorldSegment();
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(10), (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), TimeSpan.FromMinutes(10), (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
@@ -302,7 +300,7 @@ public class LightSpiritTests
     [Fact]
     public void LightSpirit_CanSeekPlayer_Basement()
     {
-        var worldSegment = new BasementWorldSegment();
+        var worldSegment = new HomeWorldSegmentGroup();
         var log = new List<string>();
         double lastLogTime = 0;
 

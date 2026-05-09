@@ -1,4 +1,5 @@
 using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,7 @@ public class WallDecalPlacementTests
     {
         var worldSegment = new WallWithGapWorldSegment();
 
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(60));        
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(60));        
         game.Run();
 
         // assertion handled within test controller
@@ -26,7 +27,7 @@ public class WallDecalPlacementTests
     {
         var worldSegment = new WallWithAsymmetricGapWorldSegment(Side.North);
 
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(60));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(60));
         game.Run();
 
         // Get the test controller through the world segment's test shape
@@ -50,7 +51,7 @@ public class WallDecalPlacementTests
     {
         var worldSegment = new WallWithAsymmetricGapWorldSegment(Side.South);
 
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(60));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(60));
         game.Run();
 
         var testController = worldSegment.TestShape.Controller;
@@ -73,7 +74,7 @@ public class WallDecalPlacementTests
     {
         var worldSegment = new WallWithAsymmetricGapWorldSegment(Side.East);
 
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(60));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(60));
         game.Run();
 
         var testController = worldSegment.TestShape.Controller;
@@ -94,7 +95,7 @@ public class WallDecalPlacementTests
     {
         var worldSegment = new WallWithAsymmetricGapWorldSegment(Side.West);
 
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(60));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(60));
         game.Run();
 
         var testController = worldSegment.TestShape.Controller;

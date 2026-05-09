@@ -22,7 +22,7 @@ public class RoomLightingGroupTests
     public void RoomLightingCalculator_GroupsRoomsByLightingGroup()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
 
         // Act
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
@@ -59,11 +59,8 @@ public class RoomLightingGroupTests
     [Fact]
     public void RoomLightingCalculator_CalculatesLightForLightingGroups()
     {
-        // Arrange
-        var basement = new BasementWorldSegment();
-        
         // Act
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds > 100)
             {
@@ -92,12 +89,8 @@ public class RoomLightingGroupTests
     [Fact]
     public void RoomLightingCalculator_RoomsInSameLightingGroupShareLightData()
     {
-        // Arrange
-        // Create a test world where multiple rooms share the same lighting group
-        var basement = new BasementWorldSegment();
-        
         // Act
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds > 100)
             {
@@ -142,7 +135,7 @@ public class RoomLightingGroupTests
     public void ShapeBufferCreator_CreatesOneBufferPerLightingGroupAndTextureSheet()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
         
         // Act
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
@@ -182,7 +175,7 @@ public class RoomLightingGroupTests
     public void ShapeBufferCreator_IncludesRoomAndChildrenInLightingGroupBuffer()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
         
         // Act
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
@@ -218,12 +211,9 @@ public class RoomLightingGroupTests
     
     [Fact]
     public void ShapeBufferCreator_CreatesBufferForRemainingStaticShapes()
-    {
-        // Arrange
-        var basement = new BasementWorldSegment();
-        
+    {        
         // Act
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds > 100)
             {
@@ -261,7 +251,7 @@ public class RoomLightingGroupTests
         // We can't fully test this without the actual implementation,
         // but we can verify the dependency is accessible
         
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
         
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
         {
@@ -303,7 +293,7 @@ public class RoomLightingGroupTests
     public void RoomLightData_TotalLightNotRecalculatedOnEveryAccess()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
         
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
         {
@@ -355,7 +345,7 @@ public class RoomLightingGroupTests
     public void RoomLightData_RecalculateLightLevelUpdatesCache()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
         
         using var game = new TestGame(basement, framesToRun: 200, testAssertion: (g, gameTime) =>
         {
@@ -413,7 +403,7 @@ public class RoomLightingGroupTests
     public void RoomLightingCalculator_CallsRecalculateLightLevelOnLightStateChange()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
         
         using var game = new TestGame(basement, framesToRun: 200, testAssertion: (g, gameTime) =>
         {
@@ -459,9 +449,7 @@ public class RoomLightingGroupTests
     public void RoomLightingCalculator_CallsRecalculateLightLevelOnDoorStateChange()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
-
-        using var game = new TestGame(basement, framesToRun: 200, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 200, testAssertion: (g, gameTime) =>
         {
             // Turn on only Basement light initially
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)

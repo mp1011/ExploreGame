@@ -1,3 +1,4 @@
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Microsoft.Xna.Framework;
@@ -18,7 +19,7 @@ public class ConnectingRoomsVisualTests
     {
         // Arrange
         var worldSegment = TestMaps.ConnectingRoomsTest();
-        using var game = new TestGame(worldSegment, framesToRun: 100);
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), framesToRun: 100);
 
         game.MockPlayerInput.AddMouseDeltas(
             startFrame: 3, 

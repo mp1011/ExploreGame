@@ -2,6 +2,8 @@ using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
+using ExploringGame.Services;
+using ExploringGame.Story;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -34,13 +36,16 @@ public class TestGame : Game1
 
     public override Random Random => new Random(12345);
 
-    public TestGame(WorldSegment worldSegment, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null, Action<TestGame> testSetup = null, string screenshotName = null) : 
-        this(worldSegment, (int)(simulationTime.TotalSeconds * 60), testAssertion, testSetup, screenshotName)
+    public TestGame(WorldSegmentGroup worldSegmentGroup, TimeSpan simulationTime, Func<TestGame, GameTime, TestResult> testAssertion = null, Action<TestGame> testSetup = null, string screenshotName = null) : 
+        this(worldSegmentGroup, (int)(simulationTime.TotalSeconds * 60), testAssertion, testSetup, screenshotName)
     {}
 
-    public TestGame(WorldSegment worldSegment, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null, Action<TestGame> testSetup = null, string screenshotName = null) 
-        : base(worldSegment)
+    public TestGame(WorldSegmentGroup worldSegmentGroup, int framesToRun, Func<TestGame, GameTime, TestResult> testAssertion = null, Action<TestGame> testSetup = null, string screenshotName = null) 
+        : base(worldSegmentGroup)
     {
+        // seems to be some unknown problem with audio content in tests
+        AudioService.Enabled = false;
+
         // Set higher default ambient light for visual tests (so rooms without lighting data are visible)
         LightIntensity.DefaultAmbientLight = LightIntensity.IndoorLight;
 
@@ -61,6 +66,11 @@ public class TestGame : Game1
 
         _graphics.SynchronizeWithVerticalRetrace = false;
         IsFixedTimeStep = false;
+    }
+
+    protected override Scene LoadInitialScene()
+    {
+        return _serviceContainer.Get<NullScene>();
     }
 
     private static string GetTestNameFromCallStack()

@@ -1,3 +1,4 @@
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
 using Xunit;
@@ -12,7 +13,7 @@ public class WallDecalTests
         // Arrange
         var worldSegment = TestMaps.WallDecalTest();
         
-        using var game = new TestGame(worldSegment, TimeSpan.FromSeconds(5));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromSeconds(5));
         
         // Act
         game.Run();

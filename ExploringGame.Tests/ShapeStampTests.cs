@@ -1,3 +1,4 @@
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
@@ -14,7 +15,7 @@ public class ShapeStampTests
         var worldSegment = TestMaps.ShapeStampTest();       
         int expectedMinimumSpawns = 500; 
 
-        using var game = new TestGame(worldSegment, TimeSpan.FromMinutes(3));
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), TimeSpan.FromMinutes(3));
         
         // Act
         game.Run();

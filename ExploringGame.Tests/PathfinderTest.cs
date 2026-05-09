@@ -18,7 +18,7 @@ public class PathfinderTest
         var testEntity = testMap.TraverseAllChildren().OfType<TestEntity>().First();
         testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;
 
-        using var g = new TestGame(testMap, TimeSpan.FromMinutes(5));
+        using var g = new TestGame(new SingleSegmentGroup(testMap), TimeSpan.FromMinutes(5));
         g.Run();
 
         var d = Debug.MovingEntityDebugger;

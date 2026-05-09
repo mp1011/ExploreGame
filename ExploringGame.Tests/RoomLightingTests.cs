@@ -7,6 +7,7 @@ using ExploringGame.Logics;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Tests.TestHelpers;
 using System.Linq;
+using System.Net.WebSockets;
 using Xunit;
 
 namespace ExploringGame.Tests;
@@ -17,7 +18,7 @@ public class RoomLightingTests
     public void AllRoomsHaveMinimalLightWithNoLightsOn()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
 
         // Act - Run game and turn off lights after initialization
         using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
@@ -62,16 +63,16 @@ public class RoomLightingTests
     [Fact]
     public void RoomWithLightSourceHasFullIntensity()
     {
-        // Arrange
-        var basement = new BasementWorldSegment();
 
         // Act - Turn off all lights, then turn on only BasementOffice lights
         bool lightsConfigured = false;
         Room basementOffice = null;
 
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             var loadedLevelData = g.GetService<LoadedLevelData>();
+            var basement = loadedLevelData.ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
+
             basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
 
             // On first update, configure lights
@@ -106,17 +107,16 @@ public class RoomLightingTests
     [Fact]
     public void AdjacentRoomReceivesDecayedLight()
     {
-        // Arrange
-        var basement = new BasementWorldSegment();
 
         // Act - Turn on only BasementOffice lights, check Basement receives light
         bool lightsConfigured = false;
         Room basementOffice = null;
         Room basementRoom = null;
 
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             var loadedLevelData = g.GetService<LoadedLevelData>();
+            var basement = loadedLevelData.ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
 
             // On first update, configure lights
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
@@ -162,7 +162,7 @@ public class RoomLightingTests
     public void LightDecreasesAcrossConnectedRoomChain()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
+        var basement = new HomeWorldSegmentGroup();
 
         // Act - Test light propagation through: BasementOffice -> Basement -> UpstairsHall -> Kitchen -> LivingRoom
         bool lightsConfigured = false;

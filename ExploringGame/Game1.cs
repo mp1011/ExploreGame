@@ -13,6 +13,7 @@ using ExploringGame.Story.PlotPoints;
 using ExploringGame.Story.Scene01;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -34,6 +35,7 @@ public class Game1 : Game
     private WorldSegmentGroup _currentSegmentGroup;
     private SceneManager _sceneManager;
     private DialogueManager _dialogueManager;
+    private AudioService _audioService;
 
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -55,19 +57,10 @@ public class Game1 : Game
         _currentSegmentGroup = currentGroup;
     }
 
-    public Game1(WorldSegment worldSegment)
-    {
-        _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = false;
-        _graphics.IsFullScreen = false;
-        _currentSegmentGroup = new SingleSegmentGroup(worldSegment);
-    }
-
     protected virtual bool AlwaysActive => false;
 
     protected virtual IPlayerInput CreatePlayerInput() => new PlayerInput();
-    
+
     protected override void Initialize()
     {
         _serviceContainer = new ServiceContainer();
@@ -126,11 +119,15 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<DialogueManager>();
         _dialogueManager = _serviceContainer.Get<
             DialogueManager>();
-
-        var initialScene = _serviceContainer.Get<SceneOne>();
-        _sceneManager.Initialize(initialScene);
+ 
+        _sceneManager.Initialize(LoadInitialScene());
 
         base.Initialize();
+    }
+
+    protected virtual Scene LoadInitialScene()
+    {
+        return _serviceContainer.Get<SceneOne>();
     }
 
     protected override void LoadContent()
@@ -183,7 +180,9 @@ public class Game1 : Game
         _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
 
         _serviceContainer.BindSingleton<PlotPointFactory>();
-        _serviceContainer.Get<AudioService>().LoadContent(Content);
+
+        _audioService = _serviceContainer.Get<AudioService>();
+        _audioService.LoadContent(Content);
     }
 
     private bool _ranInit = false;
@@ -289,5 +288,10 @@ public class Game1 : Game
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    protected override void EndRun()
+    {
+        _audioService.Dispose();
     }
 }

@@ -1,4 +1,5 @@
 using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Testing;
 using ExploringGame.Tests.TestHelpers;
@@ -12,7 +13,7 @@ public class BasicRoomTest
     [Fact]
     public void Player_WalksForward_StaysInRoom()
     {
-        using var g = new TestGame(TestMaps.EmptyRoom(), framesToRun: 5000);
+        using var g = new TestGame(new SingleSegmentGroup(TestMaps.EmptyRoom()), framesToRun: 5000);
 
         g.MockPlayerInput.AddKeyPress(frame: 1, key: GameKey.Forward);
         g.Run();
@@ -26,7 +27,7 @@ public class BasicRoomTest
     [Fact]
     public void Player_StaysStill()
     {
-        using var g = new TestGame(TestMaps.EmptyRoom(), framesToRun: 5000);
+        using var g = new TestGame(new SingleSegmentGroup(TestMaps.EmptyRoom()), framesToRun: 5000);
         g.Run();
 
         var player = g.GetService<Player>();

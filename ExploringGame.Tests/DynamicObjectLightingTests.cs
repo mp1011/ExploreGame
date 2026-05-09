@@ -29,7 +29,7 @@ public class DynamicObjectLightingTests
         // Arrange - Use a simple test world
         var worldSegment = TestMaps.WallDecalTest();
 
-        using var game = new TestGame(worldSegment, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
@@ -62,7 +62,7 @@ public class DynamicObjectLightingTests
         // Arrange
         var worldSegment = TestMaps.WallDecalTest();
 
-        using var game = new TestGame(worldSegment, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new SingleSegmentGroup(worldSegment), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
@@ -96,9 +96,8 @@ public class DynamicObjectLightingTests
     public void StampedShape_InDifferentRooms_HaveDifferentLightingGroups()
     {
         // Arrange - Create a world with two distinct rooms
-        var basement = new BasementWorldSegment();
 
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
             if (gameTime.TotalGameTime.TotalMilliseconds < 50)
             {
@@ -141,11 +140,10 @@ public class DynamicObjectLightingTests
     [Fact]
     public void StaticPlaceableObject_WithoutController_CanHaveRoomAssigned()
     {
-        // Arrange - OfficeDesk is a PlaceableShape but does NOT have a controller
-        var basement = new BasementWorldSegment();
-
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        // Arrange - OfficeDesk is a PlaceableShape but does NOT have a controller     
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
+            var basement = g.GetService<LoadedLevelData>().ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
             if (gameTime.TotalGameTime.TotalMilliseconds > 50)
             {
                 // Find any PlaceableShape in the world (e.g., OfficeDesk, Couch, etc.)
@@ -176,12 +174,12 @@ public class DynamicObjectLightingTests
     public void DynamicObject_MovingToNewRoom_UpdatesRoomProperty()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
         var testEntity = new TestEntity();
         testEntity.Position = new Vector3(0, 1.5f, 0);
 
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
+            var basement = g.GetService<LoadedLevelData>().ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
             if (gameTime.TotalGameTime.TotalMilliseconds > 50)
             {
                 var loadedLevelData = g.GetService<LoadedLevelData>();
@@ -219,12 +217,12 @@ public class DynamicObjectLightingTests
     public void DynamicObject_StayingInSameRoom_RoomPropertyRemainsStable()
     {
         // Arrange
-        var basement = new BasementWorldSegment();
         var testEntity = new TestEntity();
         testEntity.Position = new Vector3(0, 1.5f, 0);
 
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
+        using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
+            var basement = g.GetService<LoadedLevelData>().ActiveSegments.Select(p => p.WorldSegment).OfType<BasementWorldSegment>().Single();
             if (gameTime.TotalGameTime.TotalMilliseconds > 50)
             {
                 var loadedLevelData = g.GetService<LoadedLevelData>();
