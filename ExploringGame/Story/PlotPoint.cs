@@ -63,9 +63,9 @@ public class PlotPointFactory
         return new FlavorText<TShape>(_loadedLevelData, _playerInput, _player, _physics, _actor, _dialogueManager, text, tag);
     }
 
-    public Narration Narration(string text)
+    public Narration Narration(string text, params PlotPoint[] requiredDone)
     {
-        return new Narration(_loadedLevelData, _actor, _dialogueManager, text);
+        return new Narration(_loadedLevelData, _actor, _dialogueManager, text, requiredDone);
     }
 
     public CameraLookAt<TShape> LookAt<TShape>(string tag = null, params PlotPoint[] requiredDone)

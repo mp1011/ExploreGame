@@ -37,7 +37,8 @@ public enum StateKey
     FrontDoorOpen,
     GarageDoor1Open,
     GarageDoor2Open,
-    DeckSlidingDoorOpen
+    DeckSlidingDoorOpen,
+    BedroomNightLightOn
 }
 
 public class GameState

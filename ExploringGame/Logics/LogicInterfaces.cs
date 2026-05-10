@@ -34,7 +34,7 @@ public interface IActiveObject
 
 
 public interface IShapeController<T> : IActiveObject
-    where T : Shape
+    where T : IShape
 {
     T Shape { get; }
 }

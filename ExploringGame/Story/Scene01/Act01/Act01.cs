@@ -16,7 +16,7 @@ public class ActOne : Act
 
     protected override IEnumerable<PlotPoint> CreatePlotPoints(PlotPointFactory plotPointFactory)
     {
-        PlotPoint nar1, nar2, lookAtHallLight, upstairsLightsOff, bedroomLampOff, lieInBed;
+        PlotPoint nar1, nar2, nar3, lookAtHallLight, upstairsLightsOff, bedroomLampOff, lieInBed;
 
         yield return plotPointFactory.DoorBlocker(
             new()
@@ -50,8 +50,10 @@ public class ActOne : Act
             }, upstairsLightsOff);
 
         yield return bedroomLampOff = plotPointFactory.SwitchChanged(StateKey.LeftBedroomLightOn, targetState: false);
+        yield return plotPointFactory.Get<PlayerFreeze>(bedroomLampOff);
 
-        yield return lookAtHallLight = plotPointFactory.LookAt<CeilingVent>(Bedroom.VentTag, bedroomLampOff);
+        yield return nar3 = plotPointFactory.Narration("Finally, sleep", bedroomLampOff);
 
+        yield return lieInBed = plotPointFactory.Get<LieInBed>(nar3);
     }
 }

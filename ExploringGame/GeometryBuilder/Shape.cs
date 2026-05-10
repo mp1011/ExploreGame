@@ -12,7 +12,12 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-public abstract class Shape : IWithPosition
+public interface IShape
+{
+    // fill in as needed
+}
+
+public abstract class Shape : IWithPosition, IShape
 {
     public virtual IColliderMaker ColliderMaker => null;
 

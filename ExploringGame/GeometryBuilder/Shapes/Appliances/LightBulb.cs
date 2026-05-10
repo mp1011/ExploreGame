@@ -9,16 +9,19 @@ namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
 public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, IOnOff, ILightSource
 {
-    public LightBulb(Room room, Shape parent, StateKey key)
+    public LightBulb(Room room, Shape parent, StateKey key, float diameter, float intensity, Color color)
     {
         parent.AddChild(this);
+
+        Intensity = intensity;
+        Color = color; 
 
         Room = room;
         StateKey = key;
 
-        Width = Measure.Inches(4);
-        Height = Measure.Inches(4);
-        Depth = Measure.Inches(4);
+        Width = Measure.Inches(diameter);
+        Height = Measure.Inches(diameter);
+        Depth = Measure.Inches(diameter);
     }
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
@@ -44,8 +47,8 @@ public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, I
 
     public StateKey StateKey { get; }
 
-    public float Intensity { get; set; } = LightIntensity.IndoorLight;
-    public Color Color { get; set; } = Color.White;
+    public float Intensity { get; set; }
+    public Color Color { get; set; }
 
     public Vector3 LightPosition => Parent.Position + Position;
 

@@ -15,7 +15,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 public class Blocker : PlaceableShape, ICollidable
 {
     public Shape BlockingShape { get; }
-    public override ViewFrom ViewFrom => ViewFrom.Outside;
+    public override ViewFrom ViewFrom => ViewFrom.None;
 
     public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
     public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;

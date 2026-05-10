@@ -1,6 +1,5 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
-using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.LevelControl;
 using ExploringGame.Story.Character;
 using ExploringGame.Story.PlotPoints;
@@ -27,9 +26,11 @@ internal class UpstairsLightsOff : ConditionalBlocker
         foreach (var lightSwitch in _switches)
             lightSwitch.Controller.On = true;
 
-        var bedroomLamp = _loadedLevelData.LoadedSegments.FindShapes<Lamp>().Single(p => p.StateKey == StateKey.LeftBedroomLightOn);
+        var bedroomLamp = _loadedLevelData.LoadedSegments.FindShapes<EndTableLamp>().Single(p => p.StateKey == StateKey.LeftBedroomLightOn);
         bedroomLamp.Controller.On = true;
 
+        var nightLight = _loadedLevelData.LoadedSegments.FindShape<NightLight>();
+        nightLight.Controller.On = true;
     }
 
     protected override bool CheckActivation_Inner(GameTime gameTime)

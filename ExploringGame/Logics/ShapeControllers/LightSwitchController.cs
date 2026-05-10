@@ -11,15 +11,14 @@ using System.Collections.Generic;
 namespace ExploringGame.Logics.ShapeControllers;
 
 
-public interface ISwitchShape : ICollidable
+public interface ISwitchShape : ICollidable, IShape
 {
     List<IOnOff> ControlledObjects { get; }
     StateKey StateKey { get; }
     bool On { get; set; }
 }
 
-public class LightSwitchController<TSwitch> : IShapeController<TSwitch>, IOnOff, IPlayerActivated
-    where TSwitch:Shape, ISwitchShape
+public class LightSwitchController : IShapeController<ISwitchShape>, IOnOff, IPlayerActivated
 {
     private readonly IPlayerInput _playerInput;
     private readonly Player _player;
@@ -36,7 +35,7 @@ public class LightSwitchController<TSwitch> : IShapeController<TSwitch>, IOnOff,
         _gameState = gameState;
     }
 
-    public TSwitch Shape { get; set; }
+    public ISwitchShape Shape { get; set; }
 
     private bool _on;
     public bool On

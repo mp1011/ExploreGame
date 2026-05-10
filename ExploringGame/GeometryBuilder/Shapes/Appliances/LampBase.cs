@@ -1,5 +1,4 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
-using ExploringGame.LevelControl;
+﻿using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.ShapeControllers;
@@ -8,9 +7,9 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace ExploringGame.GeometryBuilder.Shapes.Furniture;
+namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
-public class Lamp : PlaceableShape, IControllable<LightSwitchController<Lamp>>, ISwitchShape
+public abstract class LampBase : PlaceableShape, IControllable<LightSwitchController>, ISwitchShape
 {
     public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
 
@@ -22,22 +21,22 @@ public class Lamp : PlaceableShape, IControllable<LightSwitchController<Lamp>>, 
 
     public LightBulb Bulb { get; }
 
-    public Lamp(Room room, StateKey stateKey)
+    public LampBase(Room room, StateKey stateKey, float width, float depth, float height)
     {
         StateKey = stateKey;
-        Width = Measure.Inches(10);
-        Height = Measure.Inches(20);
-        Depth = Measure.Inches(10);
+        Width = width;
+        Height = height;
+        Depth = depth;
 
-        Bulb = new LightBulb(room, this, stateKey);
-        Bulb.Place().AtParent().OnSideOuter(Side.Top);
-
+        Bulb = CreateBulb(room, StateKey);
         ControlledObjects.Add(Bulb);
     }
 
+    protected abstract LightBulb CreateBulb(Room room, StateKey stateKey);
+
     public override Theme Theme => new BasicFurnitureTheme(Color.Turquoise);
 
-    public LightSwitchController<Lamp> Controller { get; private set; }
+    public LightSwitchController Controller { get; private set; }
 
     public List<IOnOff> ControlledObjects { get; } = new List<IOnOff>();
 
@@ -49,15 +48,9 @@ public class Lamp : PlaceableShape, IControllable<LightSwitchController<Lamp>>, 
         set => Controller.On = value;
 
     }
-
-    protected override Triangle[] BuildInternal(QualityLevel quality)
-    {
-        return TriangleMaker.BuildEllipsoid(this, 16);
-    }
-
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        var controller = serviceContainer.Get<LightSwitchController<Lamp>>();
+        var controller = serviceContainer.Get<LightSwitchController>();
         controller.Shape = this;
         Controller = controller;
         return controller;

@@ -52,15 +52,22 @@ public class Bedroom : Room
             .OnSideInner(Side.North, offset: 0.4f);
         rightEndTable.Rotation = Rotation.YawFromDegrees(90);
 
-        var leftLamp = leftEndTable.AddChild(new Lamp(this, StateKey.LeftBedroomLightOn));
+        var leftLamp = leftEndTable.AddChild(new EndTableLamp(this, StateKey.LeftBedroomLightOn));
         leftLamp.Place()
             .AtParent()
             .OnSideOuter(Side.Top);
 
-        rightEndTable.AddChild(new Lamp(this, StateKey.RightBedroomLightOn))
+        rightEndTable.AddChild(new EndTableLamp(this, StateKey.RightBedroomLightOn))
             .Place()
             .AtParent()
             .OnSideOuter(Side.Top);
+
+        rightEndTable.AddChild(new NightLight(this, StateKey.BedroomNightLightOn))
+            .Place()
+            .AtParent()
+            .OnSideOuter(Side.Top)
+            .OnSideInner(Side.East, offset: -0.2f)
+            .OnSideInner(Side.North);
 
         var vent = new CeilingVent(this, -2.0f, 1.0f);
         vent.Tag = VentTag;

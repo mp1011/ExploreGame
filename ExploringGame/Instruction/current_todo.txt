@@ -1,3 +1,6 @@
-﻿- add end table
-- replace high-hat light in bedroom with lamps
-- add camera transition for "sleep"
+﻿- add a night light
+	- generalize lamp
+	- stop needing type annotations on light controller
+
+- fade-out transition
+	- render to texture concept
