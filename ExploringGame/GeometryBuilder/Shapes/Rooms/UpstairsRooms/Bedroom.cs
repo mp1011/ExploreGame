@@ -11,6 +11,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class Bedroom : Room
 {
+    public const string VentTag = "BedroomVent";
+
     private UpstairsHall _upstairsHall;
 
     public Bedroom(WorldSegment worldSegment, UpstairsHall upstairsHall) 
@@ -59,6 +61,9 @@ public class Bedroom : Room
             .Place()
             .AtParent()
             .OnSideOuter(Side.Top);
+
+        var vent = new CeilingVent(this, -2.0f, 1.0f);
+        vent.Tag = VentTag;
 
     }
 

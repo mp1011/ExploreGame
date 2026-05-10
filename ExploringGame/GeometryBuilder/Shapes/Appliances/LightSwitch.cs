@@ -19,6 +19,12 @@ public class LightSwitch : Shape, IControllable<LightSwitchController<LightSwitc
 
     public StateKey StateKey { get; }
 
+    public bool On
+    {
+        get => Controller.On;
+        set => Controller.On = value;
+    }
+
     public List<IOnOff> ControlledObjects { get; } = new List<IOnOff>();
     public LightSwitch(Room room, Side wallSide, StateKey key)
     {

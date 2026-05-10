@@ -16,7 +16,7 @@ public class ActOne : Act
 
     protected override IEnumerable<PlotPoint> CreatePlotPoints(PlotPointFactory plotPointFactory)
     {
-        PlotPoint nar1, nar2, lookAtHallLight, upstairsLightsOff;
+        PlotPoint nar1, nar2, lookAtHallLight, upstairsLightsOff, bedroomLampOff, lieInBed;
 
         yield return plotPointFactory.DoorBlocker(
             new()
@@ -46,6 +46,12 @@ public class ActOne : Act
                 [StateKey.HallLightOn] = "This should stay off",
                 [StateKey.KitchenLightOn] = "This should stay off",
                 [StateKey.LivingRoomLightOn] = "This should stay off",
+                [StateKey.RightBedroomLightOn] = "This should stay off",
             }, upstairsLightsOff);
+
+        yield return bedroomLampOff = plotPointFactory.SwitchChanged(StateKey.LeftBedroomLightOn, targetState: false);
+
+        yield return lookAtHallLight = plotPointFactory.LookAt<CeilingVent>(Bedroom.VentTag, bedroomLampOff);
+
     }
 }

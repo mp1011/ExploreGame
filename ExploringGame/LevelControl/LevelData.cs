@@ -33,6 +33,18 @@ public static class LevelDataExtensions
             .OfType<TShape>();
 
     }
+
+    public static IEnumerable<T> FindShapes<T>(this List<LevelData> levelData, Func<T,bool> filter)
+    {
+        return levelData.SelectMany(p => p.WorldSegment.TraverseAllChildren())
+            .OfType<T>()
+            .Where(filter);
+    }
+
+    public static T FindShape<T>(this List<LevelData> levelData, Func<T, bool> filter)
+    {
+        return levelData.FindShapes<T>(filter).Single();
+    }
 }
 public class LevelData
 {

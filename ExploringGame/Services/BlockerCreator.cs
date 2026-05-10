@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics.ShapeControllers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,9 +29,9 @@ public class BlockerCreator
 
     public IEnumerable<Blocker> ExecuteForSwitches(WorldSegment worldSegment, params StateKey[] switchKeys)
     {
-        var shapes = worldSegment.TraverseAllChildren().OfType<LightSwitch>()
+        var shapes = worldSegment.TraverseAllChildren().OfType<ISwitchShape>()
             .Where(p => switchKeys.Contains(p.StateKey));
 
-        return Execute(worldSegment, shapes);
+        return Execute(worldSegment, shapes.Select(p=>p as Shape));
     }
 }

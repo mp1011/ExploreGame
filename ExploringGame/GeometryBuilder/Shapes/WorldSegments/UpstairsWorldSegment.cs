@@ -86,7 +86,7 @@ public class UpstairsWorldSegment : WorldSegment
             .AxisStretch(Axis.Z, 1.0f);
 
         new BlockerCreator().ExecuteForDoors(this, StateKey.KidsBedroomDoorOpen, StateKey.BathroomDoorOpen, StateKey.DenDoorsOpen, StateKey.SpareRoomDoorOpen, StateKey.LinenClosetDoorOpen);
-        new BlockerCreator().ExecuteForSwitches(this, StateKey.HallLightOn, StateKey.KitchenLightOn, StateKey.LivingRoomLightOn);
+        new BlockerCreator().ExecuteForSwitches(this, StateKey.HallLightOn, StateKey.KitchenLightOn, StateKey.LivingRoomLightOn, StateKey.RightBedroomLightOn);
 
     }
 }

@@ -84,6 +84,11 @@ public class PlotPointFactory
         return new SwitchBlocker(blockMessages, _player, _actor, _dialogueManager, _loadedLevelData, _playerInput, _physics, requiredDone);
     }
 
+    public SwitchChanged SwitchChanged(StateKey key, bool targetState, params PlotPoint[] requiredDone)
+    {
+        return new SwitchChanged(_loadedLevelData, key, targetState, requiredDone);
+    }
+
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {
         return _serviceContainer.Get<T>(new Ninject.Parameters.ConstructorArgument("requiredDone", requiredDone));

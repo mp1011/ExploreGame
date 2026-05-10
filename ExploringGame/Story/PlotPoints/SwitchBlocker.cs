@@ -3,9 +3,11 @@ using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
+using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
 using ExploringGame.Story.Character;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,9 +48,10 @@ public class SwitchBlocker : PlotPoint
 
     private void SetupBlocker(StateKey key, string message)
     {
-        var lightSwitch = _loadedLevelData.ActiveSegments.FindShapes<LightSwitch>().Single(p => p.StateKey == key);
+        var lightSwitch = _loadedLevelData.ActiveSegments.FindShape<ISwitchShape>(p => p.StateKey == key);
 
-        var blocker = _loadedLevelData.ActiveSegments.FindShapes<Blocker>().First(p => p.BlockingShape == lightSwitch);
+        var blocker = _loadedLevelData.ActiveSegments.FindShapes<Blocker>().FirstOrDefault(p => p.BlockingShape == lightSwitch)
+            ?? throw new Exception("No blocker shape was created for this switch");
 
         blocker.Enabled = true;
 

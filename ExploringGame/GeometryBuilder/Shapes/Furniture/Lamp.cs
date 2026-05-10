@@ -43,6 +43,13 @@ public class Lamp : PlaceableShape, IControllable<LightSwitchController<Lamp>>, 
 
     public StateKey StateKey { get; }
 
+    public bool On
+    {
+        get => Controller.On;
+        set => Controller.On = value;
+
+    }
+
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         return TriangleMaker.BuildEllipsoid(this, 16);
