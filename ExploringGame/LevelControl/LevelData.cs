@@ -89,7 +89,7 @@ public class LevelData
         {
             foreach (var buffer in regularBuffers)
             {
-                var pass = _renderPassRegistry.Passes.FirstOrDefault(p => p.ShapeBufferType == buffer.Type);
+                var pass = _renderPassRegistry.EnvironmentPasses.FirstOrDefault(p => p.ShapeBufferType == buffer.Type);
                 if (pass != null)
                 {
                     if (!BuffersByPass.ContainsKey(pass))

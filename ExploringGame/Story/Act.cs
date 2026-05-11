@@ -15,5 +15,4 @@ public abstract class Act
     }
 
     protected abstract IEnumerable<PlotPoint> CreatePlotPoints(PlotPointFactory plotPointFactory);
-
 }

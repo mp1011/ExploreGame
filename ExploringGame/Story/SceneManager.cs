@@ -21,8 +21,18 @@ public class SceneManager
 
     public void Update(GameTime gameTime)
     {
+        bool nextScene = false;
+
         foreach (var plotPoint in CurrentAct.PlotPoints)
-            plotPoint.Update(gameTime);
+        {
+            if (plotPoint.Update(gameTime) == PlotPointState.NextScene)
+                nextScene = true;
+        }
+
+        if(nextScene)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 }

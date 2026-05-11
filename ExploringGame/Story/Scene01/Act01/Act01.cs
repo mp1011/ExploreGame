@@ -40,6 +40,8 @@ public class ActOne : Act
         yield return upstairsLightsOff = plotPointFactory.Get<UpstairsLightsOff>();
         yield return plotPointFactory.Get<PlayerResume>(lookAtHallLight, nar2);
 
+      
+
         yield return plotPointFactory.SwitchBlocker(
             new()
             {
@@ -55,5 +57,8 @@ public class ActOne : Act
         yield return nar3 = plotPointFactory.Narration("Finally, sleep", bedroomLampOff);
 
         yield return lieInBed = plotPointFactory.Get<LieInBed>(nar3);
+
+        yield return plotPointFactory.Get<SceneFadeout>(lieInBed);
+
     }
 }

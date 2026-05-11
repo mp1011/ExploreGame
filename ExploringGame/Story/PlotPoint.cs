@@ -7,6 +7,7 @@ using ExploringGame.Services;
 using ExploringGame.Story.Character;
 using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,14 +18,16 @@ public enum PlotPointState
     Idle,
     Ready,
     Active,
-    Done
+    Done,
+    NextScene
 }
 
 public enum PlotUpdate
 {
     Continue,
     End,
-    Reset
+    Reset,
+    NextScene
 }
 
 public static class PlotPointExtensions
@@ -101,15 +104,17 @@ public abstract class PlotPoint
 
     public PlotPoint[] RequiredDone { get; }
 
+    protected TimeSpan? _activationTime;
 
     public PlotPoint(IEnumerable<PlotPoint> requiredDone)
     {
         RequiredDone = requiredDone.ToArray();
     }
 
-    public void Update(GameTime gameTime)
+    public PlotPointState Update(GameTime gameTime)
     {
         State = UpdateState(gameTime);
+        return State;
     }
 
     private PlotPointState UpdateState(GameTime gameTime)
@@ -128,6 +133,7 @@ public abstract class PlotPoint
                 if (CheckActivation(gameTime))
                 {
                     OnActivated();
+                    _activationTime = gameTime.TotalGameTime;
                     return PlotPointState.Active;
                 }
                 else
@@ -138,6 +144,8 @@ public abstract class PlotPoint
                     return PlotPointState.Done;
                 else if (updateResult == PlotUpdate.Reset)
                     return PlotPointState.Ready;
+                else if (updateResult == PlotUpdate.NextScene)
+                    return PlotPointState.NextScene;
                 else
                     return PlotPointState.Active;
             default:

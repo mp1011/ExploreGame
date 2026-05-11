@@ -3,8 +3,11 @@ using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics.Controllers;
+using ExploringGame.Services;
 using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace ExploringGame.Story.Scene01.Act01;
 
@@ -15,7 +18,10 @@ public class LieInBed : PlotPoint
     private Player _player;
     private Bed _bed;
 
-    public LieInBed(PlotPointFactory factory, Player player, LoadedLevelData loadedLevelData, params PlotPoint[] requiredDone) : base(requiredDone)
+    private TimedAction _fadeOut;
+
+    public LieInBed(PlotPointFactory factory, Player player, LoadedLevelData loadedLevelData,
+        params PlotPoint[] requiredDone) : base(requiredDone)
     {
         _cameraLookAt = factory.LookAt<CeilingVent>(Bedroom.VentTag);
         _loadedLevelData = loadedLevelData;
@@ -34,6 +40,10 @@ public class LieInBed : PlotPoint
         _player.Position = _bed.Position;
 
         _cameraLookAt.Update(gameTime);
-        return PlotUpdate.Continue;
+
+        if ((gameTime.TotalGameTime - _activationTime) > TimeSpan.FromSeconds(3))
+            return PlotUpdate.End;
+        else
+            return PlotUpdate.Continue;
     }
 }

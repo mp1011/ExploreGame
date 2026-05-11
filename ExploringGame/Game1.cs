@@ -40,6 +40,8 @@ public class Game1 : Game
     protected GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private RenderPassRegistry _renderPassRegistry;
+    private RenderTargetTransformService _renderTargetTransformService;
+    private RenderTarget2D _environmentRenderTarget;
 
     private SpriteFont _debugFont;
 
@@ -75,8 +77,10 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<LoadedTextureSheets>();  
         _serviceContainer.BindSingleton<PointLights>();
         _serviceContainer.BindSingleton<RoomLightingCalculator>();
+        _serviceContainer.BindSingleton<RenderTargetTransformService>();
         _serviceContainer.BindSingleton<LoadedLevelData>();
         _loadedLevelData = _serviceContainer.Get<LoadedLevelData>();
+        _renderTargetTransformService = _serviceContainer.Get<RenderTargetTransformService>();
         _serviceContainer.BindSingleton<EntityRoomFinder>();
 
         _serviceContainer.BindSingleton<Player>();
@@ -145,6 +149,7 @@ public class Game1 : Game
         loadedTextures.AddTexture(new UpstairsTextureSheet(Content));
         loadedTextures.AddTexture(new SkyTextureSheet(Content));
         loadedTextures.AddTexture(new OutdoorsTextureSheet(Content));
+        _renderTargetTransformService.LoadContent(Content);
 
         // Create and register opaque pass (DrawOrder = 0)
         var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
@@ -174,7 +179,7 @@ public class Game1 : Game
 
         var dialogueRenderPass = _serviceContainer.Get<DialogueRenderPass>();
         dialogueRenderPass.LoadContent(this, loadedTextures);
-        _renderPassRegistry.Register(dialogueRenderPass);
+        _renderPassRegistry.RegisterInterface(dialogueRenderPass);
 
         // Provide registry to LoadedLevelData so it can group buffers by pass
         _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
@@ -234,13 +239,34 @@ public class Game1 : Game
         base.Update(gameTime);
     }
 
-    protected virtual void DrawWorld(GraphicsDevice graphicsDevice)
+    private void EnsureEnvironmentRenderTarget(GraphicsDevice graphicsDevice)
+    {
+        var width = graphicsDevice.Viewport.Width;
+        var height = graphicsDevice.Viewport.Height;
+
+        if (_environmentRenderTarget != null &&
+            _environmentRenderTarget.Width == width &&
+            _environmentRenderTarget.Height == height)
+        {
+            return;
+        }
+
+        _environmentRenderTarget?.Dispose();
+        _environmentRenderTarget = new RenderTarget2D(
+            graphicsDevice,
+            width,
+            height,
+            false,
+            SurfaceFormat.Color,
+            DepthFormat.Depth24);
+    }
+
+    protected virtual void DrawEnvironment(GraphicsDevice graphicsDevice)
     {
         graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
         graphicsDevice.DepthStencilState = GameDebug.Debug.NoDepthStencil ? DepthStencilState.None : DepthStencilState.Default;
 
-        // Draw using render pass registry - each pass draws all its buffers across all segments
-        foreach (var pass in _renderPassRegistry.Passes)
+        foreach (var pass in _renderPassRegistry.EnvironmentPasses)
         {
             foreach (var levelData in _loadedLevelData.ActiveSegments)
             {
@@ -258,14 +284,42 @@ public class Game1 : Game
                     pass.Draw(graphicsDevice, levelData.StampedShapeBuffers, _cameraService.View, _cameraService.Projection);
                 }
             }
+        }
+    }
 
+    protected virtual void DrawInterface(GraphicsDevice graphicsDevice)
+    {
+        foreach (var pass in _renderPassRegistry.InterfacePasses)
+        {
             // dialogue pass is special
-            if(pass is DialogueRenderPass)
+            if (pass is DialogueRenderPass)
             {
                 // note - probably want a different view
                 pass.Draw(graphicsDevice, null, _cameraService.View, _cameraService.Projection);
             }
         }
+    }
+
+    protected virtual void DrawWorld(GraphicsDevice graphicsDevice)
+    {
+        EnsureEnvironmentRenderTarget(graphicsDevice);
+
+        var previousRenderTargets = graphicsDevice.GetRenderTargets();
+        graphicsDevice.SetRenderTarget(_environmentRenderTarget);
+        DrawEnvironment(graphicsDevice);
+
+        if (previousRenderTargets.Length == 0)
+        {
+            graphicsDevice.SetRenderTarget(null);
+        }
+        else
+        {
+            graphicsDevice.SetRenderTargets(previousRenderTargets);
+        }
+
+        _renderTargetTransformService.Draw(_spriteBatch, graphicsDevice, _environmentRenderTarget);
+
+        DrawInterface(graphicsDevice);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -292,6 +346,8 @@ public class Game1 : Game
 
     protected override void EndRun()
     {
+        _environmentRenderTarget?.Dispose();
+        _renderTargetTransformService?.Dispose();
         _audioService.Dispose();
     }
 }
