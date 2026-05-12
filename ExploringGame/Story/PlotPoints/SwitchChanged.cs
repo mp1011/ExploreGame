@@ -41,4 +41,11 @@ public class SwitchChanged : PlotPoint
     {
         return PlotUpdate.End;
     }
+
+    protected override void FastForward_Inner()
+    {
+        if (State < PlotPointState.Ready)
+            OnReady();
+        _switch.On = _targetState;
+    }
 }

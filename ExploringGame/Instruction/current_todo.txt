@@ -1,6 +1,13 @@
-﻿- add a night light
-	- generalize lamp
-	- stop needing type annotations on light controller
+﻿scene cleanup
+	maybe each plot point can have a "cleanup" action
 
-- fade-out transition
-	- render to texture concept
+scene transition
+
+scene 2
+	- fix environment lighting
+		- add outdoor lights
+		- add "neighbor" lights
+	- sky anomaly
+	- ambient noise
+	- force-field
+	

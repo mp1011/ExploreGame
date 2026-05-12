@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Logics;
 using ExploringGame.Logics.Controllers;
 using ExploringGame.Services;
+using ExploringGame.Story.Character;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,11 @@ public class DialogueManager
             return;
 
         _lines.Enqueue(entry);
+    }
+
+    public void Remove(StoryActor actor, string line)
+    {
+        _lines = new Queue<DialogueEntry>(_lines.Where(p => p.Actor != actor && p.Line != line));
     }
 
     public DialogueManager(IPlayerInput playerInput, AudioService audioService)

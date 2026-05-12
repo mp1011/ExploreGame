@@ -1,12 +1,14 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
 using ExploringGame.Story.Character;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,5 +70,17 @@ public class SwitchBlocker : PlotPoint
             f.Update(gameTime);
 
         return PlotUpdate.Continue;
+    }
+
+    public override void Cleanup()
+    {
+        foreach (var entry in _blockMessages)
+        {
+            var lightSwitch = _loadedLevelData.ActiveSegments.FindShape<ISwitchShape>(p => p.StateKey == entry.Key);
+
+            var blocker = _loadedLevelData.ActiveSegments.FindShapes<Blocker>().FirstOrDefault(p => p.BlockingShape == lightSwitch)
+            ?? throw new Exception("No blocker shape was created for this switch");
+
+        }
     }
 }

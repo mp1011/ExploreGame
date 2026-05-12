@@ -87,4 +87,10 @@ public class FlavorText<TShape> : PlotPoint, IPlayerActivated
         _dialogueManager.EnqueueIfNeeded(new DialogueEntry(_playerActor, Text));
         return PlotUpdate.Reset;
     }
+
+    public override void Cleanup()
+    {
+        _dialogueManager.Remove(_playerActor, Text);
+    }
+
 }

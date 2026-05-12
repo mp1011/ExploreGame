@@ -153,6 +153,22 @@ public abstract class PlotPoint
         }
     }
 
+    public void FastForward()
+    {
+        FastForward_Inner();
+        State = PlotPointState.Done;
+    }
+
+    protected virtual void FastForward_Inner()
+    {
+
+    }
+
+    public virtual void Cleanup()
+    {
+
+    }
+
     protected virtual void OnReady()
     {
 

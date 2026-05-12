@@ -11,6 +11,7 @@ using ExploringGame.Services;
 using ExploringGame.Story;
 using ExploringGame.Story.PlotPoints;
 using ExploringGame.Story.Scene01;
+using ExploringGame.Story.Scene01.Act01;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -207,7 +208,10 @@ public class Game1 : Game
             _player.Position = _currentSegmentGroup.DefaultPlayerStart;
             _player.Rotation = new Rotation(Yaw: _currentSegmentGroup.DefaultPlayerAngle);
             _playerMover.Initialize();
-            _segmentActivationManager.ActivateGroup(_currentSegmentGroup);          
+            _segmentActivationManager.ActivateGroup(_currentSegmentGroup);
+
+            //debug
+            _sceneManager.FastForwardTo<LieInBed>();
         }
 
         _playerMover.Update(gameTime);

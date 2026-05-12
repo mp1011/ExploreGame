@@ -37,4 +37,12 @@ internal class UpstairsLightsOff : ConditionalBlocker
     {
         return _switches.All(p => !p.Controller.On);
     }
+
+    protected override void FastForward_Inner()
+    {
+        foreach(var s in _switches)
+        {
+            s.Controller.On = false;
+        }
+    }
 }

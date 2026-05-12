@@ -8,6 +8,7 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Story.Character;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -71,5 +72,19 @@ public class DoorBlocker : PlotPoint
             f.Update(gameTime);
 
         return PlotUpdate.Continue;
+    }
+
+    public override void Cleanup()
+    {
+        foreach (var entry in _blockMessages)
+        {
+            var doorJunction = _loadedLevelData.ActiveSegments.FindShapes<Door>().Where(p => p.StateKey == entry.Key)
+           .Select(p => p.Parent)
+           .Distinct()
+           .Single();
+
+            var blocker = _loadedLevelData.ActiveSegments.FindShapes<Blocker>().First(p => p.BlockingShape == doorJunction);
+            blocker.Enabled = false;
+        }
     }
 }

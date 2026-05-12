@@ -1,4 +1,5 @@
-﻿using ExploringGame.Story.Scene01;
+﻿using ExploringGame.Logics.Controllers.LightSpiritPhases;
+using ExploringGame.Story.Scene01;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
@@ -31,8 +32,24 @@ public class SceneManager
 
         if(nextScene)
         {
+            foreach (var plotPoint in CurrentAct.PlotPoints)
+                plotPoint.Cleanup();
+
             throw new System.NotImplementedException();
         }
     }
 
+    public void FastForwardTo<T>()
+        where T:PlotPoint
+    {
+        FastForwardTo(CurrentAct.PlotPoints.OfType<T>().Single());
+    }
+
+    public void FastForwardTo(PlotPoint target)
+    {
+        foreach (var child in target.RequiredDone)
+            FastForwardTo(child);
+
+        target.FastForward();
+    }
 }

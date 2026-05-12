@@ -37,4 +37,9 @@ public class Narration : PlotPoint
         else 
             return PlotUpdate.End;
     }
+
+    public override void Cleanup()
+    {
+        _dialogueManager.Remove(_playerActor, Text);
+    }
 }
