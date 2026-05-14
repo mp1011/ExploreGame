@@ -1,12 +1,7 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
-using ExploringGame.LevelControl;
+﻿using ExploringGame.LevelControl;
 using ExploringGame.Logics;
-using ExploringGame.Logics.Collision.ColliderMakers;
-using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
-using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
