@@ -92,6 +92,11 @@ public class PlotPointFactory
         return new SwitchChanged(_loadedLevelData, key, targetState, requiredDone);
     }
 
+    public PlayerMoveTo PlayerMoveTo(Vector3 position, params PlotPoint[] requiredDone)
+    {
+        return new PlayerMoveTo(_player, position, requiredDone);
+    }
+
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {
         return _serviceContainer.Get<T>(new Ninject.Parameters.ConstructorArgument("requiredDone", requiredDone));
@@ -155,23 +160,23 @@ public abstract class PlotPoint
 
     public void FastForward()
     {
-        FastForward_Inner();
-        State = PlotPointState.Done;
+        var updateResult = FastForward_Inner();
+        if (updateResult == PlotUpdate.End)
+            State = PlotPointState.Done;
+        else if (updateResult == PlotUpdate.NextScene)
+            State = PlotPointState.NextScene;
+        else
+            throw new Exception("Invalid state after fast-forward");
     }
 
-    protected virtual void FastForward_Inner()
-    {
-
-    }
+    protected virtual PlotUpdate FastForward_Inner() => PlotUpdate.End;
 
     public virtual void Cleanup()
     {
-
     }
 
     protected virtual void OnReady()
     {
-
     }
 
     protected virtual void OnActivated()
@@ -182,4 +187,9 @@ public abstract class PlotPoint
     protected abstract bool CheckActivation(GameTime gameTime);
 
     protected abstract PlotUpdate UpdateActive(GameTime gameTime);
+
+    public override string ToString()
+    {
+        return $"{this.GetType().Name} - {State}";
+    }
 }

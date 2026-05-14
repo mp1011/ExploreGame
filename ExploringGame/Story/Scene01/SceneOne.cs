@@ -1,12 +1,12 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Story.Scene01.Act01;
-using System.Collections.Generic;
+using ExploringGame.Story.Scene01.Act02;
 
 namespace ExploringGame.Story.Scene01;
 
 public class SceneOne : Scene
 {
-    public SceneOne(HomeWorldSegmentGroup worldSegmentGroup, ActOne actOne) : base (worldSegmentGroup, actOne)
+    public SceneOne(HomeWorldSegmentGroup worldSegmentGroup, ActOne actOne, ActTwo actTwo) : base (worldSegmentGroup, actOne, actTwo)
     {
     }
 }

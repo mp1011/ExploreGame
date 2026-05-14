@@ -47,10 +47,11 @@ public class LieInBed : PlotPoint
             return PlotUpdate.Continue;
     }
 
-    protected override void FastForward_Inner()
+    protected override PlotUpdate FastForward_Inner()
     {
         if (State < PlotPointState.Ready)
             OnReady();
         _player.Position = _bed.Position;
+        return PlotUpdate.End;
     }
 }

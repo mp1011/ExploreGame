@@ -28,4 +28,10 @@ public class SceneFadeout : PlotPoint
         _renderTargetTransformService.Brightness = 0;
         return PlotUpdate.NextScene;
     }
+
+    protected override PlotUpdate FastForward_Inner()
+    {
+        _renderTargetTransformService.Brightness = 0;
+        return PlotUpdate.NextScene;
+    }
 }

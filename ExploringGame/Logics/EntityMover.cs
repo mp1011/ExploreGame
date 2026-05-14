@@ -75,4 +75,9 @@ public class EntityMover : IActiveObject
         _body.Position = _entity.Position.ToJVector();
         _initialPositionSet = true;
     }
+
+    public void RefreshPosition()
+    {
+        _body.Position = _entity.Position.ToJVector();
+    }
 }

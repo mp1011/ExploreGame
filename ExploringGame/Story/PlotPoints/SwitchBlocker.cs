@@ -80,7 +80,7 @@ public class SwitchBlocker : PlotPoint
 
             var blocker = _loadedLevelData.ActiveSegments.FindShapes<Blocker>().FirstOrDefault(p => p.BlockingShape == lightSwitch)
             ?? throw new Exception("No blocker shape was created for this switch");
-
+            blocker.Enabled = false;
         }
     }
 }

@@ -70,11 +70,16 @@ public abstract class ConditionalBlocker : PlotPoint
         return PlotUpdate.End;
     }
 
-    protected override void FastForward_Inner()
+    protected sealed override PlotUpdate FastForward_Inner()
     {
         if (State < PlotPointState.Ready)
             OnReady();
 
         _blocker.Enabled = false;
+        FastForward_Inner2();
+        return PlotUpdate.End;
     }
+
+    //don't like this name
+    protected virtual void FastForward_Inner2() { }
 }

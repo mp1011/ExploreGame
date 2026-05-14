@@ -125,8 +125,6 @@ public class Game1 : Game
         _dialogueManager = _serviceContainer.Get<
             DialogueManager>();
  
-        _sceneManager.Initialize(LoadInitialScene());
-
         base.Initialize();
     }
 
@@ -210,8 +208,7 @@ public class Game1 : Game
             _playerMover.Initialize();
             _segmentActivationManager.ActivateGroup(_currentSegmentGroup);
 
-            //debug
-            _sceneManager.FastForwardTo<LieInBed>();
+            _sceneManager.Initialize(LoadInitialScene());
         }
 
         _playerMover.Update(gameTime);

@@ -1,6 +1,9 @@
 ﻿using ExploringGame.Logics.Controllers.LightSpiritPhases;
+using ExploringGame.Story.PlotPoints;
 using ExploringGame.Story.Scene01;
+using ExploringGame.Story.Scene01.Act02;
 using Microsoft.Xna.Framework;
+using System;
 using System.Linq;
 
 namespace ExploringGame.Story;
@@ -18,6 +21,8 @@ public class SceneManager
     {
         CurrentScene = initialScene;
         CurrentAct = initialScene.Acts.First();
+
+        FastForwardToAct<ActTwo>();
     }
 
     public void Update(GameTime gameTime)
@@ -31,13 +36,35 @@ public class SceneManager
         }
 
         if(nextScene)
-        {
-            foreach (var plotPoint in CurrentAct.PlotPoints)
-                plotPoint.Cleanup();
+            NextScene();
+    }
 
-            throw new System.NotImplementedException();
+    private void NextScene()
+    {
+        foreach (var plotPoint in CurrentAct.PlotPoints)
+            plotPoint.Cleanup();
+
+        CurrentAct = CurrentScene.Acts.Single(p => p.Num == CurrentAct.Num + 1);
+    }
+
+    public void FastForwardToAct<TAct>()
+        where TAct : Act
+    {
+        while (CurrentAct.GetType() != typeof(TAct))
+        {
+            FastForwardTo<SceneFadeout>();
+            NextScene();
         }
     }
+
+    public void FastForwardTo<TAct, TPlot>()
+        where TAct : Act
+        where TPlot : PlotPoint
+    {
+        FastForwardToAct<TAct>();
+        FastForwardTo<TPlot>();
+    }
+
 
     public void FastForwardTo<T>()
         where T:PlotPoint
@@ -47,9 +74,25 @@ public class SceneManager
 
     public void FastForwardTo(PlotPoint target)
     {
-        foreach (var child in target.RequiredDone)
-            FastForwardTo(child);
+        int maxTries = 1000;
+        while (--maxTries > 0)
+        {
+            foreach (var plotPoint in CurrentAct.PlotPoints)
+            {
+                switch (plotPoint.Update(new GameTime()))
+                {
+                    case PlotPointState.Ready:
+                    case PlotPointState.Active:
+                        plotPoint.FastForward();
+                        if (plotPoint == target)
+                            return;
+                        break;
+                    default:
+                        break;      
+                }
+            }
+        }
 
-        target.FastForward();
+        throw new Exception("Unable to fast-forward");
     }
 }
