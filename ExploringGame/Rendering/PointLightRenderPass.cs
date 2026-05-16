@@ -1,6 +1,7 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -11,32 +12,29 @@ using System.Linq;
 namespace ExploringGame.Rendering;
 
 /// <summary>
-/// Render pass for grass surfaces using custom billboard shader.
+/// Renders light sources
 /// </summary>
-public class GrassRenderPass : IRenderPass
+public class PointLightRenderPass : IRenderPass
 {
-    private readonly GrassRenderEffect _grassEffect;
-    private readonly GrassVertexBufferBuilder _vertexBufferBuilder = new();
+    private readonly PointLightRenderEffect _renderEffect;
+    private readonly VertexBufferBuilder _vertexBufferBuilder = new();
     private LoadedTextureSheets _textureSheets;
 
-    public GrassRenderPass(GrassRenderEffect grassEffect)
+    public PointLightRenderPass(PointLightRenderEffect renderEffect)
     {
-        _grassEffect = grassEffect;
+        _renderEffect = renderEffect;
     }
 
-    public ShapeBufferType ShapeBufferType => ShapeBufferType.Grass;
+    public ShapeBufferType ShapeBufferType => ShapeBufferType.PointLight;
 
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
-        foreach (var buffer in shapeBuffers)
-        {
-            _grassEffect.Draw(graphicsDevice, buffer, view, projection);
-        }
+       // _renderEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
     }
 
     public void LoadContent(Game game, LoadedTextureSheets textureSheets)
     {
         _textureSheets = textureSheets;
-        _grassEffect.SetTextures(textureSheets);
+        _renderEffect.SetTextures(textureSheets);
     }
 }

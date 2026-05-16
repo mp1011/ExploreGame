@@ -150,21 +150,24 @@ public class Game1 : Game
         loadedTextures.AddTexture(new OutdoorsTextureSheet(Content));
         _renderTargetTransformService.LoadContent(Content);
 
-        // Create and register opaque pass (DrawOrder = 0)
         var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
         var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
-        var twoPassEffect = new TwoPassRenderEffect(basicEffect, pointLightEffect);
-        var opaquePass = new OpaqueRenderPass(twoPassEffect);
+       
+        var opaquePass = new OpaqueRenderPass(basicEffect);
         opaquePass.LoadContent(this, loadedTextures);
         _renderPassRegistry.Register(opaquePass);
 
-        // Create and register glass pass (DrawOrder = 5)
+        var pointLightPass = new PointLightRenderPass(pointLightEffect);
+        pointLightPass.LoadContent(this, loadedTextures);
+        _renderPassRegistry.Register(pointLightPass);
+
+        // Create and register glass pass
         var glassEffect = new GlassRenderEffect(this);
         var glassPass = new GlassRenderPass(glassEffect);
         glassPass.LoadContent(this, loadedTextures);
         _renderPassRegistry.Register(glassPass);
 
-        // Create and register grass pass (DrawOrder = 10)
+        // Create and register grass pass
         var grassEffect = new GrassRenderEffect(_cameraService, this);
         var grassPass = new GrassRenderPass(grassEffect);
         grassPass.LoadContent(this, loadedTextures);

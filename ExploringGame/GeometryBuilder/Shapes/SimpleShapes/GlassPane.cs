@@ -1,4 +1,5 @@
 using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -11,6 +12,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 /// </summary>
 public class GlassPane : Shape
 {
+    public override ShapeBufferType ShapeBufferType => ShapeBufferType.Glass;
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);

@@ -19,11 +19,6 @@ public interface IRenderPass
     ShapeBufferType ShapeBufferType { get; }
 
     /// <summary>
-    /// Creates a ShapeBuffer for a shape claimed by this pass.
-    /// </summary>
-    ShapeBuffer BuildBuffer(GraphicsDevice graphicsDevice, Shape shape, QualityLevel quality);
-
-    /// <summary>
     /// Draws all buffers owned by this pass.
     /// </summary>
     void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection);

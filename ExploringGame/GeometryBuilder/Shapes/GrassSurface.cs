@@ -3,6 +3,7 @@ using ExploringGame.Texture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExploringGame.Rendering;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
@@ -12,6 +13,8 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 /// </summary>
 public class GrassSurface : Shape
 {
+    public override ShapeBufferType ShapeBufferType => ShapeBufferType.Grass;
+        
     private readonly TerrainSurface _terrain;
     private const float BladeHalfWidth = 0.01f;   // ~1 inch lateral spread
     private const float BladeHeight    = 0.25f;   // ~6 inches tall

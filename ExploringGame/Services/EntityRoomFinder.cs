@@ -30,7 +30,7 @@ public class EntityRoomFinder
 
         // Slow path: Find which room contains the position
         var newRoom = FindRoomContainingPosition(shape.Position);
-        shape.Room = newRoom?.LightingGroup;
+        shape.Room = newRoom?.LightingGroup as Room ?? newRoom;
     }
 
     private Room FindRoomContainingPosition(Vector3 position)

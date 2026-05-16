@@ -21,6 +21,9 @@ public class VertexBufferBuilder
 
         BuildBuffers(triangles, vertices, indices, indexCache, textureSheet);
 
+        if (vertices.Count == 0)
+            return (null, null, 0);
+
         var vb = new VertexBuffer(graphicsDevice, typeof(VertexPositionColorNormalTexture), vertices.Count, BufferUsage.WriteOnly);
         vb.SetData(vertices.ToArray());
 

@@ -1,6 +1,8 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
+using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Jitter2.Dynamics;
@@ -21,6 +23,27 @@ public abstract class Shape : IWithPosition, IShape
 {
     public virtual IColliderMaker ColliderMaker => null;
 
+    public virtual ShapeBufferType ShapeBufferType
+    {
+        get
+        {
+            if (Parent != null)
+                return Parent.ShapeBufferType;
+            else
+                return ShapeBufferType.Static;
+        }
+    }
+
+    public virtual ILightingGroup LightingGroup
+    {
+        get
+        {
+            if (Parent != null)
+                return Parent.LightingGroup;
+            else
+                return DefaultLightingGroup.Instance;
+        }
+    }
     public RigidBody[] ColliderBodies { get; set; }
 
     public Shape Parent { get; private set; }

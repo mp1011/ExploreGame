@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
+using ExploringGame.Rendering;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 
@@ -9,6 +10,8 @@ public abstract class PlaceableShape : Shape, IPlaceableObject, ICollidable
 {
     private Vector3 _savedPosition;
     private Rotation _savedRotation;
+
+    public override ShapeBufferType ShapeBufferType => ShapeBufferType.ActiveObject;
 
     public Shape Self => this;
 

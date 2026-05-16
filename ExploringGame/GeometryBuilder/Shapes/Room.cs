@@ -51,7 +51,7 @@ public class Room : Shape, ILightingGroup
         worldSegment.AddChild(this);
     }
 
-    public virtual Room LightingGroup => this;
+    public override ILightingGroup LightingGroup => this;
 
     public void AddConnectingRoom(Room other, Side side, float? placement = null)
     {

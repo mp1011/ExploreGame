@@ -171,7 +171,7 @@ public class LevelData
         }
 
         // Determine the lighting group for this shape buffer
-        Room lightingGroup = room?.LightingGroup;
+        var lightingGroup = room?.LightingGroup;
 
         // Create a new ShapeBuffer that points to the stamped shape
         // but uses the vertex/index buffers from the stamp

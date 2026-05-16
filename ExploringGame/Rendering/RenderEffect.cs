@@ -290,25 +290,3 @@ public class SkyboxRenderEffect : RenderEffect<Effect>
         effect.Parameters["Projection"].SetValue(projection);
     }
 }
-
-public class TwoPassRenderEffect : IRenderEffect
-{
-    private readonly BasicRenderEffect _firstPassEffect;
-    private readonly PointLightRenderEffect _secondPassEffect;
-
-    public TwoPassRenderEffect(BasicRenderEffect firstPassEffect, PointLightRenderEffect secondPassEffect)
-    {
-        _firstPassEffect = firstPassEffect;
-        _secondPassEffect = secondPassEffect;
-    }
-    public void SetTextures(LoadedTextureSheets textureSheets)
-    {
-        _firstPassEffect.SetTextures(textureSheets);
-        _secondPassEffect.SetTextures(textureSheets);
-    }
-    public void Draw(GraphicsDevice graphicsDevice, IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
-    {       
-        _firstPassEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
-        _secondPassEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
-    }
-}

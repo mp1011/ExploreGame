@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExploringGame.Logics;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 
-public class WorldSegment : Shape
+public class WorldSegment : Shape, ILightingGroup
 {
     public override ViewFrom ViewFrom => ViewFrom.None;
 

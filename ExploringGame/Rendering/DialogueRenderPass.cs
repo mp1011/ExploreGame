@@ -30,11 +30,6 @@ public class DialogueRenderPass : IRenderPass
         _dialogueManager = dialogueManager;
     }
 
-    public ShapeBuffer BuildBuffer(GraphicsDevice graphicsDevice, Shape shape, QualityLevel quality)
-    {
-        return null;
-    }
-
     private void UpdateMargins(GraphicsDevice graphicsDevice)
     {
         _leftMargin = graphicsDevice.Viewport.Width * _horizontalPaddingPercent;

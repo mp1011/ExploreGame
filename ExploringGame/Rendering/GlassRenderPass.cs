@@ -24,12 +24,6 @@ public class GlassRenderPass : IRenderPass
         _glassEffect = glassEffect;
     }
 
-    public ShapeBuffer BuildBuffer(GraphicsDevice graphicsDevice, Shape shape, QualityLevel quality)
-    {
-        // Not used - ShapeBufferCreator builds buffers
-        throw new System.NotImplementedException("GlassRenderPass uses ShapeBufferCreator for buffer building");
-    }
-
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
         if (shapeBuffers.Count == 0)

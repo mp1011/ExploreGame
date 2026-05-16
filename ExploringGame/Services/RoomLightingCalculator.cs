@@ -26,13 +26,7 @@ public class RoomLightingCalculator
     private AnnotatedGraph<RoomLightData> _roomLightGraph;
     private readonly List<ILightSource> _allLightSources = new();
 
-    public Room[] LightGroups { get; private set; }
-
-    public RoomLightingCalculator()
-    {
-        _roomGraph = new RoomGraph();
-        _roomLightGraph = new AnnotatedGraph<RoomLightData>(_roomGraph);
-    }
+    public ILightingGroup[] LightGroups { get; private set; }
 
     public AnnotatedGraph<RoomLightData> RoomLightGraph => _roomLightGraph;
 
@@ -50,7 +44,7 @@ public class RoomLightingCalculator
             .Distinct()
             .ToArray();
 
-        foreach (var lightingGroup in LightGroups)
+        foreach (var lightingGroup in LightGroups.OfType<Room>())
             _roomLightGraph.Add(lightingGroup, new RoomLightData(lightingGroup));
     }
 
@@ -152,7 +146,7 @@ public class RoomLightingCalculator
         // Walk the path and calculate decay
         // Only apply decay when crossing between different lighting groups
         float contribution = lightSource.Intensity;
-        Room currentLightingGroup = lightRoom.LightingGroup;
+        var currentLightingGroup = lightRoom.LightingGroup;
 
         for (int i = 0; i < roomPath.Count - 1; i++)
         {
@@ -273,12 +267,15 @@ public class RoomLightingCalculator
     /// <summary>
     /// Gets RoomLightData for a specific lighting group.
     /// </summary>
-    public RoomLightData GetLightDataForGroup(Room lightingGroup)
+    public RoomLightData GetLightDataForGroup(ILightingGroup lightingGroup)
     {
+        if (lightingGroup is Room r)
+            return _roomLightGraph.Get(r);
+
         if (lightingGroup == null)
             return null;
 
-        return _roomLightGraph.Get(lightingGroup);
+        throw new System.NotImplementedException("check me"); 
     }
 
     /// <summary>

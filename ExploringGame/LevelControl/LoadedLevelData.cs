@@ -6,6 +6,7 @@ using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Rendering;
+using ExploringGame.Rendering.ShapeBufferCreators;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -108,21 +109,22 @@ public class LoadedLevelData
 
         AssignRoomsToPlaceableShapes(worldSegment);
 
-        var shapeBufferCreator = new ShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice);
-        var shapeBuffers = shapeBufferCreator.Execute();
+        var shapeBufferCreator = new MasterShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice);
+        var shapeBuffers = shapeBufferCreator.Execute(worldSegment);
 
-        // Build skybox if this segment has one
-        if (worldSegment.Skybox != null)
-        {
-            var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
-            var skyboxBufferCreator = new ShapeBufferCreator(skyboxTriangles, _loadedTextureSheets, _game.GraphicsDevice);
-            var skyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
-            if (skyboxBuffer != null)
-            {
-                // Add skybox buffer to the regular buffers array so it gets grouped by pass
-                shapeBuffers = shapeBuffers.Concat(new[] { skyboxBuffer }).ToArray();
-            }
-        }
+        // TODO - buffer for skybox
+        //// Build skybox if this segment has one
+        //if (worldSegment.Skybox != null)
+        //{
+        //    var skyboxTriangles = worldSegment.Skybox.Build((QualityLevel)8);
+        //    var skyboxBufferCreator = new ShapeBufferCreator(skyboxTriangles, _loadedTextureSheets, _game.GraphicsDevice);
+        //    var skyboxBuffer = skyboxBufferCreator.CreateSkyboxBuffer(worldSegment.Skybox);
+        //    if (skyboxBuffer != null)
+        //    {
+        //        // Add skybox buffer to the regular buffers array so it gets grouped by pass
+        //        shapeBuffers = shapeBuffers.Concat(new[] { skyboxBuffer }).ToArray();
+        //    }
+        //}
 
         var activeObjects = _serviceContainer.CreateControllers(worldSegment.TraverseAllChildren());
 
@@ -148,9 +150,7 @@ public class LoadedLevelData
         foreach (var shape in placeableShapes)
         {
             var room = FindRoomContainingPosition(shape.Position);
-
-            // Use the LightingGroup for consistency (RoomParts point to their parent room)
-            shape.Room = room?.LightingGroup;
+            shape.Room = room?.LightingGroup as Room ?? room;
         }
     }
 

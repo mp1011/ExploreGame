@@ -12,28 +12,22 @@ using System.Linq;
 namespace ExploringGame.Rendering;
 
 /// <summary>
-/// Render pass for standard opaque geometry using two-pass lighting (ambient + point lights).
+/// Render pass for standard opaque geometry.
 /// Acts as catch-all for any shapes not claimed by specialized passes.
 /// </summary>
 public class OpaqueRenderPass : IRenderPass
 {
-    private readonly TwoPassRenderEffect _renderEffect;
+    private readonly BasicRenderEffect _renderEffect;
     private readonly VertexBufferBuilder _vertexBufferBuilder = new();
     private LoadedTextureSheets _textureSheets;
 
-    public OpaqueRenderPass(TwoPassRenderEffect renderEffect)
+    public OpaqueRenderPass(BasicRenderEffect renderEffect)
     {
         _renderEffect = renderEffect;
     }
 
     public ShapeBufferType ShapeBufferType => ShapeBufferType.Normal;
 
-    public ShapeBuffer BuildBuffer(GraphicsDevice graphicsDevice, Shape shape, QualityLevel quality)
-    {
-        // This method isn't used in the current implementation since ShapeBufferCreator
-        // builds buffers with its own logic. This pass only handles drawing.
-        throw new System.NotImplementedException("OpaqueRenderPass uses ShapeBufferCreator for buffer building");
-    }
 
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {

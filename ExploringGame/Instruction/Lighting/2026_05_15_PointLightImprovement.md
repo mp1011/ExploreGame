@@ -12,9 +12,13 @@
 
 # INSTRUCTION
 1. Start by researching the codebase to learn about Lighting Groups and Point Lights. Write your findings into the "RESEARCH NOTES" section.
-2. Write a test that turns off all lights except one, and asserts a neighboring room gets some of the light. Expect this test to fail.
+2. Decide how you will implement this fix and write your plan into # DEVELOPMENT PLAN.
+3. Write a test that turns off all lights except one, and asserts a neighboring room gets some of the light. Expect this test to fail.
     - please note that being a monogame project, tests CANNOT run in parallel
-3. 
+    - expect this test to fail
+4. Based on your research, your development plan, and the failing test, implement the feature.
+
 
 # RESEARCH NOTES
 
+# DEVELOPMENT PLAN

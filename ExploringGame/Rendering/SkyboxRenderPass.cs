@@ -27,13 +27,6 @@ public class SkyboxRenderPass : IRenderPass
 
     public ShapeBufferType ShapeBufferType => ShapeBufferType.Skybox;
 
-    public ShapeBuffer BuildBuffer(GraphicsDevice graphicsDevice, Shape shape, QualityLevel quality)
-    {
-        // This method isn't used in the current implementation since ShapeBufferCreator
-        // builds buffers with its own logic. This pass only handles drawing.
-        throw new System.NotImplementedException("SkyboxRenderPass uses ShapeBufferCreator for buffer building");
-    }
-
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
         if (Debug.NoDepthStencil)

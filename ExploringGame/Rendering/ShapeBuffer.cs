@@ -7,11 +7,14 @@ namespace ExploringGame.Rendering;
 // lower entries are drawn first
 public enum ShapeBufferType
 {
-    Normal,
-    Grass,
-    Skybox,
-    Glass,
-    UI
+    Static = 1,
+    PointLight = 2,
+    ActiveObject = 4,
+    Normal = Static | PointLight | ActiveObject,
+    Grass = 8,
+    Skybox = 16,
+    Glass = 32,
+    UI = 64
 }
 
 public record ShapeBuffer(
