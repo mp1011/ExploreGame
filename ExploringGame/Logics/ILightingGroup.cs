@@ -5,8 +5,4 @@ namespace ExploringGame.Logics;
 /// </summary>
 public interface ILightingGroup
 {
-    /// <summary>
-    /// If set, this value is used as the ambient light instead of LightIntensity.DefaultAmbientLight
-    /// </summary>
-    float? FixedAmbientLight { get; }
 }

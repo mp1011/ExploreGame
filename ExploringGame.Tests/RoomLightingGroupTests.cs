@@ -1,4 +1,5 @@
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -414,7 +415,7 @@ public class RoomLightingGroupTests
                 // Find a light and toggle it
                 var light = loadedLevelData.LoadedSegments
                     .SelectMany(ld => ld.WorldSegment.TraverseAllChildren())
-                    .OfType<ILightSource>()
+                    .OfType<HighHatLight>()
                     .FirstOrDefault(l => l.On);
                 
                 if (light != null && light.Room != null)

@@ -15,52 +15,6 @@ namespace ExploringGame.Tests;
 public class RoomLightingTests
 {
     [Fact]
-    public void AllRoomsHaveMinimalLightWithNoLightsOn()
-    {
-        // Arrange
-        var basement = new HomeWorldSegmentGroup();
-
-        // Act - Run game and turn off lights after initialization
-        using var game = new TestGame(basement, framesToRun: 100, testAssertion: (g, gameTime) =>
-        {
-            // On first update after initialization, turn off all lights in ALL segments
-            if (gameTime.TotalGameTime.TotalMilliseconds < 50)
-            {
-                g.SetAllLights(light => false);
-                return TestResult.CONTINUE;
-            }
-
-            // After a few frames, check the light levels
-            if (gameTime.TotalGameTime.TotalMilliseconds > 200)
-            {
-                var loadedLevelData = g.GetService<LoadedLevelData>();
-                var rooms = loadedLevelData.RoomGraph.GetAllRooms().ToList();
-
-                // All rooms should have minimal light level (0.0)
-                foreach (var room in rooms)
-                {
-                    if (loadedLevelData.LightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
-                    {
-                        var lightLevel = lightData.GetTotalLight();
-                        Assert.Equal(0.0f, lightLevel);
-                    }
-                }
-
-                return TestResult.PASS;
-            }
-
-            return TestResult.CONTINUE;
-        });
-
-        game.Run();
-
-        // Additional assertion after game completes
-        var loadedLevelData = game.GetService<LoadedLevelData>();
-        Assert.NotNull(loadedLevelData);
-        Assert.NotNull(loadedLevelData.LightingCalculator);
-    }
-
-    [Fact]
     public void RoomWithLightSourceHasFullIntensity()
     {
 

@@ -1,5 +1,7 @@
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
@@ -134,7 +136,7 @@ public class RoomLightingCalculator
             return 0f;
 
         // Find the room containing this light
-        var lightRoom = FindRoomContainingPoint(lightSource.LightPosition);
+        var lightRoom = lightSource.Room;
         if (lightRoom == null)
             return 0f;
 
@@ -235,22 +237,18 @@ public class RoomLightingCalculator
 
     private float CalculateDecayFactor(Room from, Room to, RoomConnection connection)
     {
-        // Calculate the size of the opening compared to both walls
-        var fromWallLength = from.SideLength(connection.Side);
-        var toWallLength = to.SideLength(connection.Side.Opposite());
+        var distance = from.Position.DistanceTo(to.Position);
 
-        // The effective opening is constrained by the smaller wall
-        var effectiveOpeningSize = System.Math.Min(fromWallLength, toWallLength);
+        float c = 1.0f;
+        float l = 0.16f;
+        float q = 0.064f;
 
-        // Calculate ratio from both perspectives and use the minimum (the bottleneck)
-        // A small opening in a large wall creates high decay
-        float fromRatio = effectiveOpeningSize / fromWallLength;
-        float toRatio = effectiveOpeningSize / toWallLength;
-        float minRatio = System.Math.Min(fromRatio, toRatio);
+        //float l = 0.09f;
+        //float q = 0.032f;
 
-        // Apply minimum decay threshold to avoid too-dark rooms
-        // Returns values between 0.3 and 1.0
-        return System.Math.Max(0.3f, minRatio);
+        var factor = 1.0f / (c + (l * distance) + (q * distance * distance));
+
+        return System.Math.Max(0.3f, factor);
     }
 
     private RoomConnection FindConnection(Room room1, Room room2)

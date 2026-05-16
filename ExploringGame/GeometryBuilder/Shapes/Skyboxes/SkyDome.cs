@@ -11,8 +11,6 @@ public class SkyDome : SkyboxShape
 
     public override Theme Theme { get; }
 
-    public override float? FixedAmbientLight => LightIntensity.Bright;
-
     private SkyDome()
     {
         Theme = new SkyTheme();

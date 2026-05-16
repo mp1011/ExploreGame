@@ -17,7 +17,7 @@ public class EndTableLamp : LampBase
     protected override LightBulb CreateBulb(Room room, StateKey stateKey)
     {
         var bulb = new LightBulb(room, this, stateKey,
-            diameter: Measure.Inches(4),
+            diameter: Measure.Inches(20),
             intensity: LightIntensity.IndoorLight,
             color: Color.White);
         bulb.Place().AtParent().OnSideOuter(Side.Top);

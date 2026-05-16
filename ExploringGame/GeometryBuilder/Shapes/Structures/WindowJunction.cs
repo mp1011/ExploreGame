@@ -167,7 +167,6 @@ public class Window : Room
 
         var exteriorRoom = new WindowExterior(_parentRoom.WorldSegment, exteriorRoomWidth, exteriorRoomDepth, exteriorRoomHeight);
         exteriorRoom.MainTexture = new TextureInfo(Color.White);
-        exteriorRoom.FixedAmbientLight = LightIntensity.VeryBright;
         return exteriorRoom;
     }
 

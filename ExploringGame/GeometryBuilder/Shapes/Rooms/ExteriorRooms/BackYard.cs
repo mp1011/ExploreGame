@@ -194,6 +194,8 @@ public class BackYard : Room
 
         midGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
         southGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
+
+        AddChild(new OutdoorAmbientLight(this));
     }
 
 }

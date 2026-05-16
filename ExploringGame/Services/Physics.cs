@@ -339,13 +339,6 @@ public class Physics
                 var infoA = bodyA.RigidBody.Tag as CollisionInfo;
                 var infoB = bodyB.RigidBody.Tag as CollisionInfo;
 
-                if(infoA!.Shape?.GetType()?.Name == "OfficeDesk"
-                    || infoB!.Shape?.GetType()?.Name == "OfficeDesk")
-                {
-                    Console.Write(".");
-                }
-                    
-
                 if (infoA == null || infoB == null)
                     return false;
 

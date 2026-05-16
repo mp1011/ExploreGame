@@ -125,10 +125,6 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
 
         float brightness = LightIntensity.DefaultAmbientLight;
         var lightingGroup = shapeBuffer.LightingGroup;
-        if (lightingGroup != null && lightingGroup.FixedAmbientLight.HasValue)
-        {
-            brightness = lightingGroup.FixedAmbientLight.Value;
-        }
 
         if (lightingGroup is Room room && _roomLightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
         {

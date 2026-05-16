@@ -9,8 +9,6 @@ public abstract class SkyboxShape : Shape, ILightingGroup
 {
     public override ViewFrom ViewFrom => ViewFrom.Inside;
 
-    public virtual float? FixedAmbientLight => LightIntensity.Normal;
-
     public SkyboxShape()
     {
         Position = Vector3.Zero;

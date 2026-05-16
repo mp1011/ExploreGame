@@ -1,13 +1,13 @@
-﻿scene cleanup
-	maybe each plot point can have a "cleanup" action
-
-scene transition
-
-scene 2
+﻿scene 2
 	- fix environment lighting
-		- add outdoor lights
-		- add "neighbor" lights
+		X add outdoor lights
+		- point lights able to affect more than room itself
+		
+	- add "neighbor" lights
 	- sky anomaly
 	- ambient noise
 	- force-field
 	
+
+- placeable shapes, need to rethink
+    - placeable shapes with placeable children? doesn't really work

@@ -114,5 +114,6 @@ public class FrontYard : Room
 
         SouthSection = southSection;
 
+        AddChild(new OutdoorAmbientLight(this));
     }
 }
