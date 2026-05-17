@@ -29,7 +29,7 @@ public class PointLightRenderPass : IRenderPass
 
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
-       // _renderEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
+        _renderEffect.Draw(graphicsDevice, shapeBuffers, view, projection);
     }
 
     public void LoadContent(Game game, LoadedTextureSheets textureSheets)

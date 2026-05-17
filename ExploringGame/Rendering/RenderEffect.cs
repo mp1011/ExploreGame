@@ -204,9 +204,6 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         effect.Parameters["Projection"].SetValue(projection);
     }
 
-    /// <summary>
-    /// Gets the active lights for a shape buffer (testable method)
-    /// </summary>
     public (Vector3[] positions, Vector3[] colors, float[] intensities, int count) GetActiveLightsForBuffer(ShapeBuffer shapeBuffer)
     {
         // Pack only lights that are physically in this room's lighting group
@@ -215,36 +212,17 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         var intensities = new float[PointLights.MAX_LIGHTS];
         int activeLightCount = 0;
 
-        var lightingGroup = shapeBuffer.LightingGroup;
-        if (lightingGroup is Room room && _roomLightingCalculator.RoomLightGraph.TryGet(room, out var lightData))
-        {
-            // Get only the light sources physically located in this room
-            // (not lights from neighboring rooms that contribute to ambient lighting)
-            var lightSources = lightData.GetLightSourcesInRoom();
+        foreach(var lightSource in shapeBuffer.PointLights)
+        { 
+            if (!lightSource.On || activeLightCount >= PointLights.MAX_LIGHTS)
+                break;
 
-            foreach (var lightSource in lightSources)
-            {
-                if (activeLightCount >= PointLights.MAX_LIGHTS)
-                    break;
+            positions[activeLightCount] = lightSource.LightPosition;
+            colors[activeLightCount] = lightSource.Color.ToVector3();
 
-                // Only include lights that are currently on
-                if (lightSource.On)
-                {
-                    positions[activeLightCount] = lightSource.LightPosition;
-                    colors[activeLightCount] = lightSource.Color.ToVector3();
-
-                    // Apply scaling to expand the intensity range:
-                    // Power > 1 makes bright lights brighter and dim lights dimmer
-                    // - VeryDim (1) -> ~0.3 (very dim, barely visible)
-                    // - Dim (2) -> ~0.9
-                    // - IndoorLight (3) -> ~1.6 (moderate)
-                    // - Bright (7) -> ~5.9
-                    // - ExtremelyBright (10) -> ~10 (blindingly bright)
-                    var scaledIntensity = MathF.Pow(lightSource.Intensity / 10f, 1.5f) * 10f;
-                    intensities[activeLightCount] = scaledIntensity;
-                    activeLightCount++;
-                }
-            }
+            var scaledIntensity = MathF.Pow(lightSource.Intensity / 10f, 1.5f) * 10f;
+            intensities[activeLightCount] = scaledIntensity;
+            activeLightCount++;
         }
 
         return (positions, colors, intensities, activeLightCount);

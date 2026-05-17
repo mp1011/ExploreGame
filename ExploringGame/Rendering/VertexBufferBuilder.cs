@@ -103,6 +103,8 @@ public class VertexBufferBuilder
 
     public Vector2 CalcTextureCoordinates(Shape shape, Side side, TextureSheet textureSheet, Triangle triangle, Vector3 position, (Vector3, Vector3) corners, Services.TilingPlaneHelper.PlaneInfo planeInfo)
     {
+        if (textureSheet == null)
+            return Vector2.Zero;
         var texture = triangle.TextureInfo;
         var textureCoordinates = texture.Style switch
         {

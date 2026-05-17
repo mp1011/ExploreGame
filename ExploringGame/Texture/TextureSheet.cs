@@ -29,7 +29,8 @@ public enum TextureSheetKey
     Basement,
     Upstairs,
     Sky,
-    Outdoors
+    Outdoors,
+    Default = Basement
 }
 
 public abstract class TextureSheet

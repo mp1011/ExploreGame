@@ -71,13 +71,6 @@ public class UpstairsWorldSegment : WorldSegment
         _den.LoadChildren();
         _halfBath.LoadChildren();
 
-        AddChild(new WallDecalStamp());
-
-        // Add the Light Spirit
-        var lightSpirit = new LightSpirit();
-        lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
-        AddChild(lightSpirit);
-
         var bedroomDoor = TraverseAllChildren().OfType<Door>().Where(p => p.StateKey == StateKey.BedroomDoorOpen).Single().Parent;
 
         var bedroomDoorBlocker = _upstairsHall.AddChild(new Blocker(bedroomDoor) { Tag = "BedroomDoorBlocker" });

@@ -17,6 +17,9 @@ abstract class ShapeBufferCreator
     protected Dictionary<Shape, Triangle[]> _shapeTriangles;
     protected AnnotatedGraph<RoomLightData> _roomLightGraph;
 
+    protected readonly VertexBufferBuilder _vertexBufferBuilder = new VertexBufferBuilder();
+    // private readonly GrassVertexBufferBuilder _grassVertexBufferBuilder = new GrassVertexBufferBuilder();
+
     public ShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles,
         LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice,
         AnnotatedGraph<RoomLightData> roomLightGraph = null)
@@ -27,8 +30,6 @@ abstract class ShapeBufferCreator
         _roomLightGraph = roomLightGraph;
     }
 
-    private readonly VertexBufferBuilder _vertexBufferBuilder = new VertexBufferBuilder();
-    // private readonly GrassVertexBufferBuilder _grassVertexBufferBuilder = new GrassVertexBufferBuilder();
 
     public ShapeBuffer[] Execute(WorldSegment worldSegment)
     {

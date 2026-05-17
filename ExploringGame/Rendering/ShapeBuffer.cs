@@ -8,9 +8,9 @@ namespace ExploringGame.Rendering;
 public enum ShapeBufferType
 {
     Static = 1,
-    PointLight = 2,
-    ActiveObject = 4,
-    Normal = Static | PointLight | ActiveObject,
+    ActiveObject = 2,
+    Normal = Static | ActiveObject,
+    PointLight = 4,    
     Grass = 8,
     Skybox = 16,
     Glass = 32,
@@ -25,6 +25,7 @@ public record ShapeBuffer(
     TextureSheetKey Texture,
     RasterizerState RasterizerState = null,
     ILightingGroup LightingGroup = null,
+    ILightSource[] PointLights = null,
     DepthStencilState DepthStencilState = null,
     ShapeBufferType Type = ShapeBufferType.Normal)
 {}
