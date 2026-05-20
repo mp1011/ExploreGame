@@ -16,7 +16,8 @@ namespace ExploringGame.Rendering.ShapeBufferCreators;
 /// </summary>
 class LightingGroupShapeBufferCreator : ShapeBufferCreator
 {
-    public LightingGroupShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles, LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice, AnnotatedGraph<RoomLightData> roomLightGraph = null) 
+    public LightingGroupShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles, LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice, 
+        AnnotatedGraph<RoomLightData> roomLightGraph) 
         : base(shapeTriangles, loadedTextureSheets, graphicsDevice, roomLightGraph)
     {
     }
@@ -27,7 +28,7 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
         foreach(var lightingGroup in worldSegment.TraverseAllChildren()
             .GroupBy(p => p.LightingGroup))
         {
-            var lights = GetLights(worldSegment).Where(p=>p.On).ToArray(); //todo
+            var lights = GetLights(lightingGroup.Key);
 
             // then by texture key
             foreach(var textureGroup in lightingGroup.GroupBy(p=>p.Theme.TextureSheetKey))
@@ -41,18 +42,23 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
         }
     }
 
-    private ILightSource[] GetLights(WorldSegment worldSegment)
+    private RoomLightData GetLights(ILightingGroup group)
     {
-        var lights = worldSegment.TraverseAllChildren().OfType<ILightSource>().ToArray();
-        return lights;
+        // fix me
+        if (group is Room r)
+            return _roomLightGraph.Get(r);
+        else
+            return null;
     }
+
+  
 
     protected ShapeBuffer CreateShapeBuffer(
        Shape shape,
        Shape[] children,
        TextureSheetKey key,
        ILightingGroup lightingGroup,
-       ILightSource[] lights)
+       RoomLightData lightData)
     {
         var worldSegmentTriangles = new Dictionary<Shape, Triangle[]>();
         foreach (var child in children)
@@ -61,7 +67,7 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup, 
             Type: ShapeBufferType.Normal, 
-            PointLights: lights);
+            LightData: lightData);
     }
 
     private bool IsStatic(Shape s)

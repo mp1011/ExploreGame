@@ -1,8 +1,11 @@
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ExploringGame.Logics.Pathfinding;
+
+public record LightContribution(ILightSource LightSource, float Amount);
 
 /// <summary>
 /// Stores lighting information for a room, including
@@ -12,7 +15,7 @@ public class RoomLightData : IWithRoom
 {
     public Room Room { get; set; }
 
-    private Dictionary<ILightSource, float> _lightContributions = new();
+    private Dictionary<ILightSource, LightContribution> _lightContributions = new();
     private float _cachedTotalLight = 0f;
 
     public RoomLightData(Room room)
@@ -25,7 +28,7 @@ public class RoomLightData : IWithRoom
     /// </summary>
     public void SetLightContribution(ILightSource lightSource, float contribution)
     {
-        _lightContributions[lightSource] = contribution;
+        _lightContributions[lightSource] = new LightContribution(lightSource, contribution);
     }
 
     /// <summary>
@@ -44,7 +47,7 @@ public class RoomLightData : IWithRoom
         if (!_lightContributions.Any())
             return 0f;
 
-        var sortedContributions = _lightContributions.Values.OrderByDescending(x => x);
+        var sortedContributions = _lightContributions.Values.Select(p=>p.Amount).OrderByDescending(x => x);
         float brightness = 0f;
 
         foreach (var contribution in sortedContributions)
@@ -76,6 +79,8 @@ public class RoomLightData : IWithRoom
     {
         return _lightContributions.Keys;
     }
+
+    public IEnumerable<LightContribution> SortedContributions => _lightContributions.Values.Where(p => p.Amount > 0).OrderByDescending(p => p.Amount);
 
     public override string ToString() => $"Light Data ({Room}) = {TotalLight}";  
 }

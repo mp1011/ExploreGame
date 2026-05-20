@@ -37,7 +37,9 @@ public class RoomLightingCalculator
     public void SetRoomGraph(RoomGraph roomGraph)
     {
         _roomGraph = roomGraph;
-        _roomLightGraph = new AnnotatedGraph<RoomLightData>(roomGraph);
+        
+        if(_roomLightGraph == null || !_roomLightGraph.HasRoomGraph(roomGraph))
+            _roomLightGraph = new AnnotatedGraph<RoomLightData>(roomGraph);
 
         LightGroups = _roomGraph.GetAllRooms()
             .Select(r => r.LightingGroup)
@@ -46,7 +48,10 @@ public class RoomLightingCalculator
             .ToArray();
 
         foreach (var lightingGroup in LightGroups.OfType<Room>())
-            _roomLightGraph.Add(lightingGroup, new RoomLightData(lightingGroup));
+        {
+            if(_roomLightGraph.Get(lightingGroup) == null)
+                _roomLightGraph.Add(lightingGroup, new RoomLightData(lightingGroup));
+        }
     }
 
     /// <summary>

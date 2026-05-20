@@ -1,5 +1,12 @@
 ﻿two-pass rendering isn't really working
 
+fix renderer
+	properly calculate light contributes
+	sort by intensity
+	for debugging, limit to one light
+
+
+
 1. use only one shader
 	- keep basic one for certain tests
 	- add texture ability to point light shader

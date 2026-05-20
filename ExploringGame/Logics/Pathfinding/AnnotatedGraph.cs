@@ -19,6 +19,8 @@ public class AnnotatedGraph<T>
         _roomGraph = roomGraph;
     }
 
+    public bool HasRoomGraph(RoomGraph g) => _roomGraph == g;
+
     public void Add(Room room, T annotation)
     {
         _annotations[room] = annotation;

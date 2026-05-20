@@ -214,9 +214,14 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         var intensities = new float[PointLights.MAX_LIGHTS];
         int activeLightCount = 0;
 
-        if (shapeBuffer.PointLights != null)
-        {
-            foreach (var lightSource in shapeBuffer.PointLights)
+        if (shapeBuffer.LightData != null)
+        {            
+            var lights = shapeBuffer.LightData.SortedContributions
+                .Select(p => p.LightSource)
+                .Take(1) // testing
+                .ToArray();
+    
+            foreach (var lightSource in lights)
             {
                 if (!lightSource.On || activeLightCount >= PointLights.MAX_LIGHTS)
                     break;

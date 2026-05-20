@@ -38,40 +38,41 @@ PSInput VSMain(VSInput input)
 {
     PSInput output;
     output.Position = mul(input.Position, World);
-    output.WorldPos = output.Position.xyz;
+    output.WorldPos = input.Position.xyz;
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     output.Color = input.Color;
     output.TexCoord = input.TexCoord;
-    // Transform normal to world space (if needed)
-    output.Normal = mul(float4(input.Normal, 0), World).xyz;
+    float4 worldNormal = mul(float4(input.Normal, 0), World);
+    output.Normal = normalize(worldNormal.xyz);
     return output;
 }
 
 float4 PSMain(PSInput input) : SV_Target
 {
-    float3 texColor = tex2D(TextureSampler, input.TexCoord).rgb;
-    float3 baseColor = texColor * input.Color.rgb;
+    float4 baseColor = tex2D(TextureSampler, input.TexCoord) * input.Color;
     float3 normal = normalize(input.Normal);
-    float3 additionalLight = baseColor;
-
-    for (int i = 0; i < LightCount; ++i)
+    float3 totalLight = float3(0, 0, 0);
+   
+    for (int i = 0; i < MAX_LIGHTS; i++)
     {
+        if (i >= LightCount)
+            break;
+
         float3 toLight = LightPositions[i] - input.WorldPos;
-        float dist = length(toLight);
-        float3 toLightDir = normalize(toLight);
+        float distanceSquared = dot(toLight, toLight);
+        float distance = sqrt(distanceSquared);
+        float3 lightDirection = distance > 0.0001 ? toLight / distance : float3(0, 0, 0);
 
-        // Calculate lighting based on normal angle
-        float NdotL = max(dot(normal, toLightDir), 0.0);
-
-        // Strong attenuation - lights fall off very quickly with distance
-        float attenuation = 1.0 / (1.0 + dist * dist);
-
-        // Add light contribution
-        additionalLight += LightColors[i] * NdotL * LightIntensities[i] * attenuation;
+        float facing = saturate(dot(normal, lightDirection));
+        float attenuation = exp(-2.5 * distance) * LightIntensities[i];
+        
+        float3 newLight = LightColors[i] * (facing * attenuation);
+        totalLight += newLight * 1000;               
     }
     
-    return float4(additionalLight, 1);
+    
+    return float4(saturate(baseColor.rgb + totalLight), baseColor.a);
 }
 
 technique PointLight

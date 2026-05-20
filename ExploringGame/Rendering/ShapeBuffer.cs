@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.Logics;
+using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 namespace ExploringGame.Rendering;
@@ -24,7 +25,7 @@ public record ShapeBuffer(
     TextureSheetKey Texture,
     RasterizerState RasterizerState = null,
     ILightingGroup LightingGroup = null,
-    ILightSource[] PointLights = null,
+    RoomLightData LightData = null,
     DepthStencilState DepthStencilState = null,
     ShapeBufferType Type = ShapeBufferType.Normal)
 {}

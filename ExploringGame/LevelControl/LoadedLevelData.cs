@@ -109,7 +109,7 @@ public class LoadedLevelData
 
         AssignRoomsToPlaceableShapes(worldSegment);
 
-        var shapeBufferCreator = new MasterShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice);
+        var shapeBufferCreator = new MasterShapeBufferCreator(triangles, _loadedTextureSheets, _game.GraphicsDevice, _lightingCalculator.RoomLightGraph);
         var shapeBuffers = shapeBufferCreator.Execute(worldSegment);
 
         // TODO - buffer for skybox

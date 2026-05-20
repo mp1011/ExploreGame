@@ -17,7 +17,7 @@ internal class MasterShapeBufferCreator
 
     public MasterShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles,
         LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice,
-        AnnotatedGraph<RoomLightData> roomLightGraph = null)
+        AnnotatedGraph<RoomLightData> roomLightGraph)
     {
         _textureSheets = loadedTextureSheets;
         _graphicsDevice = graphicsDevice;
