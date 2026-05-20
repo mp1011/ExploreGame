@@ -28,6 +28,12 @@ struct PSInput
     float3 Normal : TEXCOORD2;
 };
 
+Texture2D Texture : register(t0);
+sampler TextureSampler = sampler_state
+{
+    Texture = <Texture>;
+};
+
 PSInput VSMain(VSInput input)
 {
     PSInput output;
@@ -44,8 +50,10 @@ PSInput VSMain(VSInput input)
 
 float4 PSMain(PSInput input) : SV_Target
 {
+    float3 texColor = tex2D(TextureSampler, input.TexCoord).rgb;
+    float3 baseColor = texColor * input.Color.rgb;
     float3 normal = normalize(input.Normal);
-    float3 additionalLight = float3(0, 0, 0);
+    float3 additionalLight = baseColor;
 
     for (int i = 0; i < LightCount; ++i)
     {
@@ -62,9 +70,7 @@ float4 PSMain(PSInput input) : SV_Target
         // Add light contribution
         additionalLight += LightColors[i] * NdotL * LightIntensities[i] * attenuation;
     }
-
-    // Second pass - only return the additional light, not the base color
-    // The base color was already rendered in the first pass (BasicEffect)
+    
     return float4(additionalLight, 1);
 }
 

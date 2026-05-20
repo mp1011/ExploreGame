@@ -153,13 +153,9 @@ public class Game1 : Game
         var basicEffect = new BasicRenderEffect(_serviceContainer.Get<RoomLightingCalculator>(), this);
         var pointLightEffect = new PointLightRenderEffect(_serviceContainer.Get<PointLights>(), _serviceContainer.Get<RoomLightingCalculator>(), this);
        
-        var opaquePass = new OpaqueRenderPass(basicEffect);
+        var opaquePass = new OpaqueRenderPass(pointLightEffect);
         opaquePass.LoadContent(this, loadedTextures);
         _renderPassRegistry.Register(opaquePass);
-
-        var pointLightPass = new PointLightRenderPass(pointLightEffect);
-        pointLightPass.LoadContent(this, loadedTextures);
-        _renderPassRegistry.Register(pointLightPass);
 
         // Create and register glass pass
         var glassEffect = new GlassRenderEffect(this);

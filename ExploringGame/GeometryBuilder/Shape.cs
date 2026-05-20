@@ -17,7 +17,7 @@ namespace ExploringGame.GeometryBuilder;
 
 public interface IShape
 {
-    // fill in as needed
+    Shape[] TraverseAllChildren();
 }
 
 public abstract class Shape : IWithPosition, IShape

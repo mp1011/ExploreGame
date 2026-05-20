@@ -17,11 +17,9 @@ namespace ExploringGame.Rendering;
 /// </summary>
 public class OpaqueRenderPass : IRenderPass
 {
-    private readonly BasicRenderEffect _renderEffect;
-    private readonly VertexBufferBuilder _vertexBufferBuilder = new();
-    private LoadedTextureSheets _textureSheets;
+    private readonly IRenderEffect _renderEffect;
 
-    public OpaqueRenderPass(BasicRenderEffect renderEffect)
+    public OpaqueRenderPass(IRenderEffect renderEffect)
     {
         _renderEffect = renderEffect;
     }
@@ -36,7 +34,6 @@ public class OpaqueRenderPass : IRenderPass
 
     public void LoadContent(Game game, LoadedTextureSheets textureSheets)
     {
-        _textureSheets = textureSheets;
         _renderEffect.SetTextures(textureSheets);
     }
 }

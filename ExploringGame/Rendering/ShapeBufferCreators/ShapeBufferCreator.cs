@@ -40,18 +40,6 @@ abstract class ShapeBufferCreator
 
     protected abstract IEnumerable<ShapeBuffer> CreateShapeBuffers(WorldSegment worldSegment);
 
-    protected ShapeBuffer CreateShapeBuffer(
-       Shape shape,
-       Shape[] children,
-       TextureSheetKey key,
-       ILightingGroup lightingGroup = null)
-    {
-        var worldSegmentTriangles = new Dictionary<Shape, Triangle[]>();
-        foreach (var child in children)
-            worldSegmentTriangles[child] = _shapeTriangles[child];
-
-        var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
-        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup);
-    }
+    
 
 }

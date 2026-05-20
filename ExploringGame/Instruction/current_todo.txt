@@ -1,4 +1,31 @@
-﻿scene 2
+﻿two-pass rendering isn't really working
+
+1. use only one shader
+	- keep basic one for certain tests
+	- add texture ability to point light shader
+	- initial pass will use naive distance to light
+
+
+2. smarter light contribution
+	RoomLightData - more advanced structure
+	simulated distance based on paths to light
+	adjust lights for room
+	find "all" paths
+		base by each neighbor
+
+
+
+
+
+
+
+
+
+
+
+
+
+scene 2
 	- fix environment lighting
 		X add outdoor lights
 		- point lights able to affect more than room itself

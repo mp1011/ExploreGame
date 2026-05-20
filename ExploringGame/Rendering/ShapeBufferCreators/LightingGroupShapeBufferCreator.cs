@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,6 +27,8 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
         foreach(var lightingGroup in worldSegment.TraverseAllChildren()
             .GroupBy(p => p.LightingGroup))
         {
+            var lights = GetLights(worldSegment).Where(p=>p.On).ToArray(); //todo
+
             // then by texture key
             foreach(var textureGroup in lightingGroup.GroupBy(p=>p.Theme.TextureSheetKey))
             {
@@ -33,9 +36,32 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
                 var shapes = textureGroup.Where(p => IsStatic(p)).ToArray();
 
                 if (shapes.Any())
-                    yield return CreateShapeBuffer(worldSegment, shapes, textureKey, lightingGroup.Key);
+                    yield return CreateShapeBuffer(worldSegment, shapes, textureKey, lightingGroup.Key, lights);
             }
         }
+    }
+
+    private ILightSource[] GetLights(WorldSegment worldSegment)
+    {
+        var lights = worldSegment.TraverseAllChildren().OfType<ILightSource>().ToArray();
+        return lights;
+    }
+
+    protected ShapeBuffer CreateShapeBuffer(
+       Shape shape,
+       Shape[] children,
+       TextureSheetKey key,
+       ILightingGroup lightingGroup,
+       ILightSource[] lights)
+    {
+        var worldSegmentTriangles = new Dictionary<Shape, Triangle[]>();
+        foreach (var child in children)
+            worldSegmentTriangles[child] = _shapeTriangles[child];
+
+        var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
+        return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup, 
+            Type: ShapeBufferType.Normal, 
+            PointLights: lights);
     }
 
     private bool IsStatic(Shape s)

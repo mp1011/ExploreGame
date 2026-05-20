@@ -117,7 +117,9 @@ public class BasicRenderEffect : RenderEffect<BasicEffect>
         effect.World = world;
         effect.View = view;
         effect.Projection = projection;
-        effect.AmbientLightColor = AmbientLight(shapeBuffer);
+
+        var b = 0.01f;
+        effect.AmbientLightColor = new Vector3(b,b,b); // AmbientLight(shapeBuffer);
     }
 
     private Vector3 AmbientLight(ShapeBuffer shapeBuffer)
@@ -184,7 +186,7 @@ public class PointLightRenderEffect : RenderEffect<Effect>
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
     {
         var pointLightEffect = contentManager.Load<Effect>("PointLightEffect").Clone();
-        // No texture needed for additive light pass
+        pointLightEffect.Parameters["Texture"].SetValue(texture);
         return pointLightEffect;
     }
 
@@ -212,17 +214,20 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         var intensities = new float[PointLights.MAX_LIGHTS];
         int activeLightCount = 0;
 
-        foreach(var lightSource in shapeBuffer.PointLights)
-        { 
-            if (!lightSource.On || activeLightCount >= PointLights.MAX_LIGHTS)
-                break;
+        if (shapeBuffer.PointLights != null)
+        {
+            foreach (var lightSource in shapeBuffer.PointLights)
+            {
+                if (!lightSource.On || activeLightCount >= PointLights.MAX_LIGHTS)
+                    break;
 
-            positions[activeLightCount] = lightSource.LightPosition;
-            colors[activeLightCount] = lightSource.Color.ToVector3();
+                positions[activeLightCount] = lightSource.LightPosition;
+                colors[activeLightCount] = lightSource.Color.ToVector3();
 
-            var scaledIntensity = MathF.Pow(lightSource.Intensity / 10f, 1.5f) * 10f;
-            intensities[activeLightCount] = scaledIntensity;
-            activeLightCount++;
+                var scaledIntensity = MathF.Pow(lightSource.Intensity / 10f, 1.5f) * 10f;
+                intensities[activeLightCount] = scaledIntensity;
+                activeLightCount++;
+            }
         }
 
         return (positions, colors, intensities, activeLightCount);

@@ -10,11 +10,10 @@ public enum ShapeBufferType
     Static = 1,
     ActiveObject = 2,
     Normal = Static | ActiveObject,
-    PointLight = 4,    
-    Grass = 8,
-    Skybox = 16,
-    Glass = 32,
-    UI = 64
+    Grass = 4,
+    Skybox = 8,
+    Glass = 16,
+    UI = 32
 }
 
 public record ShapeBuffer(

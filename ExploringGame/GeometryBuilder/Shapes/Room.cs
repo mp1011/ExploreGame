@@ -11,6 +11,12 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
+
+public interface IRoom : IShape
+{
+
+}
+
 public class Room : Shape, ILightingGroup
 {
     public WorldSegment WorldSegment { get; private set; }
