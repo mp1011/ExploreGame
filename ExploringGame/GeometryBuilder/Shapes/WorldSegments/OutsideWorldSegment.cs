@@ -71,6 +71,8 @@ public class OutsideWorldSegment : WorldSegment
         _road.Place().OnSideOuter(Side.West, _frontYard);
         _road.AdjustShape().AxisStretch(Axis.Z, 200.0f);
 
+        _road.AddConnectingRoom(_frontYard, Side.East, placement: null);
+
         _sideRoad.Depth = Measure.Feet(32);
         _sideRoad.Height = _road.Height;
         _sideRoad.AdjustShape().AxisStretch(Axis.X, 200.0f);
@@ -130,5 +132,11 @@ public class OutsideWorldSegment : WorldSegment
         DebugShapeLogger.LogShape("OutsideWorldSegment PositionChildren end", _frontYard);
 
         new BlockerCreator().ExecuteForDoors(this, StateKey.FrontDoorOpen);
+
+
+
+        var streetLight = AddChild(new StreetLight(_road));
+        streetLight.Place().OnSideInner(Side.East, _road);
+        streetLight.Z = _frontYard.GetSide(Side.North) - Measure.Feet(10);
     }
 }

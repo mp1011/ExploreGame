@@ -6,6 +6,7 @@ namespace ExploringGame.LevelControl;
 public enum StateKey
 {
     None,
+    AlwaysOn,
     OfficeDoor1Open,
     OfficeDoor2Open,
     OfficeDoor3Open,
@@ -45,11 +46,6 @@ public class GameState
 {
     private Dictionary<StateKey, int> _values = new();
     
-
-    public GameState()
-    {        
-    }
-
     public int Get(StateKey key)
     {
         if (key == StateKey.None)

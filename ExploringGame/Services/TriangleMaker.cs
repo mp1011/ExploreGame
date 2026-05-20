@@ -274,6 +274,9 @@ public static class TriangleMaker
             ));
         }
 
+        if (triangles.All(p => p.IsDegenerate))
+            throw new Exception("Failed to build ellipsoid");
+
         return triangles.ToArray();
     }
 

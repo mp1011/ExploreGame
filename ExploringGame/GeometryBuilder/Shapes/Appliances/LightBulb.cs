@@ -19,9 +19,9 @@ public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, I
         Room = room;
         StateKey = key;
 
-        Width = Measure.Inches(diameter);
-        Height = Measure.Inches(diameter);
-        Depth = Measure.Inches(diameter);
+        Width = diameter;
+        Height = diameter;
+        Depth = diameter;
     }
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
@@ -58,7 +58,11 @@ public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, I
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        return TriangleMaker.BuildEllipsoid(this);
+        //hack
+        if (Width < Measure.Inches(1))
+            return BuildCuboid();
+
+        return TriangleMaker.BuildEllipsoid(this, 8);
     }
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
@@ -68,5 +72,10 @@ public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, I
         Controller = controller;
         On = _on; // Apply the stored state
         return controller;
+    }
+
+    public override string ToString()
+    {
+        return $"LightBulb ({Parent})";
     }
 }

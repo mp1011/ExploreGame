@@ -1,6 +1,7 @@
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;

@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Rendering;
@@ -54,6 +55,7 @@ public abstract class Shape : IWithPosition, IShape
 
     public abstract ViewFrom ViewFrom { get; }
     public Vector3 Position { get; set; }
+
     public Vector3 Size { get; set; }
     public string Tag { get; set; }
 

@@ -1,5 +1,7 @@
 ﻿
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
@@ -9,13 +11,16 @@ public abstract class ShapePart : Shape
 
     protected sealed override void BeforeBuild()
     {
+        if (this.Parent is StreetLight)
+            Console.Write(".");
+
         _originalPos = Position;
 
-        Position += Parent.Position;        
+      //  Position += Parent.Position;        
     }
 
     protected sealed override void AfterBuild()
     {
-        Position = _originalPos;
+       // Position = _originalPos;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
 using ExploringGame.Story.Character;
 using ExploringGame.Story.PlotPoints;
@@ -31,6 +32,12 @@ internal class UpstairsLightsOff : ConditionalBlocker
 
         var nightLight = _loadedLevelData.LoadedSegments.FindShape<NightLight>();
         nightLight.Controller.On = true;
+
+        // todo, doesn't belong here
+        foreach(var streetLight in _loadedLevelData.LoadedSegments.FindShapes<StreetLight>())
+        {
+            streetLight.Controller.On = true;
+        }
     }
 
     protected override bool CheckActivation_Inner(GameTime gameTime)

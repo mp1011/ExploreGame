@@ -23,6 +23,9 @@ public abstract class LampBase : PlaceableShape, IControllable<LightSwitchContro
 
     public LampBase(Room room, StateKey stateKey, float width, float depth, float height)
     {
+        Room = room;
+        room.AddChild(this);
+
         StateKey = stateKey;
         Width = width;
         Height = height;
