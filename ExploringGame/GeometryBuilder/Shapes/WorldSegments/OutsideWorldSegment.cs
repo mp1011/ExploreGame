@@ -135,8 +135,8 @@ public class OutsideWorldSegment : WorldSegment
 
 
 
-        var streetLight = AddChild(new StreetLight(_road));
-        streetLight.Place().OnSideInner(Side.East, _road);
-        streetLight.Z = _frontYard.GetSide(Side.North) - Measure.Feet(10);
+      //  var streetLight = AddChild(new StreetLight(_road));
+      //  streetLight.Place().OnSideInner(Side.East, _road);
+      //  streetLight.Z = _frontYard.GetSide(Side.North) - Measure.Feet(10);
     }
 }

@@ -5,6 +5,12 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 
+float DAtten;
+float DMod;
+float LAtten;
+float LMod;
+
+
 float3 LightPositions[MAX_LIGHTS];
 float3 LightColors[MAX_LIGHTS];
 float LightIntensities[MAX_LIGHTS];
@@ -64,15 +70,25 @@ float4 PSMain(PSInput input) : SV_Target
         float distance = sqrt(distanceSquared);
         float3 lightDirection = distance > 0.0001 ? toLight / distance : float3(0, 0, 0);
 
+        // Distance-based lighting (no normal check - purely on proximity)
+        float distanceAttenuation = exp(DAtten * distance) * LightIntensities[i] * DMod;
+        float newDistanceLight = baseColor.rgb * distanceAttenuation;
+
+        // Normal-based lighting (directional shading)
         float facing = saturate(dot(normal, lightDirection));
-        float attenuation = exp(-2.5 * distance) * LightIntensities[i];
+        float normalAttenuation = exp(LAtten * distance) * LightIntensities[i] * LMod;
+        float newNormalLight = LightColors[i].rgb * (facing * normalAttenuation);
         
-        float3 newLight = LightColors[i] * (facing * attenuation);
-        totalLight += newLight * 1000;               
+         totalLight += max(newDistanceLight, newNormalLight);
     }
     
+    float NORMAL_LIGHT_THRESHOLD = 0.5;
+    float currentLuminance = dot(totalLight, float3(0.2126, 0.7152, 0.0722));
     
-    return float4(saturate(baseColor.rgb + totalLight), baseColor.a);
+    // Blend factor: 1 when lit normally (shows baseColor), 0 when dark (shows black)
+    float blendFactor = saturate(saturate(currentLuminance / NORMAL_LIGHT_THRESHOLD) - 0.5);
+    
+    return float4(saturate(lerp(float3(0, 0, 0), baseColor.rgb + totalLight, blendFactor)), baseColor.a);
 }
 
 technique PointLight

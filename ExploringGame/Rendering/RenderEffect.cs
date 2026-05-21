@@ -190,16 +190,30 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         return pointLightEffect;
     }
 
+    public static float DAtten = -0.16f;
+    public static float DMod = 0f; // 0.3f;
+
+    public static float LAtten = -0.2f;
+    public static float LMod = 0.5f;
+
+
     public override void SetParameters(Effect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
     {
         var world = shapeBuffer.Shape.GetWorldMatrix();
 
         var (positions, colors, intensities, count) = GetActiveLightsForBuffer(shapeBuffer);
 
-        effect.Parameters["LightPositions"].SetValue(positions);
-        effect.Parameters["LightColors"].SetValue(colors);
+        effect.Parameters["LightPositions"]?.SetValue(positions);
+        effect.Parameters["LightColors"]?.SetValue(colors);
         effect.Parameters["LightIntensities"].SetValue(intensities);
         effect.Parameters["LightCount"].SetValue(count);
+
+        effect.Parameters["DAtten"].SetValue(DAtten);
+        effect.Parameters["DMod"].SetValue(DMod);
+
+        effect.Parameters["LAtten"].SetValue(LAtten);
+        effect.Parameters["LMod"].SetValue(LMod);
+
 
         effect.Parameters["World"].SetValue(world);
         effect.Parameters["View"].SetValue(view);
@@ -218,7 +232,6 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         {            
             var lights = shapeBuffer.LightData.SortedContributions
                 .Select(p => p.LightSource)
-                .Take(1) // testing
                 .ToArray();
     
             foreach (var lightSource in lights)

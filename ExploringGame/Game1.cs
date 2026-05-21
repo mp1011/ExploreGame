@@ -226,9 +226,19 @@ public class Game1 : Game
             _playerMotion.Update(gameTime, Window);
         }
 
+        if (_playerInput.IsKeyPressed(Keys.NumPad7))
+            PointLightRenderEffect.LAtten += 0.01f;
+        if (_playerInput.IsKeyPressed(Keys.NumPad1))
+            PointLightRenderEffect.LAtten -= 0.01f;
+        if (_playerInput.IsKeyPressed(Keys.NumPad9))
+            PointLightRenderEffect.LMod += 0.1f;
+        if (_playerInput.IsKeyPressed(Keys.NumPad3))
+            PointLightRenderEffect.LMod -= 0.1f;
+
+
         // Update debug display with player health
-       // GameDebug.Debug.Watch1 = $"Player Health: {_player.Health}";
-        
+        // GameDebug.Debug.Watch1 = $"Player Health: {_player.Health}";
+
         // Check if player is dead
         if (_player.Health <= 0)
         {
@@ -328,12 +338,15 @@ public class Game1 : Game
 
         // Draw debug information
         _spriteBatch.Begin();
-        _spriteBatch.DrawString(_debugFont,
-            $"Position: X={_player.Position.X.ToString("0.00")} Y={_player.Position.Y.ToString("0.00")} Z={_player.Position.Z.ToString("0.00")}",
-            new Vector2(10, 10), Color.White);
+        _spriteBatch.DrawString(_debugFont, $"DAtten: {PointLightRenderEffect.DAtten}    DMod: {PointLightRenderEffect.DMod}", new Vector2(10, 30), Color.Green);
+        _spriteBatch.DrawString(_debugFont, $"LAtten: {PointLightRenderEffect.LAtten}    LMod: {PointLightRenderEffect.LMod}", new Vector2(10, 50), Color.Green);
 
-        _spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString("0.00"), new Vector2(10, 30), Color.White);
-        _spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString("0.00"), new Vector2(10, 50), Color.White);
+        //_spriteBatch.DrawString(_debugFont,
+        //    $"Position: X={_player.Position.X.ToString("0.00")} Y={_player.Position.Y.ToString("0.00")} Z={_player.Position.Z.ToString("0.00")}",
+        //    new Vector2(10, 10), Color.White);
+
+        //_spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString("0.00"), new Vector2(10, 30), Color.White);
+        //_spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString("0.00"), new Vector2(10, 50), Color.White);
 
         _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString("0.00"), new Vector2(10, 80), Color.White);
         _spriteBatch.DrawString(_debugFont, "Watch1: " + Debug.Watch1 ?? "", new Vector2(10, 100), Color.White);
