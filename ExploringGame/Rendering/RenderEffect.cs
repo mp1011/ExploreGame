@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -225,7 +226,7 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         int activeLightCount = 0;
 
         if (shapeBuffer.LightData != null)
-        {            
+        {
             var lights = shapeBuffer.LightData.SortedContributions
                 .Select(p => p.LightSource)
                 .ToArray();
@@ -236,6 +237,12 @@ public class PointLightRenderEffect : RenderEffect<Effect>
                     break;
 
                 positions[activeLightCount] = lightSource.LightPosition;
+
+                if(shapeBuffer.Shape is IPlaceableObject)
+                {
+                    positions[activeLightCount] = lightSource.LightPosition - shapeBuffer.Shape.Position;
+                }
+
                 colors[activeLightCount] = lightSource.Color.ToVector3();
 
                 intensities[activeLightCount] = lightSource.Intensity;

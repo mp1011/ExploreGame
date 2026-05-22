@@ -17,6 +17,7 @@ namespace ExploringGame.GeometryBuilder;
 
 public interface IShape
 {
+    string Tag { get; }
     Shape[] TraverseAllChildren();
     bool ContainsPoint(Vector3 point);
     Vector3 Position { get; }

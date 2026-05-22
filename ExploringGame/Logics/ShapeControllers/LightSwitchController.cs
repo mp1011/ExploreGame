@@ -16,6 +16,8 @@ public interface ISwitchShape : ICollidable, IShape
     List<IOnOff> ControlledObjects { get; }
     StateKey StateKey { get; }
     bool On { get; set; }
+
+    LightSwitchController Controller { get; }
 }
 
 public class LightSwitchController : IShapeController<ISwitchShape>, IOnOff, IPlayerActivated

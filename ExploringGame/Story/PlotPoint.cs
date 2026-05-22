@@ -5,6 +5,7 @@ using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Story.Character;
+using ExploringGame.Story.Debug;
 using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
 using System;
@@ -95,6 +96,11 @@ public class PlotPointFactory
     public PlayerMoveTo PlayerMoveTo(Vector3 position, params PlotPoint[] requiredDone)
     {
         return new PlayerMoveTo(_player, position, requiredDone);
+    }
+
+    public DebugSetLights DebugSetLights(params StateKey[] lights)
+    {
+        return new DebugSetLights(_loadedLevelData, lights);
     }
 
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint

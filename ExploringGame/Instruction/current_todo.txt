@@ -1,9 +1,14 @@
 ﻿lighting improvement
 
-- single light, fixed intensity
-- multiple lights
-- apply lights to active objects
+- light intensities
+	- add a class to set lights specifically
+	- override existing behavior
+	- dial in the intensities of each light type
+		- normal lights
+		- night light
+		- street light
+
+
 - add remaining buffers
-- multiple lights with normal-based lighting
 - multiple lights with light bleed protection
 - colored lights

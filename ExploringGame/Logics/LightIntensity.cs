@@ -6,45 +6,19 @@ namespace ExploringGame.Logics;
 /// </summary>
 public static class LightIntensity
 {
-    /// <summary>
-    /// Complete darkness (0.0)
-    /// </summary>
     public const float Darkness = 0f;
 
-    /// <summary>
-    /// Very dim light (1.0)
-    /// </summary>
-    public const float VeryDim = 1f;
+    public const float VeryDim = 0.1f;
 
-    /// <summary>
-    /// Dim light (2.0)
-    /// </summary>
-    public const float Dim = 2f;
+    public const float Dim = 0.4f;
 
-    /// <summary>
-    /// Indoor lighting - typical for residential rooms (3.0)
-    /// </summary>
-    public const float IndoorLight = 3f;
+    public const float IndoorLight = 1.0f;
 
-    /// <summary>
-    /// Normal light level (5.0)
-    /// </summary>
-    public const float Normal = 5f;
+    public const float Bright = 1.2f;
 
-    /// <summary>
-    /// Bright light (7.0)
-    /// </summary>
-    public const float Bright = 7f;
+    public const float VeryBright = 2.0f;
 
-    /// <summary>
-    /// Very bright light (9.0)
-    /// </summary>
-    public const float VeryBright = 9f;
-
-    /// <summary>
-    /// Extremely bright - blindingly bright (10.0)
-    /// </summary>
-    public const float ExtremelyBright = 10f;
+    public const float ExtremelyBright = 3.0f;
 
     /// <summary>
     /// Default ambient light level for rooms without lighting data.

@@ -62,18 +62,20 @@ float DistanceBasedLight(PSInput input)
         float distanceSquared = dot(toLight, toLight);
         float distance = sqrt(distanceSquared);
 
-        float d1 = 0.5;
-        float d2 = 2.0;
-        float d3 = 4.0;
-        float d4 = 12.0;
-        float d5 = 30.0;
+        // ideal for indoor light
+        float mod = LightIntensities[i];
+        float d1 = 0.5 * mod;
+        float d2 = 2.0 * mod;
+        float d3 = 4.0 * mod;
+        float d4 = 12.0 * mod;
+        float d5 = 20.0 * mod;
         
-        float l1 = 2.0;
-        float l2 = 0.8;
-        float l3 = 0.4;
-        float l4 = 0.2;
-        float l5 = 0.1;
-    
+        float l1 = 2.0 * mod;
+        float l2 = 0.8 * mod;
+        float l3 = 0.4 * mod;
+        float l4 = 0.2 * mod;
+        float l5 = 0.1 * mod;
+                
         // Distance-based with falloff and color scaling
         if (distance < d1)
         {
@@ -105,7 +107,7 @@ float DistanceBasedLight(PSInput input)
         {
             distRatio = 0;
         }
-        
+               
         if (distRatio > bestRatio)
             bestRatio = distRatio;
     }
@@ -134,7 +136,7 @@ float NormalBasedLight(PSInput input)
 
         float attenuation = saturate(1.0f - (distance / 8.0f));
 
-        normRatio = NdotL * attenuation;
+        normRatio = NdotL * attenuation * LightIntensities[i];
         
         if (normRatio > bestNormRatio)
             bestNormRatio = normRatio;
@@ -151,7 +153,7 @@ float4 PSMain(PSInput input) : SV_Target
     float distRatio = DistanceBasedLight(input);
     float normRatio = NormalBasedLight(input);
     float lightRatio = max(distRatio, normRatio);
-    
+
     return float4(sampledColor.rgb * lightRatio, 1.0f);
 }
 

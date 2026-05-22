@@ -9,6 +9,7 @@ using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Services;
 using ExploringGame.Story;
+using ExploringGame.Story.Debug;
 using ExploringGame.Story.PlotPoints;
 using ExploringGame.Story.Scene01;
 using ExploringGame.Story.Scene01.Act01;
@@ -130,7 +131,8 @@ public class Game1 : Game
 
     protected virtual Scene LoadInitialScene()
     {
-        return _serviceContainer.Get<SceneOne>();
+        return _serviceContainer.Get<DebugScene>();
+//        return _serviceContainer.Get<SceneOne>();
     }
 
     protected override void LoadContent()
