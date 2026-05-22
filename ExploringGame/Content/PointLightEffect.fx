@@ -5,7 +5,6 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 
-
 float3 LightPositions[MAX_LIGHTS];
 float3 LightColors[MAX_LIGHTS];
 float LightIntensities[MAX_LIGHTS];
@@ -70,9 +69,9 @@ float DistanceBasedLight(PSInput input)
         float d5 = 30.0;
         
         float l1 = 2.0;
-        float l2 = 1.0;
-        float l3 = 0.6;
-        float l4 = 0.4;
+        float l2 = 0.8;
+        float l3 = 0.4;
+        float l4 = 0.2;
         float l5 = 0.1;
     
         // Distance-based with falloff and color scaling
@@ -114,13 +113,45 @@ float DistanceBasedLight(PSInput input)
     return bestRatio;
 }
 
+float NormalBasedLight(PSInput input)
+{    
+    float normRatio = 0.0f;
+    float bestNormRatio = 0.0;
+    float3 normal = normalize(input.Normal);
+    
+    for (int i = 0; i < MAX_LIGHTS; i++)
+    {
+        if (i >= LightCount) 
+            break;
+
+        float3 lightVector = LightPositions[i] - input.WorldPos;
+
+        float distance = length(lightVector);
+
+        float3 lightDir = lightVector / distance;
+
+        float NdotL = saturate(dot(normal, lightDir));
+
+        float attenuation = saturate(1.0f - (distance / 8.0f));
+
+        normRatio = NdotL * attenuation;
+        
+        if (normRatio > bestNormRatio)
+            bestNormRatio = normRatio;
+    }
+    
+    return bestNormRatio;
+}
+
 float4 PSMain(PSInput input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
     float4 sampledColor = tex2D(TextureSampler, input.TexCoord) * input.Color;
     
-    float lightRatio = DistanceBasedLight(input);
-
+    float distRatio = DistanceBasedLight(input);
+    float normRatio = NormalBasedLight(input);
+    float lightRatio = max(distRatio, normRatio);
+    
     return float4(sampledColor.rgb * lightRatio, 1.0f);
 }
 
