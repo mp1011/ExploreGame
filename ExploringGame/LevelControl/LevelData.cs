@@ -162,7 +162,7 @@ public class LevelData
         }
 
         // Detect which room the stamped shape is in
-        Room room = null;
+        IRoom room = null;
         if (roomGraph != null && stampedShape is IPlaceableObject placeableShape)
         {
             // Find the room containing this position
@@ -188,7 +188,7 @@ public class LevelData
         StampedShapeBuffers.Add(stampedBuffer);
     }
 
-    private Room FindRoomContainingPosition(Vector3 position, RoomGraph roomGraph)
+    private IRoom FindRoomContainingPosition(Vector3 position, RoomGraph roomGraph)
     {
         // Check each room to see if it contains the position
         foreach (var room in roomGraph.GetAllRooms())
@@ -198,7 +198,7 @@ public class LevelData
         }
 
         // If no room contains the point, find the nearest room
-        Room nearestRoom = null;
+        IRoom nearestRoom = null;
         float nearestDistance = float.MaxValue;
 
         foreach (var room in roomGraph.GetAllRooms())

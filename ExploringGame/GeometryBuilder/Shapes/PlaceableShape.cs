@@ -17,7 +17,7 @@ public abstract class PlaceableShape : Shape, IPlaceableObject, ICollidable
 
     Shape[] IPlaceableObject.Children => TraverseAllChildren();
 
-    public Room Room { 
+    public IRoom Room { 
         get; 
         set; 
     }

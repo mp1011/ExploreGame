@@ -130,7 +130,7 @@ public class RoomLightingCalculator
     /// <summary>
     /// Calculate light contribution from a specific light source to a specific room
     /// </summary>
-    public float CalculateLightContribution(ILightSource lightSource, Room targetRoom)
+    public float CalculateLightContribution(ILightSource lightSource, IRoom targetRoom)
     {
         if (!lightSource.On)
             return 0f;
@@ -194,7 +194,7 @@ public class RoomLightingCalculator
     /// <summary>
     /// Determines the contribution of each light towards this room
     /// </summary>
-    private void RecalculateLightContributions(Room room, IEnumerable<ILightSource> allLights)
+    private void RecalculateLightContributions(IRoom room, IEnumerable<ILightSource> allLights)
     {
         if (!_roomLightGraph.TryGet(room, out var lightData))
             return;
@@ -235,7 +235,7 @@ public class RoomLightingCalculator
         }
     }
 
-    private float CalculateDecayFactor(Room from, Room to, RoomConnection connection)
+    private float CalculateDecayFactor(IRoom from, IRoom to, RoomConnection connection)
     {
         var distance = from.Position.DistanceTo(to.Position);
 
@@ -251,16 +251,16 @@ public class RoomLightingCalculator
         return System.Math.Max(0.3f, factor);
     }
 
-    private RoomConnection FindConnection(Room room1, Room room2)
+    private RoomConnection FindConnection(IRoom room1, IRoom room2)
     {
         return room1.RoomConnections.FirstOrDefault(rc =>
             rc.GetOtherRoom(room1) == room2);
     }
 
-    private Door FindDoor(Room room) =>    
+    private Door FindDoor(IRoom room) =>    
         room.TraverseAllChildren().OfType<Door>().FirstOrDefault();
     
-    private Room FindRoomContainingPoint(Vector3 position)
+    private IRoom FindRoomContainingPoint(Vector3 position)
     {
         foreach (var room in _roomGraph.GetAllRooms())
         {

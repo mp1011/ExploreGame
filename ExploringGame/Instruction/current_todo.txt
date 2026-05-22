@@ -1,47 +1,9 @@
-﻿two-pass rendering isn't really working
+﻿lighting improvement
 
-fix renderer
-	properly calculate light contributes
-	sort by intensity
-	for debugging, limit to one light
-
-
-
-1. use only one shader
-	- keep basic one for certain tests
-	- add texture ability to point light shader
-	- initial pass will use naive distance to light
-
-
-2. smarter light contribution
-	RoomLightData - more advanced structure
-	simulated distance based on paths to light
-	adjust lights for room
-	find "all" paths
-		base by each neighbor
-
-
-
-
-
-
-
-
-
-
-
-
-
-scene 2
-	- fix environment lighting
-		X add outdoor lights
-		- point lights able to affect more than room itself
-		
-	- add "neighbor" lights
-	- sky anomaly
-	- ambient noise
-	- force-field
-	
-
-- placeable shapes, need to rethink
-    - placeable shapes with placeable children? doesn't really work
+- single light, fixed intensity
+- multiple lights
+- apply lights to active objects
+- add remaining buffers
+- multiple lights with normal-based lighting
+- multiple lights with light bleed protection
+- colored lights

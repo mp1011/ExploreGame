@@ -13,7 +13,7 @@ public record LightContribution(ILightSource LightSource, float Amount);
 /// </summary>
 public class RoomLightData : IWithRoom
 {
-    public Room Room { get; set; }
+    public IRoom Room { get; set; }
 
     private Dictionary<ILightSource, LightContribution> _lightContributions = new();
     private float _cachedTotalLight = 0f;

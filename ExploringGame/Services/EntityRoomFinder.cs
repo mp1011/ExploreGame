@@ -33,7 +33,7 @@ public class EntityRoomFinder
         shape.Room = newRoom?.LightingGroup as Room ?? newRoom;
     }
 
-    private Room FindRoomContainingPosition(Vector3 position)
+    private IRoom FindRoomContainingPosition(Vector3 position)
     {
         var roomGraph = _loadedLevelData.RoomGraph;
         if (roomGraph == null)
@@ -47,7 +47,7 @@ public class EntityRoomFinder
         }
 
         // If no room contains the point, find the nearest room
-        Room nearestRoom = null;
+        IRoom nearestRoom = null;
         float nearestDistance = float.MaxValue;
 
         foreach (var room in roomGraph.GetAllRooms())
@@ -63,7 +63,7 @@ public class EntityRoomFinder
         return nearestRoom;
     }
 
-    public Room FindRoom(Vector3 position)
+    public IRoom FindRoom(Vector3 position)
     {
         return FindRoomContainingPosition(position);
     }

@@ -32,7 +32,7 @@ class ActiveObjectShapeBufferCreator : ShapeBufferCreator
         foreach(var textureGroup in activeObject.Self.TraverseAllChildren().GroupBy(p=>p.Theme.TextureSheetKey))
         {
             // Use the Room's LightingGroup if the active object has a room assigned
-            var lightingGroup = activeObject.Room?.LightingGroup;
+            var lightingGroup = activeObject.Room?.LightingGroup;           
             yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, textureGroup.Key, lightingGroup);
         }
     }
@@ -48,7 +48,11 @@ class ActiveObjectShapeBufferCreator : ShapeBufferCreator
             worldSegmentTriangles[child] = _shapeTriangles[child];
 
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
+
+        var lights = GetLights(lightingGroup);
+
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup,
+            LightData: lights,
             Type: ShapeBufferType.Normal);
     }
 }

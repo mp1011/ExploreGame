@@ -12,9 +12,11 @@ public class WorldSegment : Shape, ILightingGroup
 
     public virtual Vector3 DefaultPlayerStart { get; }
 
-
-
     public virtual SkyboxShape Skybox => null;
+
+    public IEnumerable<RoomConnection> RoomConnections => Array.Empty<RoomConnection>();
+
+    WorldSegment IRoom.WorldSegment => this;
 
     public WorldSegment(params Shape[] contents)
     {

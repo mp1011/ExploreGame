@@ -12,7 +12,7 @@ public class AnnotatedGraph<T>
     where T:IWithRoom
 {
     private readonly RoomGraph _roomGraph;
-    private readonly Dictionary<Room, T> _annotations = new();
+    private readonly Dictionary<IRoom, T> _annotations = new();
 
     public AnnotatedGraph(RoomGraph roomGraph)
     {
@@ -21,17 +21,17 @@ public class AnnotatedGraph<T>
 
     public bool HasRoomGraph(RoomGraph g) => _roomGraph == g;
 
-    public void Add(Room room, T annotation)
+    public void Add(IRoom room, T annotation)
     {
         _annotations[room] = annotation;
     }
 
-    public T Get(Room room)
+    public T Get(IRoom room)
     {
         return _annotations.TryGetValue(room, out var annotation) ? annotation : default;
     }
 
-    public bool TryGet(Room room, out T annotation)
+    public bool TryGet(IRoom room, out T annotation)
     {
         return _annotations.TryGetValue(room, out annotation);
     }
@@ -43,7 +43,7 @@ public class AnnotatedGraph<T>
             .Select(neighbor => _annotations[neighbor]);
     }
 
-    public IEnumerable<Room> GetAllRooms()
+    public IEnumerable<IRoom> GetAllRooms()
     {
         return _annotations.Keys;
     }
@@ -53,7 +53,7 @@ public class AnnotatedGraph<T>
         return _annotations.Values;
     }
 
-    public List<T> FindPath(Room start, Room goal)
+    public List<T> FindPath(IRoom start, IRoom goal)
     {
         var roomPath = _roomGraph.FindPath(start, goal);
         return roomPath

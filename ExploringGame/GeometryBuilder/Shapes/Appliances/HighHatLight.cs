@@ -20,7 +20,7 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController<H
 
     public Color Color { get; set; } = Color.White;
 
-    public Room Room { get; }
+    public IRoom Room { get; }
 
     public Vector3 LightPosition => Position + new Vector3(0, -Height / 2f, 0);
 

@@ -1,5 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
@@ -33,6 +35,8 @@ internal class MasterShapeBufferCreator
             yield return new ActiveObjectShapeBufferCreator(_shapeTriangles, _textureSheets, _graphicsDevice, _roomLightGraph);
         }
     }
+
+
 
     public ShapeBuffer[] Execute(WorldSegment worldSegment)
     {

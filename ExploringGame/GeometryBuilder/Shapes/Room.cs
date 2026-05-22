@@ -14,6 +14,13 @@ namespace ExploringGame.GeometryBuilder.Shapes;
 
 public interface IRoom : IShape
 {
+    ILightingGroup LightingGroup { get; }
+    IEnumerable<RoomConnection> RoomConnections { get; }
+    WorldSegment WorldSegment { get; }
+}
+
+public static class IRoomExtensions
+{
 
 }
 
@@ -161,9 +168,9 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         : this(Room, Other, Side, CalcPosition(Room, Other, Side, Align, Offset)) { }
     public RoomConnection Reverse() => new RoomConnection(Other, Room, Side.Opposite(), 1.0f - Position);
 
-    public Room GetOtherRoom(Room r) => r == Room ? Other : Room;
+    public Room GetOtherRoom(IRoom r) => r == Room ? Other : Room;
 
-    private static float CalcPosition(Room room, Room other, Side side, HAlign align, float offset)
+    private static float CalcPosition(IRoom room, IRoom other, Side side, HAlign align, float offset)
     {
         switch(align)
         {

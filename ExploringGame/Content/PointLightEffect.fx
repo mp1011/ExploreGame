@@ -5,11 +5,6 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 
-float DAtten;
-float DMod;
-float LAtten;
-float LMod;
-
 
 float3 LightPositions[MAX_LIGHTS];
 float3 LightColors[MAX_LIGHTS];
@@ -56,39 +51,72 @@ PSInput VSMain(VSInput input)
 
 float4 PSMain(PSInput input) : SV_Target
 {
-    float4 baseColor = tex2D(TextureSampler, input.TexCoord) * input.Color;
     float3 normal = normalize(input.Normal);
-    float3 totalLight = float3(0, 0, 0);
-   
+    float4 sampledColor = tex2D(TextureSampler, input.TexCoord) * input.Color;
+    
+    float distRatio = 0.0f;
+
+    float bestRatio = 0.0;
+    
     for (int i = 0; i < MAX_LIGHTS; i++)
     {
-        if (i >= LightCount)
+        if (i >= LightCount) 
             break;
 
         float3 toLight = LightPositions[i] - input.WorldPos;
         float distanceSquared = dot(toLight, toLight);
         float distance = sqrt(distanceSquared);
-        float3 lightDirection = distance > 0.0001 ? toLight / distance : float3(0, 0, 0);
 
-        // Distance-based lighting (no normal check - purely on proximity)
-        float distanceAttenuation = exp(DAtten * distance) * LightIntensities[i] * DMod;
-        float newDistanceLight = baseColor.rgb * distanceAttenuation;
-
-        // Normal-based lighting (directional shading)
-        float facing = saturate(dot(normal, lightDirection));
-        float normalAttenuation = exp(LAtten * distance) * LightIntensities[i] * LMod;
-        float newNormalLight = LightColors[i].rgb * (facing * normalAttenuation);
+        float d1 = 0.5;
+        float d2 = 2.0;
+        float d3 = 4.0;
+        float d4 = 12.0;
+        float d5 = 30.0;
         
-         totalLight += max(newDistanceLight, newNormalLight);
+        float l1 = 2.0;
+        float l2 = 1.0;
+        float l3 = 0.6;
+        float l4 = 0.4;
+        float l5 = 0.1;
+    
+        // Distance-based with falloff and color scaling
+        if (distance < d1)
+        {
+            float t = saturate(distance / d1);
+            distRatio = lerp(l1, l2, t);
+        }
+        else if (distance < d2)
+        {  
+            float t = saturate((distance - d1) / (d2-d1));
+            distRatio = lerp(l2, l3, t);
+        }
+        else if (distance < d3)
+        {            
+            float t = saturate((distance - d2) / (d3-d2));
+            distRatio = lerp(l3, l4,
+            t);
+        }
+        else if (distance < d4)
+        {            
+            float t = saturate((distance - d3) / (d4 - d3));
+            distRatio = lerp(l4, l5, t);
+        }
+        else if (distance < d5)
+        {
+            float t = saturate((distance - d4) / (d5 - d4));
+            distRatio = lerp(l5, 0.0f, t);
+        }
+        else
+        {
+            distRatio = 0;
+        }
+        
+        if (distRatio > bestRatio)
+            bestRatio = distRatio;
+
     }
-    
-    float NORMAL_LIGHT_THRESHOLD = 0.5;
-    float currentLuminance = dot(totalLight, float3(0.2126, 0.7152, 0.0722));
-    
-    // Blend factor: 1 when lit normally (shows baseColor), 0 when dark (shows black)
-    float blendFactor = saturate(saturate(currentLuminance / NORMAL_LIGHT_THRESHOLD) - 0.5);
-    
-    return float4(saturate(lerp(float3(0, 0, 0), baseColor.rgb + totalLight, blendFactor)), baseColor.a);
+
+    return float4(sampledColor.rgb * bestRatio, 1.0f);
 }
 
 technique PointLight

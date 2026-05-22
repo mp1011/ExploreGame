@@ -42,17 +42,6 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
         }
     }
 
-    private RoomLightData GetLights(ILightingGroup group)
-    {
-        // fix me
-        if (group is Room r)
-            return _roomLightGraph.Get(r);
-        else
-            return null;
-    }
-
-  
-
     protected ShapeBuffer CreateShapeBuffer(
        Shape shape,
        Shape[] children,

@@ -18,6 +18,9 @@ namespace ExploringGame.GeometryBuilder;
 public interface IShape
 {
     Shape[] TraverseAllChildren();
+    bool ContainsPoint(Vector3 point);
+    Vector3 Position { get; }
+    float SideLength(Side side);
 }
 
 public abstract class Shape : IWithPosition, IShape

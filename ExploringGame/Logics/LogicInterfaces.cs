@@ -5,7 +5,7 @@ namespace ExploringGame.Logics;
 
 public interface IWithRoom
 {
-    Room Room { get; set; }
+    IRoom Room { get; set; }
 }
 
 public interface IPlaceableObject : IWithRoom

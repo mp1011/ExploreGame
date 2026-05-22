@@ -11,9 +11,6 @@ public abstract class ShapePart : Shape
 
     protected sealed override void BeforeBuild()
     {
-        if (this.Parent is StreetLight)
-            Console.Write(".");
-
         _originalPos = Position;
 
       //  Position += Parent.Position;        

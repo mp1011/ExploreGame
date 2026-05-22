@@ -6,17 +6,17 @@ namespace ExploringGame.Logics.Pathfinding;
 
 public class RoomGraph
 {
-    private readonly Dictionary<Room, List<Room>> _adjacency = new();
+    private readonly Dictionary<IRoom, List<IRoom>> _adjacency = new();
 
-    public void AddRoom(Room room)
+    public void AddRoom(IRoom room)
     {
         if (!_adjacency.ContainsKey(room))
         {
-            _adjacency[room] = new List<Room>();
+            _adjacency[room] = new List<IRoom>();
         }
     }
 
-    public void AddConnection(Room room1, Room room2)
+    public void AddConnection(IRoom room1, IRoom room2)
     {
         AddRoom(room1);
         AddRoom(room2);
@@ -32,28 +32,28 @@ public class RoomGraph
         }
     }
 
-    public IEnumerable<Room> GetNeighbors(Room room)
+    public IEnumerable<IRoom> GetNeighbors(IRoom room)
     {
-        return _adjacency.TryGetValue(room, out var neighbors) ? neighbors : Enumerable.Empty<Room>();
+        return _adjacency.TryGetValue(room, out var neighbors) ? neighbors : Enumerable.Empty<IRoom>();
     }
 
-    public IEnumerable<Room> GetAllRooms()
+    public IEnumerable<IRoom> GetAllRooms()
     {
         return _adjacency.Keys;
     }
 
-    public List<Room> FindPath(Room start, Room goal)
+    public List<IRoom> FindPath(IRoom start, IRoom goal)
     {
         if (start == null || goal == null || start == goal)
-            return new List<Room>();
+            return new List<IRoom>();
 
         if (!_adjacency.ContainsKey(start) || !_adjacency.ContainsKey(goal))
-            return new List<Room>();
+            return new List<IRoom>();
 
-        var openSet = new HashSet<Room> { start };
-        var cameFrom = new Dictionary<Room, Room>();
-        var gScore = new Dictionary<Room, float> { [start] = 0 };
-        var fScore = new Dictionary<Room, float> { [start] = Heuristic(start, goal) };
+        var openSet = new HashSet<IRoom> { start };
+        var cameFrom = new Dictionary<IRoom, IRoom>();
+        var gScore = new Dictionary<IRoom, float> { [start] = 0 };
+        var fScore = new Dictionary<IRoom, float> { [start] = Heuristic(start, goal) };
 
         while (openSet.Count > 0)
         {
@@ -84,17 +84,17 @@ public class RoomGraph
             }
         }
 
-        return new List<Room>();
+        return new List<IRoom>();
     }
 
-    private float Heuristic(Room a, Room b)
+    private float Heuristic(IRoom a, IRoom b)
     {
         return Microsoft.Xna.Framework.Vector3.Distance(a.Position, b.Position);
     }
 
-    private List<Room> ReconstructPath(Dictionary<Room, Room> cameFrom, Room current)
+    private List<IRoom> ReconstructPath(Dictionary<IRoom, IRoom> cameFrom, IRoom current)
     {
-        var path = new List<Room> { current };
+        var path = new List<IRoom> { current };
 
         while (cameFrom.ContainsKey(current))
         {

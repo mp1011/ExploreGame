@@ -29,7 +29,7 @@ public interface ILightSource
     /// </summary>
     bool On { get; set; }
 
-    Room Room { get; }
+    IRoom Room { get; }
 
     /// <summary>
     /// Raised when the light's on/off state changes

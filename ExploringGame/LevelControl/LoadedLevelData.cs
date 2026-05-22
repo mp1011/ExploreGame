@@ -154,7 +154,7 @@ public class LoadedLevelData
         }
     }
 
-    private Room FindRoomContainingPosition(Vector3 position)
+    private IRoom FindRoomContainingPosition(Vector3 position)
     {
         // Check each room to see if it contains the position
         foreach (var room in RoomGraph.GetAllRooms())
@@ -164,7 +164,7 @@ public class LoadedLevelData
         }
 
         // If no room contains the point, find the nearest room
-        Room nearestRoom = null;
+        IRoom nearestRoom = null;
         float nearestDistance = float.MaxValue;
 
         foreach (var room in RoomGraph.GetAllRooms())

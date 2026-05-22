@@ -9,7 +9,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
 public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, IOnOff, ILightSource
 {
-    public LightBulb(Room room, Shape parent, StateKey key, float diameter, float intensity, Color color)
+    public LightBulb(IRoom room, Shape parent, StateKey key, float diameter, float intensity, Color color)
     {
         parent.AddChild(this);
 
@@ -52,7 +52,7 @@ public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, I
 
     public Vector3 LightPosition => Parent.Position + Position;
 
-    public Room Room { get; }
+    public IRoom Room { get; }
 
     public event EventHandler<LightStateChangedEventArgs> StateChanged;
 

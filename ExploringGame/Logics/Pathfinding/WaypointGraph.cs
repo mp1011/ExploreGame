@@ -42,7 +42,7 @@ public class WaypointGraph
     }
 
 
-    public Room GetRoomContaining(Vector3 position)
+    public IRoom GetRoomContaining(Vector3 position)
     {
         foreach (var room in _annotatedGraph.GetAllRooms())
         {

@@ -217,9 +217,9 @@ public class RoomLightingTests
     //    game.Run();
     //}
 
-    private string BuildRoomGraphTree(Room startRoom, RoomGraph roomGraph, int indent = 0, HashSet<Room> visited = null)
+    private string BuildRoomGraphTree(IRoom startRoom, RoomGraph roomGraph, int indent = 0, HashSet<IRoom> visited = null)
     {
-        visited ??= new HashSet<Room>();
+        visited ??= new HashSet<IRoom>();
 
         if (visited.Contains(startRoom))
             return "";

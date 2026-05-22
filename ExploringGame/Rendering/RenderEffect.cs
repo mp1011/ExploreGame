@@ -186,16 +186,14 @@ public class PointLightRenderEffect : RenderEffect<Effect>
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
     {
         var pointLightEffect = contentManager.Load<Effect>("PointLightEffect").Clone();
-        pointLightEffect.Parameters["Texture"].SetValue(texture);
+        pointLightEffect.Parameters["Texture"]?.SetValue(texture);
         return pointLightEffect;
     }
 
-    public static float DAtten = -0.16f;
-    public static float DMod = 0f; // 0.3f;
-
-    public static float LAtten = -0.2f;
-    public static float LMod = 0.5f;
-
+    public static float Arg0 = -0.16f;
+    public static float Arg1 = 0.3f;
+    public static float Arg2 = -0.2f;
+    public static float Arg3 = 0.0f;
 
     public override void SetParameters(Effect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
     {
@@ -205,15 +203,13 @@ public class PointLightRenderEffect : RenderEffect<Effect>
 
         effect.Parameters["LightPositions"]?.SetValue(positions);
         effect.Parameters["LightColors"]?.SetValue(colors);
-        effect.Parameters["LightIntensities"].SetValue(intensities);
-        effect.Parameters["LightCount"].SetValue(count);
+        effect.Parameters["LightIntensities"]?.SetValue(intensities);
+        effect.Parameters["LightCount"]?.SetValue(count);
 
-        effect.Parameters["DAtten"].SetValue(DAtten);
-        effect.Parameters["DMod"].SetValue(DMod);
-
-        effect.Parameters["LAtten"].SetValue(LAtten);
-        effect.Parameters["LMod"].SetValue(LMod);
-
+        effect.Parameters["Arg0"]?.SetValue(Arg0);
+        effect.Parameters["Arg1"]?.SetValue(Arg1);
+        effect.Parameters["Arg2"]?.SetValue(Arg2);
+        effect.Parameters["Arg3"]?.SetValue(Arg3);
 
         effect.Parameters["World"].SetValue(world);
         effect.Parameters["View"].SetValue(view);
@@ -242,8 +238,7 @@ public class PointLightRenderEffect : RenderEffect<Effect>
                 positions[activeLightCount] = lightSource.LightPosition;
                 colors[activeLightCount] = lightSource.Color.ToVector3();
 
-                var scaledIntensity = MathF.Pow(lightSource.Intensity / 10f, 1.5f) * 10f;
-                intensities[activeLightCount] = scaledIntensity;
+                intensities[activeLightCount] = lightSource.Intensity;
                 activeLightCount++;
             }
         }

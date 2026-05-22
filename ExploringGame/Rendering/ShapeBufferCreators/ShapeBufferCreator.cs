@@ -38,8 +38,12 @@ abstract class ShapeBufferCreator
             .ToArray();
     }
 
+    protected RoomLightData GetLights(ILightingGroup group)
+    {
+        return _roomLightGraph.Get(group);
+    }
+
     protected abstract IEnumerable<ShapeBuffer> CreateShapeBuffers(WorldSegment worldSegment);
 
-    
-
+ 
 }
