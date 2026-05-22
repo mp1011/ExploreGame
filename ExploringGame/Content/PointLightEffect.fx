@@ -49,13 +49,9 @@ PSInput VSMain(VSInput input)
     return output;
 }
 
-float4 PSMain(PSInput input) : SV_Target
-{
-    float3 normal = normalize(input.Normal);
-    float4 sampledColor = tex2D(TextureSampler, input.TexCoord) * input.Color;
-    
+float DistanceBasedLight(PSInput input)
+{    
     float distRatio = 0.0f;
-
     float bestRatio = 0.0;
     
     for (int i = 0; i < MAX_LIGHTS; i++)
@@ -86,18 +82,18 @@ float4 PSMain(PSInput input) : SV_Target
             distRatio = lerp(l1, l2, t);
         }
         else if (distance < d2)
-        {  
-            float t = saturate((distance - d1) / (d2-d1));
+        {
+            float t = saturate((distance - d1) / (d2 - d1));
             distRatio = lerp(l2, l3, t);
         }
         else if (distance < d3)
-        {            
-            float t = saturate((distance - d2) / (d3-d2));
+        {
+            float t = saturate((distance - d2) / (d3 - d2));
             distRatio = lerp(l3, l4,
             t);
         }
         else if (distance < d4)
-        {            
+        {
             float t = saturate((distance - d3) / (d4 - d3));
             distRatio = lerp(l4, l5, t);
         }
@@ -113,10 +109,19 @@ float4 PSMain(PSInput input) : SV_Target
         
         if (distRatio > bestRatio)
             bestRatio = distRatio;
-
     }
+    
+    return bestRatio;
+}
 
-    return float4(sampledColor.rgb * bestRatio, 1.0f);
+float4 PSMain(PSInput input) : SV_Target
+{
+    float3 normal = normalize(input.Normal);
+    float4 sampledColor = tex2D(TextureSampler, input.TexCoord) * input.Color;
+    
+    float lightRatio = DistanceBasedLight(input);
+
+    return float4(sampledColor.rgb * lightRatio, 1.0f);
 }
 
 technique PointLight
