@@ -16,7 +16,7 @@ public static class LightIntensity
 
     public const float Bright = 1.2f;
 
-    public const float VeryBright = 2.0f;
+    public const float VeryBright = 1.5f;
 
     public const float ExtremelyBright = 3.0f;
 

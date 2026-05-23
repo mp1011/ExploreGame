@@ -1,5 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -224,6 +225,9 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         var colors = new Vector3[PointLights.MAX_LIGHTS];
         var intensities = new float[PointLights.MAX_LIGHTS];
         int activeLightCount = 0;
+
+        if (shapeBuffer.LightingGroup is BackYard)
+            Console.WriteLine("!");
 
         if (shapeBuffer.LightData != null)
         {

@@ -194,6 +194,13 @@ public class BackYard : Room
 
         midGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
         southGrass.SetSideUnanchored(Side.East, eastGrass.GetSide(Side.West));
+
+
+        var neighborLight = new NeighborLight(this);
+        neighborLight.Place().At(this).OnSideOuter(Side.North);
+        neighborLight.Y = this.Y + Measure.Feet(14);
+        neighborLight.X += Measure.Feet(8);
+        neighborLight.Z -= Measure.Feet(8);
     }
 
 }

@@ -53,5 +53,8 @@ public class BackyardWorldSegment : WorldSegment
         slidingDoorJunction.SetSide(Side.Top, den.GetSide(Side.Top) - Measure.Feet(1));
         slidingDoorJunction.SetSideUnanchored(Side.Bottom, _backyard.BackDeck.GetSide(Side.Bottom));
 
+        _backyard.AddConnectingRoom(FindShape<FrontYard>(loadedSegments), Side.West);
+
+
     }
 }

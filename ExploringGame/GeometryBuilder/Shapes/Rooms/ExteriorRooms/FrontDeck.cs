@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using ExploringGame.Texture.Themes;
@@ -116,6 +117,8 @@ public class FrontDeckStairs : Stairs
 {
     public override ViewFrom ViewFrom => ViewFrom.None;
     public override Theme Theme => TopFloor.Theme;
+
+    public override ILightingGroup LightingGroup => TopFloor.LightingGroup;
 
     public FrontDeckStairs(FrontYard bottomFloor, FrontDeck topFloor) 
         : base(topFloor.WorldSegment, CalcStepSize(bottomFloor, topFloor), bottomFloor, topFloor, 

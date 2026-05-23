@@ -99,6 +99,9 @@ public class RoomLightingCalculator
     {
         if (sender is ILightSource lightSource)
         {
+            if (lightSource.Room is Road)
+                Console.WriteLine("!");
+
             RecalculateLightContributions(lightSource);
 
             foreach(var lightData in _roomLightGraph.GetAllAnnotations())
@@ -220,6 +223,9 @@ public class RoomLightingCalculator
     {
         foreach (var room in _roomGraph.GetAllRooms())
         {
+            if (room is BackYard)
+                Console.Write(">");
+
             if (_roomLightGraph.TryGet(room, out var lightData))
             {
                 float contribution = CalculateLightContribution(lightSource, room);

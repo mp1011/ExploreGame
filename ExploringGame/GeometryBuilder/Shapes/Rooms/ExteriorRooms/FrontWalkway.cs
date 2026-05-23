@@ -11,14 +11,19 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class FrontWalkway : Room
 {
+    private FrontYard _yard;
+
     public Shape WestPart { get; private set; }
     public override ViewFrom ViewFrom => ViewFrom.None;
 
     public override Theme Theme { get; }
 
 
+    public override ILightingGroup LightingGroup => _yard;
+
     public FrontWalkway(FrontYard yard) : base(yard.WorldSegment)
     {
+        _yard = yard;
         Size = Vector3.One;
         Theme = yard.Theme;
     }

@@ -1,12 +1,8 @@
 ﻿lighting improvement
 
-- light intensities
-	- add a class to set lights specifically
-	- override existing behavior
-	- dial in the intensities of each light type
-		- normal lights
-		- night light
-		- street light
+- consider normal-only lighting for certain things
+- doors don't affect light in the right way
+	
 
 
 - add remaining buffers

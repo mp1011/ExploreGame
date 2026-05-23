@@ -11,12 +11,16 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 
 public class Driveway : Room
 {
+    private FrontYard _yard;
     public override Theme Theme => new RoadTheme();
 
     public override Side OmitSides => Side.Top | Side.South | Side.North | Side.East | Side.West;
 
+    public override ILightingGroup LightingGroup => _yard;
+
     public Driveway(WorldSegment worldSegment, Garage garage, FrontYard yard) : base(worldSegment)
     {
+        _yard = yard;
         Depth = garage.Depth;
         Height = 0.5f;
         Width = 1.0f;
