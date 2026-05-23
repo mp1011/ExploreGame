@@ -18,8 +18,7 @@ abstract class ShapeBufferCreator
     protected AnnotatedGraph<RoomLightData> _roomLightGraph;
 
     protected readonly VertexBufferBuilder _vertexBufferBuilder = new VertexBufferBuilder();
-    // private readonly GrassVertexBufferBuilder _grassVertexBufferBuilder = new GrassVertexBufferBuilder();
-
+ 
     public ShapeBufferCreator(Dictionary<Shape, Triangle[]> shapeTriangles,
         LoadedTextureSheets loadedTextureSheets, GraphicsDevice graphicsDevice,
         AnnotatedGraph<RoomLightData> roomLightGraph = null)

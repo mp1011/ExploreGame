@@ -80,7 +80,6 @@ public class LightingVisualTests
             LightIntensity.VeryDim => "VeryDim",
             LightIntensity.Dim => "Dim",
             LightIntensity.IndoorLight => "IndoorLight",
-            LightIntensity.Normal => "Normal",
             LightIntensity.Bright => "Bright",
             LightIntensity.VeryBright => "VeryBright",
             LightIntensity.ExtremelyBright => "ExtremelyBright",

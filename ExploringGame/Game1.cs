@@ -7,6 +7,7 @@ using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
+using ExploringGame.Rendering.RenderEffects;
 using ExploringGame.Services;
 using ExploringGame.Story;
 using ExploringGame.Story.Debug;

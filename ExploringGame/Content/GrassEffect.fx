@@ -3,7 +3,12 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 float3 CameraPosition;
-float3 LightDirection = float3(0.3, -0.8, 0.5); // Sunlight direction
+
+float3 LightPosition1;
+float3 LightIntensity1;
+float3 LightPosition2;
+float3 LightIntensity2;
+
 texture GrassTexture;
 
 sampler GrassSampler = sampler_state
@@ -63,7 +68,7 @@ PSInput VSMain(VSInput input)
     float3 bladeNormal = normalize(cross(rotatedRight, up));
 
     // Calculate lighting based on normal and height with more contrast
-    float normalDot = dot(bladeNormal, normalize(-LightDirection));
+    float normalDot = 1.0; // fix me
     float normalLighting = saturate(normalDot * 0.5 + 0.5); // Softer contrast
 
     float heightFactor = saturate(input.Offset.y / 0.3); // Darker at base, brighter at top

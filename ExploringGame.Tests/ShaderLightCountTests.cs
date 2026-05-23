@@ -3,6 +3,7 @@ using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Rendering;
+using ExploringGame.Rendering.RenderEffects;
 using ExploringGame.Services;
 using ExploringGame.Tests.TestHelpers;
 using System.Linq;

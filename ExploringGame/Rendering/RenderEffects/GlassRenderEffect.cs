@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ExploringGame.Rendering;
+namespace ExploringGame.Rendering.RenderEffects;
 
 /// <summary>
 /// Render effect for glass panes with transparency and slight tint.

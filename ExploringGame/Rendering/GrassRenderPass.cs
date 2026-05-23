@@ -1,6 +1,7 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Rendering.RenderEffects;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
@@ -28,10 +29,7 @@ public class GrassRenderPass : IRenderPass
 
     public void Draw(GraphicsDevice graphicsDevice, IReadOnlyList<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
-        foreach (var buffer in shapeBuffers)
-        {
-            _grassEffect.Draw(graphicsDevice, buffer, view, projection);
-        }
+        _grassEffect.Draw(graphicsDevice, shapeBuffers, view, projection);        
     }
 
     public void LoadContent(Game game, LoadedTextureSheets textureSheets)

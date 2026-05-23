@@ -1,5 +1,6 @@
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.Rendering.RenderEffects;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
