@@ -35,10 +35,20 @@ public class GlassRenderEffect : RenderEffect<Effect>
 
     public override void SetParameters(Effect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
     {
+        var (positions, colors, intensities, count) = GetActiveLightsForBuffer(shapeBuffer);
+
         var world = shapeBuffer.Shape.GetWorldMatrix();
         effect.Parameters["World"].SetValue(world);
         effect.Parameters["View"].SetValue(view);
         effect.Parameters["Projection"].SetValue(projection);
+
+        if (positions.Length > 0)
+        {
+            effect.Parameters["LightPosition"]?.SetValue(positions[0]);
+            effect.Parameters["LightIntensity"]?.SetValue(intensities[0]);
+        }
+        else
+            effect.Parameters["LightIntensity"]?.SetValue(0);
     }
 
     public new void Draw(GraphicsDevice graphicsDevice, System.Collections.Generic.IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)

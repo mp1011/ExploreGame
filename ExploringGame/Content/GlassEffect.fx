@@ -5,6 +5,9 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 
+float3 LightPosition;
+float3 LightIntensity;
+
 texture Texture;
 sampler TextureSampler = sampler_state
 {
@@ -35,7 +38,24 @@ struct PSInput
     float4 Color : COLOR0;
     float2 TexCoord : TEXCOORD0;
     float3 Normal : TEXCOORD1;
+    float3 WorldPos : TEXCOORD2;
 };
+
+float NormalBasedLight(PSInput input)
+{
+    float normRatio1 = 0.0f;
+    
+    float3 normal = normalize(input.Normal);
+    
+    float3 lightVector1 = LightPosition - input.WorldPos;
+    float distance1 = length(lightVector1);
+    float3 lightDir1 = lightVector1 / distance1;
+    float NdotL1 = saturate(dot(normal, lightDir1));
+    float attenuation1 = saturate(1.0f - (distance1 / 32.0f));
+    normRatio1 = NdotL1 * attenuation1 * LightIntensity;
+        
+    return normRatio1;
+}
 
 PSInput VSMain(VSInput input)
 {
@@ -47,6 +67,7 @@ PSInput VSMain(VSInput input)
     output.Color = input.Color;
     output.TexCoord = input.TexCoord;
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
+    output.WorldPos = input.Position.xyz;
     return output;
 }
 
@@ -73,7 +94,7 @@ float4 PSMain(PSInput input) : SV_Target
     // Apply very light glass tint
     float4 finalColor = blurredColor * input.Color;
     finalColor.rgb = lerp(finalColor.rgb, GlassTint.rgb, GlassTint.a);
-
+    
     // Make edges slightly more visible using fresnel-like effect
     float3 viewDir = float3(0, 0, -1); // Simplified view direction
     float fresnel = 1.0 - abs(dot(normalize(input.Normal), viewDir));
@@ -82,7 +103,7 @@ float4 PSMain(PSInput input) : SV_Target
     // Edges are slightly more opaque but still very transparent
     finalColor.a = lerp(0.15, 0.4, fresnel);
 
-    return finalColor;
+    return float4(finalColor.rgb * NormalBasedLight(input), finalColor.a);
 }
 
 technique GlassEffect

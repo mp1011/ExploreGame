@@ -1,13 +1,19 @@
 ﻿lighting improvement
+ 
+ - new structures
+	- front porch light
+	- back porch light
+	- second streetlight
+	- neigher house structure (all-black)
 
-- grass
-	don't actually need normal in vertex definition
-	use the one already there
-	revert vertex format
-
-- consider normal-only lighting for certain things
-- doors don't affect light in the right way
-	
+ - fix light "bleed" problem, for example light from bathroom should not be immediately visible in the kitchen
+	- same with half-bath
+ - doors don't affect light in the right way
+ - light for half bath appears through the wall
+ - light from den doesn't make it into deck
+ - piece of floor appearing through basement stairs ceiling
+ - roof not getting lit
+ 
 
 
 - add remaining buffers
