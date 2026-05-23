@@ -40,7 +40,7 @@ PSInput VSMain(VSInput input)
     // Force depth to 1.0 (far plane) so skybox is always behind everything
     output.Position.z = output.Position.w;
     
-    output.Color = input.Color;
+    output.Color = float4(input.Color.rgb * 0.4, input.Color.a);
     output.TexCoord = input.TexCoord;
     
     return output;
