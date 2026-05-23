@@ -83,7 +83,8 @@ public class GrassVertexBufferBuilder
                         new Vector2(lateralOffset, offset.Y),
                         texCoord,
                         rotation,
-                        triangle.TextureInfo.Color
+                        triangle.TextureInfo.Color,
+                        triangle.Normal
                     ));
                 }
 

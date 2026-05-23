@@ -13,14 +13,11 @@ namespace ExploringGame.Rendering.RenderEffects;
 /// </summary>
 public class GrassRenderEffect : RenderEffect<Effect>
 {
-    private readonly CameraService _cameraService;
     private readonly ContentManager _contentManager;
-    private Texture2D _grassTexture;
     private Vector3 _cameraPosition;
 
     public GrassRenderEffect(CameraService cameraService, Game game) : base(game)
     {
-        _cameraService = cameraService;
         _contentManager = game.Content;
     }
 
@@ -46,7 +43,9 @@ public class GrassRenderEffect : RenderEffect<Effect>
 
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
     {
-        return _contentManager.Load<Effect>("GrassEffect");
+        var effect = _contentManager.Load<Effect>("GrassEffect");
+        effect.Parameters["GrassTexture"]?.SetValue(texture);
+        return effect;
     }
 
     public override void SetParameters(Effect effect, ShapeBuffer shapeBuffer, Matrix view, Matrix projection)
@@ -83,6 +82,5 @@ public class GrassRenderEffect : RenderEffect<Effect>
             effect.Parameters["LightIntensity1"]?.SetValue(0);
             effect.Parameters["LightIntensity2"]?.SetValue(0);
         }
-        effect.Parameters["GrassTexture"].SetValue(_grassTexture);
     }
 }

@@ -29,15 +29,41 @@ struct VSInput
     float2 TexCoord     : TEXCOORD1; // texture coordinates
     float Rotation      : TEXCOORD2; // random rotation angle (radians)
     float4 Color        : COLOR0;    // vertex color
+    float3 Normal       : NORMAL0;
 };
 
 struct PSInput
 {
     float4 Position : SV_POSITION;
+    float3 WorldPos : TEXCOORD1;
     float2 TexCoord : TEXCOORD0;
-    float Brightness : TEXCOORD1; // Lighting factor
     float4 Color : COLOR0;        // Vertex color
+    float3 Normal : TEXCOORD2;
 };
+
+float NormalBasedLight(PSInput input)
+{
+    float normRatio1 = 0.0f;
+    float normRatio2 = 0.0f;
+    
+    float3 normal = normalize(input.Normal);
+    
+    float3 lightVector1 = LightPosition1 - input.WorldPos;
+    float distance1 = length(lightVector1);
+    float3 lightDir1 = lightVector1 / distance1;
+    float NdotL1 = 1.0; //normal not working yet    saturate(dot(normal, lightDir1));
+    float attenuation1 = saturate(1.0f - (distance1 / 24.0f));
+    normRatio1 = NdotL1 * attenuation1 * LightIntensity1;
+    
+    float3 lightVector2 = LightPosition2 - input.WorldPos;
+    float distance2 = length(lightVector2);    
+    float3 lightDir2 = lightVector2 / distance2;
+    float NdotL2 = 1.0; //normal not working yet    saturate(dot(normal, lightDir2));
+    float attenuation2 = saturate(1.0f - (distance2 / 24.0f));
+    normRatio2 = NdotL2 * attenuation2 * LightIntensity2;
+    
+    return max(normRatio1, normRatio2);
+}
 
 PSInput VSMain(VSInput input)
 {
@@ -66,36 +92,29 @@ PSInput VSMain(VSInput input)
 
     // Calculate blade normal: perpendicular to the blade surface (cross product of blade width and height)
     float3 bladeNormal = normalize(cross(rotatedRight, up));
-
-    // Calculate lighting based on normal and height with more contrast
-    float normalDot = 1.0; // fix me
-    float normalLighting = saturate(normalDot * 0.5 + 0.5); // Softer contrast
-
+   
     float heightFactor = saturate(input.Offset.y / 0.3); // Darker at base, brighter at top
     float ambientOcclusion = lerp(0.7, 1.0, heightFactor); // Subtle ground shadow
-
-    // Combine lighting factors
-    output.Brightness = normalLighting * ambientOcclusion;
-
+    
     float4 worldPos = mul(float4(pos, 1.0), World);
     output.Position = mul(mul(worldPos, View), Projection);
     output.TexCoord = input.TexCoord;
     output.Color = input.Color;
-
+    output.Normal = input.Normal;
+    output.WorldPos = worldPos;
+    
     return output;
 }
 
 float4 PSMain(PSInput input) : SV_Target
 {
     float4 texColor = tex2D(GrassSampler, input.TexCoord);
-
-    // Ensure brightness has a minimum value to prevent it being too dark
-    float finalBrightness = max(input.Brightness, 0.4) * 0.2;
-
-    // Apply vertex color and lighting
-    float3 litColor = texColor.rgb * input.Color.rgb * finalBrightness;
-
-    return float4(litColor, texColor.a);
+    float brightness = NormalBasedLight(input);
+    
+    // desired formula, but input.Color is always black
+    //return float4(texColor.rgb * input.Color.rgb * brightness, texColor.a);
+      
+    return float4(texColor.rgb * float3(0, 0.3, 0.1) * brightness, texColor.a);
 }
 
 technique Grass
