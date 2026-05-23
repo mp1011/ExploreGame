@@ -21,9 +21,6 @@ public struct GrassVertex : IVertexType
     /// <summary>Texture coordinates for sampling grass texture.</summary>
     public Vector2 TexCoord;
 
-    /// <summary>World-space normal direction perpendicular to the blade surface.</summary>
-    public Vector3 Normal;
-
     /// <summary>Random rotation angle (in radians) around the Y-axis for this blade.</summary>
     public float Rotation;
 
@@ -31,23 +28,21 @@ public struct GrassVertex : IVertexType
     public Color Color;
 
     public static readonly VertexDeclaration VertexDeclaration = new(
-        new VertexElement(0,  VertexElementFormat.Vector3, VertexElementUsage.Position,         0),  // RootPosition
+        new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),  // RootPosition
         new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),  // Offset
         new VertexElement(20, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),  // TexCoord
-        new VertexElement(28, VertexElementFormat.Single,  VertexElementUsage.TextureCoordinate, 2),  // Rotation
-        new VertexElement(32, VertexElementFormat.Color,   VertexElementUsage.Color,            0),   // Color
-        new VertexElement(36, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)   // Normal
+        new VertexElement(28, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 2),  // Rotation
+        new VertexElement(32, VertexElementFormat.Color, VertexElementUsage.Color, 0)   // Color
     );
 
     VertexDeclaration IVertexType.VertexDeclaration => VertexDeclaration;
 
-    public GrassVertex(Vector3 rootPosition, Vector2 offset, Vector2 texCoord, float rotation, Color color, Vector3 normal)
+    public GrassVertex(Vector3 rootPosition, Vector2 offset, Vector2 texCoord, float rotation, Color color)
     {
         RootPosition = rootPosition;
-        Offset       = offset;
-        TexCoord     = texCoord;
-        Normal       = normal;
-        Rotation     = rotation;
-        Color        = color;
+        Offset = offset;
+        TexCoord = texCoord;
+        Rotation = rotation;
+        Color = color;
     }
 }

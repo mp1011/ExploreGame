@@ -25,11 +25,10 @@ sampler GrassSampler = sampler_state
 struct VSInput
 {
     float3 RootPosition : POSITION0;
-    float2 Offset       : TEXCOORD0; // x = lateral offset, y = height
-    float2 TexCoord     : TEXCOORD1; // texture coordinates
-    float Rotation      : TEXCOORD2; // random rotation angle (radians)
-    float4 Color        : COLOR0;    // vertex color
-    float3 Normal       : NORMAL0;
+    float2 Offset : TEXCOORD0; // x = lateral offset, y = height
+    float2 TexCoord : TEXCOORD1; // texture coordinates
+    float Rotation : TEXCOORD2; // random rotation angle (radians)
+    float4 Color : COLOR0; // vertex color
 };
 
 struct PSInput
@@ -51,15 +50,15 @@ float NormalBasedLight(PSInput input)
     float3 lightVector1 = LightPosition1 - input.WorldPos;
     float distance1 = length(lightVector1);
     float3 lightDir1 = lightVector1 / distance1;
-    float NdotL1 = 1.0; //normal not working yet    saturate(dot(normal, lightDir1));
-    float attenuation1 = saturate(1.0f - (distance1 / 24.0f));
+    float NdotL1 = saturate(dot(normal, lightDir1));
+    float attenuation1 = saturate(1.0f - (distance1 / 32.0f));
     normRatio1 = NdotL1 * attenuation1 * LightIntensity1;
     
     float3 lightVector2 = LightPosition2 - input.WorldPos;
     float distance2 = length(lightVector2);    
     float3 lightDir2 = lightVector2 / distance2;
-    float NdotL2 = 1.0; //normal not working yet    saturate(dot(normal, lightDir2));
-    float attenuation2 = saturate(1.0f - (distance2 / 24.0f));
+    float NdotL2 = saturate(dot(normal, lightDir2));
+    float attenuation2 = saturate(1.0f - (distance2 / 32.0f));
     normRatio2 = NdotL2 * attenuation2 * LightIntensity2;
     
     return max(normRatio1, normRatio2);
@@ -100,7 +99,7 @@ PSInput VSMain(VSInput input)
     output.Position = mul(mul(worldPos, View), Projection);
     output.TexCoord = input.TexCoord;
     output.Color = input.Color;
-    output.Normal = input.Normal;
+    output.Normal = bladeNormal;
     output.WorldPos = worldPos;
     
     return output;
@@ -112,9 +111,12 @@ float4 PSMain(PSInput input) : SV_Target
     float brightness = NormalBasedLight(input);
     
     // desired formula, but input.Color is always black
-    //return float4(texColor.rgb * input.Color.rgb * brightness, texColor.a);
+   // return float4(texColor.rgb * input.Color.rgb * brightness, texColor.a);
       
-    return float4(texColor.rgb * float3(0, 0.3, 0.1) * brightness, texColor.a);
+   return float4(texColor.rgb * float3(0.1, 0.6, 0.2) * brightness, texColor.a);
+    
+    
+    
 }
 
 technique Grass

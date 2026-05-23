@@ -1,5 +1,10 @@
 ﻿lighting improvement
 
+- grass
+	don't actually need normal in vertex definition
+	use the one already there
+	revert vertex format
+
 - consider normal-only lighting for certain things
 - doors don't affect light in the right way
 	
