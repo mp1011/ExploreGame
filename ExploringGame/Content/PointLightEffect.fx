@@ -11,6 +11,9 @@ float LightIntensities[MAX_LIGHTS];
 
 int LightCount;
 
+float NormalLightScale;
+float DistanceLightScale;
+
 struct VSInput
 {
     float4 Position : POSITION0;
@@ -112,7 +115,7 @@ float DistanceBasedLight(PSInput input)
             bestRatio = distRatio;
     }
     
-    return bestRatio;
+    return bestRatio * DistanceLightScale;
 }
 
 float NormalBasedLight(PSInput input)
@@ -142,7 +145,7 @@ float NormalBasedLight(PSInput input)
             bestNormRatio = normRatio;
     }
     
-    return bestNormRatio;
+    return bestNormRatio * NormalLightScale;
 }
 
 float4 PSMain(PSInput input) : SV_Target

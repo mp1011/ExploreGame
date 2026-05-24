@@ -100,9 +100,6 @@ public class RoomLightingCalculator
     {
         if (sender is ILightSource lightSource)
         {
-            if (lightSource.Room is Road)
-                Console.WriteLine("!");
-
             RecalculateLightContributions(lightSource);
 
             foreach(var lightData in _roomLightGraph.GetAllAnnotations())
@@ -122,6 +119,8 @@ public class RoomLightingCalculator
     {
         foreach (var room in _roomGraph.GetAllRooms())
         {
+            ExploringGame.GameDebug.Debug.Message(room is UpstairsHall, ".");
+
             RecalculateLightContributions(room, _allLightSources);
         }
 
@@ -163,6 +162,7 @@ public class RoomLightingCalculator
         Vector3 lastDir = Vector3.Zero;
 
         var currentLightingGroup = lightRoom.LightingGroup;
+        var doorDistanceModifier = 1.0f;
 
         for (int i = 0; i < roomPath.Count - 1; i++)
         {
@@ -188,13 +188,17 @@ public class RoomLightingCalculator
                 {
                     float doorScale = door.Open ? DoorOpenScale : DoorClosedScale;
                     contribution *= doorScale;
+
+                    doorDistanceModifier = door.Open ? 1.0f : 3.0f;
                 }
+                else
+                    doorDistanceModifier = 1.0f;
 
                 // Stop if contribution is too small
                 if (contribution < MinimumContribution)
                     return new LightContribution(lightSource, 0);
 
-                graphDistance += (pos.DistanceTo(nextLightingGroup.Position) * 1.3f);
+                graphDistance += (pos.DistanceTo(nextLightingGroup.Position) * 1.3f * doorDistanceModifier);
                 pos = nextLightingGroup.Position;
 
                 // lastDir = (nextLightingGroup.Position - currentLightingGroup.Position);
@@ -205,13 +209,6 @@ public class RoomLightingCalculator
                 currentLightingGroup = nextLightingGroup;
             }
         }
-
-        if (targetRoom is LivingRoom && lightSource.Room is Kitchen)
-            Console.Write("!");
-
-        if (targetRoom is Kitchen && lightSource.Room is Bathroom)
-            Console.Write("!");
-
 
         var directDistance = lightSource.LightPosition.DistanceTo(targetRoom.Position);
         if (directDistance > graphDistance)

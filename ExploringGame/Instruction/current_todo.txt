@@ -6,10 +6,7 @@
 	- second streetlight
 	- neigher house structure (all-black)
 
- - fix light "bleed" problem, for example light from bathroom should not be immediately visible in the kitchen
-	- same with half-bath
- - doors don't affect light in the right way
- - light for half bath appears through the wall
+ - maybe doors should only use normal-based light
  - light from den doesn't make it into deck
  - piece of floor appearing through basement stairs ceiling
  - roof not getting lit

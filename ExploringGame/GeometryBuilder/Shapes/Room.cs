@@ -154,9 +154,9 @@ public class Room : Shape, ILightingGroup
         return shape;
     }
 
-    public Room Copy(float? height = null, float? width = null, float? depth = null)
+    public Room Copy(float? height = null, float? width = null, float? depth = null, bool inheritLightingGroup = true)
     {
-        return new RoomPart(this, height, width, depth);
+        return new RoomPart(this, height, width, depth, inheritLightingGroup);
     }
 
     public override string ToString() => Tag ?? GetType().Name;

@@ -97,9 +97,6 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
         var intensities = new float[PointLights.MAX_LIGHTS];
         int activeLightCount = 0;
 
-        if (shapeBuffer.LightingGroup is Kitchen)
-            Console.WriteLine("!");
-
         if (shapeBuffer.LightData != null)
         {
             foreach (var lightContribution in shapeBuffer.LightData.SortedContributions)

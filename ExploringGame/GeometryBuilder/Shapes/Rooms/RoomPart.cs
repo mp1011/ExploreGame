@@ -6,12 +6,17 @@ public class RoomPart : Room
 
     public override Side OmitSides => Main.OmitSides;
 
-    public RoomPart(Room main, float? height = null, float? width = null, float? depth = null)
+    public RoomPart(Room main, float? height = null, float? width = null, float? depth = null, bool inheritLightingGroup = true)
         : base(main.WorldSegment, theme: main.Theme)
     {
         Main = main;
         Position = main.Position;
         Size = main.Size;
+
+        if (inheritLightingGroup)
+            LightingGroup = Main;
+        else
+            LightingGroup = this;
 
         if (height.HasValue)
             Height = height.Value;
@@ -25,5 +30,5 @@ public class RoomPart : Room
 
     public override string ToString() => $"{Tag ?? Main.ToString()} (part)";
 
-    public override Room LightingGroup => Main;
+    public override Room LightingGroup { get; }
 }

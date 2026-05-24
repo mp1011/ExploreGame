@@ -34,10 +34,10 @@ public class OutsideWorldSegment : WorldSegment
 
         _deck = new FrontDeck(this);
         _frontYard = new FrontYard(this, _deck);
-        _westRoof = new Roof(this, Side.East) { Tag = "WestRoof" };
-        _eastRoof = new Roof(this, Side.West) { Tag = "EastRoof" };
-        _denRoof1 = new Roof(this, Side.South) { Tag = "DenRoofNorth" };
-        _denRoof2 = new Roof(this, Side.North) { Tag = "DenRoofSouth" };
+        _westRoof = new Roof(this, Side.East, _frontYard) { Tag = "WestRoof" };
+        _eastRoof = new Roof(this, Side.West, _frontYard) { Tag = "EastRoof" };
+        _denRoof1 = new Roof(this, Side.South, _frontYard) { Tag = "DenRoofNorth" };
+        _denRoof2 = new Roof(this, Side.North, _frontYard) { Tag = "DenRoofSouth" };
 
         _road = new Road(this) { Tag = "HomeRoad" };
         _sideRoad = new Road(this) { Tag = "SideRoad" };

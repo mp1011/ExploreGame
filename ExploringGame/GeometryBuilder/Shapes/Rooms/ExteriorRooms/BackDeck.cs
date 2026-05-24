@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
 using ExploringGame.Texture.Themes;
@@ -20,8 +21,12 @@ public class BackDeck : Deck
 
     public BackDeckSideStairs SideStairs { get; private set; }
 
+    public override ILightingGroup LightingGroup { get; }
+
     public BackDeck(WorldSegment worldSegment, Room backDeckArea, Den den) : base(worldSegment)
     {
+        LightingGroup = backDeckArea.LightingGroup;
+
         var floor = AddChild(new Box(Theme));
         floor.Position = backDeckArea.Position;
         floor.Size = backDeckArea.Size;
@@ -86,6 +91,8 @@ public class BackDeckStairs : Stairs
     public override ViewFrom ViewFrom => ViewFrom.None;
     public override Theme Theme => TopFloor.Theme;
 
+    public override ILightingGroup LightingGroup => TopFloor.LightingGroup;
+
     public BackDeckStairs(Room bottomFloor, BackDeck topFloor)
         : base(topFloor.WorldSegment, new Vector2(topFloor.StepWidth, StepDepth), bottomFloor, topFloor,
             topFloor.StepWidth,
@@ -105,6 +112,8 @@ public class BackDeckSideStairs : Stairs
     public static readonly float StepDepth = Measure.Feet(1);
     public override ViewFrom ViewFrom => ViewFrom.None;
     public override Theme Theme => TopFloor.Theme;
+    public override ILightingGroup LightingGroup => TopFloor.LightingGroup;
+
 
     public BackDeckSideStairs(Room bottomFloor, BackDeck topFloor)
         : base(topFloor.WorldSegment, new Vector2(topFloor.SideStepWidth, StepDepth), bottomFloor, topFloor,

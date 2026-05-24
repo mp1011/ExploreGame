@@ -14,8 +14,11 @@ public class Roof : Room
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
-    public Roof(OutsideWorldSegment worldSegment, Side raiseSide) : base(worldSegment)
+    public override ILightingGroup LightingGroup { get; }
+
+    public Roof(OutsideWorldSegment worldSegment, Side raiseSide, ILightingGroup lightingGroup) : base(worldSegment)
     {
+        LightingGroup = lightingGroup;
         Theme.SideTextures[Side.Bottom] = new TextureInfo(TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
         Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Concrete, TextureStyle.Tile, new TilingInfo(TileSize: 2.0f));
 

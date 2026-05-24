@@ -1,4 +1,6 @@
-﻿namespace ExploringGame.GameDebug;
+﻿using System;
+
+namespace ExploringGame.GameDebug;
 
 public static class Debug
 {
@@ -13,4 +15,10 @@ public static class Debug
     public static bool SavePolygonImages = false;
 
     public static MovingEntityDebugger MovingEntityDebugger;
+
+    public static void Message(bool condition, string message)
+    {
+        if(condition)
+            Console.WriteLine(message);
+    }
 }

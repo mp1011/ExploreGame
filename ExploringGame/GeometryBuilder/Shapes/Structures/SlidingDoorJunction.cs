@@ -1,5 +1,4 @@
-﻿using ExploringGame.Extensions;
-using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+﻿using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
@@ -8,8 +7,6 @@ using ExploringGame.Services;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
-using System.Runtime.CompilerServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Structures;
 

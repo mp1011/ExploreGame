@@ -36,11 +36,8 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
         {
             if (_open != value)
             {
-                _open = value;
-                if (_open != value)
-                {
-                    PositionChanged?.Invoke(this, EventArgs.Empty);
-                }
+                _open = value;               
+                PositionChanged?.Invoke(this, EventArgs.Empty);                
             }
         }
     }

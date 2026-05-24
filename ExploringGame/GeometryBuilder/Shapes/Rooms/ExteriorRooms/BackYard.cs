@@ -35,16 +35,16 @@ public class BackYard : Room
         Height = 5.52f;
 
         // Create child sections (positioning will happen in LoadChildren and SetDependencies)
-        _eastSection = Copy();
+        _eastSection = Copy(inheritLightingGroup: false);
         _eastSection.Tag = "BackyardEast";
 
-        _southSection = Copy();
+        _southSection = Copy(inheritLightingGroup: false);
         _southSection.Tag = "BackyardSouth";
 
-        _midSection = Copy();
+        _midSection = Copy(inheritLightingGroup: false);
         _midSection.Tag = "BackyardMid";
 
-        _deckArea = Copy();
+        _deckArea = Copy(inheritLightingGroup: false);
         _deckArea.Tag = "BackDeckArea";
     }
 

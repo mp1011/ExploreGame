@@ -80,6 +80,11 @@ public class PointLightRenderEffect : RenderEffect<Effect>
         effect.Parameters["LightIntensities"]?.SetValue(intensities);
         effect.Parameters["LightCount"]?.SetValue(count);
 
+        effect.Parameters["NormalLightScale"]?.SetValue(shapeBuffer.NormalLightScale);
+        effect.Parameters["DistanceLightScale"]?.SetValue(shapeBuffer.DistanceLightScale);
+
+
+        // debugging, currently not wired up
         effect.Parameters["Arg0"]?.SetValue(Arg0);
         effect.Parameters["Arg1"]?.SetValue(Arg1);
         effect.Parameters["Arg2"]?.SetValue(Arg2);

@@ -27,5 +27,7 @@ public record ShapeBuffer(
     ILightingGroup LightingGroup = null,
     RoomLightData LightData = null,
     DepthStencilState DepthStencilState = null,
-    ShapeBufferType Type = ShapeBufferType.Normal)
+    ShapeBufferType Type = ShapeBufferType.Normal,
+    float NormalLightScale = 1.0f,
+    float DistanceLightScale = 1.0f)
 {}
