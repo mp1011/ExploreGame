@@ -88,6 +88,12 @@ public class BackDeck : Deck
         var light = new OutdoorLight(this, StateKey.BackDeckLightOn);
         light.Place().AtParent().OnSideInner(Side.West).OnSideInner(Side.Top);
         light.Z -= Measure.Feet(2);
+
+        var underDeckShadow = AddChild(new ShadowVolume());
+        underDeckShadow.AdjustShape().From(this);
+
+        underDeckShadow.SetSide(Side.Bottom, backDeckArea.GetSide(Side.Bottom));
+        underDeckShadow.SetSideUnanchored(Side.Top, floor.GetSide(Side.Bottom));
     }
 }
 

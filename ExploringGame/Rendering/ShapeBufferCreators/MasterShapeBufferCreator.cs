@@ -36,6 +36,7 @@ internal class MasterShapeBufferCreator
             yield return new GrassShapeBufferCreator(_shapeTriangles, _textureSheets, _graphicsDevice, _roomLightGraph);
             yield return new GlassShapeBufferCreator(_shapeTriangles, _textureSheets, _graphicsDevice, _roomLightGraph);
             yield return new SkyboxShapeBufferCreator(_textureSheets, _graphicsDevice);
+            yield return new StaticShadowShapeBufferCreator(_shapeTriangles, _textureSheets, _graphicsDevice);
             // still todo, stamped shapes
         }
     }

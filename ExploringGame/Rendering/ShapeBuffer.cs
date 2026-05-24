@@ -14,7 +14,8 @@ public enum ShapeBufferType
     Grass = 4,
     Skybox = 8,
     Glass = 16,
-    UI = 32
+    StaticShadow = 32,
+    UI = 64
 }
 
 public record ShapeBuffer(
