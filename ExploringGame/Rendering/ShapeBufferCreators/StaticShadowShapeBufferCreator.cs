@@ -22,8 +22,8 @@ class StaticShadowShapeBufferCreator : ShapeBufferCreator
     protected override IEnumerable<ShapeBuffer> CreateShapeBuffers(WorldSegment worldSegment)
     {
         var shadows = worldSegment.TraverseAllChildren().OfType<ShadowVolume>().ToArray();
-
-        yield return CreateShadowBuffer(worldSegment, shadows);       
+        if(shadows.Any())
+            yield return CreateShadowBuffer(worldSegment, shadows);       
     }
 
     private ShapeBuffer CreateShadowBuffer(WorldSegment worldSegment, ShadowVolume[] shadows)
@@ -36,7 +36,7 @@ class StaticShadowShapeBufferCreator : ShapeBufferCreator
         var buffers = _vertexBufferBuilder.Build(triangles, texture, _graphicsDevice);
 
         return new ShapeBuffer(worldSegment, buffers.Item1, buffers.Item2, buffers.Item3, TextureSheetKey.Basement, 
-            RasterizerState.CullNone, null,
+            RasterizerState: shadows[0].RasterizerState, null,
             Type: ShapeBufferType.StaticShadow);
     }
 

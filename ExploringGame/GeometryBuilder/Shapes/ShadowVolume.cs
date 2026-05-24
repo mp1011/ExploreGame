@@ -2,6 +2,7 @@
 using ExploringGame.Rendering;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
@@ -22,4 +23,10 @@ public class ShadowVolume : Shape
     {
         return BuildCuboid();
     }
+
+    public override RasterizerState RasterizerState => new RasterizerState
+    {
+        DepthBias = -0.0001f,
+        CullMode = CullMode.None
+    };
 }

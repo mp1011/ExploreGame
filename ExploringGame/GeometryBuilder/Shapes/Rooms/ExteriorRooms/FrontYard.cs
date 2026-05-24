@@ -91,12 +91,15 @@ public class FrontYard : Room
         westOfWalkway.SetSideUnanchored(Side.West, GetSide(Side.West));
 
 
-        var southSection = Copy();
+        var southSection = Copy(inheritLightingGroup: false);
         southSection.Tag = "SouthFrontYard";
         southSection.Depth = driveway.Depth * 1.6f;
         southSection.Width = driveway.Width;
         southSection.Place().OnSideOuter(Side.South, driveway)
             .OnSideInner(Side.East, driveway);
+
+        AddConnectingRoom(driveway, Side.None);
+        driveway.AddConnectingRoom(southSection, Side.None);
 
         new GrassSurface(southSection, TerrainSurface.DefaultLawn);
 

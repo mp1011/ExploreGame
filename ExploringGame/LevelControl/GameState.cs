@@ -6,7 +6,6 @@ namespace ExploringGame.LevelControl;
 public enum StateKey
 {
     None,
-    AlwaysOn,
     OfficeDoor1Open,
     OfficeDoor2Open,
     OfficeDoor3Open,
@@ -41,7 +40,8 @@ public enum StateKey
     DeckSlidingDoorOpen,
     BedroomNightLightOn,
     FrontPorchLightOn,
-    BackDeckLightOn
+    BackDeckLightOn,
+    StreetLightsOn
 }
 
 public class GameState

@@ -15,7 +15,7 @@ public class StreetLight : LampBase
 
     public override Theme Theme => new BasicFurnitureTheme(Color.DarkGray);
 
-    public StreetLight(Room room) : base(room, StateKey.AlwaysOn, PoleDiameter, PoleDiameter, PoleHeight)
+    public StreetLight(Room room) : base(room, StateKey.StreetLightsOn, PoleDiameter, PoleDiameter, PoleHeight)
     {
         this.Place().AtParent().OnFloor();
     }

@@ -46,6 +46,11 @@ public class BackYard : Room
 
         _deckArea = Copy(inheritLightingGroup: false);
         _deckArea.Tag = "BackDeckArea";
+
+        AddConnectingRoom(_eastSection, Side.None);
+        AddConnectingRoom(_southSection, Side.None);
+        AddConnectingRoom(_midSection, Side.None);
+        AddConnectingRoom(_deckArea, Side.None);
     }
 
     public void LoadChildren(Shape frontSidewalk, Shape northYard, FrontDeck frontDeck, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 

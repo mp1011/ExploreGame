@@ -54,6 +54,6 @@ class ActiveObjectShapeBufferCreator : ShapeBufferCreator
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup,
             LightData: lights,
             Type: ShapeBufferType.Normal,
-            DistanceLightScale: 0.1f);
+            DistanceLightScale: 0.4f);
     }
 }

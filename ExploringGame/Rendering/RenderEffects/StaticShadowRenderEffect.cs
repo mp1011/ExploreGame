@@ -6,23 +6,12 @@ using Microsoft.Xna.Framework.Graphics;
 namespace ExploringGame.Rendering.RenderEffects;
 
 /// <summary>
-/// Render effect for glass panes with transparency and slight tint.
+/// Render effect for static shadows that darken existing pixels.
 /// </summary>
 public class StaticShadowRenderEffect : RenderEffect<Effect>
 {
-    private BlendState _transparentBlendState;
-
     public StaticShadowRenderEffect(Game game) : base(game)
     {
-        _transparentBlendState = new BlendState
-        {
-            ColorSourceBlend = Blend.SourceAlpha,
-            ColorDestinationBlend = Blend.InverseSourceAlpha,
-            ColorBlendFunction = BlendFunction.Add,
-            AlphaSourceBlend = Blend.One,
-            AlphaDestinationBlend = Blend.Zero,
-            AlphaBlendFunction = BlendFunction.Add
-        };
     }
 
     protected override Effect CreateEffect(GraphicsDevice graphicsDevice, ContentManager contentManager, Texture2D texture)
@@ -41,16 +30,26 @@ public class StaticShadowRenderEffect : RenderEffect<Effect>
 
     public new void Draw(GraphicsDevice graphicsDevice, System.Collections.Generic.IEnumerable<ShapeBuffer> shapeBuffers, Matrix view, Matrix projection)
     {
-        // Enable alpha blending for transparent glass
+        // Use multiply blend state to darken existing pixels
         var previousBlendState = graphicsDevice.BlendState;
-        graphicsDevice.BlendState = _transparentBlendState;
+      
+        graphicsDevice.BlendState = new BlendState()
+        {
+            ColorSourceBlend = Blend.Zero,
+            ColorDestinationBlend = Blend.InverseSourceAlpha,
+            ColorBlendFunction = BlendFunction.Add,
+
+            AlphaSourceBlend = Blend.Zero,
+            AlphaDestinationBlend = Blend.One,
+            AlphaBlendFunction = BlendFunction.Add
+        };
 
         // Render shadows after opaque geometry, reading from depth buffer but not writing to it
         var previousDepthStencilState = graphicsDevice.DepthStencilState;
         var depthState = new DepthStencilState
         {
             DepthBufferEnable = true,
-            DepthBufferWriteEnable = false, // Don't write to depth buffer
+            DepthBufferWriteEnable = false,
             DepthBufferFunction = CompareFunction.LessEqual
         };
         graphicsDevice.DepthStencilState = depthState;

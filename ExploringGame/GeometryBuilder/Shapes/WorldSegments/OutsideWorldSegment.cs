@@ -112,7 +112,7 @@ public class OutsideWorldSegment : WorldSegment
         _denRoof2.VertexOffsets.Add(new VertexOffset(Side.North | Side.West, new Vector3(-8.5f, 0f, 0f)));
 
 
-        var sideSection = _frontYard.Copy();
+        var sideSection = _frontYard.Copy(inheritLightingGroup: false);
         sideSection.Place().OnSideOuter(Side.South, _frontYard.SouthSection)
             .OnSideInner(Side.West, _frontYard.SouthSection);
 
@@ -120,7 +120,7 @@ public class OutsideWorldSegment : WorldSegment
         sideSection.SetSideUnanchored(Side.East, _sideRoad.GetSide(Side.East));
 
 
-        var sideSection2 = sideSection.Copy();
+        var sideSection2 = sideSection.Copy(inheritLightingGroup: false);
         sideSection2.Place().OnSideOuter(Side.South, _sideRoad);
 
         new Fence(sideSection2, Side.South);
@@ -136,5 +136,15 @@ public class OutsideWorldSegment : WorldSegment
         var streetLight = AddChild(new StreetLight(_road));
         streetLight.Place().OnSideInner(Side.East, _road);
         streetLight.Z = _frontYard.GetSide(Side.North) - Measure.Feet(10);
+
+        var streetLight2 = AddChild(new StreetLight(_road));
+        streetLight2.Place().OnSideInner(Side.East, _road);
+        streetLight2.Z = sideSection.GetSide(Side.South) + Measure.Feet(10);
+
+        _frontYard.AddConnectingRoom(sideSection, Side.None);
+        sideSection.AddConnectingRoom(sideSection2, Side.None);
+        sideSection.AddConnectingRoom(_road, Side.None);
+
+        _frontYard.SouthSection.AddConnectingRoom(_road, Side.None);
     }
 }

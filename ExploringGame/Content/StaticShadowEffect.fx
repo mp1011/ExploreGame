@@ -35,7 +35,7 @@ PSInput VSMain(VSInput input)
 
 float4 PSMain(PSInput input) : SV_Target
 {
-    return input.Color;
+    return float4(0, 0, 0, .6);
 }
 
 technique StaticShadowEffect

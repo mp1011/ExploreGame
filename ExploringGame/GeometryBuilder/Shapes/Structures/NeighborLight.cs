@@ -16,7 +16,7 @@ public class NeighborLight : LampBase
 
     public override Theme Theme => new BasicFurnitureTheme(Color.DarkGray);
 
-    public NeighborLight(Room room) : base(room, StateKey.AlwaysOn, BulbDiameter, BulbDiameter, BulbDiameter)
+    public NeighborLight(Room room) : base(room, StateKey.StreetLightsOn, BulbDiameter, BulbDiameter, BulbDiameter)
     {;
     }
 
