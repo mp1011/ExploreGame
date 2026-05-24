@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExploringGame.Rendering;
+namespace ExploringGame.Rendering.RenderPasses;
 
 /// <summary>
 /// Render pass for grass surfaces using custom billboard shader.

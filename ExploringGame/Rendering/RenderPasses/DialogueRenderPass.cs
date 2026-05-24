@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExploringGame.Rendering;
+namespace ExploringGame.Rendering.RenderPasses;
 
 public class DialogueRenderPass : IRenderPass
 {

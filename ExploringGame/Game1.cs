@@ -8,6 +8,7 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Rendering;
 using ExploringGame.Rendering.RenderEffects;
+using ExploringGame.Rendering.RenderPasses;
 using ExploringGame.Services;
 using ExploringGame.Story;
 using ExploringGame.Story.Debug;
@@ -178,10 +179,14 @@ public class Game1 : Game
         skyboxPass.LoadContent(this, loadedTextures);
         _renderPassRegistry.Register(skyboxPass);
 
+        var staticShadowRenderEffect = new StaticShadowRenderEffect(this);
+        staticShadowRenderEffect.SetTextures(loadedTextures);
+        _renderPassRegistry.Register(new StaticShadowRenderPass(staticShadowRenderEffect));
+
         var dialogueRenderPass = _serviceContainer.Get<DialogueRenderPass>();
         dialogueRenderPass.LoadContent(this, loadedTextures);
         _renderPassRegistry.RegisterInterface(dialogueRenderPass);
-
+      
         // Provide registry to LoadedLevelData so it can group buffers by pass
         _loadedLevelData.SetRenderPassRegistry(_renderPassRegistry);
 
