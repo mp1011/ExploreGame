@@ -182,6 +182,8 @@ public class BackYard : Room
 
         BackDeck = new BackDeck(WorldSegment, _deckArea, den);
 
+        BackDeck.AddConnectingRoom(_deckArea, Side.None);
+
         var eastSidewalk = AddChild(new Box(Theme, TextureKey.Concrete));
         eastSidewalk.AdjustShape().From(backSidewalk).SetAxis(Axis.X, BackDeck.SideStairs.Depth);
         eastSidewalk.Place().OnSideInner(Side.North, backSidewalk)

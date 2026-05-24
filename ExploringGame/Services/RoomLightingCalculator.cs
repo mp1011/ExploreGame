@@ -135,7 +135,8 @@ public class RoomLightingCalculator
     /// </summary>
     public LightContribution CalculateLightContribution(ILightSource lightSource, IRoom targetRoom)
     {
-
+        GameDebug.Debug.Message(lightSource.On && targetRoom is Kitchen && lightSource.Room is BackDeck, "TEST");
+        
         if (!lightSource.On)
             return new LightContribution(lightSource, 0);
 

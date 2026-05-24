@@ -1,6 +1,8 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
+using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -82,6 +84,10 @@ public class BackDeck : Deck
             .OnSideInner(Side.East, this);
 
         SideStairs = sideStairs;
+
+        var light = new OutdoorLight(this, StateKey.BackDeckLightOn);
+        light.Place().AtParent().OnSideInner(Side.West).OnSideInner(Side.Top);
+        light.Z -= Measure.Feet(2);
     }
 }
 

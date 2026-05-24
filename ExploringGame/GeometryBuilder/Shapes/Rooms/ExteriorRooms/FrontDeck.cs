@@ -110,6 +110,10 @@ public class FrontDeck : Deck
 
         frontDoor.TraverseAllChildren().OfType<Door>().First().Tag = "FrontDoor";
         frontDoor.SetSideUnanchored(Side.Top, livingRoom.GetSide(Side.Top));
+
+        var light = new OutdoorLight(this, StateKey.FrontPorchLightOn);
+        light.Place().AtParent().OnSideInner(Side.East).OnSideInner(Side.Top);
+        light.Z += Measure.Feet(2);
     }
 }
 

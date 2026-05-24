@@ -113,10 +113,7 @@ float4 PSMain(PSInput input) : SV_Target
     // desired formula, but input.Color is always black
    // return float4(texColor.rgb * input.Color.rgb * brightness, texColor.a);
       
-   return float4(texColor.rgb * float3(0.1, 0.6, 0.2) * brightness, texColor.a);
-    
-    
-    
+   return float4(texColor.rgb * float3(50.0/255.0, 110.0/255.0, 40.0/255.0) * brightness, texColor.a);   
 }
 
 technique Grass
