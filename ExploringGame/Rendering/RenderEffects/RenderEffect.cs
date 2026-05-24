@@ -1,6 +1,7 @@
 ﻿using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Texture;
@@ -96,30 +97,26 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
         var intensities = new float[PointLights.MAX_LIGHTS];
         int activeLightCount = 0;
 
-        if (shapeBuffer.LightingGroup is BackYard)
+        if (shapeBuffer.LightingGroup is Kitchen)
             Console.WriteLine("!");
 
         if (shapeBuffer.LightData != null)
         {
-            var lights = shapeBuffer.LightData.SortedContributions
-                .Select(p => p.LightSource)
-                .ToArray();
-
-            foreach (var lightSource in lights)
+            foreach (var lightContribution in shapeBuffer.LightData.SortedContributions)
             {
-                if (!lightSource.On || activeLightCount >= PointLights.MAX_LIGHTS)
+                if (!lightContribution.LightSource.On || activeLightCount >= PointLights.MAX_LIGHTS)
                     break;
 
-                positions[activeLightCount] = lightSource.LightPosition;
+                positions[activeLightCount] = lightContribution.AdjustedPosition();
 
                 if (shapeBuffer.Shape is IPlaceableObject)
                 {
-                    positions[activeLightCount] = lightSource.LightPosition - shapeBuffer.Shape.Position;
+                    positions[activeLightCount] = lightContribution.LightSource.LightPosition - shapeBuffer.Shape.Position;
                 }
 
-                colors[activeLightCount] = lightSource.Color.ToVector3();
+                colors[activeLightCount] = lightContribution.LightSource.Color.ToVector3();
 
-                intensities[activeLightCount] = lightSource.Intensity;
+                intensities[activeLightCount] = lightContribution.LightSource.Intensity;
                 activeLightCount++;
             }
         }

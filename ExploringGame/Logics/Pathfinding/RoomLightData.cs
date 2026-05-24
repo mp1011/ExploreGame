@@ -1,11 +1,22 @@
 using ExploringGame.GeometryBuilder.Shapes;
-using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ExploringGame.Logics.Pathfinding;
 
-public record LightContribution(ILightSource LightSource, float Amount);
+public record LightContribution(ILightSource LightSource, float? GraphDistance, Vector3? Origin, Vector3? AdjustedDirection, float Amount)
+{
+    public LightContribution(ILightSource LightSource, float Amount) : this(LightSource, null, null, null, Amount) { }
+
+    public Vector3 AdjustedPosition()
+    {
+        if (GraphDistance == null)
+            return LightSource.LightPosition;
+        else
+            return Origin.Value + (AdjustedDirection.Value * GraphDistance.Value);
+    }
+}
 
 /// <summary>
 /// Stores lighting information for a room, including
@@ -26,9 +37,9 @@ public class RoomLightData : IWithRoom
     /// <summary>
     /// Stores light contribution from a specific source
     /// </summary>
-    public void SetLightContribution(ILightSource lightSource, float contribution)
+    public void AddLightContribution(LightContribution lightContribution)
     {
-        _lightContributions[lightSource] = new LightContribution(lightSource, contribution);
+        _lightContributions[lightContribution.LightSource] = lightContribution;
     }
 
     /// <summary>

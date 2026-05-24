@@ -16,6 +16,5 @@
  
 
 
-- add remaining buffers
-- multiple lights with light bleed protection
+- add stamp shape buffers
 - colored lights

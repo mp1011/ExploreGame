@@ -10,6 +10,7 @@ using ExploringGame.Logics.Pathfinding;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ExploringGame.Services;
@@ -133,28 +134,34 @@ public class RoomLightingCalculator
     /// <summary>
     /// Calculate light contribution from a specific light source to a specific room
     /// </summary>
-    public float CalculateLightContribution(ILightSource lightSource, IRoom targetRoom)
+    public LightContribution CalculateLightContribution(ILightSource lightSource, IRoom targetRoom)
     {
+
         if (!lightSource.On)
-            return 0f;
+            return new LightContribution(lightSource, 0);
 
         // Find the room containing this light
         var lightRoom = lightSource.Room;
         if (lightRoom == null)
-            return 0f;
+            return new LightContribution(lightSource, 0);
 
         // If light is in the same lighting group, full contribution
         if (lightRoom.LightingGroup == targetRoom.LightingGroup)
-            return lightSource.Intensity;
+            return new LightContribution(lightSource, lightSource.Intensity); 
 
         // Find path from light's room to target room
         var roomPath = _roomGraph.FindPath(lightRoom, targetRoom);
         if (roomPath == null || roomPath.Count == 0)
-            return 0f;
+            return new LightContribution(lightSource, 0);
 
         // Walk the path and calculate decay
         // Only apply decay when crossing between different lighting groups
         float contribution = lightSource.Intensity;
+        float graphDistance = 0;
+
+        Vector3 pos = lightSource.LightPosition;
+        Vector3 lastDir = Vector3.Zero;
+
         var currentLightingGroup = lightRoom.LightingGroup;
 
         for (int i = 0; i < roomPath.Count - 1; i++)
@@ -185,13 +192,32 @@ public class RoomLightingCalculator
 
                 // Stop if contribution is too small
                 if (contribution < MinimumContribution)
-                    return 0f;
+                    return new LightContribution(lightSource, 0);
+
+                graphDistance += (pos.DistanceTo(nextLightingGroup.Position) * 1.3f);
+                pos = nextLightingGroup.Position;
+
+                // lastDir = (nextLightingGroup.Position - currentLightingGroup.Position);
+                lastDir = (currentLightingGroup.Position - nextLightingGroup.Position);
+
+                lastDir.Normalize();
 
                 currentLightingGroup = nextLightingGroup;
             }
         }
 
-        return contribution;
+        if (targetRoom is LivingRoom && lightSource.Room is Kitchen)
+            Console.Write("!");
+
+        if (targetRoom is Kitchen && lightSource.Room is Bathroom)
+            Console.Write("!");
+
+
+        var directDistance = lightSource.LightPosition.DistanceTo(targetRoom.Position);
+        if (directDistance > graphDistance)
+            return new LightContribution(lightSource, contribution);
+        else 
+            return new LightContribution(lightSource, graphDistance, targetRoom.Position, lastDir, contribution);
     }
 
     /// <summary>
@@ -204,15 +230,11 @@ public class RoomLightingCalculator
 
         foreach (var light in allLights)
         {
-            float contribution = CalculateLightContribution(light, room);
-            if (contribution > 0)
-            {
-                lightData.SetLightContribution(light, contribution);
-            }
+            var contribution = CalculateLightContribution(light, room);
+            if (contribution.Amount > 0)
+                lightData.AddLightContribution(contribution);
             else
-            {
                 lightData.RemoveLightContribution(light);
-            }
         }
     }
 
@@ -228,15 +250,11 @@ public class RoomLightingCalculator
 
             if (_roomLightGraph.TryGet(room, out var lightData))
             {
-                float contribution = CalculateLightContribution(lightSource, room);
-                if (contribution > 0)
-                {
-                    lightData.SetLightContribution(lightSource, contribution);
-                }
+                var contribution = CalculateLightContribution(lightSource, room);
+                if (contribution.Amount > 0)
+                    lightData.AddLightContribution(contribution);
                 else
-                {
                     lightData.RemoveLightContribution(lightSource);
-                }
             }
         }
     }
