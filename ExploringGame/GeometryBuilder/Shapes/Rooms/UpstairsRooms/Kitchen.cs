@@ -35,7 +35,7 @@ public class Kitchen : Room
 
         lightSwitch.Position = Position;
         lightSwitch.Place().OnSideInner(Side.West)
-                           .AtEyeLevel(this, -Measure.Inches(5));
+                           .AtStandardSwitchHeight();
 
         var southPart = Copy();
         southPart.Depth = Measure.Feet(4);

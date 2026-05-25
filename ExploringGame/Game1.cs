@@ -59,7 +59,7 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = false;
-        _graphics.IsFullScreen = true00000000000000000000;
+        _graphics.IsFullScreen = false;
         _currentSegmentGroup = currentGroup;
     }
 

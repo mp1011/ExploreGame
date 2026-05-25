@@ -2,6 +2,7 @@
 using ExploringGame.Logics;
 using ExploringGame.Logics.ShapeControllers;
 using ExploringGame.Services;
+using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -9,6 +10,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Appliances;
 
 public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, IOnOff, ILightSource
 {
+    public override Theme Theme { get; } = new Theme(Color.White);
+
     public LightBulb(IRoom room, Shape parent, StateKey key, float diameter, float intensity, Color color)
     {
         parent.AddChild(this);

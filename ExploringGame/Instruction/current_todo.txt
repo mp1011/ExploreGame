@@ -1,10 +1,21 @@
-﻿lighting improvement
- 
- - new structures
-	- neighbor house structure (all-black)
+﻿X light switches, use a consistent Y
+X remove curtain rod from half bath window
+X street lights should be white
+- fit basement stairs ceiling
 
- 
 
 
 - add stamp shape buffers
 - colored lights
+- object activation improvement
+
+
+Lighting Next Phase
+- double door junction appears fully black
+	- room distance is inaccurate when rooms are large
+- GetTotalLight in RoomLightData doesn't need to be as complex
+- half bath appears fully black if light is off
+- fix light bleed issue from bedroom to front yard
+- second street light not illuminating properly
+- in backyard, lights don't reach wall
+- active objects rendering brighter than room, can be seen in basement office

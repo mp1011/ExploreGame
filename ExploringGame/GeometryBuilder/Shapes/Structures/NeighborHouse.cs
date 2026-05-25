@@ -15,7 +15,7 @@ public class NeighborHouse : Shape
 
     public NeighborHouse()
     {
-        Theme = new Theme(Color.Red);
+        Theme = new Theme(Color.Black);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

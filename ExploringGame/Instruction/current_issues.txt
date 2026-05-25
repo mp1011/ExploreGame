@@ -1,4 +1,0 @@
-[ ] DoesCutoutIntersectSurface - implemented incorrectly
-[ ] need better solution for stepping up short distances
-[ ] glass panes don't use proper renderer when inside an active object
-[ ] textures on curtain rod spheres

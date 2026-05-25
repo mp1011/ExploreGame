@@ -29,7 +29,7 @@ public class Bathroom : Room
         var sw = new LightSwitch(this, Side.North, StateKey.BathroomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.North).AtEyeLevel(this, -Measure.Inches(5));
+        sw.Place().OnSideInner(Side.North).AtStandardSwitchHeight();
 
         var sinkArea = Copy(depth: Measure.Feet(2), width: Measure.Feet(5));
         sinkArea.Place().OnSideOuter(Side.North, this)

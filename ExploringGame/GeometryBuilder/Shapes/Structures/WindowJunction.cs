@@ -11,6 +11,12 @@ using System.Runtime.CompilerServices;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Structures;
 
+public enum WindowStyle
+{
+    Plain = 0,
+    Curtains = 1
+}
+
 /// <summary>
 /// Mini "room" which joins an interior room to an exterior room, creating a window opening.
 /// The junction itself represents the windowsill.
@@ -40,7 +46,7 @@ public class Window : Room
 
     public override Side OmitSides => _wallSide | _wallSide.Opposite();
 
-    public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f, Room otherRoom = null) : base(room.WorldSegment)
+    public Window(Room room, Side wallSide, float width, float height, HAlign align = HAlign.Center, float offset = 0f, Room otherRoom = null, WindowStyle style = WindowStyle.Curtains) : base(room.WorldSegment)
     {
         room.AddChild(this);
         _parentRoom = room;
@@ -74,24 +80,28 @@ public class Window : Room
             .AxisStretch(_wallSide.GetAxis(), SillOverhang));
 
         // curtain rod
-        var rod = AddChild(new Cylinder { Axis = wallSide.GetPerpendicularAxis() });
-        rod.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Ceiling);
-        rod.AdjustShape()
-            .SetAxis(Axis.Y, RodThickness)
-            .SetAxis(_wallSide.GetAxis(), RodThickness)
-            .SetAxis(_wallSide.GetPerpendicularAxis(), width + (RodLengthExtra * 2f));
-        rod.Place()
-            .AtParent()
-            .OnSideOuter(wallSide.Opposite(), this, offset: -RodWallOffset * _wallSide.Sign())
-            .FromSide(Side.Top, RodVerticalOffset);
+        Cylinder rod = null;
+        if (style == WindowStyle.Curtains)
+        {
+            rod = AddChild(new Cylinder { Axis = wallSide.GetPerpendicularAxis() });
+            rod.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Ceiling);
+            rod.AdjustShape()
+                .SetAxis(Axis.Y, RodThickness)
+                .SetAxis(_wallSide.GetAxis(), RodThickness)
+                .SetAxis(_wallSide.GetPerpendicularAxis(), width + (RodLengthExtra * 2f));
+            rod.Place()
+                .AtParent()
+                .OnSideOuter(wallSide.Opposite(), this, offset: -RodWallOffset * _wallSide.Sign())
+                .FromSide(Side.Top, RodVerticalOffset);
 
-        // rod end-caps
-        var cap1 = AddChild(new Ellipsoid(radius: RodEndcapRadius));
-        var cap2 = AddChild(new Ellipsoid(radius: RodEndcapRadius));
-        cap1.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Ceiling);
-        cap2.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Ceiling);
-        cap1.Place().At(rod).OnSideOuter(wallSide.ClockwiseTurn(), rod);
-        cap2.Place().At(rod).OnSideOuter(wallSide.CounterClockwiseTurn(), rod);
+            // rod end-caps
+            var cap1 = AddChild(new Ellipsoid(radius: RodEndcapRadius));
+            var cap2 = AddChild(new Ellipsoid(radius: RodEndcapRadius));
+            cap1.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Ceiling);
+            cap2.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Ceiling);
+            cap1.Place().At(rod).OnSideOuter(wallSide.ClockwiseTurn(), rod);
+            cap2.Place().At(rod).OnSideOuter(wallSide.CounterClockwiseTurn(), rod);
+        }
 
         // glass pane - thin transparent glass in the window opening
         var glassPane = AddChild(new GlassPane(wallSide));
@@ -102,8 +112,11 @@ public class Window : Room
         glassPane.Place().AtParent(); // Center in the window opening
 
         // curtains
-        CreateCurtain(rod, wallSide, wallSide.ClockwiseTurn());
-        CreateCurtain(rod, wallSide, wallSide.CounterClockwiseTurn());
+        if (style == WindowStyle.Curtains)
+        {
+            CreateCurtain(rod, wallSide, wallSide.ClockwiseTurn());
+            CreateCurtain(rod, wallSide, wallSide.CounterClockwiseTurn());
+        }
 
         // moulding
         AddChild(new Moulding(

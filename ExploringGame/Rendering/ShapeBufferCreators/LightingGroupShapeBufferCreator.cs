@@ -55,7 +55,7 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
 
         var buffers = _vertexBufferBuilder.Build(worldSegmentTriangles, _textureSheets.Get(key), _graphicsDevice);
         return new ShapeBuffer(shape, buffers.Item1, buffers.Item2, buffers.Item3, key, shape.RasterizerState, lightingGroup, 
-            Type: ShapeBufferType.Normal, 
+            Type: ShapeBufferType.Normal,
             LightData: lightData);
     }
 

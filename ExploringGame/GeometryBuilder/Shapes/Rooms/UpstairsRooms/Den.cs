@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -41,8 +42,10 @@ public class Den : Room
         var lightSwitch = new LightSwitch(this, Side.South, StateKey.DenLightOn);
         lightSwitch.ControlledObjects.Add(light);
 
+        LightingDebugger.WatchLight = light;
+
         lightSwitch.Position = Position;
-        lightSwitch.Place().OnSideInner(Side.South).AtEyeLevel(this, -Measure.Inches(5));
+        lightSwitch.Place().OnSideInner(Side.South).AtStandardSwitchHeight();
 
         SetSideUnanchored(Side.North, _livingRoom.GetSide(Side.North));
     }

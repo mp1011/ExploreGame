@@ -45,6 +45,8 @@ public class ShapePlacer
         return this;
     }
 
+    public ShapePlacer AtStandardSwitchHeight() => AtEyeLevel(_shape.Parent, offset: -Measure.Feet(1));
+
     public ShapePlacer AtEyeLevel(Shape container, float offset)
     {
         _shape.Y = container.GetSide(Side.Bottom) + Player.EyeHeight + offset;

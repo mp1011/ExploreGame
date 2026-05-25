@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+﻿using ExploringGame.GameDebug;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -51,6 +52,11 @@ public class BackYard : Room
         AddConnectingRoom(_southSection, Side.None);
         AddConnectingRoom(_midSection, Side.None);
         AddConnectingRoom(_deckArea, Side.None);
+
+        _eastSection.AddConnectingRoom(_midSection, Side.None);
+        _eastSection.AddConnectingRoom(_deckArea, Side.None);
+        _eastSection.AddConnectingRoom(_southSection, Side.None);
+
     }
 
     public void LoadChildren(Shape frontSidewalk, Shape northYard, FrontDeck frontDeck, Den den, Kitchen kitchen, KidsBedroom kidsBedroom, Bedroom bedroom, 
@@ -175,12 +181,12 @@ public class BackYard : Room
 
         new OuterWall(_deckArea, Side.North);
 
-        new Window(kitchen, Side.East, Measure.Feet(4), Measure.Feet(4), HAlign.Right, -Measure.Feet(2), otherRoom: _deckArea);    
+        new Window(kitchen, Side.East, Measure.Feet(4), Measure.Feet(4), HAlign.Right, -Measure.Feet(2), otherRoom: _deckArea, style: WindowStyle.Plain);    
         new Window(den, Side.South, Measure.Feet(4), Measure.Feet(4), HAlign.Left, Measure.Feet(2), otherRoom: _deckArea);
         new Window(kidsBedroom, Side.South, Measure.Feet(3), Measure.Feet(4), otherRoom: _southSection);
         new Window(kidsBedroom, Side.East, Measure.Feet(3), Measure.Feet(4), otherRoom: _midSection);       
         new Window(bedroom, Side.South, Measure.Feet(4), Measure.Feet(4), otherRoom: _southSection);
-        new Window(halfBath, Side.East, Measure.Feet(4), Measure.Feet(4), otherRoom: _eastSection);
+        new Window(halfBath, Side.East, Measure.Feet(4), Measure.Feet(4), otherRoom: _eastSection, style: WindowStyle.Plain);
 
         new BasementWindow(basement, this, Side.North, HAlign.Right, -0.5f);
         new BasementWindow(basementOffice.EastPart, _eastSection, Side.East, HAlign.Left, 0.0f);
@@ -208,6 +214,11 @@ public class BackYard : Room
         neighborLight.Y = this.Y + Measure.Feet(14);
         neighborLight.X += Measure.Feet(8);
         neighborLight.Z -= Measure.Feet(8);
+
+        var neighborLight2 = new NeighborLight(_eastSection);
+        neighborLight2.Place().At(_eastSection).OnSideOuter(Side.East);
+        neighborLight2.Y = this.Y + Measure.Feet(12);
+        neighborLight2.X += Measure.Feet(8);
     }
 
 }

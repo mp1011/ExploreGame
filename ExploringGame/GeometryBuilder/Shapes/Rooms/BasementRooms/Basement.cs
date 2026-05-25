@@ -50,7 +50,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             lightSwitch.Place().OnSideInner(Side.East);
             lightSwitch.SetSide(Side.North, GetSide(Side.North) + Measure.Inches(22));
             lightSwitch.ControlledObjects.AddRange(_office.Lights);
-            lightSwitch.Place().AtEyeLevel(this, -Measure.Inches(5));
+            lightSwitch.Place().AtStandardSwitchHeight();
 
             // L-shaped walls
             var wall1 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(31) });
@@ -137,9 +137,14 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
             lightSwitch2.Position = wall2.Position;
             lightSwitch2.Place().OnSideOuter(Side.West, wall2);
-            lightSwitch2.Place().AtEyeLevel(this, -Measure.Inches(5));
+            lightSwitch2.Place().AtStandardSwitchHeight();
 
             BasementStairsDoor.AddConnectingRoom(_upstairsHall, Side.South);
+
+            //hack
+            wall6.SetSideUnanchored(Side.North, Stairs.GetSide(Side.North));
+            wall7.SetSideUnanchored(Side.North, Stairs.GetSide(Side.North));
+
         }
     }
 }

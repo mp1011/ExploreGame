@@ -27,7 +27,7 @@ public class StreetLight : LampBase
 
     protected override LightBulb CreateBulb(Room room, StateKey stateKey)
     {
-        var bulb = new LightBulb(Room, this, StateKey, BulbDiameter, LightIntensity.Bright, Color.LightYellow);
+        var bulb = new LightBulb(Room, this, StateKey, BulbDiameter, LightIntensity.VeryBright, Color.LightYellow);
         bulb.Place().AtParent().OnSideOuter(Side.Top);
         return bulb;
     }

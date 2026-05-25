@@ -49,7 +49,7 @@ public class BackyardWorldSegment : WorldSegment
             halfBath);
 
         var slidingDoorJunction = _backyard.DeckArea.AddConnectingRoomWithJunction(new SlidingDoorJunction(_backyard.DeckArea, Side.North, HAlign.Right, StateKey.DeckSlidingDoorOpen),
-            den, Side.North, HAlign.Left, 1.0f, adjustPlacement: false);
+            den, Side.North, HAlign.Left, 2.0f, adjustPlacement: false);
 
         slidingDoorJunction.SetSide(Side.Top, den.GetSide(Side.Top) - Measure.Feet(1));
         slidingDoorJunction.SetSideUnanchored(Side.Bottom, _backyard.BackDeck.GetSide(Side.Bottom));
@@ -62,6 +62,14 @@ public class BackyardWorldSegment : WorldSegment
         neighborHouse1.Height = Measure.Feet(20);
         neighborHouse1.Place().OnFloor(_backyard)
             .OnSideOuter(Side.North, _backyard, -Measure.Feet(10));
+
+        var neighborHouse2 = AddChild(new NeighborHouse());
+        neighborHouse2.Width = Measure.Feet(50);
+        neighborHouse2.Depth = Measure.Feet(50);
+        neighborHouse2.Height = Measure.Feet(20);
+        neighborHouse2.Place().OnFloor(_backyard)
+            .OnSideOuter(Side.East, _backyard, Measure.Feet(20));
+
 
     }
 }

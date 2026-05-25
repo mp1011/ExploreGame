@@ -38,7 +38,7 @@ public class KidsBedroom : Room
         lightSwitch.Position = Position;
         lightSwitch.Place().OnSideInner(Side.North)
             .OnSideInner(Side.West, this, 1.5f)
-            .AtEyeLevel(this, -Measure.Inches(5));
+            .AtStandardSwitchHeight();
 
         var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(1.4f));
         closet.Place().OnSideOuter(Side.North, this, -Measure.Inches(6))

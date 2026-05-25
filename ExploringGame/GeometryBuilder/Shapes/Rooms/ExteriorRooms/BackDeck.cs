@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -88,6 +89,15 @@ public class BackDeck : Deck
         var light = new OutdoorLight(this, StateKey.BackDeckLightOn);
         light.Place().AtParent().OnSideInner(Side.West).OnSideInner(Side.Top);
         light.Z -= Measure.Feet(2);
+
+        var lightSwitch = new LightSwitch(den, Side.South, StateKey.BackDeckLightOn);
+        lightSwitch.ControlledObjects.Add(light.Bulb);
+
+        lightSwitch.Place().AtParent()
+            .AtStandardSwitchHeight()
+            .OnSideInner(Side.South);
+        lightSwitch.SetSide(Side.West, den.GetSide(Side.West) + Measure.Feet(1));
+
 
         var underDeckShadow = AddChild(new ShadowVolume());
         underDeckShadow.AdjustShape().From(this);

@@ -6,6 +6,7 @@ using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using Microsoft.Xna.Framework;
 using ExploringGame.Services;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
+using ExploringGame.GameDebug;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
@@ -15,13 +16,15 @@ public class HalfBathroom : Room
     public override Theme Theme => new BathroomTheme();
 
     public HalfBathroom(UpstairsWorldSegment worldSegment, Den den) 
-        : base(worldSegment, height: den.Height, width: Measure.Feet(5), depth: Measure.Feet(5))
+        : base(worldSegment, height: den.Height, width: Measure.Feet(4.8f), depth: Measure.Feet(5))
     {
         _den = den;
     }
 
     public void LoadChildren()
     {
+        LightingDebugger.WatchShape = this;
+
         _den.EastPart.AddConnectingRoomWithJunction(new DoorJunction(this, Side.North, HAlign.Left, DoorDirection.Pull, StateKey.HalfBathroomDoorOpen),
             this, Side.North);
 
@@ -29,6 +32,6 @@ public class HalfBathroom : Room
         var sw = new LightSwitch(this, Side.West, StateKey.HalfBathroomLightOn);
         sw.ControlledObjects.Add(light);
         sw.Position = this.Position;
-        sw.Place().OnSideInner(Side.West).AtEyeLevel(this, -Measure.Inches(5)); 
+        sw.Place().OnSideInner(Side.West).AtStandardSwitchHeight(); 
     }
 }

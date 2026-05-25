@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -114,6 +115,17 @@ public class FrontDeck : Deck
         var light = new OutdoorLight(this, StateKey.FrontPorchLightOn);
         light.Place().AtParent().OnSideInner(Side.East).OnSideInner(Side.Top);
         light.Z += Measure.Feet(2);
+
+        var lightSwitch = new LightSwitch(livingRoom, Side.West, StateKey.FrontPorchLightOn);
+        lightSwitch.Place()
+            .AtParent()
+            .AtStandardSwitchHeight()
+            .OnSideInner(Side.West);
+
+        lightSwitch.ControlledObjects.Add(light.Bulb);
+
+        lightSwitch.Z += Measure.Feet(4);
+
     }
 }
 

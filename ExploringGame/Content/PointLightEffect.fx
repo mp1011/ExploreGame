@@ -137,9 +137,10 @@ float NormalBasedLight(PSInput input)
 
         float NdotL = saturate(dot(normal, lightDir));
 
-        float attenuation = saturate(1.0f - (distance / 8.0f));
+        float baseDistance = 24.0 * LightIntensities[i];
+        float attenuation = saturate(1.0f - (distance / baseDistance));
 
-        normRatio = NdotL * attenuation * LightIntensities[i];
+        normRatio = NdotL * attenuation;
         
         if (normRatio > bestNormRatio)
             bestNormRatio = normRatio;

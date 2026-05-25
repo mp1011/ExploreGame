@@ -1,4 +1,5 @@
 using ExploringGame.Extensions;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
@@ -211,6 +212,8 @@ public class RoomLightingCalculator
             }
         }
 
+        LightingDebugger.Check(lightSource, targetRoom);
+
         var directDistance = lightSource.LightPosition.DistanceTo(targetRoom.Position);
         if (directDistance > graphDistance)
             return new LightContribution(lightSource, contribution);
@@ -243,9 +246,6 @@ public class RoomLightingCalculator
     {
         foreach (var room in _roomGraph.GetAllRooms())
         {
-            if (room is BackYard)
-                Console.Write(">");
-
             if (_roomLightGraph.TryGet(room, out var lightData))
             {
                 var contribution = CalculateLightContribution(lightSource, room);
