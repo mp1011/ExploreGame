@@ -5,6 +5,7 @@ using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Skyboxes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.LevelControl;
+using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,12 @@ public class BackyardWorldSegment : WorldSegment
 
         _backyard.AddConnectingRoom(FindShape<FrontYard>(loadedSegments), Side.West);
 
+        var neighborHouse1 = AddChild(new NeighborHouse());
+        neighborHouse1.Width = Measure.Feet(50);
+        neighborHouse1.Depth = Measure.Feet(50);
+        neighborHouse1.Height = Measure.Feet(20);
+        neighborHouse1.Place().OnFloor(_backyard)
+            .OnSideOuter(Side.North, _backyard, -Measure.Feet(10));
 
     }
 }

@@ -1,15 +1,8 @@
 ﻿lighting improvement
  
  - new structures
-	- front porch light
-	- back porch light
-	- second streetlight
-	- neigher house structure (all-black)
+	- neighbor house structure (all-black)
 
- - maybe doors should only use normal-based light
- - light from den doesn't make it into deck
- - piece of floor appearing through basement stairs ceiling
- - roof not getting lit
  
 
 
