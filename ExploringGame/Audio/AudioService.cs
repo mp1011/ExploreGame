@@ -1,16 +1,19 @@
-﻿using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 
-namespace ExploringGame.Services;
+namespace ExploringGame.Audio;
 
 
 public enum SoundEffectKey
 {
      DoorOpen,
      DoorClose,
-     TextBeep
+     TextBeep,
+     CreepyLoop
 }
 public class AudioService : IDisposable
 {
@@ -20,6 +23,9 @@ public class AudioService : IDisposable
     public static bool Enabled { get; set; }
 
     private Dictionary<SoundEffectKey, SoundEffect> _effects = new();
+
+    private List<ActiveAudio> _activeSounds = new();
+
     private bool disposedValue;
 
     public void LoadContent(ContentManager contentManager)
@@ -32,7 +38,30 @@ public class AudioService : IDisposable
         foreach(SoundEffectKey key in Enum.GetValues(typeof(SoundEffectKey)))
         {
             _effects[key] = contentManager.Load<SoundEffect>($"Sound/{key}");
-        }        
+        }
+    }
+
+    public TimeSpan GetDuration(SoundEffectKey key)
+    {
+        return _effects[key].Duration;
+    }
+
+    public void AddActiveSound(ActiveAudio sound)
+    {
+        _activeSounds.Add(sound);
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        foreach(var sound in _activeSounds)
+        {
+            sound.Update(gameTime);
+        }
+    }
+
+    public SoundEffectInstance CreateInstance(SoundEffectKey key)
+    {
+        return _effects[key].CreateInstance();
     }
 
     public void Play(SoundEffectKey key)

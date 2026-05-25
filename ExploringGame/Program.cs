@@ -1,10 +1,12 @@
 ﻿using ExploringGame;
+using ExploringGame.Audio;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Testing;
 using System.Linq;
 
+AudioService.Enabled = true;
 using var game = new Game1(new HomeWorldSegmentGroup());
 
 //var testMap = TestMaps.CircleCutoutTest();

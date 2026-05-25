@@ -1,4 +1,5 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Audio;
+using ExploringGame.Entities;
 using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -127,7 +128,7 @@ public class Game1 : Game
         _serviceContainer.BindSingleton<DialogueManager>();
         _dialogueManager = _serviceContainer.Get<
             DialogueManager>();
- 
+
         base.Initialize();
     }
 
@@ -194,6 +195,8 @@ public class Game1 : Game
 
         _audioService = _serviceContainer.Get<AudioService>();
         _audioService.LoadContent(Content);
+
+        _audioService.AddActiveSound(new ActiveAudio(_audioService, SoundEffectKey.CreepyLoop));
     }
 
     private bool _ranInit = false;
@@ -223,7 +226,8 @@ public class Game1 : Game
         _loadedLevelData.Update(gameTime);
         _sceneManager.Update(gameTime);
         _dialogueManager.Update(gameTime);
-
+        _audioService.Update(gameTime);
+      
         _playerInput.Update(Window);
         if (_playerInput.IsKeyDown(GameKey.DebugKey))
         {

@@ -6,6 +6,17 @@ public static class NumberExtensions
 {
     const float Epsilon = 1e-6f;
 
+
+    public static float ClampF(this double number, float min, float max)
+    {
+        if (number < min)
+            return min;
+        else if (number > max)
+            return max;
+        else
+            return (float)number;
+    }
+
     public static float Abs(this float number) => Math.Abs(number);
 
     public static bool IsValidPositive(this float number)

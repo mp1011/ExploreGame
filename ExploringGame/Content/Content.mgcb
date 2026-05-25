@@ -93,6 +93,12 @@
 /processorParam:DebugMode=Auto
 /build:SkyboxEffect.fx
 
+#begin Sound/CreepyLoop.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/CreepyLoop.wav
+
 #begin Sound/DoorClose.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
