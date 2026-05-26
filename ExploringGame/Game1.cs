@@ -134,8 +134,10 @@ public class Game1 : Game
 
     protected virtual Scene LoadInitialScene()
     {
-        return _serviceContainer.Get<DebugScene>();
-//        return _serviceContainer.Get<SceneOne>();
+        if(Debug.UseDebugScene)
+            return _serviceContainer.Get<DebugScene>();
+        else
+            return _serviceContainer.Get<SceneOne>();
     }
 
     protected override void LoadContent()
@@ -195,8 +197,6 @@ public class Game1 : Game
 
         _audioService = _serviceContainer.Get<AudioService>();
         _audioService.LoadContent(Content);
-
-        _audioService.AddActiveSound(new ActiveAudio(_audioService, SoundEffectKey.CreepyLoop));
     }
 
     private bool _ranInit = false;

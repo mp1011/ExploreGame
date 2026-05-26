@@ -18,6 +18,8 @@ public class ActOne : Act
     {
         PlotPoint nar1, nar2, nar3, lookAtHallLight, upstairsLightsOff, bedroomLampOff, lieInBed;
 
+        yield return plotPointFactory.SetLights(StateKey.LeftBedroomLightOn, StateKey.BedroomNightLightOn, StateKey.StreetLightsOn);
+
         yield return plotPointFactory.DoorBlocker(
             new()
             {

@@ -1,11 +1,12 @@
-﻿using ExploringGame.Entities;
+﻿using ExploringGame.Audio;
+using ExploringGame.Entities;
 using ExploringGame.GeometryBuilder;
+using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using ExploringGame.Story.Character;
-using ExploringGame.Story.Debug;
 using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
 using System;
@@ -47,9 +48,11 @@ public class PlotPointFactory
     private readonly DialogueManager _dialogueManager;
     private readonly PlayerActor _actor;
     private readonly CameraService _cameraService;
+    private readonly AudioService _audioService;
 
     public PlotPointFactory(ServiceContainer serviceContainer, LoadedLevelData loadedLevelData, IPlayerInput playerInput, Player player, 
-        Physics physics, DialogueManager dialogueManager, PlayerActor playerActor, CameraService cameraService)
+        Physics physics, DialogueManager dialogueManager, PlayerActor playerActor, CameraService cameraService,
+        AudioService audioService)
     {
         _serviceContainer = serviceContainer;
         _cameraService = cameraService;
@@ -59,6 +62,7 @@ public class PlotPointFactory
         _physics = physics;
         _actor = playerActor;
         _dialogueManager = dialogueManager;
+        _audioService = audioService;
     }
 
     public FlavorText<TShape> FlavorText<TShape>(string text, string tag = null)
@@ -70,6 +74,17 @@ public class PlotPointFactory
     public Narration Narration(string text, params PlotPoint[] requiredDone)
     {
         return new Narration(_loadedLevelData, _actor, _dialogueManager, text, requiredDone);
+    }
+
+    public Narration RoomNarration<T>(string text, params PlotPoint[] requiredDone)
+        where T:IRoom
+    {
+        return new RoomNarration<T>(_loadedLevelData, _player, _actor, _dialogueManager, text, null, requiredDone);
+    }
+
+    public Narration RoomNarration(string text, string tag, params PlotPoint[] requiredDone)
+    {
+        return new RoomNarration<Room>(_loadedLevelData, _player, _actor, _dialogueManager, text, tag, requiredDone);
     }
 
     public CameraLookAt<TShape> LookAt<TShape>(string tag = null, params PlotPoint[] requiredDone)
@@ -98,10 +113,12 @@ public class PlotPointFactory
         return new PlayerMoveTo(_player, position, requiredDone);
     }
 
-    public DebugSetLights DebugSetLights(params StateKey[] lights)
+    public SetLights SetLights(params StateKey[] lights)
     {
-        return new DebugSetLights(_loadedLevelData, lights);
+        return new SetLights(_loadedLevelData, lights);
     }
+
+    public AmbientSound AmbientSound(SoundEffectKey key, params PlotPoint[] requiredDone) => new AmbientSound(_audioService, key, requiredDone);
 
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {

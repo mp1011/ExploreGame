@@ -11,6 +11,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
 public class UpstairsHall : Room
 {
+    public static string SouthHallTag = "SouthHall";
+
     public static readonly string LightSwitchTag = StateKey.HallLightOn.ToString();
     public override Theme Theme => new UpstairsHallTheme();
 
@@ -26,6 +28,7 @@ public class UpstairsHall : Room
 
         // Create SouthHall and NorthHall in constructor so they're available as dependencies
         SouthHall = Copy(width: Measure.Feet(7), depth: Measure.Feet(10));
+        SouthHall.Tag = SouthHallTag;
 
         NorthHall = Copy(width: Measure.Feet(4), depth: Measure.Feet(14));
         NorthHall.MainTexture = new TextureInfo(Microsoft.Xna.Framework.Color.White, TextureKey.Plain);

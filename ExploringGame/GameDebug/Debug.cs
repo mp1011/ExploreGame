@@ -14,6 +14,8 @@ public static class Debug
 
     public static bool SavePolygonImages = false;
 
+    public static bool UseDebugScene = false;
+
     public static MovingEntityDebugger MovingEntityDebugger;
 
     public static void Message(bool condition, string message)

@@ -25,19 +25,7 @@ internal class UpstairsLightsOff : ConditionalBlocker
             .ToArray();
 
         foreach (var lightSwitch in _switches)
-            lightSwitch.Controller.On = true;
-
-        var bedroomLamp = _loadedLevelData.LoadedSegments.FindShapes<EndTableLamp>().Single(p => p.StateKey == StateKey.LeftBedroomLightOn);
-        bedroomLamp.Controller.On = true;
-
-        var nightLight = _loadedLevelData.LoadedSegments.FindShape<NightLight>();
-        nightLight.Controller.On = true;
-
-        // todo, doesn't belong here
-        foreach(var streetLight in _loadedLevelData.LoadedSegments.FindShapes<StreetLight>())
-        {
-            streetLight.Controller.On = true;
-        }
+            lightSwitch.Controller.On = true;       
     }
 
     protected override bool CheckActivation_Inner(GameTime gameTime)

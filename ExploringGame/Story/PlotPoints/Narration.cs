@@ -7,9 +7,9 @@ namespace ExploringGame.Story.PlotPoints;
 
 public class Narration : PlotPoint
 {
-    private readonly PlayerActor _playerActor;
+    protected readonly PlayerActor _playerActor;
     private readonly DialogueManager _dialogueManager;
-    private readonly LoadedLevelData _loadedLevelData;
+    protected readonly LoadedLevelData _loadedLevelData;
  
     public Narration(LoadedLevelData loadedLevelData, PlayerActor playerActor, DialogueManager dialogueManager,
         string text, params PlotPoint[] requiredDone)

@@ -1,8 +1,9 @@
-﻿X light switches, use a consistent Y
-X remove curtain rod from half bath window
-X street lights should be white
-- fit basement stairs ceiling
+﻿Act2
+	- add code to initialize lights
+	- add creepy audio with gradual fade-in
 
+	
+     
 
 
 - add stamp shape buffers
