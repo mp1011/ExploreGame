@@ -134,8 +134,10 @@ public class Game1 : Game
 
     protected virtual Scene LoadInitialScene()
     {
-        if(Debug.UseDebugScene)
+        if (Debug.UseDebugScene)
             return _serviceContainer.Get<DebugScene>();
+        else if (Debug.NoScene)
+            return _serviceContainer.Get<NullScene>();
         else
             return _serviceContainer.Get<SceneOne>();
     }

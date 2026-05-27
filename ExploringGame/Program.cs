@@ -4,10 +4,15 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Testing;
+using System.Diagnostics;
 using System.Linq;
 
 AudioService.Enabled = true;
-using var game = new Game1(new HomeWorldSegmentGroup());
+ExploringGame.GameDebug.Debug.NoScene = true;
+
+using var game = new Game1(new SingleSegmentGroup(TestMaps.NpcTest()));
+// using var game = new Game1(new HomeWorldSegmentGroup());
+
 
 //var testMap = TestMaps.CircleCutoutTest();
 //var testMap = TestMaps.SkyboxTest();
@@ -20,4 +25,4 @@ using var game = new Game1(new HomeWorldSegmentGroup());
 //using var game = new Game1(testMap);
 
 
-    game.Run();
+game.Run();

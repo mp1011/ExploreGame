@@ -15,6 +15,7 @@ public static class Debug
     public static bool SavePolygonImages = false;
 
     public static bool UseDebugScene = false;
+    public static bool NoScene = false;
 
     public static MovingEntityDebugger MovingEntityDebugger;
 

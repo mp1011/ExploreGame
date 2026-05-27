@@ -28,6 +28,17 @@ public static partial class TestMaps
         return world;
     }
 
+    public static WorldSegment NpcTest()
+    {
+        var segment = new WorldSegment();
+        var room = new Room(segment, Measure.Feet(20), Measure.Feet(20), Measure.Feet(10), theme: new BasementRoomTheme());       
+        room.SetSide(Side.Bottom, -1f);
+
+        var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
+
+        return segment;
+    }
+
     private class SkyboxTestWorldSegment : WorldSegment
     {
         public override SkyboxShape Skybox => TestSkybox.Instance;
