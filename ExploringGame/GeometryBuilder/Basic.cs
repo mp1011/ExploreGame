@@ -54,45 +54,57 @@ public enum DoorDirection
 /// <param name="Yaw"></param>
 /// <param name="Pitch"></param>
 /// <param name="Roll"></param>
-public record Rotation(float Yaw = 0f, float Pitch = 0f, float Roll = 0f)
+public record Rotation(Quaternion Quaternion)
 {
-    public float YawDegrees => (Yaw * 180.0f / MathHelper.Pi).NMod(360f);
 
-    public Matrix AsMatrix() => Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
-
-    public Quaternion AsQuaternion() => Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
-
-
-    public static Rotation FromJQuaternion(JQuaternion q)
+    public Rotation(float Yaw, float Pitch, float Roll) : this(Quaternion.CreateFromYawPitchRoll(Yaw, Pitch, Roll))
     {
-        // Normalize to avoid drift
-        q = JQuaternion.Normalize(q);
-
-        // Pitch (X axis)
-        float sinp = 2f * (q.W * q.X - q.Z * q.Y);
-        float pitch;
-        if (MathF.Abs(sinp) >= 1f)
-            pitch = MathF.CopySign(MathF.PI / 2f, sinp); // gimbal lock
-        else
-            pitch = MathF.Asin(sinp);
-
-        // Yaw (Y axis)
-        var yaw = MathF.Atan2(
-            2f * (q.W * q.Y + q.X * q.Z),
-            1f - 2f * (q.X * q.X + q.Y * q.Y)
-        );
-
-        // Roll (Z axis)
-        var roll = MathF.Atan2(
-            2f * (q.W * q.Z + q.X * q.Y),
-            1f - 2f * (q.X * q.X + q.Z * q.Z)
-        );
-
-        return new Rotation(yaw, pitch, roll);
     }
 
-    public static Rotation YawFromDegrees(float degrees, float pitch = 0f, float roll = 0f) => 
-        new Rotation(Yaw: (degrees * MathHelper.Pi) / 180.0f, Pitch: pitch, Roll: roll);
+    public static Rotation YawFromDegrees(float YawDegrees) => new Rotation(
+        Yaw: (YawDegrees * MathHelper.Pi) / 180.0f, 
+        Pitch: 0, Roll: 0);
+
+    public float Yaw
+    {
+        get
+        {
+            var q = Quaternion.Normalize(Quaternion);
+
+            return MathF.Atan2(
+                2f * (q.W * q.Y + q.X * q.Z),
+                1f - 2f * (q.Y * q.Y + q.X * q.X)
+            );
+        }
+    }
+
+    public float Pitch
+    {
+        get
+        {
+            var q = Quaternion.Normalize(Quaternion);
+
+            float sinp = 2f * (q.W * q.X - q.Y * q.Z);
+
+            if (MathF.Abs(sinp) >= 1f)
+            {
+                // Clamp at 90 degrees if out of range
+                return MathF.CopySign(MathF.PI / 2f, sinp);
+            }
+
+            return MathF.Asin(sinp);
+        }
+    }
+
+    //public float Pitch { get; }
+    //public float Roll { get; }
+
+    public float YawDegrees => (Yaw * 180.0f / MathHelper.Pi).NMod(360f);
+
+    public Matrix AsMatrix() => Matrix.CreateFromQuaternion(Quaternion);
+    
+    //public static Rotation YawFromDegrees(float degrees, float pitch = 0f, float roll = 0f) => 
+    //    new Rotation(Yaw: (degrees * MathHelper.Pi) / 180.0f, Pitch: pitch, Roll: roll);
 }
 
 public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)

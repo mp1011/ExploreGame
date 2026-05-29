@@ -21,10 +21,24 @@ class ActiveObjectShapeBufferCreator : ShapeBufferCreator
     {
         var placeableShapes = worldSegment.TraverseAllChildren()
             .OfType<IPlaceableObject>()
-            .Where(p => p.Self.ViewFrom != ViewFrom.None)
+            .Where(p => p.Self.ViewFrom != ViewFrom.None && !IsChildOfPlaceableShape(p))
             .ToArray();
 
         return placeableShapes.SelectMany(p => CreateShapeBuffers(worldSegment, p));
+    }
+
+    private bool IsChildOfPlaceableShape(IPlaceableObject obj)
+    {
+        var parent = obj.Self.Parent;
+        while(parent != null)
+        {
+            if (parent is IPlaceableObject)
+                return true;
+
+            parent = parent.Parent;
+        }
+
+        return false;
     }
 
     private IEnumerable<ShapeBuffer> CreateShapeBuffers(WorldSegment worldSegment, IPlaceableObject activeObject)

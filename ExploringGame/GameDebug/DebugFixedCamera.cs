@@ -26,7 +26,7 @@ public class DebugFixedCamera : ICamera
 
     public Matrix CreateViewMatrix()
     {
-        var lookDir = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(Rotation.Yaw, Rotation.Pitch, 0));
+        var lookDir = Vector3.Transform(Vector3.Forward, Rotation.AsMatrix());
         return Matrix.CreateLookAt(Position, Position + lookDir, Vector3.Up);
     }
 

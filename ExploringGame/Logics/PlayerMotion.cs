@@ -71,7 +71,7 @@ public class PlayerMotion
         pitch = MathHelper.Clamp(pitch, -MathHelper.PiOver2 + 0.1f, MathHelper.PiOver2 - 0.1f);
         _playerInput.CenterMouse(window);
 
-        _player.Rotation = new Rotation(yaw, pitch, _player.Rotation.Roll);
+        _player.Rotation = new Rotation(yaw, pitch, 0f);
     }
 
     public Vector3 GetMotionTarget(float yaw)

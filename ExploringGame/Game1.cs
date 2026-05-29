@@ -216,7 +216,7 @@ public class Game1 : Game
         {
             _ranInit = true;
             _player.Position = _currentSegmentGroup.DefaultPlayerStart;
-            _player.Rotation = new Rotation(Yaw: _currentSegmentGroup.DefaultPlayerAngle);
+            _player.Rotation = Rotation.YawFromDegrees(_currentSegmentGroup.DefaultPlayerAngle);
             _playerMover.Initialize();
             _segmentActivationManager.ActivateGroup(_currentSegmentGroup);
 
@@ -362,7 +362,7 @@ public class Game1 : Game
         //_spriteBatch.DrawString(_debugFont, "Yaw: " + _player.Rotation.Yaw.ToString("0.00"), new Vector2(10, 30), Color.White);
         //_spriteBatch.DrawString(_debugFont, "Pitch: " + _player.Rotation.Pitch.ToString("0.00"), new Vector2(10, 50), Color.White);
 
-        _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString("0.00"), new Vector2(10, 80), Color.White);
+       // _spriteBatch.DrawString(_debugFont, "Degrees: " + _player.Rotation.YawDegrees.ToString("0.00"), new Vector2(10, 80), Color.White);
         _spriteBatch.DrawString(_debugFont, "Watch1: " + Debug.Watch1 ?? "", new Vector2(10, 100), Color.White);
         _spriteBatch.DrawString(_debugFont, "Watch2: " + Debug.Watch2 ?? "", new Vector2(10, 120), Color.White);
 

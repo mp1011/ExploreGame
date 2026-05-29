@@ -85,7 +85,7 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
         _rigidBody.AngularVelocity = new JVector(0, delta * .05f, 0f);
 
         Shape.Position = _rigidBody.Position.ToVector3();
-        Shape.Rotation = Rotation.FromJQuaternion(_rigidBody.Orientation);
+        Shape.Rotation = new Rotation(_rigidBody.Orientation.ToQuaternion());
 
         if (this.CheckPlayerActivation(_physics))
         {

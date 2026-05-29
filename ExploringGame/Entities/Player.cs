@@ -37,7 +37,7 @@ public class Player : ICollidable, ICamera
         var cameraY = feetPosition + EyeHeight;
         var cameraPosition = new Vector3(Position.X, cameraY, Position.Z);
 
-        var lookDir = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(Rotation.Yaw, Rotation.Pitch, 0));
+        var lookDir = Vector3.Transform(Vector3.Forward, Rotation.AsMatrix());
         return Matrix.CreateLookAt(cameraPosition, cameraPosition + lookDir, Vector3.Up);
     }
 

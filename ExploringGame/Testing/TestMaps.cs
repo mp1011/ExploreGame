@@ -36,6 +36,16 @@ public static partial class TestMaps
 
         var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
 
+        var puppet = segment.AddChild(new Puppet(segment));
+        puppet.X = 2f;
+        puppet.Y = 1f;
+
+
+        var part = segment.AddChild(new PuppetPart(puppet));
+
+        part.Position = puppet.Position;
+        part.SetSide(Side.Bottom, puppet.Position.Y + 0.5f);
+
         return segment;
     }
 

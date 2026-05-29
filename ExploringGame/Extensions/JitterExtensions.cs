@@ -1,16 +1,25 @@
-﻿
-using ExploringGame.Logics.Collision;
+﻿using ExploringGame.Logics.Collision;
 using ExploringGame.Services;
 using Jitter2.Collision;
 using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
-using System;
-using System.Text;
+using Jitter2.LinearMath;
+using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Extensions;
 
 public static class JitterExtensions
 {
+    public static JQuaternion ToJQuaternion(this Quaternion q)
+    {
+        return new JQuaternion(q.X, q.Y, q.Z, q.W);
+    }
+
+    public static Quaternion ToQuaternion(this JQuaternion q)
+    {
+        return new Quaternion(q.X, q.Y, q.Z, q.W);
+    }
+
     public static string DiagnosticInfo(this RigidBody body)
     {
         if (body.Tag is CollisionInfo collisionInfo && collisionInfo.Shape != null)

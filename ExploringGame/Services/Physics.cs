@@ -6,6 +6,7 @@ using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.Logics.Collision;
+using ExploringGame.Story;
 using Jitter2;
 using Jitter2.Collision;
 using Jitter2.Collision.Shapes;
@@ -160,6 +161,23 @@ public class Physics
         return body;
     }
 
+    public RigidBody CreateHingeCollider(ICollidable shape, ICollidable parent)
+    {
+        var body = CreateDynamicBody(shape);
+        body.AffectedByGravity = true;
+
+        //todo
+        parent.ColliderBodies[0].SetMassInertia(10f);
+
+        var ballSocket = _world.CreateConstraint<BallSocket>(body, parent.ColliderBodies[0]);
+        ballSocket.Initialize(parent.ColliderBodies[0].Position);
+
+     //   ballSocket.Anchor1 = new JVector(0, 0f, 0);
+     //   ballSocket.Anchor2 = new JVector(0, 0f, 0);
+       
+        return body;
+    }
+
     public RigidBody CreateStaticBody(IWithPosition shape, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
         if (shape.Size.X == 0 || shape.Size.Y == 0 || shape.Size.Z == 0)
@@ -170,8 +188,7 @@ public class Physics
 
         if (shape.Rotation != null)
         {
-            var rotationQ = shape.Rotation.AsQuaternion();
-            body.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
+            body.Orientation = shape.Rotation.Quaternion.ToJQuaternion();
         }
         body.Position = shape.Position.ToJVector();
         body.MotionType = MotionType.Static;
@@ -298,8 +315,7 @@ public class Physics
            // AngularLimit.FromDegree(minAngle, maxAngle),
             hasMotor: false);
 
-        var rotationQ = door.Rotation.AsQuaternion();
-        doorBody.Orientation = new JQuaternion(rotationQ.X, rotationQ.Y, rotationQ.Z, rotationQ.W);
+        doorBody.Orientation = door.Rotation.Quaternion.ToJQuaternion();
         doorBody.Tag = new CollisionInfo(door.CollisionGroup, door.CollidesWithGroups, door);
 
         //  h.Motor.IsEnabled = true;
