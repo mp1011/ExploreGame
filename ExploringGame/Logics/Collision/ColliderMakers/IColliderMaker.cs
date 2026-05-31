@@ -16,7 +16,7 @@ public interface IColliderMaker
 
 public static class ColliderMakers
 {
-    public static IColliderMaker BoundingBox(ICollidable shape) => new BoundingBoxColliderMaker(shape);
+    public static IColliderMaker BoundingBox(ICollidable shape, bool isStatic = true) => new BoundingBoxColliderMaker(shape, isStatic);
     public static IColliderMaker BoundingBox(IWithPosition shape) => new LegacyBoundingBoxColliderMaker(shape);
 
     public static IColliderMaker Room(Shape room) => new RoomColliderMaker(room);
@@ -28,15 +28,20 @@ public static class ColliderMakers
 public class BoundingBoxColliderMaker : IColliderMaker
 {
     private ICollidable _shape;
+    private bool _isStatic;
 
-    public BoundingBoxColliderMaker(ICollidable shape)
+    public BoundingBoxColliderMaker(ICollidable shape, bool isStatic=true)
     {
         _shape = shape;
+        _isStatic = isStatic;
     }
 
     public IEnumerable<RigidBody> CreateColliders(Physics physics)
     {
-        yield return physics.CreateStaticBody(_shape);
+        if (_isStatic)
+            yield return physics.CreateStaticBody(_shape);
+        else
+            yield return physics.CreateDynamicBody(_shape);
     }
 }
 

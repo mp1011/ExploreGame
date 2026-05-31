@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.Entities.EntityParts;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.Logics.Collision;
@@ -67,11 +68,12 @@ public class PuppetPartController : IActiveObject
         _physics = physics;
     }
 
-    public PuppetPart PuppetPart { get; set; }
+    public TestArm PuppetPart { get; set; }
 
     public void Initialize()
     {
         _body = PuppetPart.ColliderBodies[0];
+        _physics.CreateHinge(_body, PuppetPart.Entity.ColliderBodies[0]);
     }
 
     public void Stop()

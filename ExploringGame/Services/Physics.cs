@@ -161,21 +161,14 @@ public class Physics
         return body;
     }
 
-    public RigidBody CreateHingeCollider(ICollidable shape, ICollidable parent)
+    public void CreateHinge(RigidBody body, RigidBody other)
     {
-        var body = CreateDynamicBody(shape);
         body.AffectedByGravity = true;
 
-        //todo
-        parent.ColliderBodies[0].SetMassInertia(10f);
+        other.SetMassInertia(10f); // todo, figure out better way
 
-        var ballSocket = _world.CreateConstraint<BallSocket>(body, parent.ColliderBodies[0]);
-        ballSocket.Initialize(parent.ColliderBodies[0].Position);
-
-     //   ballSocket.Anchor1 = new JVector(0, 0f, 0);
-     //   ballSocket.Anchor2 = new JVector(0, 0f, 0);
-       
-        return body;
+        var ballSocket = _world.CreateConstraint<BallSocket>(body, other);
+        ballSocket.Initialize(other.Position);      
     }
 
     public RigidBody CreateStaticBody(IWithPosition shape, CollisionGroup myGroup, CollisionGroup collidesWithGroups)

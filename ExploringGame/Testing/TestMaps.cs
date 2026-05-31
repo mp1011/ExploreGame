@@ -1,4 +1,5 @@
 using ExploringGame.Entities;
+using ExploringGame.Entities.EntityParts;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
@@ -41,7 +42,7 @@ public static partial class TestMaps
         puppet.Y = 1f;
 
 
-        var part = segment.AddChild(new PuppetPart(puppet));
+        var part = segment.AddChild(new TestArm(puppet));
 
         part.Position = puppet.Position;
         part.SetSide(Side.Bottom, puppet.Position.Y + 0.5f);
