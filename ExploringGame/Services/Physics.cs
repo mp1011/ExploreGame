@@ -161,14 +161,13 @@ public class Physics
         return body;
     }
 
-    public void CreateHinge(RigidBody body, RigidBody other)
+    public void CreateHinge(RigidBody body, RigidBody other, Vector3 hingeWorldPosition)
     {
         body.AffectedByGravity = true;
 
-        other.SetMassInertia(10f); // todo, figure out better way
 
         var ballSocket = _world.CreateConstraint<BallSocket>(body, other);
-        ballSocket.Initialize(other.Position);      
+        ballSocket.Initialize(hingeWorldPosition.ToJVector());      
     }
 
     public RigidBody CreateStaticBody(IWithPosition shape, CollisionGroup myGroup, CollisionGroup collidesWithGroups)

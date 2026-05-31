@@ -34,6 +34,9 @@ public class PuppetController : IActiveObject
 
         _mover.Motion.Acceleration = 0.1f;
         _mover.Motion.TargetMotion = new Vector3(1.0f, 0.0f, 1.0f);
+
+        // don't like this
+        Puppet.ColliderBodies[0].SetMassInertia(10f);
     }
 
     public void Stop()
@@ -73,7 +76,7 @@ public class PuppetPartController : IActiveObject
     public void Initialize()
     {
         _body = PuppetPart.ColliderBodies[0];
-        _physics.CreateHinge(_body, PuppetPart.Entity.ColliderBodies[0]);
+        _physics.CreateHinge(_body, PuppetPart.Entity.ColliderBodies[0], PuppetPart.Entity.Position);
     }
 
     public void Stop()

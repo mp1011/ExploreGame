@@ -42,10 +42,17 @@ public static partial class TestMaps
         puppet.Y = 1f;
 
 
-        var part = segment.AddChild(new TestArm(puppet));
 
-        part.Position = puppet.Position;
-        part.SetSide(Side.Bottom, puppet.Position.Y + 0.5f);
+
+        Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        Tentacle.GenerateTentacleArm(segment, puppet, 50);
+
+        //        var part = segment.AddChild(new TestArm(puppet));
+        //       part.Position = puppet.Position;
+        //     part.SetSide(Side.Bottom, puppet.Position.Y + 0.5f);
 
         return segment;
     }
