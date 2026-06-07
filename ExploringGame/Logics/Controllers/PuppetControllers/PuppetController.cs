@@ -10,7 +10,7 @@ using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace ExploringGame.Logics.Controllers;
+namespace ExploringGame.Logics.Controllers.PuppetControllers;
 
 public class PuppetController : IActiveObject
 {

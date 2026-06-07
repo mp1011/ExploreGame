@@ -44,11 +44,11 @@ public static partial class TestMaps
 
 
 
-        Tentacle.GenerateTentacleArm(segment, puppet, 50);
-        Tentacle.GenerateTentacleArm(segment, puppet, 50);
-        Tentacle.GenerateTentacleArm(segment, puppet, 50);
-        Tentacle.GenerateTentacleArm(segment, puppet, 50);
-        Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        //Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        //Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        //Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        //Tentacle.GenerateTentacleArm(segment, puppet, 50);
+        //Tentacle.GenerateTentacleArm(segment, puppet, 50);
 
         //        var part = segment.AddChild(new TestArm(puppet));
         //       part.Position = puppet.Position;

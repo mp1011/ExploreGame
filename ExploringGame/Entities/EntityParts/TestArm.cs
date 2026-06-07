@@ -1,6 +1,6 @@
 ﻿using ExploringGame.GeometryBuilder;
 using ExploringGame.Logics;
-using ExploringGame.Logics.Controllers;
+using ExploringGame.Logics.Controllers.PuppetControllers;
 using Microsoft.Xna.Framework;
 
 namespace ExploringGame.Entities.EntityParts;

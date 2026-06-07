@@ -328,6 +328,9 @@ public class Physics
 
     public void Update(GameTime gameTime)
     {
+        if (Debug.NoPhysics)
+            return;
+
         if(gameTime.ElapsedGameTime.TotalSeconds > 0)
             _world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
     }
