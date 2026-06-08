@@ -29,6 +29,9 @@ public class PuppetController : IActiveObject
 
     public void Initialize()                                      
     {
+        Puppet.X = 2;
+        Puppet.Y = 1;
+
         _mover = new EntityMover(Puppet, _physics, ignoreY: false);
         _mover.Initialize();
 
@@ -46,9 +49,13 @@ public class PuppetController : IActiveObject
     private double t = 0;
     public void Update(GameTime gameTime)
     {
+        if (GameDebug.Debug.NoNPCPhysics)
+            return;
+
         _mover.Update(gameTime);
 
         t += gameTime.ElapsedGameTime.TotalSeconds;
+
 
         if (t >= 2.0)
         {

@@ -15,12 +15,12 @@ public class BasicArm : Shape
     public BasicArmPart UpperArm { get; }
     public BasicArmPart LowerArm { get; }
 
-    public BasicArm(WorldSegment worldSegment, Puppet parent, float armRadius, float upperArmLength, float lowerArmLength)
+    public BasicArm(WorldSegment worldSegment, Puppet puppet, Shape parentAnchor, float armRadius, float upperArmLength, float lowerArmLength)
     {
-        parent.AddChild(this);
+        puppet.AddChild(this);
 
-        UpperArm = worldSegment.AddChild(new BasicArmPart(parent, parent, armRadius, upperArmLength));
-        LowerArm = worldSegment.AddChild(new BasicArmPart(parent, UpperArm, armRadius, lowerArmLength));
+        UpperArm = worldSegment.AddChild(new BasicArmPart(puppet, parentAnchor, armRadius, upperArmLength));
+        LowerArm = worldSegment.AddChild(new BasicArmPart(puppet, UpperArm, armRadius, lowerArmLength));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

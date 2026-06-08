@@ -34,6 +34,11 @@ public class Ellipsoid : Shape
         _theme = theme;
     }
 
+    public Ellipsoid(float radius, Theme theme) : this(radius)
+    {
+        _theme = theme;
+    }
+
     /// <summary>
     /// Number of segments for mesh detail (default: 32)
     /// </summary>

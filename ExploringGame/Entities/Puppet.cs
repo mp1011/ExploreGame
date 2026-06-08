@@ -8,6 +8,7 @@ using ExploringGame.Logics.Collision;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Logics.Controllers.PuppetControllers;
 using ExploringGame.Services;
+using ExploringGame.Story;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 using System.Net.Quic;
@@ -42,12 +43,17 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
         head.Position = Position;
         head.SetSide(Side.Bottom, GetSide(Side.Top));
 
-        var leftArm = worldSegment.AddChild(new BasicArm(worldSegment, this, 0.2f, 1.0f, 1.0f));
-        leftArm.UpperArm.Position = Position;
-        leftArm.LowerArm.Position = Position;
 
-        leftArm.UpperArm.SetSide(Side.Bottom, GetSide(Side.Top));
-        leftArm.LowerArm.SetSide(Side.Bottom, leftArm.UpperArm.GetSide(Side.Top));
+        var leftShoulder = AddChild(new Ellipsoid(0.2f, (new Theme(Color.GreenYellow))));
+        leftShoulder.Position = Position;
+        leftShoulder.Place().OnSideOuter(Side.Top);
+        leftShoulder.X += 0.5f;
+
+        // todo, need cleaner way for dependency between moving object and parts
+       // X = 2f;
+    //    Y = 1f;
+
+        worldSegment.AddChild(new BasicArm(worldSegment, this, leftShoulder, 0.2f, 1.0f, 1.0f));       
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

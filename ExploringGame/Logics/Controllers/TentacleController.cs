@@ -9,6 +9,7 @@ using Jitter2.Dynamics;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics;
 
 namespace ExploringGame.Logics.Controllers;
 
@@ -40,6 +41,9 @@ public class TentacleController : IActiveObject
 
     public void Update(GameTime gameTime)
     {
+        if (GameDebug.Debug.NoNPCPhysics)
+            return;
+
         Tentacle.Position = _body.Position.ToVector3();
         Tentacle.Rotation = new Rotation(_body.Orientation.ToQuaternion());
 
