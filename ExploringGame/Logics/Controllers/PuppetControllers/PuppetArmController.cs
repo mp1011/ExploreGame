@@ -32,7 +32,7 @@ public class PuppetArmController : IActiveObject
         _body = ArmPart.ColliderBodies[0];
         _body.AffectedByGravity = true;
         _body.SetMassInertia(0.001f);
-        _physics.CreateHinge(_body, ConnectsTo.ColliderBodies[0], new Vector3(ConnectsTo.Position.X, ConnectsTo.GetSide(Side.Top), ConnectsTo.Position.Z));
+        _physics.CreateHinge(_body, ConnectsTo.ColliderBodies[0], new Vector3(ConnectsTo.LocalPosition.X, ConnectsTo.GetSide(Side.Top), ConnectsTo.LocalPosition.Z));
     }
 
     public void Stop()
@@ -45,7 +45,7 @@ public class PuppetArmController : IActiveObject
             return;
 
         //todo, break out physics object controller
-        ArmPart.Position = _body.Position.ToVector3();
+        ArmPart.LocalPosition = _body.Position.ToVector3();
         ArmPart.Rotation = new Rotation(_body.Orientation.ToQuaternion());       
     }
 }

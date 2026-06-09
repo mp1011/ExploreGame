@@ -28,7 +28,7 @@ public class Bathroom : Room
         var light = new HighHatLight(this, 0f, 0f, initialState: false);
         var sw = new LightSwitch(this, Side.North, StateKey.BathroomLightOn);
         sw.ControlledObjects.Add(light);
-        sw.Position = this.Position;
+        sw.LocalPosition = this.LocalPosition;
         sw.Place().OnSideInner(Side.North).AtStandardSwitchHeight();
 
         var sinkArea = Copy(depth: Measure.Feet(2), width: Measure.Feet(5));

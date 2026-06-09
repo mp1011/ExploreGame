@@ -53,7 +53,7 @@ public class LightBulb : ShapePart, IControllable<LightController<LightBulb>>, I
     public float Intensity { get; set; }
     public Color Color { get; set; }
 
-    public Vector3 LightPosition => Parent.Position + Position;
+    public Vector3 LightPosition => Parent.LocalPosition + LocalPosition;
 
     public IRoom Room { get; }
 

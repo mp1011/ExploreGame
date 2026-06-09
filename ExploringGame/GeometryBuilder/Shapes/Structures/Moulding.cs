@@ -43,7 +43,7 @@ public class Moulding : Shape
         _size = size;
         _thickness = thickness;
 
-        Position = parent.Position;
+        LocalPosition = parent.LocalPosition;
         Size = parent.Size;
 
         parent.AddChild(this);

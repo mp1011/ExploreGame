@@ -65,7 +65,7 @@ public class WaypointGraph
 
         foreach (var waypoint in _annotatedGraph.GetAllAnnotations())
         {
-            var distance = Vector3.DistanceSquared(position, waypoint.Position);
+            var distance = Vector3.DistanceSquared(position, waypoint.LocalPosition);
             if (distance < nearestDistance)
             {
                 nearestDistance = distance;

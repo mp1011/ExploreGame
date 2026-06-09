@@ -57,7 +57,7 @@ public class WallDecalTestController : IActiveObject
 
         // Determine which axis to check based on wall orientation
         var (axisU, _) = sourceQuad.Side.GetAxisUV();
-        float decalCenterU = decal.Position.AxisValue(axisU);
+        float decalCenterU = decal.LocalPosition.AxisValue(axisU);
         float decalLeftU = decalCenterU - (decal.Width / 2f);
         float decalRightU = decalCenterU + (decal.Width / 2f);
 
@@ -73,7 +73,7 @@ public class WallDecalTestController : IActiveObject
         {
             // DECAL OVERLAPS GAP - throw detailed exception
             var errorMsg = $"❌ INVALID DECAL PLACEMENT DETECTED!\n" +
-                $"Decal Position: {decal.Position}\n" +
+                $"Decal Position: {decal.LocalPosition}\n" +
                 $"Decal U bounds: [{decalLeftU:F2} to {decalRightU:F2}] (axis: {axisU})\n" +
                 $"Gap U bounds: [{gapStart:F2} to {gapEnd:F2}]\n" +
                 $"Overlap amount: {overlapAmount:F4} (tolerance: {epsilon:F4})\n" +
@@ -135,7 +135,7 @@ public class WallDecalTestController : IActiveObject
             _loadedLevelData.AddWallDecal(_worldSegment, decal);
 
             var (checkAxisU, _) = _testWallSide.GetAxisUV();
-            System.Console.WriteLine($"✓ Decal placed at U={decal.Position.AxisValue(checkAxisU):F2} (axis: {checkAxisU})");
+            System.Console.WriteLine($"✓ Decal placed at U={decal.LocalPosition.AxisValue(checkAxisU):F2} (axis: {checkAxisU})");
         }
 
         _initialized = true;

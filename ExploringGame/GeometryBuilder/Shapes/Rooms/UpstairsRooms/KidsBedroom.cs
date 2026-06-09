@@ -35,7 +35,7 @@ public class KidsBedroom : Room
         // Add a light switch on the east wall
         var lightSwitch = new LightSwitch(this, Side.North, StateKey.KidsBedroomLightOn);
         lightSwitch.ControlledObjects.Add(kidsLight);
-        lightSwitch.Position = Position;
+        lightSwitch.LocalPosition = LocalPosition;
         lightSwitch.Place().OnSideInner(Side.North)
             .OnSideInner(Side.West, this, 1.5f)
             .AtStandardSwitchHeight();

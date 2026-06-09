@@ -21,7 +21,7 @@ public class ShapeAdjuster
     public ShapeAdjuster From(Shape other)
     {
         _shape.Size = other.Size;
-        _shape.Position = other.Position;
+        _shape.LocalPosition = other.LocalPosition;
         return this;
     }
 

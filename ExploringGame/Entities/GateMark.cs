@@ -25,7 +25,7 @@ public class GateMark : WallDecal
                 _isActive = true;
 
                 // Add a faint red point light at the gatemark location
-                ActivationLight = _pointLights.AddLight(Position, Color.Red, 0.3f);
+                ActivationLight = _pointLights.AddLight(LocalPosition, Color.Red, 0.3f);
             }
             else if(!value && _isActive)
             {

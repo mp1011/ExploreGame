@@ -27,15 +27,15 @@ public abstract class PlaceableShape : Shape, IPlaceableObject, ICollidable
 
     protected override void BeforeBuild()
     {
-        _savedPosition = Position;
+        _savedPosition = LocalPosition;
         _savedRotation = Rotation;
-        Position = Vector3.Zero;
+        LocalPosition = Vector3.Zero;
         Rotation = null;
     }
 
     protected override void AfterBuild()
     {
-        Position = _savedPosition;
+        LocalPosition = _savedPosition;
         Rotation = _savedRotation;
     }
 }

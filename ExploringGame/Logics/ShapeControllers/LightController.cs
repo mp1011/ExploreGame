@@ -17,7 +17,7 @@ public class LightController<T> : IShapeController<T>, IOnOff
 
     public T Shape { get; set; }
 
-    public Vector3 LightPosition => Shape.Position + new Vector3(0, -Shape.Height/2f, 0);
+    public Vector3 LightPosition => Shape.LocalPosition + new Vector3(0, -Shape.Height/2f, 0);
 
     private PointLight _light = PointLight.DefaultOff;
 

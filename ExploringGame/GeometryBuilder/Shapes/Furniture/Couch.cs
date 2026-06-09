@@ -20,7 +20,7 @@ internal class Couch : PlaceableShape
     public override CollisionGroup CollidesWithGroups => CollisionGroup.Player | CollisionGroup.SolidEntity;
     public Couch(Shape parent)
     {
-        Position = parent.Position;
+        LocalPosition = parent.LocalPosition;
         parent.AddChild(this);
         Width = Measure.Inches(72);
         Height = Measure.Inches(38);

@@ -15,7 +15,7 @@ public static class DebugShapeLogger
         var logEntry = $"[{DateTime.Now:HH:mm:ss.fff}] {label} - " +
                       $"Type: {shape.GetType().Name}, " +
                       $"Tag: {shape.Tag ?? "null"}, " +
-                      $"Position: ({shape.Position.X:F2}, {shape.Position.Y:F2}, {shape.Position.Z:F2}), " +
+                      $"Position: ({shape.LocalPosition.X:F2}, {shape.LocalPosition.Y:F2}, {shape.LocalPosition.Z:F2}), " +
                       $"Size: ({shape.Size.X:F2}, {shape.Size.Y:F2}, {shape.Size.Z:F2})";
 
         File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);

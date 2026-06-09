@@ -33,7 +33,7 @@ public class Kitchen : Room
         var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);
         lightSwitch.ControlledObjects.Add(light);
 
-        lightSwitch.Position = Position;
+        lightSwitch.LocalPosition = LocalPosition;
         lightSwitch.Place().OnSideInner(Side.West)
                            .AtStandardSwitchHeight();
 

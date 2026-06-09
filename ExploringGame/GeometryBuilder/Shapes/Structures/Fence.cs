@@ -58,8 +58,8 @@ public class Fence : Shape, ICollidable
         foreach (var spanPos in ComputePostPositions(start, end))
         {
             var postCenter = spanAxis == Axis.X
-                ? new Vector3(spanPos, Position.Y, Position.Z)
-                : new Vector3(Position.X, Position.Y, spanPos);
+                ? new Vector3(spanPos, LocalPosition.Y, LocalPosition.Z)
+                : new Vector3(LocalPosition.X, LocalPosition.Y, spanPos);
 
             if (!PostExistsAt(parent, postCenter))
             {
@@ -67,7 +67,7 @@ public class Fence : Shape, ICollidable
                 post.Width    = PostThickness;
                 post.Depth    = PostThickness;
                 post.Height   = PostHeight;
-                post.Position = postCenter;
+                post.LocalPosition = postCenter;
             }
         }
     }
@@ -94,7 +94,7 @@ public class Fence : Shape, ICollidable
         return parent.WorldSegment
             .TraverseAllChildren()
             .OfType<FencePost>()
-            .Any(p => Vector3.DistanceSquared(p.Position, position) < PostPositionTolerance * PostPositionTolerance);
+            .Any(p => Vector3.DistanceSquared(p.LocalPosition, position) < PostPositionTolerance * PostPositionTolerance);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

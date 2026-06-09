@@ -89,7 +89,7 @@ public class RoomGraph
 
     private float Heuristic(IRoom a, IRoom b)
     {
-        return Microsoft.Xna.Framework.Vector3.Distance(a.Position, b.Position);
+        return Microsoft.Xna.Framework.Vector3.Distance(a.LocalPosition, b.LocalPosition);
     }
 
     private List<IRoom> ReconstructPath(Dictionary<IRoom, IRoom> cameFrom, IRoom current)

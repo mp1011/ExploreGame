@@ -17,7 +17,7 @@ public class OilTankRoom : Room
 
     override protected void BeforeBuild()
     {
-        _oilTank.Position = Position;
+        _oilTank.LocalPosition = LocalPosition;
         _oilTank.Z -= 0.3f;
         _oilTank.Place().OnFloor();
         _oilTank.Y += Measure.Inches(4);

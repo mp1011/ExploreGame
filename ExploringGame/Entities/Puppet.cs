@@ -40,12 +40,12 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
         torso.SetSide(Side.Top, GetSide(Side.Top));
 
         var head = AddChild(new Ellipsoid(0.5f));
-        head.Position = Position;
+        head.LocalPosition = LocalPosition;
         head.SetSide(Side.Bottom, GetSide(Side.Top));
 
 
         var leftShoulder = AddChild(new Ellipsoid(0.2f, (new Theme(Color.GreenYellow))));
-        leftShoulder.Position = Position;
+        leftShoulder.LocalPosition = LocalPosition;
         leftShoulder.Place().OnSideOuter(Side.Top);
         leftShoulder.X += 0.5f;
 

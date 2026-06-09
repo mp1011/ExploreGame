@@ -10,7 +10,7 @@ public class RoomPart : Room
         : base(main.WorldSegment, theme: main.Theme)
     {
         Main = main;
-        Position = main.Position;
+        LocalPosition = main.LocalPosition;
         Size = main.Size;
 
         if (inheritLightingGroup)

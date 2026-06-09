@@ -38,7 +38,7 @@ public class WallDecal : StampedShape<WallDecalStamp>
 
     private void CalculateTransform()
     {
-        var roomPos = Parent.Position;
+        var roomPos = Parent.LocalPosition;
         var roomSize = Parent.Size;
 
         // CenterUV is relative to wall center, in UV coordinates
@@ -88,7 +88,7 @@ public class WallDecal : StampedShape<WallDecalStamp>
                 throw new ArgumentException($"WallDecal only supports North, South, East, West sides, not {WallSide}");
         }
 
-        Position = position;
+        LocalPosition = position;
         Rotation = new Rotation(yaw, 0, 0);      
     }
 }

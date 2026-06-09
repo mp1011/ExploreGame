@@ -22,7 +22,7 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController<H
 
     public IRoom Room { get; }
 
-    public Vector3 LightPosition => Position + new Vector3(0, -Height / 2f, 0);
+    public Vector3 LightPosition => LocalPosition + new Vector3(0, -Height / 2f, 0);
 
     public event EventHandler<LightStateChangedEventArgs> StateChanged;
 

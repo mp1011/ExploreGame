@@ -20,7 +20,7 @@ public static partial class TestMaps
         room.Width = 10f;
         room.Height = 7f;
         room.Depth = 10f;
-        room.Position = Vector3.Zero;
+        room.LocalPosition = Vector3.Zero;
 
         var decalStamp = new WallDecalStamp();
         worldSegment.AddChild(decalStamp);

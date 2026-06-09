@@ -53,10 +53,10 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
     public void Initialize()
     {
         _rigidBody = Shape.ColliderBodies.First();
-        _rigidBody.Position = Shape.Position.ToJVector();
+        _rigidBody.Position = Shape.LocalPosition.ToJVector();
 
-        _closedPosition = Shape.Position.AxisValue(Shape.OpenAxis);
-        _openPosition = (Shape.Position + (Shape.OpenSide.AsVector() * 1.0f)).AxisValue(Shape.OpenAxis);
+        _closedPosition = Shape.LocalPosition.AxisValue(Shape.OpenAxis);
+        _openPosition = (Shape.LocalPosition + (Shape.OpenSide.AsVector() * 1.0f)).AxisValue(Shape.OpenAxis);
     }
 
     public void Stop()
@@ -65,7 +65,7 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
 
     public void Update(GameTime gameTime)
     {
-        Shape.Position = _rigidBody.Position.ToVector3();
+        Shape.LocalPosition = _rigidBody.Position.ToVector3();
 
         if (this.CheckPlayerActivation(_physics))
             Open = !Open;
@@ -73,7 +73,7 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
         var distance = (CurrentAxisPosition - TargetPosition).Abs();
         if(distance < 0.01f)
         {
-            _rigidBody.Position = Shape.Position.SetAxis(Shape.OpenAxis, TargetPosition).ToJVector();
+            _rigidBody.Position = Shape.LocalPosition.SetAxis(Shape.OpenAxis, TargetPosition).ToJVector();
             _rigidBody.Velocity = new Jitter2.LinearMath.JVector(0, 0, 0);
         }
         else

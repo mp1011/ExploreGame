@@ -23,7 +23,7 @@ public class DefaultLightingGroup : ILightingGroup
 
     public ILightingGroup LightingGroup => this;
 
-    public Vector3 Position => Vector3.Zero;
+    public Vector3 LocalPosition => Vector3.Zero;
 
     public IEnumerable<RoomConnection> RoomConnections => Array.Empty<RoomConnection>();
 

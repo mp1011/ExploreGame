@@ -55,7 +55,7 @@ public class LightSpiritFlickerEffect
 
         foreach (var light in allLights)
         {
-            var distance = _distanceCalculator.CalculateDistance(_lightSpirit.Position, light.LightPosition);
+            var distance = _distanceCalculator.CalculateDistance(_lightSpirit.LocalPosition, light.LightPosition);
             if (distance == null)
                 continue;
 

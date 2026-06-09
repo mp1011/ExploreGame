@@ -31,14 +31,14 @@ public class BackDeck : Deck
         LightingGroup = backDeckArea.LightingGroup;
 
         var floor = AddChild(new Box(Theme));
-        floor.Position = backDeckArea.Position;
+        floor.LocalPosition = backDeckArea.LocalPosition;
         floor.Size = backDeckArea.Size;
 
         floor.SetSide(Side.Top, den.GetSide(Side.Bottom));
         floor.SetSideUnanchored(Side.Bottom, den.GetSide(Side.Bottom) - Measure.Feet(1));
         floor.AdjustShape().AddToSide(Side.East, SideStepWidth);
 
-        Position = floor.Position;
+        LocalPosition = floor.LocalPosition;
         Size = floor.Size;
         SetSide(Side.Bottom, floor.GetSide(Side.Top));
         SetSideUnanchored(Side.Top, den.GetSide(Side.Top));

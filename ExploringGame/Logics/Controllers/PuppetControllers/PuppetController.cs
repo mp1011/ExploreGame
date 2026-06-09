@@ -83,7 +83,7 @@ public class PuppetPartController : IActiveObject
     public void Initialize()
     {
         _body = PuppetPart.ColliderBodies[0];
-        _physics.CreateHinge(_body, PuppetPart.Entity.ColliderBodies[0], PuppetPart.Entity.Position);
+        _physics.CreateHinge(_body, PuppetPart.Entity.ColliderBodies[0], PuppetPart.Entity.LocalPosition);
     }
 
     public void Stop()
@@ -93,7 +93,7 @@ public class PuppetPartController : IActiveObject
     public void Update(GameTime gameTime)
     {
         _body.AngularVelocity = new JVector(0.1f, 0f, 0f);
-        PuppetPart.Position = _body.Position.ToVector3();
+        PuppetPart.LocalPosition = _body.Position.ToVector3();
         PuppetPart.Rotation = new Rotation(_body.Orientation.ToQuaternion());
     }
 }

@@ -14,7 +14,7 @@ public class GarageDoor : Room
         Depth = Measure.Feet(10);
         Height = garage.Height;
         Width = Measure.Feet(1);
-        Position = garage.Position;
+        LocalPosition = garage.LocalPosition;
         garage.AddConnectingRoomWithJunction(this, driveway, Side.West, align, offset, adjustPlacement: false);        
     }
 }

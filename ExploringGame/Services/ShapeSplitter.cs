@@ -22,13 +22,13 @@ public class ShapeSplitter
                 for(int z = 0; z < zParts; z++)
                 {
                     var boxPosition = new Vector3(
-                        shape.Position.X - shape.Size.X / 2f + partSize.X / 2f + x * partSize.X,
-                        shape.Position.Y - shape.Size.Y / 2f + partSize.Y / 2f + y * partSize.Y,
-                        shape.Position.Z - shape.Size.Z / 2f + partSize.Z / 2f + z * partSize.Z
+                        shape.LocalPosition.X - shape.Size.X / 2f + partSize.X / 2f + x * partSize.X,
+                        shape.LocalPosition.Y - shape.Size.Y / 2f + partSize.Y / 2f + y * partSize.Y,
+                        shape.LocalPosition.Z - shape.Size.Z / 2f + partSize.Z / 2f + z * partSize.Z
                     );
 
                     var box = factory();
-                    box.Position = boxPosition;
+                    box.LocalPosition = boxPosition;
                     box.Size = partSize;
                     box.Rotation = shape.Rotation;
                     boxes.Add((box, new Vector3(x,y,z)));

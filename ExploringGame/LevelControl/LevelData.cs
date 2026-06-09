@@ -166,7 +166,7 @@ public class LevelData
         if (roomGraph != null && stampedShape is IPlaceableObject placeableShape)
         {
             // Find the room containing this position
-            room = FindRoomContainingPosition(stampedShape.Position, roomGraph);
+            room = FindRoomContainingPosition(stampedShape.LocalPosition, roomGraph);
             placeableShape.Room = room;
         }
 
@@ -203,7 +203,7 @@ public class LevelData
 
         foreach (var room in roomGraph.GetAllRooms())
         {
-            var distance = Vector3.DistanceSquared(position, room.Position);
+            var distance = Vector3.DistanceSquared(position, room.LocalPosition);
             if (distance < nearestDistance)
             {
                 nearestDistance = distance;

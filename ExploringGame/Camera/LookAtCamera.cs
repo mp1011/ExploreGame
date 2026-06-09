@@ -17,11 +17,11 @@ public class LookAtCamera : ICamera
     {
         _lookAt = lookAt;
         _lastView = previous.CreateViewMatrix();
-        Position = previous.Position;
+        LocalPosition = previous.LocalPosition;
         Rotation = previous.Rotation;
     }
 
-    public Vector3 Position { get; set; }
+    public Vector3 LocalPosition { get; set; }
 
     public Vector3 Size => Vector3.One;
 
@@ -31,13 +31,13 @@ public class LookAtCamera : ICamera
     {
         var currentWorld = Matrix.Invert(_lastView);
         var cameraPosition = currentWorld.Translation;
-        Position = cameraPosition;
+        LocalPosition = cameraPosition;
 
-        var targetDirection = _lookAt.Position - cameraPosition;
+        var targetDirection = _lookAt.LocalPosition - cameraPosition;
         if (targetDirection.LengthSquared() <= float.Epsilon)
             return _lastView;
 
-        var targetView = Matrix.CreateLookAt(cameraPosition, _lookAt.Position, Vector3.Up);
+        var targetView = Matrix.CreateLookAt(cameraPosition, _lookAt.LocalPosition, Vector3.Up);
         var currentRotation = Quaternion.CreateFromRotationMatrix(currentWorld);
         var targetRotation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(targetView));
         var angularDistance = QuaternionAngle(currentRotation, targetRotation);

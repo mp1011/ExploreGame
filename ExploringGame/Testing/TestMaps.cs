@@ -47,7 +47,7 @@ public static partial class TestMaps
 
         // static child, positioned in absolute space = wrong pos
         var boxTop = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Yellow)));
-        boxTop.Position = box.Position;
+        boxTop.LocalPosition = box.LocalPosition;
         boxTop.Place().OnSideOuter(Side.Top);
 
         // static child, positioned in relative space = right
@@ -308,7 +308,7 @@ public static partial class TestMaps
         simpleRoom.Y = 2;
 
         var shape = simpleRoom.AddChild(createShape(simpleRoom));
-        shape.Position = simpleRoom.Position;
+        shape.LocalPosition = simpleRoom.LocalPosition;
         shape.Place().OnFloor();
         shape.Z += 2.0f;
 
@@ -354,7 +354,7 @@ public static partial class TestMaps
         officeDesk.Z += 0.1f;
 
         var officeDesk2 = new OfficeDesk(simpleRoom);
-        officeDesk2.Position = simpleRoom.Position;
+        officeDesk2.LocalPosition = simpleRoom.LocalPosition;
         officeDesk2.Place().OnFloor();
         officeDesk2.X += 3.0f;
 

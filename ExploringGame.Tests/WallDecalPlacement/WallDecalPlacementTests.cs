@@ -40,7 +40,7 @@ public class WallDecalPlacementTests
         
         foreach (var decal in placedDecals)
         {
-            var decalX = decal.Position.X;
+            var decalX = decal.LocalPosition.X;
             Assert.True(decalX < worldSegment.GapStartX, 
                 $"Decal at X={decalX:F2} should be west of gap (gap starts at {worldSegment.GapStartX:F2})");
         }
@@ -63,7 +63,7 @@ public class WallDecalPlacementTests
         // So decals should appear on the East side (larger quad)
         foreach (var decal in placedDecals)
         {
-            var decalX = decal.Position.X;
+            var decalX = decal.LocalPosition.X;
             Assert.True(decalX > worldSegment.GapEndX, 
                 $"Decal at X={decalX:F2} should be east of gap (gap ends at {worldSegment.GapEndX:F2})");
         }
@@ -84,7 +84,7 @@ public class WallDecalPlacementTests
         
         foreach (var decal in placedDecals)
         {
-            var decalZ = decal.Position.Z;
+            var decalZ = decal.LocalPosition.Z;
             Assert.True(decalZ < worldSegment.GapStartX, 
                 $"Decal at Z={decalZ:F2} should be north of gap (gap starts at {worldSegment.GapStartX:F2})");
         }
@@ -107,7 +107,7 @@ public class WallDecalPlacementTests
         // So decals should appear on the South side (larger quad)
         foreach (var decal in placedDecals)
         {
-            var decalZ = decal.Position.Z;
+            var decalZ = decal.LocalPosition.Z;
             Assert.True(decalZ > worldSegment.GapEndX, 
                 $"Decal at Z={decalZ:F2} should be south of gap (gap ends at {worldSegment.GapEndX:F2})");
         }

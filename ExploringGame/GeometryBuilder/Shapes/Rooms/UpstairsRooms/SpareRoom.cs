@@ -29,7 +29,7 @@ public class SpareRoom : Room
         var light = new HighHatLight(this, 0f, 0f);
         var sw = new LightSwitch(this, Side.East, StateKey.SpareRoomLightOn);
         sw.ControlledObjects.Add(light);
-        sw.Position = this.Position;
+        sw.LocalPosition = this.LocalPosition;
         sw.Place().OnSideInner(Side.East).AtEyeLevel(this, -Measure.Inches(5));
 
         var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(4));

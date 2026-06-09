@@ -267,7 +267,7 @@ public class LightSpiritTests
 
             // Calculate path distance from Light Spirit to each light
             var distanceCalculator = g.GetService<WaypointDistanceCalculator>();
-            var lightSpiritPosition = lightSpiritController.LightSpirit.Position;
+            var lightSpiritPosition = lightSpiritController.LightSpirit.LocalPosition;
 
             var lightDistances = allLights.Select(light =>
             {
@@ -322,7 +322,7 @@ public class LightSpiritTests
                 var player = g.GetService<Player>();
                 if (lightSpiritController != null && player != null && lightSpiritController.LightSpirit.Phase == LightSpiritPhase.HalfPresence)
                 {
-                    var distance = Vector3.Distance(player.Position, lightSpiritController.LightSpirit.Position);
+                    var distance = Vector3.Distance(player.LocalPosition, lightSpiritController.LightSpirit.LocalPosition);
                     if (distance < 1.5f)
                         return TestResult.PASS;
                 }
@@ -341,16 +341,16 @@ public class LightSpiritTests
         room.Width = 10f;
         room.Height = 3f;
         room.Depth = 10f;
-        room.Position = Vector3.Zero;
+        room.LocalPosition = Vector3.Zero;
 
         // Add WallDecalStamp so GateMarks can be created as stamped shapes
         var wallDecalStamp = new GeometryBuilder.Shapes.Decals.WallDecalStamp();
-        wallDecalStamp.Position = new Vector3(0, 5, 0); // Position doesn't matter for stamps
+        wallDecalStamp.LocalPosition = new Vector3(0, 5, 0); // Position doesn't matter for stamps
         worldSegment.AddChild(wallDecalStamp);
 
         // Add the Light Spirit
         var lightSpirit = new LightSpirit();
-        lightSpirit.Position = new Vector3(0, -100, 0); // Start underground
+        lightSpirit.LocalPosition = new Vector3(0, -100, 0); // Start underground
         worldSegment.AddChild(lightSpirit);
 
         return worldSegment;

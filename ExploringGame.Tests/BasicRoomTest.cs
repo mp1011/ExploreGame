@@ -19,7 +19,7 @@ public class BasicRoomTest
 
         var player = g.GetService<Player>();
 
-        var distanceToCenter = (player.Position - Vector3.Zero).Length();
+        var distanceToCenter = (player.LocalPosition - Vector3.Zero).Length();
         Assert.True(distanceToCenter < 2f);
     }
 }

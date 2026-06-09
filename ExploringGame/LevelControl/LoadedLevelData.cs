@@ -149,7 +149,7 @@ public class LoadedLevelData
 
         foreach (var shape in placeableShapes)
         {
-            var room = FindRoomContainingPosition(shape.Position);
+            var room = FindRoomContainingPosition(shape.LocalPosition);
             shape.Room = room?.LightingGroup as Room ?? room;
         }
     }
@@ -169,7 +169,7 @@ public class LoadedLevelData
 
         foreach (var room in RoomGraph.GetAllRooms())
         {
-            var distance = Vector3.DistanceSquared(position, room.Position);
+            var distance = Vector3.DistanceSquared(position, room.LocalPosition);
             if (distance < nearestDistance)
             {
                 nearestDistance = distance;

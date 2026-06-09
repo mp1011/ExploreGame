@@ -61,13 +61,13 @@ public class BreakInPhaseHandler : IPhaseHandler
         // Find closest active gatemark if we don't have a target
         if (_targetGateMark == null || !_targetGateMark.IsActive)
         {
-            _targetGateMark = _gateMarkManager.GetClosestActiveGateMark(_lightSpirit.Position);
+            _targetGateMark = _gateMarkManager.GetClosestActiveGateMark(_lightSpirit.LocalPosition);
         }
 
         // Move toward target gatemark if we have one
         if (_targetGateMark != null)
         {
-            var direction = _targetGateMark.Position - _lightSpirit.Position;
+            var direction = _targetGateMark.LocalPosition - _lightSpirit.LocalPosition;
             var distance = direction.Length();
 
             if (distance <= ArrivalThreshold)
@@ -80,7 +80,7 @@ public class BreakInPhaseHandler : IPhaseHandler
 
                 // Reposition LS to center of room to avoid being stuck near wall
                 if (room != null)
-                    _lightSpirit.Position = room.Position;
+                    _lightSpirit.LocalPosition = room.LocalPosition;
 
                 // Transition to Half-Presence Phase
                 _lightSpirit.Phase = LightSpiritPhase.HalfPresence;
@@ -90,7 +90,7 @@ public class BreakInPhaseHandler : IPhaseHandler
                 // Move toward gatemark
                 direction.Normalize();
                 var movement = direction * MovementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                _lightSpirit.Position += movement;
+                _lightSpirit.LocalPosition += movement;
                 
                 // Keep sphere underground (invisible, no collision)
                 SetUndergroundPosition();
@@ -131,7 +131,7 @@ public class BreakInPhaseHandler : IPhaseHandler
         // If there are any GateMarks, move LS to the nearest one
         GateMark target = null;
         if (_gateMarkManager.GateMarks.Any())
-            target = _gateMarkManager.GetClosestActiveGateMark(_lightSpirit.Position);
+            target = _gateMarkManager.GetClosestActiveGateMark(_lightSpirit.LocalPosition);
         else
         {
             _gateMarkManager.SpawnGateMark();
@@ -140,7 +140,7 @@ public class BreakInPhaseHandler : IPhaseHandler
 
         if (target != null)
         {
-            _lightSpirit.Position = target.Position;
+            _lightSpirit.LocalPosition = target.LocalPosition;
             SetUndergroundPosition();
         }
 
@@ -150,12 +150,12 @@ public class BreakInPhaseHandler : IPhaseHandler
     private void SetUndergroundPosition()
     {
         // Keep the sphere underground so it's invisible and has no collision
-        _lightSpirit.Sphere.Position = new Vector3(_lightSpirit.Position.X, -100f, _lightSpirit.Position.Z);
+        _lightSpirit.Sphere.LocalPosition = new Vector3(_lightSpirit.LocalPosition.X, -100f, _lightSpirit.LocalPosition.Z);
         
         // Update physics body position to be underground too
         if (_lightSpirit.Sphere.ColliderBodies != null && _lightSpirit.Sphere.ColliderBodies.Length > 0)
         {
-            _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.Position.ToJVector();
+            _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.LocalPosition.ToJVector();
         }
     }
 

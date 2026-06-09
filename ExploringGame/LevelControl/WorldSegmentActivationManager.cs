@@ -28,7 +28,7 @@ public class WorldSegmentActivationManager
 
     public void Update()
     {
-        UpdateActiveSegments(_player.Position);
+        UpdateActiveSegments(_player.LocalPosition);
     }
 
     public void ActivateGroup(WorldSegmentGroup worldSegmentGroup)

@@ -35,13 +35,13 @@ public class ShapePlacer
 
     public ShapePlacer AtParent()
     {
-        _shape.Position = _shape.Parent.Position;
+        _shape.LocalPosition = _shape.Parent.LocalPosition;
         return this;
     }
 
     public ShapePlacer At(Shape other)
     {
-        _shape.Position = other.Position;
+        _shape.LocalPosition = other.LocalPosition;
         return this;
     }
 
@@ -140,7 +140,7 @@ public class WallDecalShapePlacer : ShapePlacer
         float decalWorldV = (float)(vMin + random.NextDouble() * (vMax - vMin));
 
         var decalWorldPosition = new Vector2(decalWorldU, decalWorldV);
-        var wallCenter = new Vector2(quad.Room.Position.AxisValue(axisU), quad.Room.Position.AxisValue(axisV));
+        var wallCenter = new Vector2(quad.Room.LocalPosition.AxisValue(axisU), quad.Room.LocalPosition.AxisValue(axisV));
        
         _wallDecal.WallSide = quad.Side;
         _wallDecal.CenterUV = decalWorldPosition - wallCenter;

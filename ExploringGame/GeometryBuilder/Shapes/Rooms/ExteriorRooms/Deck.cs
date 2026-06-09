@@ -41,7 +41,7 @@ public abstract class Deck : Room
         var bottomRailing = AddChild(new Box(new Theme(Theme.TextureSheetKey, TextureKey.Plain, color)));
 
         // Calculate direction and distance between posts
-        var direction = postTo.Position - postFrom.Position;
+        var direction = postTo.LocalPosition - postFrom.LocalPosition;
         var distance = direction.Length();
 
         // Determine orientation (X-axis or Z-axis)
@@ -67,17 +67,17 @@ public abstract class Deck : Room
         }
 
         // Position at midpoint between posts
-        var midpoint = (postFrom.Position + postTo.Position) / 2f;
+        var midpoint = (postFrom.LocalPosition + postTo.LocalPosition) / 2f;
 
         // Top railing - 4 inches below the top
-        var postTop = postFrom.Position.Y + (PostHeight / 2f);
+        var postTop = postFrom.LocalPosition.Y + (PostHeight / 2f);
         var topRailingY = postTop - RailingTopOffset - (RailThickness / 2f);
-        topRailing.Position = new Vector3(midpoint.X, topRailingY, midpoint.Z);
+        topRailing.LocalPosition = new Vector3(midpoint.X, topRailingY, midpoint.Z);
 
         // Bottom railing - 4 inches above the bottom
-        var postBottom = postFrom.Position.Y - (PostHeight / 2f);
+        var postBottom = postFrom.LocalPosition.Y - (PostHeight / 2f);
         var bottomRailingY = postBottom + RailingTopOffset + (RailThickness / 2f);
-        bottomRailing.Position = new Vector3(midpoint.X, bottomRailingY, midpoint.Z);
+        bottomRailing.LocalPosition = new Vector3(midpoint.X, bottomRailingY, midpoint.Z);
 
         // Create vertical bars between top and bottom railings
         var barHeight = topRailingY - bottomRailingY;
@@ -96,8 +96,8 @@ public abstract class Deck : Room
 
             // Interpolate position between the two posts
             var t = (float)i / numBars;
-            var barPosition = Vector3.Lerp(postFrom.Position, postTo.Position, t);
-            bar.Position = new Vector3(barPosition.X, barCenterY, barPosition.Z);
+            var barPosition = Vector3.Lerp(postFrom.LocalPosition, postTo.LocalPosition, t);
+            bar.LocalPosition = new Vector3(barPosition.X, barCenterY, barPosition.Z);
         }
 
         return topRailing;

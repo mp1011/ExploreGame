@@ -52,7 +52,7 @@ class ElectricFireplace : PlaceableShape
 
     public ElectricFireplace(Shape parent)
     {
-        Position = parent.Position;
+        LocalPosition = parent.LocalPosition;
         parent.AddChild(this);
         Width = MainWidth;
         Depth = MainDepth;
@@ -237,7 +237,7 @@ class ElectricFireplace : PlaceableShape
             Width = LowerDoorWidth;
             Height = Parent.Height - FooterHeight;
 
-            Position = Parent.Position;
+            LocalPosition = Parent.LocalPosition;
             this.Place().OnSideOuter(Side.South)
                 .OnSideInner(Side.Top);
 
@@ -245,20 +245,20 @@ class ElectricFireplace : PlaceableShape
             var windowPlacement = CalcWindowPlacement();
 
             var windowTotalHeight = LowerDoorWindowHeight * 3 + LowerDoorWindowYSpacing * 2;
-            _xStrip.Position = Position;
+            _xStrip.LocalPosition = LocalPosition;
             _xStrip.Height = windowTotalHeight;
             _xStrip.Width = LowerDoorWindowXSpacing;
             _xStrip.Depth = LowerDoorWindowIndent;           
             _xStrip.Place().OnSideInner(Side.South);
 
-            _yStrip1.Position = Position;
+            _yStrip1.LocalPosition = LocalPosition;
             _yStrip1.Height = LowerDoorWindowYSpacing;
             _yStrip1.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip1.Depth = LowerDoorWindowIndent;
             _yStrip1.Place().OnSideInner(Side.South);
             _yStrip1.Y = GetSide(Side.Top) - windowPlacement.Top - LowerDoorWindowHeight;
 
-            _yStrip2.Position = Position;
+            _yStrip2.LocalPosition = LocalPosition;
             _yStrip2.Height = LowerDoorWindowYSpacing;
             _yStrip2.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip2.Depth = LowerDoorWindowIndent;
@@ -298,7 +298,7 @@ class ElectricFireplace : PlaceableShape
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            Position = Parent.Position;
+            LocalPosition = Parent.LocalPosition;
             this.Place().OnSideInner(Side.South);
             var placement = CalcPlacement();
 
@@ -369,7 +369,7 @@ class ElectricFireplace : PlaceableShape
 
         protected override Triangle[] BuildInternal(QualityLevel quality)
         {
-            Position = Parent.Position;
+            LocalPosition = Parent.LocalPosition;
             this.AdjustShape().From(Parent)
                 .SliceFromTop(Parent.Height - FooterHeight, FooterHeight)
                 .SliceFromNorth(0, LowerDoorThickness);

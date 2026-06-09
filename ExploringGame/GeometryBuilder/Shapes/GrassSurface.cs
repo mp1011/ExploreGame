@@ -37,7 +37,7 @@ public class GrassSurface : Shape
     {
         _terrain = terrain;
         parent.AddChild(this);
-        Position = parent.Position;
+        LocalPosition = parent.LocalPosition;
         Size = parent.Size;
         _followTerrain = terrain != null;
     }

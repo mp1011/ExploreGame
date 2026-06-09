@@ -44,7 +44,7 @@ public class Den : Room
 
         LightingDebugger.WatchLight = light;
 
-        lightSwitch.Position = Position;
+        lightSwitch.LocalPosition = LocalPosition;
         lightSwitch.Place().OnSideInner(Side.South).AtStandardSwitchHeight();
 
         SetSideUnanchored(Side.North, _livingRoom.GetSide(Side.North));

@@ -76,7 +76,7 @@ public abstract class Stairs : Room
         Shape lastStep = null ;
         foreach (var step in _steps)
         {
-            step.Position = Position;
+            step.LocalPosition = LocalPosition;
             step.Size = StepSize;
             step.SetSide(StartSide, stairPosition);
             step.Place().OnFloor();

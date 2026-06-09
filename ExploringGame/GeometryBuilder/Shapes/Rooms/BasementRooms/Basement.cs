@@ -107,7 +107,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             basementStairsDoorLeft.OmitSides = Side.West | Side.South | Side.East;
             basementStairsDoorRight.OmitSides = Side.West | Side.South | Side.East;
 
-            basementStairsDoorLeft.Position = BasementStairsDoor.Position;
+            basementStairsDoorLeft.LocalPosition = BasementStairsDoor.LocalPosition;
             basementStairsDoorLeft.Size = BasementStairsDoor.Size;
             basementStairsDoorLeft.SetSide(Side.Bottom, BasementStairsDoor.GetSide(Side.Bottom));
             basementStairsDoorLeft.SetSideUnanchored(Side.Top, BasementStairsDoor.GetSide(Side.Top));
@@ -115,7 +115,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             basementStairsDoorLeft.SetSideUnanchored(Side.West, BasementStairsDoor.GetSide(Side.East));
             basementStairsDoorLeft.SetSideUnanchored(Side.South, BasementStairsDoor.GetSide(Side.North) + 0.5f);
 
-            basementStairsDoorRight.Position = BasementStairsDoor.Position;
+            basementStairsDoorRight.LocalPosition = BasementStairsDoor.LocalPosition;
             basementStairsDoorRight.Size = BasementStairsDoor.Size;
             basementStairsDoorRight.SetSide(Side.Bottom, BasementStairsDoor.GetSide(Side.Bottom));
             basementStairsDoorRight.SetSideUnanchored(Side.Top, BasementStairsDoor.GetSide(Side.Top));
@@ -135,7 +135,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             var lightSwitch2 = new LightSwitch(this, Side.West, StateKey.BasementLightOn);
             lightSwitch2.ControlledObjects.Add(light);
 
-            lightSwitch2.Position = wall2.Position;
+            lightSwitch2.LocalPosition = wall2.LocalPosition;
             lightSwitch2.Place().OnSideOuter(Side.West, wall2);
             lightSwitch2.Place().AtStandardSwitchHeight();
 

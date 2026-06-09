@@ -19,7 +19,7 @@ public static class IPlayerActivatedExtensions
 {
     public static bool CheckPlayerActivation(this IPlayerActivated playerActivated, Physics physics, GameKey key = GameKey.Use)
     {
-        if (playerActivated.Player.Position.SquaredDistance(playerActivated.Shape.Position) > playerActivated.ActivationRange * playerActivated.ActivationRange)
+        if (playerActivated.Player.LocalPosition.SquaredDistance(playerActivated.Shape.LocalPosition) > playerActivated.ActivationRange * playerActivated.ActivationRange)
             return false;
 
         if (!playerActivated.PlayerInput.IsKeyPressed(key))
@@ -30,7 +30,7 @@ public static class IPlayerActivatedExtensions
 
         // Angular check: ensure player is looking roughly at the shape
         var forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(playerActivated.Player.Rotation.Yaw, 0f, 0f));
-        var toTarget = playerActivated.Shape.Position - playerActivated.Player.Position;
+        var toTarget = playerActivated.Shape.LocalPosition - playerActivated.Player.LocalPosition;
         forward.Normalize();
         toTarget.Normalize();
 

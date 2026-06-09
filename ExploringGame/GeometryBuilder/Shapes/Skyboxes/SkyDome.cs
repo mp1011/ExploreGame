@@ -15,7 +15,7 @@ public class SkyDome : SkyboxShape
     {
         Theme = new SkyTheme();
         Height = 100f;
-        Position = new Microsoft.Xna.Framework.Vector3(0, -12.5f, 0);
+        LocalPosition = new Microsoft.Xna.Framework.Vector3(0, -12.5f, 0);
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

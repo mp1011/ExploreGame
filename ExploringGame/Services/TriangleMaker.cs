@@ -17,8 +17,8 @@ public static class TriangleMaker
     public static Triangle[] BuildCuboid(Shape shape)
     {
         // Calculate the 8 corners of the cuboid
-        var min = shape.Position - shape.Size / 2f;
-        var max = shape.Position + shape.Size / 2f;
+        var min = shape.LocalPosition - shape.Size / 2f;
+        var max = shape.LocalPosition + shape.Size / 2f;
 
         Vector3[] corners = new Vector3[8];
         // Bottom face (Y = min.Y)
@@ -69,7 +69,7 @@ public static class TriangleMaker
 
         List<Triangle> triangles = new();
 
-        Vector3 center = shape.Position;
+        Vector3 center = shape.LocalPosition;
         Vector3 size = shape.Size;
         Vector3 min = center - size / 2f;
         Vector3 max = center + size / 2f;
@@ -192,7 +192,7 @@ public static class TriangleMaker
     public static Triangle[] BuildEllipsoid(Shape shape, int segments = 16)
     {
         var triangles = new List<Triangle>();
-        var center = shape.Position;
+        var center = shape.LocalPosition;
         float rx = shape.Width / 2f;
         float ry = shape.Height / 2f;
         float rz = shape.Depth / 2f;
@@ -289,7 +289,7 @@ public static class TriangleMaker
     public static Triangle[] BuildDome(Shape shape, int segments = 32)
     {
         var allTriangles = BuildEllipsoid(shape, segments);
-        var centerY = shape.Position.Y;
+        var centerY = shape.LocalPosition.Y;
 
         return allTriangles.Where(t =>
             t.A.Y >= centerY ||

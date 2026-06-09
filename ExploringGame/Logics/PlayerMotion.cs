@@ -35,7 +35,7 @@ public class PlayerMotion
         if (!Active)
             return;
 
-        var cameraPosition = _player.Position;
+        var cameraPosition = _player.LocalPosition;
         var yaw = _player.Rotation.Yaw;
         var pitch = _player.Rotation.Pitch;
 

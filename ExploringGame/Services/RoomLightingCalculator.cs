@@ -200,11 +200,11 @@ public class RoomLightingCalculator
                 if (contribution < MinimumContribution)
                     return new LightContribution(lightSource, 0);
 
-                graphDistance += (pos.DistanceTo(nextLightingGroup.Position) * 1.3f * doorDistanceModifier);
-                pos = nextLightingGroup.Position;
+                graphDistance += (pos.DistanceTo(nextLightingGroup.LocalPosition) * 1.3f * doorDistanceModifier);
+                pos = nextLightingGroup.LocalPosition;
 
                 // lastDir = (nextLightingGroup.Position - currentLightingGroup.Position);
-                lastDir = (currentLightingGroup.Position - nextLightingGroup.Position);
+                lastDir = (currentLightingGroup.LocalPosition - nextLightingGroup.LocalPosition);
 
                 lastDir.Normalize();
 
@@ -214,11 +214,11 @@ public class RoomLightingCalculator
 
         LightingDebugger.Check(lightSource, targetRoom);
 
-        var directDistance = lightSource.LightPosition.DistanceTo(targetRoom.Position);
+        var directDistance = lightSource.LightPosition.DistanceTo(targetRoom.LocalPosition);
         if (directDistance > graphDistance)
             return new LightContribution(lightSource, contribution);
         else 
-            return new LightContribution(lightSource, graphDistance, targetRoom.Position, lastDir, contribution);
+            return new LightContribution(lightSource, graphDistance, targetRoom.LocalPosition, lastDir, contribution);
     }
 
     /// <summary>
@@ -259,7 +259,7 @@ public class RoomLightingCalculator
 
     private float CalculateDecayFactor(IRoom from, IRoom to, RoomConnection connection)
     {
-        var distance = from.Position.DistanceTo(to.Position);
+        var distance = from.LocalPosition.DistanceTo(to.LocalPosition);
 
         float c = 1.0f;
         float l = 0.16f;

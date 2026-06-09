@@ -25,11 +25,11 @@ public class EntityRoomFinder
     public void UpdateRoom(PlaceableShape shape)
     {
         // Fast path: Check if still in current room
-        if (shape.Room != null && shape.Room.ContainsPoint(shape.Position))
+        if (shape.Room != null && shape.Room.ContainsPoint(shape.LocalPosition))
             return;
 
         // Slow path: Find which room contains the position
-        var newRoom = FindRoomContainingPosition(shape.Position);
+        var newRoom = FindRoomContainingPosition(shape.LocalPosition);
         shape.Room = newRoom?.LightingGroup as Room ?? newRoom;
     }
 
@@ -52,7 +52,7 @@ public class EntityRoomFinder
 
         foreach (var room in roomGraph.GetAllRooms())
         {
-            var distance = Vector3.DistanceSquared(position, room.Position);
+            var distance = Vector3.DistanceSquared(position, room.LocalPosition);
             if (distance < nearestDistance)
             {
                 nearestDistance = distance;

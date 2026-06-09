@@ -50,7 +50,7 @@ public class TerrainSurface : Shape
     {
         MaxHeight = maxHeight;
         parent.AddChild(this);
-        Position = parent.Position;
+        LocalPosition = parent.LocalPosition;
         Size = parent.Size;
     }
 

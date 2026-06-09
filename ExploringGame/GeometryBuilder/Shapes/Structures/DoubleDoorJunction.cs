@@ -39,8 +39,8 @@ public class DoubleDoorJunction : Room
 
     protected override void BeforeBuild()
     {
-        _leftDoor.Position = Position;
-        _rightDoor.Position = Position;
+        _leftDoor.LocalPosition = LocalPosition;
+        _rightDoor.LocalPosition = LocalPosition;
 
         PlaceDoor(_leftDoor);
         PlaceDoor(_rightDoor);
@@ -48,12 +48,12 @@ public class DoubleDoorJunction : Room
 
     private void PlaceDoor(Door door)
     {
-        door.Position = Position;
+        door.LocalPosition = LocalPosition;
 
         var hingeSide = door.HingePosition == HAlign.Left ? _wallSide.CounterClockwiseTurn()
                                                            : _wallSide.ClockwiseTurn();
 
-        var hingePosition = Position.SetAxis(hingeSide.GetAxis(), GetSide(hingeSide));
+        var hingePosition = LocalPosition.SetAxis(hingeSide.GetAxis(), GetSide(hingeSide));
         door.SetHingePosition(hingePosition);
     }
 }

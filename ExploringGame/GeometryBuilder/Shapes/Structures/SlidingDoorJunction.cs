@@ -44,8 +44,8 @@ public class SlidingDoorJunction : Room
         _fixedPane.PlacePane(_wallSide.CounterClockwiseTurn());
         _movingPane.PlacePane(_wallSide.ClockwiseTurn());
 
-        _fixedPane.Position = _fixedPane.Position + _wallSide.AsVector() * -0.1f;
-        _movingPane.Position = _movingPane.Position + _wallSide.AsVector() * 0.1f;
+        _fixedPane.LocalPosition = _fixedPane.LocalPosition + _wallSide.AsVector() * -0.1f;
+        _movingPane.LocalPosition = _movingPane.LocalPosition + _wallSide.AsVector() * 0.1f;
 
     }
 }
@@ -72,7 +72,7 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject
 
     public void PlacePane(Side placementSide)
     {
-        Position = Vector3.Zero;
+        LocalPosition = Vector3.Zero;
 
         var sideAxis = _wallSide.ClockwiseTurn().GetAxis();
         var thicknessAxis = _wallSide.GetAxis();

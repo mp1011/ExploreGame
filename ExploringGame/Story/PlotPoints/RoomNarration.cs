@@ -31,6 +31,6 @@ internal class RoomNarration<TRoom> : Narration
 
     protected override bool CheckActivation(GameTime gameTime)
     {
-        return _room.ContainsPoint(_player.Position);
+        return _room.ContainsPoint(_player.LocalPosition);
     }
 }

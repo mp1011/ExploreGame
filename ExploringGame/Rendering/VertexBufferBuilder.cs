@@ -163,7 +163,7 @@ public class VertexBufferBuilder
 
     private Vector2 CalcTextureCoordinates_Spherical(Shape shape, Vector3 position)
     {
-        var center = shape.Position;
+        var center = shape.LocalPosition;
         float rx = shape.Width / 2f;
         float ry = shape.Height / 2f;
         float rz = shape.Depth / 2f;

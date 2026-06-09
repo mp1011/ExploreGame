@@ -108,7 +108,7 @@ public abstract class RenderEffect<TEffect> : IRenderEffect
 
                 if (shapeBuffer.Shape is IPlaceableObject)
                 {
-                    positions[activeLightCount] = lightContribution.LightSource.LightPosition - shapeBuffer.Shape.Position;
+                    positions[activeLightCount] = lightContribution.LightSource.LightPosition - shapeBuffer.Shape.LocalPosition;
                 }
 
                 colors[activeLightCount] = lightContribution.LightSource.Color.ToVector3();

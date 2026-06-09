@@ -11,7 +11,7 @@ public abstract class ShapePart : Shape
 
     protected sealed override void BeforeBuild()
     {
-        _originalPos = Position;
+        _originalPos = LocalPosition;
 
       //  Position += Parent.Position;        
     }

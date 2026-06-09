@@ -57,10 +57,10 @@ public class TestShapeStampGeneratorController : IActiveObject
         var offsetY = (float)(_random.NextDouble() * 1.0); // Random Y offset 0-3 units
 
         var stampedShape = new TestStampedShape();
-        stampedShape.Position = new Vector3(
-            Generator.Position.X + offsetX,
-            Generator.Position.Y + 1.0f + offsetY,
-            Generator.Position.Z + offsetZ
+        stampedShape.LocalPosition = new Vector3(
+            Generator.LocalPosition.X + offsetX,
+            Generator.LocalPosition.Y + 1.0f + offsetY,
+            Generator.LocalPosition.Z + offsetZ
         );
 
         // Add random rotation

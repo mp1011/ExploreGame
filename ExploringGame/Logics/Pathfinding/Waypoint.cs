@@ -14,7 +14,7 @@ public class Waypoint : PlaceableShape
     public Waypoint(Room room)
     {
         Room = room;
-        Position = room.Position;
+        LocalPosition = room.LocalPosition;
         Width = 0.2f;
         Height = 0.2f;
         Depth = 0.2f;

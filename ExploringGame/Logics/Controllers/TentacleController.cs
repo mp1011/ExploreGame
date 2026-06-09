@@ -32,7 +32,7 @@ public class TentacleController : IActiveObject
     {
         _body = Tentacle.ColliderBodies[0];
         _body.SetMassInertia(0.001f);
-        _physics.CreateHinge(_body, ConnectsTo.ColliderBodies[0], new Vector3(ConnectsTo.Position.X, ConnectsTo.GetSide(Side.Top), ConnectsTo.Position.Z));
+        _physics.CreateHinge(_body, ConnectsTo.ColliderBodies[0], new Vector3(ConnectsTo.LocalPosition.X, ConnectsTo.GetSide(Side.Top), ConnectsTo.LocalPosition.Z));
     }
 
     public void Stop()
@@ -44,7 +44,7 @@ public class TentacleController : IActiveObject
         if (GameDebug.Debug.NoNPCPhysics)
             return;
 
-        Tentacle.Position = _body.Position.ToVector3();
+        Tentacle.LocalPosition = _body.Position.ToVector3();
         Tentacle.Rotation = new Rotation(_body.Orientation.ToQuaternion());
 
         _body.AngularVelocity = new JVector(10.0f, 5.0f, -4.0f);

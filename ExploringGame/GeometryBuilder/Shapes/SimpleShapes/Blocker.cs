@@ -51,7 +51,7 @@ public class Blocker : PlaceableShape, ICollidable
         Rotation = BlockingShape.Rotation;
 
         if(ColliderBodies != null)
-            ColliderBodies[0].Position = Position.ToJVector();
+            ColliderBodies[0].Position = LocalPosition.ToJVector();
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

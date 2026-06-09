@@ -16,13 +16,13 @@ public class PathfinderTest
     {
         var testMap = TestMaps.PathfindingTest();
         var testEntity = testMap.TraverseAllChildren().OfType<TestEntity>().First();
-        testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").Position;
+        testMap.PlayerStart = testMap.TraverseAllChildren().OfType<Room>().First(p => p.Tag == "Room C").LocalPosition;
 
         using var g = new TestGame(new SingleSegmentGroup(testMap), TimeSpan.FromMinutes(5));
         g.Run();
 
         var d = Debug.MovingEntityDebugger;
         var player = g.GetService<Player>();       
-        Assert.True(player.Position.DistanceTo(testEntity.Position) < 3.0f);
+        Assert.True(player.LocalPosition.DistanceTo(testEntity.LocalPosition) < 3.0f);
     }
 }

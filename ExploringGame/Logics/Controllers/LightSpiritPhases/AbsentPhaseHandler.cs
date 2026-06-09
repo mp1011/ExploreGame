@@ -76,13 +76,13 @@ public class AbsentPhaseHandler : IPhaseHandler
 
     private void SetUndergroundPosition()
     {
-        _lightSpirit.Position = new Vector3(0, UndergroundY, 0);
-        _lightSpirit.Sphere.Position = new Vector3(0, UndergroundY, 0);
+        _lightSpirit.LocalPosition = new Vector3(0, UndergroundY, 0);
+        _lightSpirit.Sphere.LocalPosition = new Vector3(0, UndergroundY, 0);
         
         // Update physics body position
         if (_lightSpirit.Sphere.ColliderBodies != null && _lightSpirit.Sphere.ColliderBodies.Length > 0)
         {
-            _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Position.ToJVector();
+            _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.LocalPosition.ToJVector();
         }
     }
 

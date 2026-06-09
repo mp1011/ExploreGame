@@ -38,7 +38,7 @@ public class DynamicObjectLightingTests
 
                 // Create a stamped shape at a known position in the room
                 var stampedDecal = new TestStampedWallDecal();
-                stampedDecal.Position = room.Position + new Vector3(2, 2, 2);
+                stampedDecal.LocalPosition = room.LocalPosition + new Vector3(2, 2, 2);
 
                 // Add it to the level
                 loadedLevelData.AddStampedShape(worldSegment, stampedDecal);
@@ -71,7 +71,7 @@ public class DynamicObjectLightingTests
 
                 // Create a stamped shape in the room
                 var stampedDecal = new TestStampedWallDecal();
-                stampedDecal.Position = room.Position + new Vector3(2, 2, 2);
+                stampedDecal.LocalPosition = room.LocalPosition + new Vector3(2, 2, 2);
 
                 loadedLevelData.AddStampedShape(worldSegment, stampedDecal);
 
@@ -127,7 +127,7 @@ public class DynamicObjectLightingTests
 
         // Create a test entity
         var testEntity = new TestEntity();
-        testEntity.Position = basementRoom.Position + new Vector3(0, 1.5f, 0);
+        testEntity.LocalPosition = basementRoom.LocalPosition + new Vector3(0, 1.5f, 0);
 
         // Act - Manually assign the room (automatic assignment will be implemented separately)
         testEntity.Room = basementRoom;
@@ -175,7 +175,7 @@ public class DynamicObjectLightingTests
     {
         // Arrange
         var testEntity = new TestEntity();
-        testEntity.Position = new Vector3(0, 1.5f, 0);
+        testEntity.LocalPosition = new Vector3(0, 1.5f, 0);
 
         using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
@@ -189,7 +189,7 @@ public class DynamicObjectLightingTests
                 var basementRoom = basement.TraverseAllChildren().OfType<Basement>().First();
 
                 // Place entity in BasementOffice
-                testEntity.Position = basementOffice.Position + new Vector3(0, 1.5f, 0);
+                testEntity.LocalPosition = basementOffice.LocalPosition + new Vector3(0, 1.5f, 0);
                 roomFinder.UpdateRoom(testEntity);
 
                 // Verify entity is in BasementOffice
@@ -197,7 +197,7 @@ public class DynamicObjectLightingTests
                 Assert.Equal(basementOffice.LightingGroup, testEntity.Room.LightingGroup);
 
                 // Move entity to Basement
-                testEntity.Position = basementRoom.Position + new Vector3(0, 1.5f, 0);
+                testEntity.LocalPosition = basementRoom.LocalPosition + new Vector3(0, 1.5f, 0);
                 roomFinder.UpdateRoom(testEntity);
 
                 // Verify entity's room changed to Basement
@@ -218,7 +218,7 @@ public class DynamicObjectLightingTests
     {
         // Arrange
         var testEntity = new TestEntity();
-        testEntity.Position = new Vector3(0, 1.5f, 0);
+        testEntity.LocalPosition = new Vector3(0, 1.5f, 0);
 
         using var game = new TestGame(new HomeWorldSegmentGroup(), framesToRun: 100, testAssertion: (g, gameTime) =>
         {
@@ -231,7 +231,7 @@ public class DynamicObjectLightingTests
                 var basementOffice = basement.TraverseAllChildren().OfType<BasementOffice>().First();
 
                 // Place entity in BasementOffice
-                testEntity.Position = basementOffice.Position + new Vector3(0, 1.5f, 0);
+                testEntity.LocalPosition = basementOffice.LocalPosition + new Vector3(0, 1.5f, 0);
                 roomFinder.UpdateRoom(testEntity);
 
                 // Verify entity is in BasementOffice
@@ -240,7 +240,7 @@ public class DynamicObjectLightingTests
                 Assert.Equal(basementOffice.LightingGroup, initialRoom.LightingGroup);
 
                 // Move entity slightly within the same room
-                testEntity.Position += new Vector3(0.1f, 0, 0.1f);
+                testEntity.LocalPosition += new Vector3(0.1f, 0, 0.1f);
                 roomFinder.UpdateRoom(testEntity);
 
                 // Room should still be BasementOffice (optimization: no room change detected)

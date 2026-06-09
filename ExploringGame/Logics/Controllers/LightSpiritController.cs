@@ -107,7 +107,7 @@ public class LightSpiritController : IActiveObject, IDebugControllable
     {
         // Get the room the Light Spirit is in
         var room = _loadedLevelData.RoomGraph?.GetAllRooms()
-            .FirstOrDefault(r => r.ContainsPoint(LightSpirit.Position));
+            .FirstOrDefault(r => r.ContainsPoint(LightSpirit.LocalPosition));
 
         if (room == null || _loadedLevelData.LightingCalculator == null)
             return 0f;
@@ -124,7 +124,7 @@ public class LightSpiritController : IActiveObject, IDebugControllable
         {
             // Simple ray check - could use physics if needed
             // For now, just use distance-based bonus for lights in same room
-            float distance = Vector3.Distance(LightSpirit.Position, light.LightPosition);
+            float distance = Vector3.Distance(LightSpirit.LocalPosition, light.LightPosition);
             if (distance < 10f) // Within 10 units
             {
                 float directBonus = light.Intensity / System.Math.Max(1f, distance / 5f);

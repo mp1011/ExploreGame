@@ -52,7 +52,7 @@ public class WaypointDistanceCalculator
         float totalDistance = 0f;
         for (int i = 0; i < path.Count - 1; i++)
         {
-            totalDistance += Vector3.Distance(path[i].Position, path[i + 1].Position);
+            totalDistance += Vector3.Distance(path[i].LocalPosition, path[i + 1].LocalPosition);
         }
 
         return totalDistance;

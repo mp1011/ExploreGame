@@ -20,7 +20,7 @@ public static partial class TestMaps
         room.Width = 10f;
         room.Height = 6f;
         room.Depth = 10f;
-        room.Position = Vector3.Zero;
+        room.LocalPosition = Vector3.Zero;
 
         // Add the ShapeStamp template (will be built but not rendered)
         var shapeStamp = new TestShapeStamp();

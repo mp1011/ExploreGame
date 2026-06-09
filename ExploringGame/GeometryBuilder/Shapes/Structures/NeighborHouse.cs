@@ -20,11 +20,11 @@ public class NeighborHouse : Shape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        var northPart = new Box {  Size = Size, Position = Position };
-        northPart.SetSideUnanchored(Side.South, Position.Z);
+        var northPart = new Box {  Size = Size, LocalPosition = LocalPosition };
+        northPart.SetSideUnanchored(Side.South, LocalPosition.Z);
 
-        var southPart = new Box { Size = Size, Position = Position };
-        southPart.SetSideUnanchored(Side.North, Position.Z);
+        var southPart = new Box { Size = Size, LocalPosition = LocalPosition };
+        southPart.SetSideUnanchored(Side.North, LocalPosition.Z);
 
         var northTriangles = TriangleMaker.BuildCuboid(northPart);
         var southTriangles = TriangleMaker.BuildCuboid(southPart);

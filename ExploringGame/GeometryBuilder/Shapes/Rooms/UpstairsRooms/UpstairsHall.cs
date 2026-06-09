@@ -22,7 +22,7 @@ public class UpstairsHall : Room
     public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
     {
         Size = new Vector3(1.92f,  3.36f,  1.92f);
-        Position = new Vector3(-2.0699997f, 6.4799995f, -0.060000002f);
+        LocalPosition = new Vector3(-2.0699997f, 6.4799995f, -0.060000002f);
 
         Z += 0.7f;
 
@@ -53,7 +53,7 @@ public class UpstairsHall : Room
         hallLightSwitch.Tag = LightSwitchTag;
         hallLightSwitch.ControlledObjects.Add(hallLight);
 
-        hallLightSwitch.Position = Position;
+        hallLightSwitch.LocalPosition = LocalPosition;
         hallLightSwitch.Place().OnSideInner(Side.West).AtStandardSwitchHeight();
 
 

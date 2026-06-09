@@ -71,6 +71,6 @@ public class PhysicsTestShapeController : IShapeController<PhysicsTestShape>
 
     public void Update(GameTime gameTime)
     {
-        Shape.Position = _body.Position.ToVector3();
+        Shape.LocalPosition = _body.Position.ToVector3();
     }
 }

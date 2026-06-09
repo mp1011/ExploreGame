@@ -118,7 +118,7 @@ public class GateMarkManager
         if (activeMarks.Count == 0)
             return null;
 
-        return activeMarks.OrderBy(gm => Vector3.Distance(gm.Position, position)).First();
+        return activeMarks.OrderBy(gm => Vector3.Distance(gm.LocalPosition, position)).First();
     }
 
     public void RemoveGateMark(GateMark gateMark)

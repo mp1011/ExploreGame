@@ -20,7 +20,7 @@ public class OilTank : PlaceableShape
         Width = 3.0f;
         Height = 2.0f;
         Depth = 1.0f;
-        Position = room.Position;
+        LocalPosition = room.LocalPosition;
         MainTexture = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.DarkRed);
 
         SideTextures[Side.West] = new TextureInfo(Key: TextureKey.Ceiling, Color: Color.White);

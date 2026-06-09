@@ -32,7 +32,7 @@ public class OfficeDesk : PlaceableShape
 
     public OfficeDesk(Shape room)
     {
-        Position = room.Position;
+        LocalPosition = room.LocalPosition;
         room.AddChild(this);
 
         Width = DeskWidth;

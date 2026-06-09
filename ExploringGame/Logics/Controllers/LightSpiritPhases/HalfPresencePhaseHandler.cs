@@ -81,7 +81,7 @@ public class HalfPresencePhaseHandler : IPhaseHandler
         if (isTargetingLightSwitch)
         {
             var targetSwitch = _pathFinder.CurrentTarget.Target as LightSwitch;
-            var distanceToSwitch = Vector3.Distance(_lightSpirit.Position, targetSwitch.Position);
+            var distanceToSwitch = Vector3.Distance(_lightSpirit.LocalPosition, targetSwitch.LocalPosition);
 
             if (distanceToSwitch <= Measure.Feet(LightSwitchActivationDistance))
             {
@@ -108,10 +108,10 @@ public class HalfPresencePhaseHandler : IPhaseHandler
         // Optionally, keep the sphere underground if needed
         if (_lightSpirit.Sphere != null)
         {
-            _lightSpirit.Sphere.Position = new Vector3(_lightSpirit.Position.X, -100f, _lightSpirit.Position.Z);
+            _lightSpirit.Sphere.LocalPosition = new Vector3(_lightSpirit.LocalPosition.X, -100f, _lightSpirit.LocalPosition.Z);
             if (_lightSpirit.Sphere.ColliderBodies != null && _lightSpirit.Sphere.ColliderBodies.Length > 0)
             {
-                _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.Position.ToJVector();
+                _lightSpirit.Sphere.ColliderBodies[0].Position = _lightSpirit.Sphere.LocalPosition.ToJVector();
             }
         }
     }
@@ -148,8 +148,8 @@ public class HalfPresencePhaseHandler : IPhaseHandler
     {
         if (playerInput.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad7))
         {
-            _lightSpirit.Position = new Vector3(-7.92f, 6.1600003f, 13.22f);
-            _lightSpirit.ColliderBodies[0].Position = _lightSpirit.Position.ToJVector();
+            _lightSpirit.LocalPosition = new Vector3(-7.92f, 6.1600003f, 13.22f);
+            _lightSpirit.ColliderBodies[0].Position = _lightSpirit.LocalPosition.ToJVector();
         }
 
         if (playerInput.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad8))

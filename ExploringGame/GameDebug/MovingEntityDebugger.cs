@@ -49,9 +49,9 @@ public class MovingEntityDebugger
 
         var delta = 0f;
         if(Logs.FirstOrDefault() != null)
-            delta = (_entity.Position - Logs.LastOrDefault().Position).Length();
+            delta = (_entity.LocalPosition - Logs.LastOrDefault().Position).Length();
 
-        Logs.Add(new LogEntry(_entity.Position, delta, _pathFinder.CurrentTarget));
+        Logs.Add(new LogEntry(_entity.LocalPosition, delta, _pathFinder.CurrentTarget));
     }
 
 }

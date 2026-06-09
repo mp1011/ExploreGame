@@ -17,7 +17,7 @@ public class Tentacle : EntityPart<Puppet>, IControllable
         Depth = radius * 2;
         Height = length;
 
-        Position = connectsTo.Position;
+        LocalPosition = connectsTo.LocalPosition;
         SetSide(Side.Bottom, connectsTo.GetSide(Side.Top));
     }
 

@@ -17,7 +17,7 @@ public abstract class SkyboxShape : Shape, ILightingGroup
 
     public SkyboxShape()
     {
-        Position = Vector3.Zero;
+        LocalPosition = Vector3.Zero;
         Size = new Vector3(50f, 50f, 50f);
     }
 

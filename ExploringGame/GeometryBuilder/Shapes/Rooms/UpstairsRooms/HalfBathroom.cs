@@ -31,7 +31,7 @@ public class HalfBathroom : Room
         var light = new HighHatLight(this, 0f, 0f);
         var sw = new LightSwitch(this, Side.West, StateKey.HalfBathroomLightOn);
         sw.ControlledObjects.Add(light);
-        sw.Position = this.Position;
+        sw.LocalPosition = this.LocalPosition;
         sw.Place().OnSideInner(Side.West).AtStandardSwitchHeight(); 
     }
 }

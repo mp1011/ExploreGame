@@ -53,8 +53,8 @@ public class LightingVisualTests
                 basementLight.Intensity = (float)lightIntensity;
 
                 // Create a fixed camera positioned to view the point light
-                var cameraPosition = basementRoom.Position + new Vector3(3f, 0f, 4f);
-                var lightPosition = basementLight.Position;
+                var cameraPosition = basementRoom.LocalPosition + new Vector3(3f, 0f, 4f);
+                var lightPosition = basementLight.LocalPosition;
 
                 var camera = new DebugFixedCamera(cameraPosition, new Rotation(0, 0, 0));
 

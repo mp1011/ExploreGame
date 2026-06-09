@@ -47,7 +47,7 @@ public class Room : Shape, ILightingGroup
     public Room(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null,
         Theme theme = null)
     {
-        Position = worldSegment.Position;
+        LocalPosition = worldSegment.LocalPosition;
 
         if(width.HasValue)
             Width = width.Value;
@@ -88,7 +88,7 @@ public class Room : Shape, ILightingGroup
 
         if (adjustPlacement)
         {
-            connection.Other.Position = Position;
+            connection.Other.LocalPosition = LocalPosition;
             connection.Other.Place().OnSideOuter(connection.Side, this)
                                     .OnSideInner(Side.Bottom, this);
 

@@ -30,7 +30,7 @@ public class WallWithAsymmetricGapWorldSegment : WorldSegment, IGapWorldSegment
 
         // Main room: 10x3x10
         MainRoom = new Room(this, width: 10f, height: 3f, depth: 10f, theme: Theme);
-        MainRoom.Position = Vector3.Zero;
+        MainRoom.LocalPosition = Vector3.Zero;
         MainRoom.Tag = "MainRoom";
 
         // Small connected room (creates gap) - 2x3x2
@@ -80,7 +80,7 @@ public class WallWithAsymmetricGapWorldSegment : WorldSegment, IGapWorldSegment
 
         // Add test shape that will host the controller
         TestShape = new WallDecalTestShape(this);
-        TestShape.Position = Vector3.Zero;
+        TestShape.LocalPosition = Vector3.Zero;
         AddChild(TestShape);
     }
 }

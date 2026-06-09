@@ -54,13 +54,13 @@ public class Physics
 
     public RaycastResult Raycast(ICollidable origin, ICollidable target)
     {
-        var direction = Vector3.Normalize(target.Position - origin.Position).ToJVector();
+        var direction = Vector3.Normalize(target.LocalPosition - origin.LocalPosition).ToJVector();
 
         IDynamicTreeProxy proxy;
         JVector normal;
         float lambda;
 
-        if (_world.DynamicTree.RayCast(origin.Position.ToJVector(), direction, 
+        if (_world.DynamicTree.RayCast(origin.LocalPosition.ToJVector(), direction, 
             pre: p => {
                 if (p.BelongsTo(origin))
                     return false;
@@ -182,7 +182,7 @@ public class Physics
         {
             body.Orientation = shape.Rotation.Quaternion.ToJQuaternion();
         }
-        body.Position = shape.Position.ToJVector();
+        body.Position = shape.LocalPosition.ToJVector();
         body.MotionType = MotionType.Static;
         body.Tag = new CollisionInfo(myGroup, collidesWithGroups);
         return body;
@@ -200,7 +200,7 @@ public class Physics
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new BoxShape(entity.Width(), entity.Height(), entity.Depth()));
-        body.Position = entity.Position.ToJVector();
+        body.Position = entity.LocalPosition.ToJVector();
 
         InitPhysics(body);
 
@@ -218,7 +218,7 @@ public class Physics
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new CapsuleShape(0.4f, 2.0f)); //todo
-        body.Position = entity.Position.ToJVector();
+        body.Position = entity.LocalPosition.ToJVector();
         body.MotionType = MotionType.Dynamic;
 
         InitPhysics(body);
@@ -234,7 +234,7 @@ public class Physics
     {
         var body = _world.CreateRigidBody();
         body.AddShape(new SphereShape(radius));
-        body.Position = entity.Position.ToJVector();
+        body.Position = entity.LocalPosition.ToJVector();
         body.MotionType = MotionType.Dynamic;
 
         InitPhysics(body);
@@ -258,7 +258,7 @@ public class Physics
         openAnchor.Height = 0.01f;
         openAnchor.Width = 0.01f;
         openAnchor.Depth = 0.01f;
-        openAnchor.Position = pane.Position + openSide.AsVector() * 2.0f;
+        openAnchor.LocalPosition = pane.LocalPosition + openSide.AsVector() * 2.0f;
 
         var anchorBody = CreateStaticBody(openAnchor, CollisionGroup.Environment, CollisionGroup.None);
         
@@ -280,7 +280,7 @@ public class Physics
         hinge.Height = 1.00f;
         hinge.Width = 0.01f;
         hinge.Depth = 0.01f;
-        hinge.Position = door.Position;
+        hinge.LocalPosition = door.LocalPosition;
 
         if (door.HingePosition == HAlign.Left)
         {
@@ -302,7 +302,7 @@ public class Physics
         var maxAngle = MathHelper.Max(door.OpenAngle.Degrees, door.ClosedAngle.Degrees);
 
         // note, seems to work better if we limit the angle ourselves
-        var h = new HingeJoint(_world, hingeBody, doorBody, hinge.Position.ToJVector(), JVector.UnitY, 
+        var h = new HingeJoint(_world, hingeBody, doorBody, hinge.LocalPosition.ToJVector(), JVector.UnitY, 
             AngularLimit.Full,
            // AngularLimit.FromDegree(minAngle, maxAngle),
             hasMotor: false);

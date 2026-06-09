@@ -20,7 +20,7 @@ public interface IShape
     string Tag { get; }
     Shape[] TraverseAllChildren();
     bool ContainsPoint(Vector3 point);
-    Vector3 Position { get; }
+    Vector3 LocalPosition { get; }
     float SideLength(Side side);
 }
 
@@ -58,7 +58,7 @@ public abstract class Shape : IWithPosition, IShape
     public IEnumerable<Shape> Children => _children.AsReadOnly();
 
     public abstract ViewFrom ViewFrom { get; }
-    public Vector3 Position { get; set; }
+    public Vector3 LocalPosition { get; set; }
 
     public Vector3 Size { get; set; }
     public string Tag { get; set; }
@@ -80,15 +80,15 @@ public abstract class Shape : IWithPosition, IShape
 
     public float X
     {
-        get => Position.X; set => Position = new Vector3(value, Position.Y, Position.Z);
+        get => LocalPosition.X; set => LocalPosition = new Vector3(value, LocalPosition.Y, LocalPosition.Z);
     }
     public float Y
     {
-        get => Position.Y; set => Position = new Vector3(Position.X, value, Position.Z);
+        get => LocalPosition.Y; set => LocalPosition = new Vector3(LocalPosition.X, value, LocalPosition.Z);
     }
     public float Z
     {
-        get => Position.Z; set => Position = new Vector3(Position.X, Position.Y, value);
+        get => LocalPosition.Z; set => LocalPosition = new Vector3(LocalPosition.X, LocalPosition.Y, value);
     }
     public float Width
     {
@@ -105,9 +105,9 @@ public abstract class Shape : IWithPosition, IShape
 
     public float GetAxisPosition(Axis axis) => axis switch
     {
-        Axis.X => Position.X,
-        Axis.Y => Position.Y,
-        Axis.Z => Position.Z,
+        Axis.X => LocalPosition.X,
+        Axis.Y => LocalPosition.Y,
+        Axis.Z => LocalPosition.Z,
         _ => throw new ArgumentException("invalid axis")
     };
 
@@ -143,7 +143,7 @@ public abstract class Shape : IWithPosition, IShape
     /// </summary>
     public float TopAnchored
     {
-        get => Position.Y + Size.Y / 2f;
+        get => LocalPosition.Y + Size.Y / 2f;
         set
         {
             var currentTop = this.TopAnchored;
@@ -157,7 +157,7 @@ public abstract class Shape : IWithPosition, IShape
     /// </summary>
     public float BottomAnchored
     {
-        get => Position.Y - Size.Y / 2f;
+        get => LocalPosition.Y - Size.Y / 2f;
         set
         {
             var currentBottom = this.BottomAnchored;
@@ -171,7 +171,7 @@ public abstract class Shape : IWithPosition, IShape
     /// </summary>
     public float BottomUnanchored
     {
-        get => Position.Y - Size.Y / 2f;
+        get => LocalPosition.Y - Size.Y / 2f;
         set
         {
             var originalTop = this.TopAnchored;
@@ -184,12 +184,12 @@ public abstract class Shape : IWithPosition, IShape
     {
         return side switch
         {
-            Side.North => Position.Z - Size.Z / 2f,
-            Side.South => Position.Z + Size.Z / 2f,
-            Side.West => Position.X - Size.X / 2f,
-            Side.East => Position.X + Size.X / 2f,
-            Side.Top => Position.Y + Size.Y / 2f,
-            Side.Bottom => Position.Y - Size.Y / 2f,
+            Side.North => LocalPosition.Z - Size.Z / 2f,
+            Side.South => LocalPosition.Z + Size.Z / 2f,
+            Side.West => LocalPosition.X - Size.X / 2f,
+            Side.East => LocalPosition.X + Size.X / 2f,
+            Side.Top => LocalPosition.Y + Size.Y / 2f,
+            Side.Bottom => LocalPosition.Y - Size.Y / 2f,
             _ => throw new ArgumentException("Only singular sides can be used")
         };
     }
@@ -297,8 +297,8 @@ public abstract class Shape : IWithPosition, IShape
 
     public bool ContainsPoint(Vector3 point)
     {
-        var min = Position - Size / 2f;
-        var max = Position + Size / 2f;
+        var min = LocalPosition - Size / 2f;
+        var max = LocalPosition + Size / 2f;
 
         return point.X >= min.X && point.X <= max.X &&
            point.Y >= min.Y && point.Y <= max.Y &&
@@ -351,7 +351,7 @@ public abstract class Shape : IWithPosition, IShape
         var scaleMatrix = Matrix.Identity; // todo, see about this
         var rotationMatrix = Rotation?.AsMatrix() ?? Matrix.Identity;
 
-        return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(Position);
+        return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(LocalPosition);
     }
     public virtual RasterizerState RasterizerState { get; } = null;
 
@@ -399,7 +399,7 @@ public abstract class Shape : IWithPosition, IShape
         foreach(var key in output.Keys)
         {
             if(key.SelfOrDescendantOf(this))
-                output[key] = output[key].Select(p => p.Rotate(Position, Rotation)).ToArray();
+                output[key] = output[key].Select(p => p.Rotate(LocalPosition, Rotation)).ToArray();
         }
     }
 
@@ -441,7 +441,7 @@ public abstract class Shape : IWithPosition, IShape
         if (AreTrianglesCoplanar(triangleArray))
         {
             // Triangles are on a single plane - use the shape's bounding box center
-            referenceCenter = Position;
+            referenceCenter = LocalPosition;
         }
         else
         {
