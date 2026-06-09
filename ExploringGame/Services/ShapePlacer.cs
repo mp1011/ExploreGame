@@ -49,7 +49,7 @@ public class ShapePlacer
 
     public ShapePlacer AtEyeLevel(Shape container, float offset)
     {
-        _shape.Y = container.GetLocalSide(Side.Bottom) + Player.EyeHeight + offset;
+        _shape.LocalY = container.GetLocalSide(Side.Bottom) + Player.EyeHeight + offset;
         return this;
     }
 

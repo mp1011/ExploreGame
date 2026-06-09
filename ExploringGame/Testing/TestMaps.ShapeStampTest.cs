@@ -29,7 +29,7 @@ public static partial class TestMaps
         // Add the generator
         var generator = room.AddChild(new TestShapeStampGenerator());
         generator.Place().OnFloor();
-        generator.Y += 2f;
+        generator.LocalY += 2f;
         
         return worldSegment;
     }

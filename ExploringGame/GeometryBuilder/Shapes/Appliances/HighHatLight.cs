@@ -32,9 +32,9 @@ public class HighHatLight : Shape, ICutoutShape, IControllable<LightController<H
     {
         Room = room;
         _on = initialState;
-        X = room.X + x;
-        Y = room.Y;
-        Z = room.Z + z;
+        LocalX = room.LocalX + x;
+        LocalY = room.LocalY;
+        LocalZ = room.LocalZ + z;
         room.AddChild(this);
 
         Height = 0.1f;

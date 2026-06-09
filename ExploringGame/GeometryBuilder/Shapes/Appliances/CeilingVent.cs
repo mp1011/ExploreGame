@@ -19,9 +19,9 @@ public class CeilingVent : Shape, ICutoutShape
 
     public CeilingVent(Room room, float x, float z)
     {
-        X = room.X + x;
-        Y = room.Y;
-        Z = room.Z + z;
+        LocalX = room.LocalX + x;
+        LocalY = room.LocalY;
+        LocalZ = room.LocalZ + z;
         room.AddChild(this);
 
         Height = Measure.Feet(2);

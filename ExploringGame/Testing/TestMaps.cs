@@ -24,7 +24,7 @@ public static partial class TestMaps
     {
         var world = new SkyboxTestWorldSegment();
         var room = new SkyboxTestRoom(world, width: 20f, depth: 20f, height: 10f);
-        room.Y = 0f;
+        room.LocalY = 0f;
 
         return world;
     }
@@ -42,8 +42,8 @@ public static partial class TestMaps
 
         var box = room.AddChild(new TestPlaceable(room, 1.0f, Color.Purple));
         box.Place().OnFloor();
-        box.Z += 2;
-        box.X += 1;
+        box.LocalZ += 2;
+        box.LocalX += 1;
 
         // static child, positioned in absolute space = wrong pos
         var boxTop = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Yellow)));
@@ -95,7 +95,7 @@ public static partial class TestMaps
     {
         var world = new SkyDomeTestWorldSegment();
         var room = new SkyDomeTestRoom(world, width: 20f, depth: 20f, height: 10f);
-        room.Y = 0f;
+        room.LocalY = 0f;
 
         return world;
     }
@@ -128,7 +128,7 @@ public static partial class TestMaps
     {
         var world = new WorldSegment();
         var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var pillar = simpleRoom.AddChild(new Box(simpleRoom.Theme));
         pillar.Height = simpleRoom.Height;
@@ -136,12 +136,12 @@ public static partial class TestMaps
         pillar.Depth = 2.0f;
         pillar.Place().OnFloor();
 
-        pillar.Z -= 2.0f;
+        pillar.LocalZ -= 2.0f;
 
         var testEntity = simpleRoom.AddChild(new TestEntity());
         testEntity.MoveSpeed = 0f;
-        testEntity.Z -= 3.0f;
-        testEntity.X -= 3.0f;
+        testEntity.LocalZ -= 3.0f;
+        testEntity.LocalX -= 3.0f;
 
         return world;
     }
@@ -161,11 +161,11 @@ public static partial class TestMaps
         pillar.Depth = 2.0f;
         pillar.Place().OnFloor();
 
-        pillar.Z -= 2.0f;
+        pillar.LocalZ -= 2.0f;
 
         var testEntity = room.AddChild(new TestEntity());
-        testEntity.Z -= 3.0f;
-        testEntity.X -= 3.0f;
+        testEntity.LocalZ -= 3.0f;
+        testEntity.LocalX -= 3.0f;
 
        
         var westRoom = room.Copy();
@@ -293,7 +293,7 @@ public static partial class TestMaps
         room.Width = 8;
         room.Height = 3f;
         room.Depth = 8f;
-        room.Y = 2;
+        room.LocalY = 2;
 
         var light = new HighHatLight(room, 2.0f, 0f);
         light.Place().OnSideOuter(Side.Top, room);
@@ -306,12 +306,12 @@ public static partial class TestMaps
     {
         var world = new WorldSegment();
         var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var shape = simpleRoom.AddChild(createShape(simpleRoom));
         shape.LocalPosition = simpleRoom.LocalPosition;
         shape.Place().OnFloor();
-        shape.Z += 2.0f;
+        shape.LocalZ += 2.0f;
 
         return world;
     }
@@ -320,11 +320,11 @@ public static partial class TestMaps
     {
         var world = new WorldSegment();
         var simpleRoom = new Room(world, width: 10f, depth: 10f, height: 8f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var test = new PhysicsTestShape();
-        test.Y = 0.0f;
-        test.Z = -1.0f;
+        test.LocalY = 0.0f;
+        test.LocalZ = -1.0f;
 
         simpleRoom.AddChild(test);
 
@@ -335,7 +335,7 @@ public static partial class TestMaps
     {
         var world = new WorldSegment();
         var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2.0f;
+        simpleRoom.LocalY = 2.0f;
 
         var box = new TestMover();
         simpleRoom.AddChild(box);
@@ -347,17 +347,17 @@ public static partial class TestMaps
     {
         var ws = new WorldSegment();
         var simpleRoom = new Room(ws, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var officeDesk = new OfficeDesk(simpleRoom);
         officeDesk.Place().OnFloor();
         officeDesk.Place().OnSideInner(Side.North);
-        officeDesk.Z += 0.1f;
+        officeDesk.LocalZ += 0.1f;
 
         var officeDesk2 = new OfficeDesk(simpleRoom);
         officeDesk2.LocalPosition = simpleRoom.LocalPosition;
         officeDesk2.Place().OnFloor();
-        officeDesk2.X += 3.0f;
+        officeDesk2.LocalX += 3.0f;
 
         officeDesk2.Rotation = new Rotation(0.5f, 0.2f, 0f);
 
@@ -367,8 +367,8 @@ public static partial class TestMaps
     private static Shape SingleFaceTest()
     {
         var faceTest = new SingleFaceTest(Side.North);
-        faceTest.Y = 2.0f;
-        faceTest.Z = -1.0f;
+        faceTest.LocalY = 2.0f;
+        faceTest.LocalZ = -1.0f;
         return faceTest;
     }
 
@@ -391,7 +391,7 @@ public static partial class TestMaps
         room.Width = 16f;
         room.Height = 6f;
         room.Depth = 12f;
-        room.Y = 2;
+        room.LocalY = 2;
 
         room.Theme.SideTextures[Side.Top] = new TextureInfo(TextureKey.Ceiling);
         room.Theme.SideTextures[Side.Bottom] = floorTexture;
@@ -451,7 +451,7 @@ public static partial class TestMaps
     {
         var ws = new WorldSegment();
         var simpleRoom = new Room(ws, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var officeDesk = new OfficeDesk(simpleRoom);
         officeDesk.Place().OnFloor();
@@ -467,12 +467,12 @@ public static partial class TestMaps
     {
         var ws = new WorldSegment();
         var simpleRoom = new Room(ws, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var officeDesk = new OfficeDesk(simpleRoom);
         officeDesk.Place().OnFloor();
         officeDesk.Place().OnSideInner(Side.North);
-        officeDesk.Z += 0.1f;
+        officeDesk.LocalZ += 0.1f;
 
         return ws;
     }
@@ -481,13 +481,13 @@ public static partial class TestMaps
     {
         var world = new WorldSegment();
         var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var testShape = new FaceCutoutTest();
         testShape.Theme.MainTexture = new TextureInfo(TextureKey.Wall);
         simpleRoom.AddChild(testShape);
         testShape.Place().OnFloor();
-        testShape.Y += 1.0f;
+        testShape.LocalY += 1.0f;
 
         return world;
     }
@@ -496,7 +496,7 @@ public static partial class TestMaps
     {
         var world = new WorldSegment();
         var simpleRoom = new Room(world, width: 16f, depth: 8f, height: 4f, theme: new BasementRoomTheme());
-        simpleRoom.Y = 2;
+        simpleRoom.LocalY = 2;
 
         var sponge = new MengerSponge(new ShapeSplitter());
         simpleRoom.AddChild(sponge);

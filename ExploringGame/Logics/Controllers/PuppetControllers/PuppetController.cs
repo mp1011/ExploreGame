@@ -29,8 +29,8 @@ public class PuppetController : IActiveObject
 
     public void Initialize()                                      
     {
-        Puppet.X = 2;
-        Puppet.Y = 1;
+        Puppet.LocalX = 2;
+        Puppet.LocalY = 1;
 
         _mover = new EntityMover(Puppet, _physics, ignoreY: false);
         _mover.Initialize();

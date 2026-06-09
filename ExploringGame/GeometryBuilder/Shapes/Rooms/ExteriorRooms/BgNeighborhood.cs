@@ -45,8 +45,8 @@ public class BgNeighborhood : Room
         var spacingZ = availableZ / (gridCountZ - 1);
 
         // Start position: ground center minus half its size, plus margin
-        var startX = Ground.X - (Ground.Width / 2) + marginX;
-        var startZ = Ground.Z - (Ground.Depth / 2) + marginZ;
+        var startX = Ground.LocalX - (Ground.Width / 2) + marginX;
+        var startZ = Ground.LocalZ - (Ground.Depth / 2) + marginZ;
 
         for (int x = 0; x < gridCountX; x++)
         {
@@ -54,8 +54,8 @@ public class BgNeighborhood : Room
             {
                 var fakeHouse = new FakeHouse(this, Ground);
 
-                fakeHouse.X = startX + (x * spacingX);
-                fakeHouse.Z = startZ + (z * spacingZ);
+                fakeHouse.LocalX = startX + (x * spacingX);
+                fakeHouse.LocalZ = startZ + (z * spacingZ);
             }
         }
     }

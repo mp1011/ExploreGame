@@ -125,15 +125,15 @@ public abstract class Shape : IWithPosition, IShape
 
     #endregion
 
-    public float X
+    public float LocalX
     {
         get => LocalPosition.X; set => LocalPosition = new Vector3(value, LocalPosition.Y, LocalPosition.Z);
     }
-    public float Y
+    public float LocalY
     {
         get => LocalPosition.Y; set => LocalPosition = new Vector3(LocalPosition.X, value, LocalPosition.Z);
     }
-    public float Z
+    public float LocalZ
     {
         get => LocalPosition.Z; set => LocalPosition = new Vector3(LocalPosition.X, LocalPosition.Y, value);
     }
@@ -179,9 +179,9 @@ public abstract class Shape : IWithPosition, IShape
     {
         switch(axis)
         {
-            case Axis.X: X = value; return;
-            case Axis.Y: Y = value; return;
-            case Axis.Z: Z = value; return;
+            case Axis.X: LocalX = value; return;
+            case Axis.Y: LocalY = value; return;
+            case Axis.Z: LocalZ = value; return;
         }
     }
 
@@ -195,7 +195,7 @@ public abstract class Shape : IWithPosition, IShape
         {
             var currentTop = this.TopAnchored;
             var delta = value - currentTop;
-            Y += delta;
+            LocalY += delta;
         }
     }
 
@@ -209,7 +209,7 @@ public abstract class Shape : IWithPosition, IShape
         {
             var currentBottom = this.BottomAnchored;
             var delta = value - currentBottom;
-            Y += delta;
+            LocalY += delta;
         }
     }
 
@@ -241,27 +241,41 @@ public abstract class Shape : IWithPosition, IShape
         };
     }
 
+    public float GetWorldSide(Side side)
+    {
+        return side switch
+        {
+            Side.North => WorldPosition.Z - Size.Z / 2f,
+            Side.South => WorldPosition.Z + Size.Z / 2f,
+            Side.West => WorldPosition.X - Size.X / 2f,
+            Side.East => WorldPosition.X + Size.X / 2f,
+            Side.Top => WorldPosition.Y + Size.Y / 2f,
+            Side.Bottom => WorldPosition.Y - Size.Y / 2f,
+            _ => throw new ArgumentException("Only singular sides can be used")
+        };
+    }
+
     public void SetLocalSide(Side side, float value)
     {
         switch(side)
         {
             case Side.North:
-                Z = value + Size.Z / 2f;
+                LocalZ = value + Size.Z / 2f;
                 return;
             case Side.South:
-                Z = value - Size.Z / 2f;
+                LocalZ = value - Size.Z / 2f;
                 return;
             case Side.West:
-                X = value + Size.X / 2f;
+                LocalX = value + Size.X / 2f;
                 return;
             case Side.East:
-                X = value - Size.X / 2f;
+                LocalX = value - Size.X / 2f;
                 return;
             case Side.Top:
-                Y = value - Size.Y / 2f;
+                LocalY = value - Size.Y / 2f;
                 return;
             case Side.Bottom:
-                Y = value + Size.Y / 2f;
+                LocalY = value + Size.Y / 2f;
                 return;
             default:
                 throw new ArgumentException("Only singular sides can be used");

@@ -47,7 +47,7 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
         var leftShoulder = AddChild(new Ellipsoid(0.2f, (new Theme(Color.GreenYellow))));
         leftShoulder.LocalPosition = LocalPosition;
         leftShoulder.Place().OnSideOuter(Side.Top);
-        leftShoulder.X += 0.5f;
+        leftShoulder.LocalX += 0.5f;
 
         // todo, need cleaner way for dependency between moving object and parts
        // X = 2f;

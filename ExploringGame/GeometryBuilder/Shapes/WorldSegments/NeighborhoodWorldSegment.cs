@@ -37,21 +37,21 @@ public class NeighborhoodWorldSegment : WorldSegment
         _westNeighborhoodBlock.Ground.Place()
             .OnFloor(homeRoad)
             .OnSideOuter(Side.West, homeRoad);
-        _westNeighborhoodBlock.Ground.Y -= _westNeighborhoodBlock.Ground.Height;
+        _westNeighborhoodBlock.Ground.LocalY -= _westNeighborhoodBlock.Ground.Height;
 
         _northNeighborhoodBlock.Ground.Place()
           .OnFloor(homeRoad)
           .OnSideOuter(Side.North, homeRoad)
           .OnSideOuter(Side.East, _westNeighborhoodBlock.Ground);
-        _northNeighborhoodBlock.Ground.Y -= _northNeighborhoodBlock.Height;
-        _northNeighborhoodBlock.Ground.Z -= 20f;
+        _northNeighborhoodBlock.Ground.LocalY -= _northNeighborhoodBlock.Height;
+        _northNeighborhoodBlock.Ground.LocalZ -= 20f;
 
         _southNeighborhoodBlock.Ground.Place()
           .OnFloor(homeRoad)
           .OnSideOuter(Side.South, homeRoad)
           .OnSideOuter(Side.East, _westNeighborhoodBlock.Ground);
-        _southNeighborhoodBlock.Ground.Y -= _southNeighborhoodBlock.Height;
-        _southNeighborhoodBlock.Ground.Z += 20f;
+        _southNeighborhoodBlock.Ground.LocalY -= _southNeighborhoodBlock.Height;
+        _southNeighborhoodBlock.Ground.LocalZ += 20f;
 
         // Load children after all positioning is complete
         _westNeighborhoodBlock.LoadChildren();

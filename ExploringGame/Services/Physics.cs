@@ -125,27 +125,27 @@ public class Physics
         {
             case Side.Bottom:
                 body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
-                body.Position = new JVector(shape.X, shape.GetLocalSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.Z); 
+                body.Position = new JVector(shape.LocalX, shape.GetLocalSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.LocalZ); 
                 break;
             case Side.Top:
                 body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
-                body.Position = new JVector(shape.X, shape.GetLocalSide(Side.Top) + (WallColliderThickness / 2.0f), shape.Z);
+                body.Position = new JVector(shape.LocalX, shape.GetLocalSide(Side.Top) + (WallColliderThickness / 2.0f), shape.LocalZ);
                 break;
             case Side.North:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
-                body.Position = new JVector(shape.X, shape.Y, shape.GetLocalSide(Side.North) - (WallColliderThickness / 2.0f));
+                body.Position = new JVector(shape.LocalX, shape.LocalY, shape.GetLocalSide(Side.North) - (WallColliderThickness / 2.0f));
                 break;
             case Side.South:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
-                body.Position = new JVector(shape.X, shape.Y, shape.GetLocalSide(Side.South) + (WallColliderThickness / 2.0f));
+                body.Position = new JVector(shape.LocalX, shape.LocalY, shape.GetLocalSide(Side.South) + (WallColliderThickness / 2.0f));
                 break;
             case Side.West:
                 body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
-                body.Position = new JVector(shape.GetLocalSide(Side.West) - (WallColliderThickness / 2.0f), shape.Y, shape.Z);
+                body.Position = new JVector(shape.GetLocalSide(Side.West) - (WallColliderThickness / 2.0f), shape.LocalY, shape.LocalZ);
                 break;
             case Side.East:
                 body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
-                body.Position = new JVector(shape.GetLocalSide(Side.East) + (WallColliderThickness / 2.0f), shape.Y, shape.Z);
+                body.Position = new JVector(shape.GetLocalSide(Side.East) + (WallColliderThickness / 2.0f), shape.LocalY, shape.LocalZ);
                 break;
         }
 
@@ -285,12 +285,12 @@ public class Physics
         if (door.HingePosition == HAlign.Left)
         {
             hinge.Place().OnSideOuter(Side.West, door);
-            hinge.X -= 0.01f;
+            hinge.LocalX -= 0.01f;
         }
         else
         {
             hinge.Place().OnSideOuter(Side.East, door);
-            hinge.X += 0.01f;
+            hinge.LocalX += 0.01f;
         }
 
         var doorBody = CreateDynamicBody(door);

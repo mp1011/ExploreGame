@@ -41,9 +41,9 @@ public class TestMoverController : IShapeController<TestMover>
 
     public void Update(GameTime gameTime)
     {
-        if (Shape.Y < 3.0f)
-            Shape.Y += 0.01f;
-        Shape.Z = -2.0f;
+        if (Shape.LocalY < 3.0f)
+            Shape.LocalY += 0.01f;
+        Shape.LocalZ = -2.0f;
         Shape.Rotation = new Rotation(_yaw += 0.1f, 0, 0);
     }
 }

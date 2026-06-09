@@ -78,7 +78,7 @@ public class OutsideWorldSegment : WorldSegment
         _sideRoad.AdjustShape().AxisStretch(Axis.X, 200.0f);
 
         _sideRoad.Place().OnSideOuter(Side.East, _road).OnFloor(_frontYard);
-        _sideRoad.Z = _frontYard.GetLocalSide(Side.South) + Measure.Feet(110);
+        _sideRoad.LocalZ = _frontYard.GetLocalSide(Side.South) + Measure.Feet(110);
 
         _westRoof.Depth = _frontYard.Depth;
         _eastRoof.Depth = _frontYard.Depth;
@@ -135,11 +135,11 @@ public class OutsideWorldSegment : WorldSegment
 
         var streetLight = AddChild(new StreetLight(_road));
         streetLight.Place().OnSideInner(Side.East, _road);
-        streetLight.Z = _frontYard.GetLocalSide(Side.North) - Measure.Feet(10);
+        streetLight.LocalZ = _frontYard.GetLocalSide(Side.North) - Measure.Feet(10);
 
         var streetLight2 = AddChild(new StreetLight(_road));
         streetLight2.Place().OnSideInner(Side.East, _road);
-        streetLight2.Z = sideSection.GetLocalSide(Side.South) + Measure.Feet(10);
+        streetLight2.LocalZ = sideSection.GetLocalSide(Side.South) + Measure.Feet(10);
 
         _frontYard.AddConnectingRoom(sideSection, Side.None);
         sideSection.AddConnectingRoom(sideSection2, Side.None);

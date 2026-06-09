@@ -65,7 +65,7 @@ public class FrontDeck : Deck
         var westMiddlePost = CreatePost().Place()
             .OnSideInner(Side.West, WestPart, PostInset)
             .Shape();
-        westMiddlePost.Z = WestPart.Z;
+        westMiddlePost.LocalZ = WestPart.LocalZ;
 
         var northEastPost = CreatePost().Place()
          .OnSideInner(Side.North, WestPart, PostInset)
@@ -114,7 +114,7 @@ public class FrontDeck : Deck
 
         var light = new OutdoorLight(this, StateKey.FrontPorchLightOn);
         light.Place().AtParent().OnSideInner(Side.East).OnSideInner(Side.Top);
-        light.Z += Measure.Feet(2);
+        light.LocalZ += Measure.Feet(2);
 
         var lightSwitch = new LightSwitch(livingRoom, Side.West, StateKey.FrontPorchLightOn);
         lightSwitch.Place()
@@ -124,7 +124,7 @@ public class FrontDeck : Deck
 
         lightSwitch.ControlledObjects.Add(light.Bulb);
 
-        lightSwitch.Z += Measure.Feet(4);
+        lightSwitch.LocalZ += Measure.Feet(4);
 
     }
 }

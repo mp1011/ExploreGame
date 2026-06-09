@@ -46,7 +46,7 @@ public class Blocker : PlaceableShape, ICollidable
                 .AxisStretch(Axis.Z, 0.1f);
 
         if (!_enabled)
-            Y += 10000;
+            LocalY += 10000;
 
         Rotation = BlockingShape.Rotation;
 

@@ -88,7 +88,7 @@ public class BackDeck : Deck
 
         var light = new OutdoorLight(this, StateKey.BackDeckLightOn);
         light.Place().AtParent().OnSideInner(Side.West).OnSideInner(Side.Top);
-        light.Z -= Measure.Feet(2);
+        light.LocalZ -= Measure.Feet(2);
 
         var lightSwitch = new LightSwitch(den, Side.South, StateKey.BackDeckLightOn);
         lightSwitch.ControlledObjects.Add(light.Bulb);

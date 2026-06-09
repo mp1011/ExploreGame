@@ -256,14 +256,14 @@ class ElectricFireplace : PlaceableShape
             _yStrip1.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip1.Depth = LowerDoorWindowIndent;
             _yStrip1.Place().OnSideInner(Side.South);
-            _yStrip1.Y = GetLocalSide(Side.Top) - windowPlacement.Top - LowerDoorWindowHeight;
+            _yStrip1.LocalY = GetLocalSide(Side.Top) - windowPlacement.Top - LowerDoorWindowHeight;
 
             _yStrip2.LocalPosition = LocalPosition;
             _yStrip2.Height = LowerDoorWindowYSpacing;
             _yStrip2.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip2.Depth = LowerDoorWindowIndent;
             _yStrip2.Place().OnSideInner(Side.South);
-            _yStrip2.Y = GetLocalSide(Side.Top) - windowPlacement.Top - (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * 2;
+            _yStrip2.LocalY = GetLocalSide(Side.Top) - windowPlacement.Top - (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * 2;
 
             return new RemoveSurfaceRegion().Execute(cuboid, Side.South, windowPlacement, ViewFrom);
         }

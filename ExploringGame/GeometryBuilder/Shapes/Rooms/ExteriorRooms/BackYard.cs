@@ -211,14 +211,14 @@ public class BackYard : Room
 
         var neighborLight = new NeighborLight(this);
         neighborLight.Place().At(this).OnSideOuter(Side.North);
-        neighborLight.Y = this.Y + Measure.Feet(14);
-        neighborLight.X += Measure.Feet(8);
-        neighborLight.Z -= Measure.Feet(8);
+        neighborLight.LocalY = this.LocalY + Measure.Feet(14);
+        neighborLight.LocalX += Measure.Feet(8);
+        neighborLight.LocalZ -= Measure.Feet(8);
 
         var neighborLight2 = new NeighborLight(_eastSection);
         neighborLight2.Place().At(_eastSection).OnSideOuter(Side.East);
-        neighborLight2.Y = this.Y + Measure.Feet(12);
-        neighborLight2.X += Measure.Feet(8);
+        neighborLight2.LocalY = this.LocalY + Measure.Feet(12);
+        neighborLight2.LocalX += Measure.Feet(8);
     }
 
 }
