@@ -40,7 +40,7 @@ public class WallWithGapWorldSegment : WorldSegment, IGapWorldSegment
         // Calculate gap boundaries (where the connection is)
         // The connection is centered at 50% of the wall (placement: 0.5f)
         // ConnectedRoom is 2 units wide
-        var roomWestEdge = MainRoom.GetSide(Side.West);
+        var roomWestEdge = MainRoom.GetLocalSide(Side.West);
         var roomWidth = MainRoom.Width;
         var centerX = roomWestEdge + (roomWidth * 0.5f);
         

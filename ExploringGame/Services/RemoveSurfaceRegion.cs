@@ -36,7 +36,7 @@ class RemoveSurfaceRegion
             if (cutoutSurface.Length == 0)
                 continue;
 
-            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetSide(cutoutShape.ParentCutoutSide))).ToArray();
+            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetLocalSide(cutoutShape.ParentCutoutSide))).ToArray();
 
             var cutoutCenter = cutoutSurface.SelectMany(p => p.Vertices).Center();
             var cutout2D = new ConvexHull(cutoutSurface.Select(p => p.As2D(cutoutCenter, shape.ViewFrom)).ToArray());
@@ -57,7 +57,7 @@ class RemoveSurfaceRegion
             var parentSide = triangles.Where(p => p.Side == cutoutShape.ParentCutoutSide).ToArray();
             var sideCenter = parentSide.SelectMany(p => p.Vertices).Center();
 
-            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetSide(cutoutShape.ParentCutoutSide))).ToArray();
+            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetLocalSide(cutoutShape.ParentCutoutSide))).ToArray();
             var cutout2D = new ConvexHull(cutoutSurface.Select(p => p.As2D(sideCenter, shape.ViewFrom)).ToArray());
                       
             triangles = triangles.SelectMany(p => RemoveFace(p, cutoutShape.ParentCutoutSide, cutout2D, sideCenter, shape.ViewFrom)).ToArray();
@@ -137,15 +137,15 @@ class RemoveSurfaceRegion
             case Side.North:
             case Side.South:
                 // Check if cutout spans this Z plane
-                return cutoutShape.GetSide(Side.North) <= cutoutShape.GetSide(Side.South);
+                return cutoutShape.GetLocalSide(Side.North) <= cutoutShape.GetLocalSide(Side.South);
             case Side.East:
             case Side.West:
                 // Check if cutout spans this X plane
-                return cutoutShape.GetSide(Side.West) <= cutoutShape.GetSide(Side.East);
+                return cutoutShape.GetLocalSide(Side.West) <= cutoutShape.GetLocalSide(Side.East);
             case Side.Top:
             case Side.Bottom:
                 // Check if cutout spans this Y plane
-                return cutoutShape.GetSide(Side.Bottom) <= cutoutShape.GetSide(Side.Top);
+                return cutoutShape.GetLocalSide(Side.Bottom) <= cutoutShape.GetLocalSide(Side.Top);
             default:
                 return true;
         }
@@ -159,14 +159,14 @@ class RemoveSurfaceRegion
         // Get the 3D bounding box of the shape
         var bounds = new[]
         {
-            new Vector3(shape.GetSide(Side.West), shape.GetSide(Side.Bottom), shape.GetSide(Side.North)),
-            new Vector3(shape.GetSide(Side.West), shape.GetSide(Side.Bottom), shape.GetSide(Side.South)),
-            new Vector3(shape.GetSide(Side.West), shape.GetSide(Side.Top), shape.GetSide(Side.North)),
-            new Vector3(shape.GetSide(Side.West), shape.GetSide(Side.Top), shape.GetSide(Side.South)),
-            new Vector3(shape.GetSide(Side.East), shape.GetSide(Side.Bottom), shape.GetSide(Side.North)),
-            new Vector3(shape.GetSide(Side.East), shape.GetSide(Side.Bottom), shape.GetSide(Side.South)),
-            new Vector3(shape.GetSide(Side.East), shape.GetSide(Side.Top), shape.GetSide(Side.North)),
-            new Vector3(shape.GetSide(Side.East), shape.GetSide(Side.Top), shape.GetSide(Side.South))
+            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.North)),
+            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.South)),
+            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.North)),
+            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.South)),
+            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.North)),
+            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.South)),
+            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.North)),
+            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.South))
         };
 
         // Project the bounds onto 2D surface

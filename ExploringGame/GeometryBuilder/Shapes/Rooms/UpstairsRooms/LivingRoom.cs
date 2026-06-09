@@ -38,6 +38,6 @@ public class LivingRoom : Room
         lightSwitch.LocalPosition = LocalPosition;
         lightSwitch.Place().OnSideInner(Side.East).AtStandardSwitchHeight();
 
-        SetSideUnanchored(Side.North, GetSide(Side.North) - Measure.Feet(5));
+        SetLocalSideUnanchored(Side.North, GetLocalSide(Side.North) - Measure.Feet(5));
     }
 }

@@ -49,7 +49,7 @@ public class ShapePlacer
 
     public ShapePlacer AtEyeLevel(Shape container, float offset)
     {
-        _shape.Y = container.GetSide(Side.Bottom) + Player.EyeHeight + offset;
+        _shape.Y = container.GetLocalSide(Side.Bottom) + Player.EyeHeight + offset;
         return this;
     }
 
@@ -64,14 +64,14 @@ public class ShapePlacer
         other = other ?? _shape.Parent;
         foreach(var s in side.Decompose())
         {
-            _shape.SetSide(s, other.GetSide(s) + offset);
+            _shape.SetLocalSide(s, other.GetLocalSide(s) + offset);
         }
         return this;
     }
 
     public ShapePlacer AlignSideWith(Side side, Shape other, float offset = 0f)
     {
-        _shape.SetSideUnanchored(side, other.GetSide(side) + offset);
+        _shape.SetLocalSideUnanchored(side, other.GetLocalSide(side) + offset);
         return this;
     }
 
@@ -80,7 +80,7 @@ public class ShapePlacer
         other = other ?? _shape.Parent;
         foreach (var s in side.Decompose())
         {
-            _shape.SetSide(s.Opposite(), other.GetSide(s) + offset);
+            _shape.SetLocalSide(s.Opposite(), other.GetLocalSide(s) + offset);
         }
         return this;
     }
@@ -95,7 +95,7 @@ public class ShapePlacer
         if(side == Side.South || side == Side.East || side == Side.Top)
             amount = -amount;
 
-        _shape.SetSide(side, _shape.Parent.GetSide(side) + amount);
+        _shape.SetLocalSide(side, _shape.Parent.GetLocalSide(side) + amount);
         return this;
     }
 }

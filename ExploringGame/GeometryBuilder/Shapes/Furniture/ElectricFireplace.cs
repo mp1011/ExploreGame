@@ -256,14 +256,14 @@ class ElectricFireplace : PlaceableShape
             _yStrip1.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip1.Depth = LowerDoorWindowIndent;
             _yStrip1.Place().OnSideInner(Side.South);
-            _yStrip1.Y = GetSide(Side.Top) - windowPlacement.Top - LowerDoorWindowHeight;
+            _yStrip1.Y = GetLocalSide(Side.Top) - windowPlacement.Top - LowerDoorWindowHeight;
 
             _yStrip2.LocalPosition = LocalPosition;
             _yStrip2.Height = LowerDoorWindowYSpacing;
             _yStrip2.Width = LowerDoorWindowWidth * 2 + LowerDoorWindowXSpacing;
             _yStrip2.Depth = LowerDoorWindowIndent;
             _yStrip2.Place().OnSideInner(Side.South);
-            _yStrip2.Y = GetSide(Side.Top) - windowPlacement.Top - (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * 2;
+            _yStrip2.Y = GetLocalSide(Side.Top) - windowPlacement.Top - (LowerDoorWindowHeight + LowerDoorWindowYSpacing) * 2;
 
             return new RemoveSurfaceRegion().Execute(cuboid, Side.South, windowPlacement, ViewFrom);
         }
@@ -302,10 +302,10 @@ class ElectricFireplace : PlaceableShape
             this.Place().OnSideInner(Side.South);
             var placement = CalcPlacement();
 
-            SetSideUnanchored(Side.West, Parent.GetSide(Side.West) + placement.Left);
-            SetSideUnanchored(Side.East, Parent.GetSide(Side.West) + placement.Right);
-            SetSide(Side.Top, Parent.GetSide(Side.Top) - placement.Top);
-            SetSideUnanchored(Side.Bottom, GetSide(Side.Top) - LowerDoorWindowHeight);
+            SetLocalSideUnanchored(Side.West, Parent.GetLocalSide(Side.West) + placement.Left);
+            SetLocalSideUnanchored(Side.East, Parent.GetLocalSide(Side.West) + placement.Right);
+            SetLocalSide(Side.Top, Parent.GetLocalSide(Side.Top) - placement.Top);
+            SetLocalSideUnanchored(Side.Bottom, GetLocalSide(Side.Top) - LowerDoorWindowHeight);
 
             return BuildCuboid();
         }

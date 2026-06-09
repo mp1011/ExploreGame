@@ -20,11 +20,11 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             _yard = yard;
             Size = Vector3.One;
             Height = yard.Height;
-            SetSide(Side.North, yard.Deck.GetSide(Side.South));
-            SetSide(Side.East, yard.Deck.GetSide(Side.East));
-            SetSide(Side.Bottom, yard.GetSide(Side.Bottom));
-            SetSideUnanchored(Side.South, driveway.GetSide(Side.North));
-            SetSideUnanchored(Side.West, yard.FrontWalkway.WestPart.GetSide(Side.East));
+            SetLocalSide(Side.North, yard.Deck.GetLocalSide(Side.South));
+            SetLocalSide(Side.East, yard.Deck.GetLocalSide(Side.East));
+            SetLocalSide(Side.Bottom, yard.GetLocalSide(Side.Bottom));
+            SetLocalSideUnanchored(Side.South, driveway.GetLocalSide(Side.North));
+            SetLocalSideUnanchored(Side.West, yard.FrontWalkway.WestPart.GetLocalSide(Side.East));
         }
     }
 }

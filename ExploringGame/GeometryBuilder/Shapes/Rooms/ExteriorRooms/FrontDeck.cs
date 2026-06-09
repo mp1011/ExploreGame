@@ -35,7 +35,7 @@ public class FrontDeck : Deck
             .OnSideOuter(Side.West, this)
             .OnSideInner(Side.North, this);
 
-        WestPart.SetSide(Side.Top, GetSide(Side.Bottom));
+        WestPart.SetLocalSide(Side.Top, GetLocalSide(Side.Bottom));
 
         var northPart = AddChild(new Box(Theme));
         northPart.OmitSides = Side.Top;
@@ -44,7 +44,7 @@ public class FrontDeck : Deck
         northPart.Depth = Measure.Inches(5);
         northPart.Place().OnSideInner(Side.North)
             .OnSideInner(Side.West);
-        northPart.SetSide(Side.Top, WestPart.GetSide(Side.Top));
+        northPart.SetLocalSide(Side.Top, WestPart.GetLocalSide(Side.Top));
 
 
         var southPart = AddChild(new Box(Theme));
@@ -54,7 +54,7 @@ public class FrontDeck : Deck
         southPart.Width = Width + WestPart.Width;
         southPart.Place().OnSideInner(Side.South)
            .OnSideInner(Side.East);
-        southPart.SetSide(Side.Top, WestPart.GetSide(Side.Top));
+        southPart.SetLocalSide(Side.Top, WestPart.GetLocalSide(Side.Top));
 
         // posts
         var northWestPost = CreatePost().Place()
@@ -110,7 +110,7 @@ public class FrontDeck : Deck
             adjustPlacement: false);
 
         frontDoor.TraverseAllChildren().OfType<Door>().First().Tag = "FrontDoor";
-        frontDoor.SetSideUnanchored(Side.Top, livingRoom.GetSide(Side.Top));
+        frontDoor.SetLocalSideUnanchored(Side.Top, livingRoom.GetLocalSide(Side.Top));
 
         var light = new OutdoorLight(this, StateKey.FrontPorchLightOn);
         light.Place().AtParent().OnSideInner(Side.East).OnSideInner(Side.Top);

@@ -34,11 +34,11 @@ public class FrontWalkway : Room
         walkway.Height = Measure.Feet(1);
         walkway.Depth = Measure.Feet(10);
         walkway.Width = Measure.Feet(25);
-        walkway.SetSide(Side.Top, yard.GetSide(Side.Bottom));
+        walkway.SetLocalSide(Side.Top, yard.GetLocalSide(Side.Bottom));
         walkway.Place().OnSideOuter(Side.South, yard)
                        .OnSideOuter(Side.West, yard.Deck);
-        walkway.SetSideUnanchored(Side.South, yard.Deck.GetSide(Side.South));
-        walkway.SetSideUnanchored(Side.East, yard.Deck.WestPart.GetSide(Side.West));
+        walkway.SetLocalSideUnanchored(Side.South, yard.Deck.GetLocalSide(Side.South));
+        walkway.SetLocalSideUnanchored(Side.East, yard.Deck.WestPart.GetLocalSide(Side.West));
 
         var walkway2 = AddChild(new Box(Theme, TextureKey.Concrete));
         walkway2.Height = Measure.Feet(2);
@@ -46,8 +46,8 @@ public class FrontWalkway : Room
         walkway2.Width = Measure.Feet(5);
         walkway2.Place().OnSideOuter(Side.West, walkway)
             .OnSideInner(Side.North, walkway);
-        walkway2.SetSide(Side.Top, walkway.GetSide(Side.Top) - Measure.Feet(1));
-        walkway2.SetSideUnanchored(Side.South, driveway.GetSide(Side.North));
+        walkway2.SetLocalSide(Side.Top, walkway.GetLocalSide(Side.Top) - Measure.Feet(1));
+        walkway2.SetLocalSideUnanchored(Side.South, driveway.GetLocalSide(Side.North));
 
         var walkwaySide = AddChild(new Box(Theme, TextureKey.Brick));
         walkwaySide.Width = walkway.Width;
@@ -55,8 +55,8 @@ public class FrontWalkway : Room
         walkwaySide.Height = Measure.Feet(6);
         walkwaySide.Place().At(walkway)
             .OnSideInner(Side.North, walkway);
-        walkwaySide.SetSide(Side.Top, walkway.GetSide(Side.Top) + Measure.Inches(4));
-        walkwaySide.SetSideUnanchored(Side.West, walkway2.GetSide(Side.West) - Measure.Inches(6));
+        walkwaySide.SetLocalSide(Side.Top, walkway.GetLocalSide(Side.Top) + Measure.Inches(4));
+        walkwaySide.SetLocalSideUnanchored(Side.West, walkway2.GetLocalSide(Side.West) - Measure.Inches(6));
 
         var walkwaySide2 = AddChild(new Box(Theme, TextureKey.Brick));
         walkwaySide2.Width = Measure.Feet(1);
@@ -66,7 +66,7 @@ public class FrontWalkway : Room
             .OnSideInner(Side.West, walkwaySide)
             .OnSideInner(Side.North, walkwaySide)
             .AlignSideWith(Side.Top, walkwaySide);
-        walkwaySide2.SetSideUnanchored(Side.South, walkway2.GetSide(Side.South));
+        walkwaySide2.SetLocalSideUnanchored(Side.South, walkway2.GetLocalSide(Side.South));
 
         var walkwaySideSouth = AddChild(new Box(Theme, TextureKey.Brick));
         walkwaySideSouth.Width = walkway.Width;
@@ -75,7 +75,7 @@ public class FrontWalkway : Room
         walkwaySideSouth.Place().At(walkway)
             .OnSideInner(Side.South, walkway)
             .AlignSideWith(Side.Top, walkwaySide);
-        walkwaySideSouth.SetSideUnanchored(Side.West, walkway.GetSide(Side.West) - Measure.Inches(6));
+        walkwaySideSouth.SetLocalSideUnanchored(Side.West, walkway.GetLocalSide(Side.West) - Measure.Inches(6));
 
         var walkwaySide3 = AddChild(new Box(Theme, TextureKey.Brick));
         walkwaySide3.Width = Measure.Feet(1);
@@ -85,14 +85,14 @@ public class FrontWalkway : Room
             .OnSideInner(Side.East, walkway2)
             .OnSideInner(Side.North, walkway2)
             .AlignSideWith(Side.Top, walkwaySide);
-        walkwaySide3.SetSideUnanchored(Side.South, walkway2.GetSide(Side.South));
-        walkwaySide3.SetSideUnanchored(Side.North, walkwaySideSouth.GetSide(Side.South));
+        walkwaySide3.SetLocalSideUnanchored(Side.South, walkway2.GetLocalSide(Side.South));
+        walkwaySide3.SetLocalSideUnanchored(Side.North, walkwaySideSouth.GetLocalSide(Side.South));
 
-        SetSide(Side.West, walkway2.GetSide(Side.West));
-        SetSide(Side.North, walkway.GetSide(Side.North));
+        SetLocalSide(Side.West, walkway2.GetLocalSide(Side.West));
+        SetLocalSide(Side.North, walkway.GetLocalSide(Side.North));
 
-        SetSideUnanchored(Side.East, walkway.GetSide(Side.East));
-        SetSideUnanchored(Side.South, walkway2.GetSide(Side.South));
+        SetLocalSideUnanchored(Side.East, walkway.GetLocalSide(Side.East));
+        SetLocalSideUnanchored(Side.South, walkway2.GetLocalSide(Side.South));
 
         WestPart = walkway2;
     }

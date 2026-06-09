@@ -27,7 +27,7 @@ public class ShapeAdjuster
 
     public ShapeAdjuster AddToSide(Side side, float amount)
     {
-        _shape.SetSideUnanchored(side, _shape.GetSide(side) + amount);
+        _shape.SetLocalSideUnanchored(side, _shape.GetLocalSide(side) + amount);
         return this;
     }
 
@@ -45,16 +45,16 @@ public class ShapeAdjuster
         switch(face)
         {
             case Side.South:
-                _shape.SetSideUnanchored(Side.West, _shape.GetSide(Side.West) + amount);
+                _shape.SetLocalSideUnanchored(Side.West, _shape.GetLocalSide(Side.West) + amount);
                 return this;
             case Side.North:
-                _shape.SetSideUnanchored(Side.East, _shape.GetSide(Side.East) - amount);
+                _shape.SetLocalSideUnanchored(Side.East, _shape.GetLocalSide(Side.East) - amount);
                 return this;
             case Side.West:
-                _shape.SetSideUnanchored(Side.North, _shape.GetSide(Side.North) + amount);
+                _shape.SetLocalSideUnanchored(Side.North, _shape.GetLocalSide(Side.North) + amount);
                 return this;
             case Side.East:
-                _shape.SetSideUnanchored(Side.South, _shape.GetSide(Side.South) - amount);
+                _shape.SetLocalSideUnanchored(Side.South, _shape.GetLocalSide(Side.South) - amount);
                 return this;
             case Side.Bottom:
             case Side.Top:
@@ -69,16 +69,16 @@ public class ShapeAdjuster
         switch (face)
         {
             case Side.South:
-                _shape.SetSideUnanchored(Side.East, _shape.GetSide(Side.East) - amount);
+                _shape.SetLocalSideUnanchored(Side.East, _shape.GetLocalSide(Side.East) - amount);
                 return this;
             case Side.North:
-                _shape.SetSideUnanchored(Side.West, _shape.GetSide(Side.West) + amount);
+                _shape.SetLocalSideUnanchored(Side.West, _shape.GetLocalSide(Side.West) + amount);
                 return this;
             case Side.West:
-                _shape.SetSideUnanchored(Side.South, _shape.GetSide(Side.South) - amount);
+                _shape.SetLocalSideUnanchored(Side.South, _shape.GetLocalSide(Side.South) - amount);
                 return this;
             case Side.East:
-                _shape.SetSideUnanchored(Side.North, _shape.GetSide(Side.North) + amount);
+                _shape.SetLocalSideUnanchored(Side.North, _shape.GetLocalSide(Side.North) + amount);
                 return this;
             case Side.Bottom:
             case Side.Top:
@@ -96,7 +96,7 @@ public class ShapeAdjuster
             case Side.North:
             case Side.West:
             case Side.East:
-                _shape.SetSideUnanchored(Side.Top, _shape.GetSide(Side.Top) - amount);
+                _shape.SetLocalSideUnanchored(Side.Top, _shape.GetLocalSide(Side.Top) - amount);
                 return this;
             case Side.Bottom:
             case Side.Top:
@@ -114,7 +114,7 @@ public class ShapeAdjuster
             case Side.North:
             case Side.West:
             case Side.East:
-                _shape.SetSideUnanchored(Side.Bottom, _shape.GetSide(Side.Bottom) + amount);
+                _shape.SetLocalSideUnanchored(Side.Bottom, _shape.GetLocalSide(Side.Bottom) + amount);
                 return this;
             case Side.Bottom:
             case Side.Top:
@@ -133,36 +133,36 @@ public class ShapeAdjuster
 
     public ShapeAdjuster SliceFromWest(float fromWest, float width)
     {
-        _shape.SetSide(Side.West, _shape.GetSide(Side.West) + fromWest);
-        _shape.SetSideUnanchored(Side.East, _shape.GetSide(Side.West) + width);
+        _shape.SetLocalSide(Side.West, _shape.GetLocalSide(Side.West) + fromWest);
+        _shape.SetLocalSideUnanchored(Side.East, _shape.GetLocalSide(Side.West) + width);
         return this;
     }
 
     public ShapeAdjuster SliceFromNorth(float fromNorth, float depth)
     {
-        _shape.SetSide(Side.North, _shape.GetSide(Side.North) + fromNorth);
-        _shape.SetSideUnanchored(Side.South, _shape.GetSide(Side.North) + depth);
+        _shape.SetLocalSide(Side.North, _shape.GetLocalSide(Side.North) + fromNorth);
+        _shape.SetLocalSideUnanchored(Side.South, _shape.GetLocalSide(Side.North) + depth);
         return this;
     }
 
     public ShapeAdjuster SliceFromBottom(float fromBottom, float height)
     {
-        _shape.SetSide(Side.Bottom, _shape.GetSide(Side.Bottom) + fromBottom);
-        _shape.SetSideUnanchored(Side.Top, _shape.GetSide(Side.Bottom) + height);
+        _shape.SetLocalSide(Side.Bottom, _shape.GetLocalSide(Side.Bottom) + fromBottom);
+        _shape.SetLocalSideUnanchored(Side.Top, _shape.GetLocalSide(Side.Bottom) + height);
         return this;
     }
 
     public ShapeAdjuster SliceFromEast(float fromEast, float width)
     {
-        _shape.SetSide(Side.East, _shape.GetSide(Side.East) - fromEast);
-        _shape.SetSideUnanchored(Side.West, _shape.GetSide(Side.East) - width);
+        _shape.SetLocalSide(Side.East, _shape.GetLocalSide(Side.East) - fromEast);
+        _shape.SetLocalSideUnanchored(Side.West, _shape.GetLocalSide(Side.East) - width);
         return this;
     }
 
     public ShapeAdjuster SliceFromSouth(float fromSouth, float depth)
     {
-        _shape.SetSide(Side.South, _shape.GetSide(Side.South) - fromSouth);
-        _shape.SetSideUnanchored(Side.North, _shape.GetSide(Side.South) - depth);
+        _shape.SetLocalSide(Side.South, _shape.GetLocalSide(Side.South) - fromSouth);
+        _shape.SetLocalSideUnanchored(Side.North, _shape.GetLocalSide(Side.South) - depth);
         return this;
     }
 
@@ -229,20 +229,20 @@ public class ShapeAdjuster
     {
         if (axis.HasFlag(Axis.X))
         {
-            _shape.SetSide(Side.West, from);
-            _shape.SetSideUnanchored(Side.East, to);
+            _shape.SetLocalSide(Side.West, from);
+            _shape.SetLocalSideUnanchored(Side.East, to);
         }
 
         if (axis.HasFlag(Axis.Y))
         {
-            _shape.SetSide(Side.Bottom, from);
-            _shape.SetSideUnanchored(Side.Top, to);
+            _shape.SetLocalSide(Side.Bottom, from);
+            _shape.SetLocalSideUnanchored(Side.Top, to);
         }
 
         if (axis.HasFlag(Axis.Z))
         {
-            _shape.SetSide(Side.North, from);
-            _shape.SetSideUnanchored(Side.South, to);
+            _shape.SetLocalSide(Side.North, from);
+            _shape.SetLocalSideUnanchored(Side.South, to);
         }
 
         return this;

@@ -56,11 +56,11 @@ public class TerrainSurface : Shape
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        float baseY  = GetSide(Side.Bottom) + AntiClipLift;
-        float west   = GetSide(Side.West);
-        float east   = GetSide(Side.East);
-        float north  = GetSide(Side.North);
-        float south  = GetSide(Side.South);
+        float baseY  = GetLocalSide(Side.Bottom) + AntiClipLift;
+        float west   = GetLocalSide(Side.West);
+        float east   = GetLocalSide(Side.East);
+        float north  = GetLocalSide(Side.North);
+        float south  = GetLocalSide(Side.South);
 
         float surfaceWidth = east  - west;
         float surfaceDepth = south - north;

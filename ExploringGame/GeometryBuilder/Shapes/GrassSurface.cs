@@ -50,11 +50,11 @@ public class GrassSurface : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         // Get the bounds of this grass surface
-        float floorY = GetSide(Side.Bottom);
-        float west   = GetSide(Side.West);
-        float east   = GetSide(Side.East);
-        float north  = GetSide(Side.North);
-        float south  = GetSide(Side.South);
+        float floorY = GetLocalSide(Side.Bottom);
+        float west   = GetLocalSide(Side.West);
+        float east   = GetLocalSide(Side.East);
+        float north  = GetLocalSide(Side.North);
+        float south  = GetLocalSide(Side.South);
 
         var triangles = new List<Triangle>();
         var rng = new Random(42);

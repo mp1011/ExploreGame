@@ -101,7 +101,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 
     public void SetHingePosition(Vector3 newHingePosition)
     {
-        var hingeX = HingePosition == HAlign.Left ? GetSide(Side.West) : GetSide(Side.East);
+        var hingeX = HingePosition == HAlign.Left ? GetLocalSide(Side.West) : GetLocalSide(Side.East);
         var currentHingePosition = LocalPosition.SetX(hingeX);
 
         var delta = newHingePosition - currentHingePosition;

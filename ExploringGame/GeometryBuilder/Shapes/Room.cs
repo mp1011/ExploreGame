@@ -56,7 +56,7 @@ public class Room : Shape, ILightingGroup
         if (height.HasValue) 
             Height = height.Value;
 
-        SetSide(Side.Bottom, worldSegment.GetSide(Side.Bottom));
+        SetLocalSide(Side.Bottom, worldSegment.GetLocalSide(Side.Bottom));
 
         if (theme != null)
             _theme = theme;
@@ -113,8 +113,8 @@ public class Room : Shape, ILightingGroup
     {
         if(!adjustPlacement)
         {
-            junction.SetSide(side, other.GetSide(side.Opposite()));
-            junction.SetSideUnanchored(side.Opposite(), GetSide(side));
+            junction.SetLocalSide(side, other.GetLocalSide(side.Opposite()));
+            junction.SetLocalSideUnanchored(side.Opposite(), GetLocalSide(side));
         }
 
         AddConnectingRoom(new RoomConnection(this, junction, side, align, offset));
@@ -203,10 +203,10 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         float left, top, right, bottom;
 
         var thisFloor = wallBottom;
-        var otherFloor = other.GetSide(Side.Bottom);
+        var otherFloor = other.GetLocalSide(Side.Bottom);
 
         var thisCeiling = wallTop;
-        var otherCeiling = other.GetSide(Side.Top);
+        var otherCeiling = other.GetLocalSide(Side.Top);
 
         top = thisCeiling - otherCeiling;
         bottom = otherFloor - thisFloor;
@@ -220,21 +220,21 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         {
             case Side.South:
                 // South faces opposite direction from North, so left/right are swapped
-                left = wallEast - other.GetSide(Side.East);
-                right = other.GetSide(Side.West) - wallWest;
+                left = wallEast - other.GetLocalSide(Side.East);
+                right = other.GetLocalSide(Side.West) - wallWest;
                 break;
             case Side.North:
-                left = other.GetSide(Side.West) - wallWest;
-                right = wallEast - other.GetSide(Side.East);
+                left = other.GetLocalSide(Side.West) - wallWest;
+                right = wallEast - other.GetLocalSide(Side.East);
                 break;
             case Side.West:
                 // West faces opposite direction from East, so left/right are swapped
-                left = wallSouth - other.GetSide(Side.South);
-                right = other.GetSide(Side.North) - wallNorth;
+                left = wallSouth - other.GetLocalSide(Side.South);
+                right = other.GetLocalSide(Side.North) - wallNorth;
                 break;
             case Side.East:
-                left = other.GetSide(Side.North) - wallNorth;
-                right = wallSouth - other.GetSide(Side.South);
+                left = other.GetLocalSide(Side.North) - wallNorth;
+                right = wallSouth - other.GetLocalSide(Side.South);
                 break;
             default:
                 throw new System.NotImplementedException("fix me");

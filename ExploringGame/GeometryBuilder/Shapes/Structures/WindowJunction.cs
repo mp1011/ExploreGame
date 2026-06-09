@@ -152,7 +152,7 @@ public class Window : Room
                         .OnSideInner(curtainSide, rod)
                         .OnSideOuter(wallSide.Opposite(), rod)
                         .OnSideOuter(Side.Bottom, rod);
-        curtain.SetSideUnanchored(Side.Bottom, _parentRoom.GetSide(Side.Bottom) + CurtainDistanceFromFloor);
+        curtain.SetLocalSideUnanchored(Side.Bottom, _parentRoom.GetLocalSide(Side.Bottom) + CurtainDistanceFromFloor);
         return curtain;
     }
 

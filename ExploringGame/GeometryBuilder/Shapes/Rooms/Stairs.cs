@@ -35,13 +35,13 @@ public abstract class Stairs : Room
 
     private float CalcStepHeight()
     {
-        var heightDifference = TopFloor.GetSide(Side.Bottom) - BottomFloor.GetSide(Side.Bottom);
+        var heightDifference = TopFloor.GetLocalSide(Side.Bottom) - BottomFloor.GetLocalSide(Side.Bottom);
         return heightDifference / (float)NumSteps;
     }
 
     private float CalcHeight()
     {
-        return TopFloor.GetSide(Side.Top) - BottomFloor.GetSide(Side.Bottom);
+        return TopFloor.GetLocalSide(Side.Top) - BottomFloor.GetLocalSide(Side.Bottom);
     }
 
     private int NumSteps
@@ -71,24 +71,24 @@ public abstract class Stairs : Room
         if (_steps == null)
             CreateAllSteps();
 
-        var stairPosition = GetSide(StartSide);
+        var stairPosition = GetLocalSide(StartSide);
 
         Shape lastStep = null ;
         foreach (var step in _steps)
         {
             step.LocalPosition = LocalPosition;
             step.Size = StepSize;
-            step.SetSide(StartSide, stairPosition);
+            step.SetLocalSide(StartSide, stairPosition);
             step.Place().OnFloor();
 
             if (lastStep != null ) 
-                step.SetSideUnanchored(Side.Top, lastStep.GetSide(Side.Top) + StepSize.Y);
+                step.SetLocalSideUnanchored(Side.Top, lastStep.GetLocalSide(Side.Top) + StepSize.Y);
            
-            stairPosition = step.GetSide(StartSide.Opposite());
+            stairPosition = step.GetLocalSide(StartSide.Opposite());
             lastStep = step;
         }
 
-        _steps[^1].SetSideUnanchored(StartSide.Opposite(), GetSide(StartSide.Opposite()));
+        _steps[^1].SetLocalSideUnanchored(StartSide.Opposite(), GetLocalSide(StartSide.Opposite()));
     }
 }
 

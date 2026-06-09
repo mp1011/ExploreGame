@@ -1,6 +1,7 @@
 ﻿using ExploringGame.Entities;
 using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
 using ExploringGame.Rendering;
@@ -59,6 +60,52 @@ public abstract class Shape : IWithPosition, IShape
 
     public abstract ViewFrom ViewFrom { get; }
     public Vector3 LocalPosition { get; set; }
+
+    public Vector3 WorldPosition
+    {
+        get
+        {
+            if (LocalParent == null)
+                return LocalPosition;
+            else 
+                return LocalParent.WorldPosition + LocalPosition;
+        }
+        set
+        {
+            if (LocalParent == null)
+                LocalPosition = value;
+            else 
+                LocalPosition = value - LocalParent.WorldPosition;
+        }
+    }
+
+    private Shape _localParent = null;
+
+    /// <summary>
+    /// Either the nearest IPlaceable parent shape, or a root WorldSegment.
+    /// </summary>
+    public Shape LocalParent
+    {
+        get
+        {
+            if (_localParent == null)
+            {
+                var parent = Parent;
+                while(parent != null)
+                {
+                    if(parent is IPlaceableObject || parent is WorldSegment)
+                    {
+                        _localParent = parent;
+                        break;
+                    }
+
+                    parent = parent.Parent;
+                }
+            }
+
+            return _localParent;
+        }
+    }
 
     public Vector3 Size { get; set; }
     public string Tag { get; set; }
@@ -180,7 +227,7 @@ public abstract class Shape : IWithPosition, IShape
         }
     }
 
-    public float GetSide(Side side)
+    public float GetLocalSide(Side side)
     {
         return side switch
         {
@@ -194,7 +241,7 @@ public abstract class Shape : IWithPosition, IShape
         };
     }
 
-    public void SetSide(Side side, float value)
+    public void SetLocalSide(Side side, float value)
     {
         switch(side)
         {
@@ -238,12 +285,12 @@ public abstract class Shape : IWithPosition, IShape
         return left + (right - left) * value;
     }
 
-    public void SetSideUnanchored(Side side, float value)
+    public void SetLocalSideUnanchored(Side side, float value)
     {       
-        var currentOpposite = GetSide(side.Opposite());
-        SetSide(side, value);
+        var currentOpposite = GetLocalSide(side.Opposite());
+        SetLocalSide(side, value);
 
-        var oppDelta = GetSide(side.Opposite()) - currentOpposite;
+        var oppDelta = GetLocalSide(side.Opposite()) - currentOpposite;
 
         switch(side)
         {
@@ -269,7 +316,7 @@ public abstract class Shape : IWithPosition, IShape
                 throw new System.ArgumentException("invalid side");
         }
 
-        SetSide(side, value);
+        SetLocalSide(side, value);
     }
 
     public T AddChild<T>(T child) where T:Shape

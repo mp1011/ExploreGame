@@ -23,7 +23,7 @@ public class KidsBedroom : Room
 
     public void LoadChildren()
     {
-        SetSideUnanchored(Side.East, GetSide(Side.East) + 0.5f);
+        SetLocalSideUnanchored(Side.East, GetLocalSide(Side.East) + 0.5f);
 
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left,

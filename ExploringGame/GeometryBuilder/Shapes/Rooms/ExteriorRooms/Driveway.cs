@@ -25,15 +25,15 @@ public class Driveway : Room
         Height = 0.5f;
         Width = 1.0f;
 
-        SetSideUnanchored(Side.Top, yard.GetSide(Side.Top));
+        SetLocalSideUnanchored(Side.Top, yard.GetLocalSide(Side.Top));
 
         this.Place().OnSideInner(Side.East, yard.Deck)
                     .OnSideInner(Side.North, garage)
                     .OnFloor(garage);
 
-        SetSideUnanchored(Side.West, yard.GetSide(Side.West));
+        SetLocalSideUnanchored(Side.West, yard.GetLocalSide(Side.West));
 
-        var yOffset = yard.GetSide(Side.Bottom) - GetSide(Side.Bottom);
+        var yOffset = yard.GetLocalSide(Side.Bottom) - GetLocalSide(Side.Bottom);
         VertexOffsets.Add(new VertexOffset(Side.West, new Vector3(0f, yOffset, 0f)));
     }
 
@@ -46,8 +46,8 @@ public class Driveway : Room
         retainingWallNorth.Place().At(this)
             .OnSideInner(Side.North, this)
             .OnSideInner(Side.West, this);
-        retainingWallNorth.SetSide(Side.Top, yard.GetSide(Side.Bottom) + Measure.Inches(4));
-        retainingWallNorth.SetSideUnanchored(Side.East, yard.FrontWalkway.WestPart.GetSide(Side.West) + Measure.Inches(4));
+        retainingWallNorth.SetLocalSide(Side.Top, yard.GetLocalSide(Side.Bottom) + Measure.Inches(4));
+        retainingWallNorth.SetLocalSideUnanchored(Side.East, yard.FrontWalkway.WestPart.GetLocalSide(Side.West) + Measure.Inches(4));
 
         var retainingWallNorth2 = AddChild(new Box(yard.Theme, TextureKey.Brick));
         retainingWallNorth2.Width = Width;
@@ -56,8 +56,8 @@ public class Driveway : Room
         retainingWallNorth2.Place().At(this)
             .OnSideInner(Side.North, this)
             .OnSideInner(Side.East, this);
-        retainingWallNorth2.SetSide(Side.Top, yard.GetSide(Side.Bottom) + Measure.Inches(4));
-        retainingWallNorth2.SetSideUnanchored(Side.West, yard.FrontWalkway.WestPart.GetSide(Side.East) - Measure.Feet(1));
+        retainingWallNorth2.SetLocalSide(Side.Top, yard.GetLocalSide(Side.Bottom) + Measure.Inches(4));
+        retainingWallNorth2.SetLocalSideUnanchored(Side.West, yard.FrontWalkway.WestPart.GetLocalSide(Side.East) - Measure.Feet(1));
 
         var retainingWallSouth = AddChild(new Box(yard.Theme, TextureKey.Brick));
         retainingWallSouth.Width = Width;
@@ -66,7 +66,7 @@ public class Driveway : Room
         retainingWallSouth.Place().At(this)
             .OnSideInner(Side.South, this)
             .OnSideInner(Side.West, this);
-        retainingWallSouth.SetSide(Side.Top, yard.GetSide(Side.Bottom) + Measure.Inches(4));
-        retainingWallSouth.SetSideUnanchored(Side.East, GetSide(Side.East));
+        retainingWallSouth.SetLocalSide(Side.Top, yard.GetLocalSide(Side.Bottom) + Measure.Inches(4));
+        retainingWallSouth.SetLocalSideUnanchored(Side.East, GetLocalSide(Side.East));
     }
 }

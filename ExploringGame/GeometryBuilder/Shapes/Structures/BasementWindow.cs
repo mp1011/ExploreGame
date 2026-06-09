@@ -22,8 +22,8 @@ public class BasementWindow : Room
  
         basementRoom.AddConnectingRoomWithJunction(this, _yardArea, basementRoomWindowSide, windowAlign, placement.GetValueOrDefault(), adjustPlacement: false);
 
-        SetSide(Side.Bottom, basementRoom.GetSide(Side.Top) - Height);
-        SetSideUnanchored(Side.Top, basementRoom.GetSide(Side.Top));
+        SetLocalSide(Side.Bottom, basementRoom.GetLocalSide(Side.Top) - Height);
+        SetLocalSideUnanchored(Side.Top, basementRoom.GetLocalSide(Side.Top));
 
         // glass pane - thin transparent glass in the window opening
         var glassPane = AddChild(new GlassPane(basementRoomWindowSide));

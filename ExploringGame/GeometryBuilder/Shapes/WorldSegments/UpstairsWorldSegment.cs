@@ -35,7 +35,7 @@ public class UpstairsWorldSegment : WorldSegment
         Depth = Measure.Feet(53);
         Width = Measure.Feet(50);
         Height = Measure.Feet(10);
-        SetSide(Side.Bottom, FloorY);
+        SetLocalSide(Side.Bottom, FloorY);
 
         _upstairsHall = new UpstairsHall(this);
 
@@ -52,15 +52,15 @@ public class UpstairsWorldSegment : WorldSegment
 
     public override void PositionChildren(IEnumerable<WorldSegment> loadedSegments)
     {        
-        _livingRoom.SetSideUnanchored(Side.East, _den.GetSide(Side.West) - 1.0f);
+        _livingRoom.SetLocalSideUnanchored(Side.East, _den.GetLocalSide(Side.West) - 1.0f);
 
-        _spareRoom.SetSide(Side.North, _livingRoom.GetSide(Side.South) + 0.5f);
+        _spareRoom.SetLocalSide(Side.North, _livingRoom.GetLocalSide(Side.South) + 0.5f);
 
-        _upstairsHall.SetSideUnanchored(Side.West, _spareRoom.GetSide(Side.East) + 0.5f);
+        _upstairsHall.SetLocalSideUnanchored(Side.West, _spareRoom.GetLocalSide(Side.East) + 0.5f);
         _upstairsHall.LoadChildren(FindShapeByTag<DoorJunction>(loadedSegments, "BasementStairsDoor"));
 
-        _upstairsHall.NorthHall.SetSideUnanchored(Side.North, _livingRoom.GetSide(Side.South));
-        _upstairsHall.SouthHall.SetSideUnanchored(Side.South, _bedroom.GetSide(Side.North) - 0.5f);
+        _upstairsHall.NorthHall.SetLocalSideUnanchored(Side.North, _livingRoom.GetLocalSide(Side.South));
+        _upstairsHall.SouthHall.SetLocalSideUnanchored(Side.South, _bedroom.GetLocalSide(Side.North) - 0.5f);
 
         _livingRoom.LoadChildren(FindShape<FrontDeck>(loadedSegments));
         _bedroom.LoadChildren();

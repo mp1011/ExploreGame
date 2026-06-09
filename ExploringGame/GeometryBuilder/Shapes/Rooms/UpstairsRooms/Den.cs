@@ -28,7 +28,7 @@ public class Den : Room
         _livingRoom.AddConnectingRoomWithJunction(new DoubleDoorJunction(this, Side.East, DoorDirection.Push, StateKey.DenDoorsOpen), 
             this, Side.East, HAlign.Right, -1.0f, adjustPlacement: false);
 
-        SetSideUnanchored(Side.South, GetSide(Side.South) - Measure.Feet(6));
+        SetLocalSideUnanchored(Side.South, GetLocalSide(Side.South) - Measure.Feet(6));
 
         EastPart = Copy(depth: Measure.Feet(5), width: Measure.Feet(5));
         EastPart.Tag = "DenEast";
@@ -47,6 +47,6 @@ public class Den : Room
         lightSwitch.LocalPosition = LocalPosition;
         lightSwitch.Place().OnSideInner(Side.South).AtStandardSwitchHeight();
 
-        SetSideUnanchored(Side.North, _livingRoom.GetSide(Side.North));
+        SetLocalSideUnanchored(Side.North, _livingRoom.GetLocalSide(Side.North));
     }
 }

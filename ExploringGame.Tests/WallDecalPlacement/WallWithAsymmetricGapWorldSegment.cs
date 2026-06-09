@@ -50,28 +50,28 @@ public class WallWithAsymmetricGapWorldSegment : WorldSegment, IGapWorldSegment
         if (wallSide == Side.North)
         {
             // North: right = East
-            var roomEastEdge = MainRoom.GetSide(Side.East);
+            var roomEastEdge = MainRoom.GetLocalSide(Side.East);
             GapStartX = roomEastEdge - 0.3f - 2f;
             GapEndX = roomEastEdge - 0.3f;
         }
         else if (wallSide == Side.South)
         {
             // South: position inverted, so HAlign.Right puts gap on West (left in 2D space)
-            var roomWestEdge = MainRoom.GetSide(Side.West);
+            var roomWestEdge = MainRoom.GetLocalSide(Side.West);
             GapStartX = roomWestEdge + 0.3f;
             GapEndX = roomWestEdge + 0.3f + 2f;
         }
         else if (wallSide == Side.East)
         {
             // East: right = South
-            var roomSouthEdge = MainRoom.GetSide(Side.South);
+            var roomSouthEdge = MainRoom.GetLocalSide(Side.South);
             GapStartX = roomSouthEdge - 0.3f - 2f;
             GapEndX = roomSouthEdge - 0.3f;
         }
         else // West
         {
             // West: position inverted, so HAlign.Right puts gap on North (left in 2D space)
-            var roomNorthEdge = MainRoom.GetSide(Side.North);
+            var roomNorthEdge = MainRoom.GetLocalSide(Side.North);
             GapStartX = roomNorthEdge + 0.3f;
             GapEndX = roomNorthEdge + 0.3f + 2f;
         }

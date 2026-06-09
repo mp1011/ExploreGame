@@ -21,7 +21,7 @@ public class Garage : Room
     {
         _basement = basement;
         Height = basement.Height;
-        SetSide(Side.Bottom, 0f);
+        SetLocalSide(Side.Bottom, 0f);
 
         Width = 10f;
         Depth = 10f;
@@ -32,8 +32,8 @@ public class Garage : Room
         _basement.AddConnectingRoomWithJunction(new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Pull, StateKey.GarageInnerDoorOpen),
             this, Side.South, HAlign.Right, offset: -0.5f);
 
-        SetSideUnanchored(Side.West, WorldSegment.GetSide(Side.West));
-        SetSideUnanchored(Side.South, WorldSegment.GetSide(Side.South));
+        SetLocalSideUnanchored(Side.West, WorldSegment.GetLocalSide(Side.West));
+        SetLocalSideUnanchored(Side.South, WorldSegment.GetLocalSide(Side.South));
 
         this.Place().AlignSideWith(Side.East, _basement);
     }

@@ -31,12 +31,12 @@ public class VertexOffsetter
         {
             vertices = side switch
             { 
-                Side.West => vertices.Where(p => p.X.IsAlmost(shape.GetSide(Side.West))).ToArray(),
-                Side.East => vertices.Where(p => p.X.IsAlmost(shape.GetSide(Side.East))).ToArray(),
-                Side.South => vertices.Where(p => p.Z.IsAlmost(shape.GetSide(Side.South))).ToArray(),
-                Side.North => vertices.Where(p => p.Z.IsAlmost(shape.GetSide(Side.North))).ToArray(),
-                Side.Top => vertices.Where(p => p.Y.IsAlmost(shape.GetSide(Side.Top))).ToArray(),
-                Side.Bottom => vertices.Where(p => p.Y.IsAlmost(shape.GetSide(Side.Bottom))).ToArray(),
+                Side.West => vertices.Where(p => p.X.IsAlmost(shape.GetLocalSide(Side.West))).ToArray(),
+                Side.East => vertices.Where(p => p.X.IsAlmost(shape.GetLocalSide(Side.East))).ToArray(),
+                Side.South => vertices.Where(p => p.Z.IsAlmost(shape.GetLocalSide(Side.South))).ToArray(),
+                Side.North => vertices.Where(p => p.Z.IsAlmost(shape.GetLocalSide(Side.North))).ToArray(),
+                Side.Top => vertices.Where(p => p.Y.IsAlmost(shape.GetLocalSide(Side.Top))).ToArray(),
+                Side.Bottom => vertices.Where(p => p.Y.IsAlmost(shape.GetLocalSide(Side.Bottom))).ToArray(),
                 _ => vertices
             };           
         }

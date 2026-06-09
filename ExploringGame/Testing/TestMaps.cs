@@ -33,7 +33,7 @@ public static partial class TestMaps
     {
         var segment = new WorldSegment();
         var room = new Room(segment, Measure.Feet(20), Measure.Feet(20), Measure.Feet(10), theme: new BasementRoomTheme());       
-        room.SetSide(Side.Bottom, -1f);
+        room.SetLocalSide(Side.Bottom, -1f);
 
         var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
 
@@ -47,14 +47,15 @@ public static partial class TestMaps
 
         // static child, positioned in absolute space = wrong pos
         var boxTop = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Yellow)));
-        boxTop.LocalPosition = box.LocalPosition;
+        boxTop.WorldPosition = box.WorldPosition;
+       // boxTop.Y += 1.0f;
         boxTop.Place().OnSideOuter(Side.Top);
 
         // static child, positioned in relative space = right
         //var boxTop2 = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Turquoise)));
         //boxTop2.Position = new Vector3(0, 1.0f, 0);
 //
-        var boxTop3 = box.AddChild(new TestPlaceable(room, 6.0f, Color.Cyan));
+     //   var boxTop3 = box.AddChild(new TestPlaceable(room, 6.0f, Color.Cyan));
       //  boxTop3.Position = new Vector3(0, 4.0f, 0);
 
         //var boxTop2 = room.AddChild(new Ellipsoid(0.2f, new Theme(Color.GreenYellow)));
@@ -226,7 +227,7 @@ public static partial class TestMaps
     private static WorldSegment DoubleDoorJunctionTest(DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
-        ws.SetSide(Side.Bottom, 0f);
+        ws.SetLocalSide(Side.Bottom, 0f);
         var room = new Room(ws, theme: new BasementRoomTheme());
         room.Width = 10;
         room.Height = 3f;
@@ -413,7 +414,7 @@ public static partial class TestMaps
         northRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
         northRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(room, northRoom, Side.North, pos));
-        northRoom.SetSideUnanchored(Side.Bottom, northRoom.GetSide(Side.Bottom) + 0.4f);
+        northRoom.SetLocalSideUnanchored(Side.Bottom, northRoom.GetLocalSide(Side.Bottom) + 0.4f);
 
         var northRoom2 = new Room(world);
         northRoom2.Width = 40f;
@@ -432,7 +433,7 @@ public static partial class TestMaps
         westRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
         westRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(room, westRoom, Side.West, pos));
-        westRoom.SetSideUnanchored(Side.Top, northRoom.GetSide(Side.Top) - 0.4f);
+        westRoom.SetLocalSideUnanchored(Side.Top, northRoom.GetLocalSide(Side.Top) - 0.4f);
 
         var eastRoom = new Room(world);
         eastRoom.Width = 10f;

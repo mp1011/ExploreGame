@@ -125,27 +125,27 @@ public class Physics
         {
             case Side.Bottom:
                 body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
-                body.Position = new JVector(shape.X, shape.GetSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.Z); 
+                body.Position = new JVector(shape.X, shape.GetLocalSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.Z); 
                 break;
             case Side.Top:
                 body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
-                body.Position = new JVector(shape.X, shape.GetSide(Side.Top) + (WallColliderThickness / 2.0f), shape.Z);
+                body.Position = new JVector(shape.X, shape.GetLocalSide(Side.Top) + (WallColliderThickness / 2.0f), shape.Z);
                 break;
             case Side.North:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
-                body.Position = new JVector(shape.X, shape.Y, shape.GetSide(Side.North) - (WallColliderThickness / 2.0f));
+                body.Position = new JVector(shape.X, shape.Y, shape.GetLocalSide(Side.North) - (WallColliderThickness / 2.0f));
                 break;
             case Side.South:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
-                body.Position = new JVector(shape.X, shape.Y, shape.GetSide(Side.South) + (WallColliderThickness / 2.0f));
+                body.Position = new JVector(shape.X, shape.Y, shape.GetLocalSide(Side.South) + (WallColliderThickness / 2.0f));
                 break;
             case Side.West:
                 body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
-                body.Position = new JVector(shape.GetSide(Side.West) - (WallColliderThickness / 2.0f), shape.Y, shape.Z);
+                body.Position = new JVector(shape.GetLocalSide(Side.West) - (WallColliderThickness / 2.0f), shape.Y, shape.Z);
                 break;
             case Side.East:
                 body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
-                body.Position = new JVector(shape.GetSide(Side.East) + (WallColliderThickness / 2.0f), shape.Y, shape.Z);
+                body.Position = new JVector(shape.GetLocalSide(Side.East) + (WallColliderThickness / 2.0f), shape.Y, shape.Z);
                 break;
         }
 

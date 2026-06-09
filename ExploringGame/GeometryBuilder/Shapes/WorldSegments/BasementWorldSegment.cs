@@ -22,7 +22,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.WorldSegments
             Depth = Measure.Feet(53);
             Width = Measure.Feet(50);
             Height = Measure.Feet(10);
-            SetSide(Side.Bottom, 0f);
+            SetLocalSide(Side.Bottom, 0f);
 
             _office = AddChild(new BasementOffice(this));
             _basement = AddChild(new Basement(this, _office));

@@ -28,7 +28,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             Width = Measure.Feet(25);
             Height = Measure.Feet(8);
             Depth = Measure.Feet(28);
-            SetSide(Side.Bottom, 0f);
+            SetLocalSide(Side.Bottom, 0f);
 
             // Create BasementStairsDoor in constructor so it's available as a dependency
             BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
@@ -43,12 +43,12 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
         public void LoadChildren()
         {
-            SetSide(Side.East, _office.Exit.GetSide(Side.West));
-            SetSide(Side.North, _office.Exit.GetSide(Side.North) - Measure.Inches(31));
+            SetLocalSide(Side.East, _office.Exit.GetLocalSide(Side.West));
+            SetLocalSide(Side.North, _office.Exit.GetLocalSide(Side.North) - Measure.Inches(31));
 
             var lightSwitch = new LightSwitch(this, Side.East, StateKey.OfficeLightOn);
             lightSwitch.Place().OnSideInner(Side.East);
-            lightSwitch.SetSide(Side.North, GetSide(Side.North) + Measure.Inches(22));
+            lightSwitch.SetLocalSide(Side.North, GetLocalSide(Side.North) + Measure.Inches(22));
             lightSwitch.ControlledObjects.AddRange(_office.Lights);
             lightSwitch.Place().AtStandardSwitchHeight();
 
@@ -68,33 +68,33 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
             var ceilingBar = AddChild(new Box(TextureKey.Ceiling) { Width = Measure.Inches(12), Height = Measure.Inches(9), Depth = Depth });
             ceilingBar.Place().OnSideInner(Side.Top);
-            ceilingBar.SetSide(Side.West, wall5.GetSide(Side.West));
+            ceilingBar.SetLocalSide(Side.West, wall5.GetLocalSide(Side.West));
          
             // stair sides
             var wall6 = AddChild(new Box(TextureKey.Wall) { Depth = Measure.Feet(8), Height = Height, Width = InnerWallWidth * 2, OmitSides = Side.West });
             wall6.Place().OnFloor().OnSideInner(Side.South);
-            wall6.SetSide(Side.West, ceilingBar.GetSide(Side.East) + Measure.Feet(3));
+            wall6.SetLocalSide(Side.West, ceilingBar.GetLocalSide(Side.East) + Measure.Feet(3));
             var wall7 = AddChild(new Box(TextureKey.Wall) { Depth = Measure.Feet(8), Height = Height, Width = ceilingBar.Width,
                 OmitSides = Side.East });
             wall7.Place().OnFloor().OnSideInner(Side.South).OnSideInner(Side.West, ceilingBar);
 
-            ceilingBar.SetSideUnanchored(Side.South, wall7.GetSide(Side.North));
-            ceilingBar.SetSideUnanchored(Side.North, wall5.GetSide(Side.South));
+            ceilingBar.SetLocalSideUnanchored(Side.South, wall7.GetLocalSide(Side.North));
+            ceilingBar.SetLocalSideUnanchored(Side.North, wall5.GetLocalSide(Side.South));
 
             // corner wall
             var wall8 = AddChild(new Box(TextureKey.Wall) { Depth = InnerWallWidth, Height = Height, Width = Measure.Inches(35) });
             wall8.Place().OnFloor().OnSideInner(Side.West).FromNorth(Measure.Inches(36));
 
             // Position BasementStairsDoor (already created in constructor)
-            BasementStairsDoor.SetSide(Side.Bottom, UpstairsWorldSegment.FloorY);
+            BasementStairsDoor.SetLocalSide(Side.Bottom, UpstairsWorldSegment.FloorY);
            
-            BasementStairsDoor.SetSide(Side.North, GetSide(Side.South) + Measure.Feet(1.5f));
+            BasementStairsDoor.SetLocalSide(Side.North, GetLocalSide(Side.South) + Measure.Feet(1.5f));
 
             Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: BasementStairsDoor));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this, Measure.Feet(1.5f)).OnSideOuter(Side.West, wall6);
             
-            BasementStairsDoor.SetSide(Side.East, Stairs.GetSide(Side.East) - 0.1f);
-            BasementStairsDoor.SetSide(Side.North, Stairs.GetSide(Side.South));
+            BasementStairsDoor.SetLocalSide(Side.East, Stairs.GetLocalSide(Side.East) - 0.1f);
+            BasementStairsDoor.SetLocalSide(Side.North, Stairs.GetLocalSide(Side.South));
 
 
             var pillar = AddChild(new Box(TextureKey.Ceiling) { Width = Measure.Inches(7), Depth = Measure.Inches(7), Height = Height - ceilingBar.Height });
@@ -109,19 +109,19 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
             basementStairsDoorLeft.LocalPosition = BasementStairsDoor.LocalPosition;
             basementStairsDoorLeft.Size = BasementStairsDoor.Size;
-            basementStairsDoorLeft.SetSide(Side.Bottom, BasementStairsDoor.GetSide(Side.Bottom));
-            basementStairsDoorLeft.SetSideUnanchored(Side.Top, BasementStairsDoor.GetSide(Side.Top));
-            basementStairsDoorLeft.SetSide(Side.East, Stairs.GetSide(Side.East));
-            basementStairsDoorLeft.SetSideUnanchored(Side.West, BasementStairsDoor.GetSide(Side.East));
-            basementStairsDoorLeft.SetSideUnanchored(Side.South, BasementStairsDoor.GetSide(Side.North) + 0.5f);
+            basementStairsDoorLeft.SetLocalSide(Side.Bottom, BasementStairsDoor.GetLocalSide(Side.Bottom));
+            basementStairsDoorLeft.SetLocalSideUnanchored(Side.Top, BasementStairsDoor.GetLocalSide(Side.Top));
+            basementStairsDoorLeft.SetLocalSide(Side.East, Stairs.GetLocalSide(Side.East));
+            basementStairsDoorLeft.SetLocalSideUnanchored(Side.West, BasementStairsDoor.GetLocalSide(Side.East));
+            basementStairsDoorLeft.SetLocalSideUnanchored(Side.South, BasementStairsDoor.GetLocalSide(Side.North) + 0.5f);
 
             basementStairsDoorRight.LocalPosition = BasementStairsDoor.LocalPosition;
             basementStairsDoorRight.Size = BasementStairsDoor.Size;
-            basementStairsDoorRight.SetSide(Side.Bottom, BasementStairsDoor.GetSide(Side.Bottom));
-            basementStairsDoorRight.SetSideUnanchored(Side.Top, BasementStairsDoor.GetSide(Side.Top));
-            basementStairsDoorRight.SetSide(Side.West, Stairs.GetSide(Side.West));
-            basementStairsDoorRight.SetSideUnanchored(Side.East, BasementStairsDoor.GetSide(Side.West));
-            basementStairsDoorRight.SetSideUnanchored(Side.South, BasementStairsDoor.GetSide(Side.North) + 0.5f);
+            basementStairsDoorRight.SetLocalSide(Side.Bottom, BasementStairsDoor.GetLocalSide(Side.Bottom));
+            basementStairsDoorRight.SetLocalSideUnanchored(Side.Top, BasementStairsDoor.GetLocalSide(Side.Top));
+            basementStairsDoorRight.SetLocalSide(Side.West, Stairs.GetLocalSide(Side.West));
+            basementStairsDoorRight.SetLocalSideUnanchored(Side.East, BasementStairsDoor.GetLocalSide(Side.West));
+            basementStairsDoorRight.SetLocalSideUnanchored(Side.South, BasementStairsDoor.GetLocalSide(Side.North) + 0.5f);
 
 
             AddConnectingRoom(new RoomConnection(this, _office.Exit, Side.East, 0.5f), adjustPlacement: false);
@@ -142,8 +142,8 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             BasementStairsDoor.AddConnectingRoom(_upstairsHall, Side.South);
 
             //hack
-            wall6.SetSideUnanchored(Side.North, Stairs.GetSide(Side.North));
-            wall7.SetSideUnanchored(Side.North, Stairs.GetSide(Side.North));
+            wall6.SetLocalSideUnanchored(Side.North, Stairs.GetLocalSide(Side.North));
+            wall7.SetLocalSideUnanchored(Side.North, Stairs.GetLocalSide(Side.North));
 
         }
     }

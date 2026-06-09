@@ -42,7 +42,7 @@ public class DoorJunction : Room
         var hingeSide = _door.HingePosition == HAlign.Left ? _wallSide.CounterClockwiseTurn()
                                                            : _wallSide.ClockwiseTurn();
 
-        var hingePosition = LocalPosition.SetAxis(hingeSide.GetAxis(), GetSide(hingeSide));
+        var hingePosition = LocalPosition.SetAxis(hingeSide.GetAxis(), GetLocalSide(hingeSide));
         _door.SetHingePosition(hingePosition);
     }
 

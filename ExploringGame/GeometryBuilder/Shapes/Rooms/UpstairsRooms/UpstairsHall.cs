@@ -57,6 +57,6 @@ public class UpstairsHall : Room
         hallLightSwitch.Place().OnSideInner(Side.West).AtStandardSwitchHeight();
 
 
-        basementStairsDoor.SetSide(Side.South, GetSide(Side.North));
+        basementStairsDoor.SetLocalSide(Side.South, GetLocalSide(Side.North));
     }
 }

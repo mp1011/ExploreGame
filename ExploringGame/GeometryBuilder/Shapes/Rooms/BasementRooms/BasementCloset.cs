@@ -54,8 +54,8 @@ public class BasementCloset : Shape
         _door.LocalPosition = LocalPosition;
         _door.SetHingePosition(_doorSide switch
         {
-            Side.East => new Vector3(GetSide(Side.East), LocalPosition.Y, GetSide(Side.South) - _doorPlacement.Left),
-            Side.West => new Vector3(GetSide(Side.West), LocalPosition.Y, GetSide(Side.South) - _doorPlacement.Right),
+            Side.East => new Vector3(GetLocalSide(Side.East), LocalPosition.Y, GetLocalSide(Side.South) - _doorPlacement.Left),
+            Side.West => new Vector3(GetLocalSide(Side.West), LocalPosition.Y, GetLocalSide(Side.South) - _doorPlacement.Right),
             _ => throw new ArgumentException()
         });
 

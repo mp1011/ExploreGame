@@ -42,8 +42,8 @@ public class Fence : Shape, ICollidable
 
         this.Place().OnFloor().OnSideOuter(side);
 
-        SetSideUnanchored(side.ClockwiseTurn(), parent.GetSide(side.ClockwiseTurn()));
-        SetSideUnanchored(side.CounterClockwiseTurn(), parent.GetSide(side.CounterClockwiseTurn()));
+        SetLocalSideUnanchored(side.ClockwiseTurn(), parent.GetLocalSide(side.ClockwiseTurn()));
+        SetLocalSideUnanchored(side.CounterClockwiseTurn(), parent.GetLocalSide(side.CounterClockwiseTurn()));
 
         AddPosts(parent, side);
     }
@@ -52,8 +52,8 @@ public class Fence : Shape, ICollidable
     {
         var spanAxis = side.GetAxis().Orthogonal();
 
-        float start = spanAxis == Axis.X ? GetSide(Side.West) : GetSide(Side.North);
-        float end   = spanAxis == Axis.X ? GetSide(Side.East) : GetSide(Side.South);
+        float start = spanAxis == Axis.X ? GetLocalSide(Side.West) : GetLocalSide(Side.North);
+        float end   = spanAxis == Axis.X ? GetLocalSide(Side.East) : GetLocalSide(Side.South);
 
         foreach (var spanPos in ComputePostPositions(start, end))
         {
