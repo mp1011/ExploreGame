@@ -8,6 +8,7 @@ public interface IWithRoom
     IRoom Room { get; set; }
 }
 
+// name is misleading as this interface does not expose placeable behaviors
 public interface IPlaceableObject : IWithRoom
 {
     Shape Self { get; }

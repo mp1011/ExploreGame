@@ -63,7 +63,23 @@ class LightingGroupShapeBufferCreator : ShapeBufferCreator
     {
         return s.ShapeBufferType == ShapeBufferType.Static
             && s is not ShapeStamp
-            && s is not StampedShape;
+            && s is not StampedShape
+            && s is not IPlaceableObject
+            && !IsChildOfPlaceableShape(s);
+    }
+
+    private bool IsChildOfPlaceableShape(Shape obj)
+    {
+        var parent = obj.Parent;
+        while (parent != null)
+        {
+            if (parent is IPlaceableObject)
+                return true;
+
+            parent = parent.Parent;
+        }
+
+        return false;
     }
 
 }

@@ -1,22 +1,8 @@
-﻿Act2
-	- add code to initialize lights
-	- add creepy audio with gradual fade-in
+﻿should child object positions be in absolute space, or relative space?
 
-	
-     
+absolute - easier for everything else to deal with
+	otherwise, true position has to be inferred from parent
 
+relative - easier for shapes themselves
 
-- add stamp shape buffers
-- colored lights
-- object activation improvement
-
-
-Lighting Next Phase
-- double door junction appears fully black
-	- room distance is inaccurate when rooms are large
-- GetTotalLight in RoomLightData doesn't need to be as complex
-- half bath appears fully black if light is off
-- fix light bleed issue from bedroom to front yard
-- second street light not illuminating properly
-- in backyard, lights don't reach wall
-- active objects rendering brighter than room, can be seen in basement office
+triangle buffer for child shape should be drawn assuming parent is at 0,0

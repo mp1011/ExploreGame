@@ -5,6 +5,7 @@ using ExploringGame.Logics;
 using ExploringGame.Logics.Pathfinding;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

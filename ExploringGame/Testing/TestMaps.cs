@@ -37,10 +37,29 @@ public static partial class TestMaps
 
         var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
 
-        var puppet = segment.AddChild(new Puppet(segment));
-    
+     //   var puppet = segment.AddChild(new Puppet(segment));
 
 
+        var box = room.AddChild(new TestPlaceable(room, 1.0f, Color.Purple));
+        box.Place().OnFloor();
+        box.Z += 2;
+        box.X += 1;
+
+        // static child, positioned in absolute space = wrong pos
+        var boxTop = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Yellow)));
+        boxTop.Position = box.Position;
+        boxTop.Place().OnSideOuter(Side.Top);
+
+        // static child, positioned in relative space = right
+        //var boxTop2 = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Turquoise)));
+        //boxTop2.Position = new Vector3(0, 1.0f, 0);
+//
+        var boxTop3 = box.AddChild(new TestPlaceable(room, 6.0f, Color.Cyan));
+      //  boxTop3.Position = new Vector3(0, 4.0f, 0);
+
+        //var boxTop2 = room.AddChild(new Ellipsoid(0.2f, new Theme(Color.GreenYellow)));
+        //boxTop2.Position = boxTop.Position;
+        //boxTop2.Place().OnSideOuter(Side.Top, boxTop);
 
 
         //Tentacle.GenerateTentacleArm(segment, puppet, 50);
