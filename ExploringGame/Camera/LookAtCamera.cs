@@ -17,11 +17,11 @@ public class LookAtCamera : ICamera
     {
         _lookAt = lookAt;
         _lastView = previous.CreateViewMatrix();
-        LocalPosition = previous.LocalPosition;
+        WorldPosition = previous.WorldPosition;
         Rotation = previous.Rotation;
     }
 
-    public Vector3 LocalPosition { get; set; }
+    public Vector3 WorldPosition { get; set; }
 
     public Vector3 Size => Vector3.One;
 
@@ -31,7 +31,7 @@ public class LookAtCamera : ICamera
     {
         var currentWorld = Matrix.Invert(_lastView);
         var cameraPosition = currentWorld.Translation;
-        LocalPosition = cameraPosition;
+        WorldPosition = cameraPosition;
 
         var targetDirection = _lookAt.LocalPosition - cameraPosition;
         if (targetDirection.LengthSquared() <= float.Epsilon)

@@ -19,7 +19,7 @@ public class PathFinderTarget
 
     public void Update(GameTime gameTime, ICollidable entity)
     {
-        var distance = entity.LocalPosition.DistanceTo(Target.LocalPosition);
+        var distance = entity.WorldPosition.DistanceTo(Target.WorldPosition);
 
         if(distance >= _lastDistance)
             StuckTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;

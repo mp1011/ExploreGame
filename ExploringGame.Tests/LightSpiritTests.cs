@@ -322,7 +322,7 @@ public class LightSpiritTests
                 var player = g.GetService<Player>();
                 if (lightSpiritController != null && player != null && lightSpiritController.LightSpirit.Phase == LightSpiritPhase.HalfPresence)
                 {
-                    var distance = Vector3.Distance(player.LocalPosition, lightSpiritController.LightSpirit.LocalPosition);
+                    var distance = Vector3.Distance(player.WorldPosition, lightSpiritController.LightSpirit.LocalPosition);
                     if (distance < 1.5f)
                         return TestResult.PASS;
                 }

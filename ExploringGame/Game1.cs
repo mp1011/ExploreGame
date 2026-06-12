@@ -215,7 +215,7 @@ public class Game1 : Game
         if(!_ranInit)
         {
             _ranInit = true;
-            _player.LocalPosition = _currentSegmentGroup.DefaultPlayerStart;
+            _player.WorldPosition = _currentSegmentGroup.DefaultPlayerStart;
             _player.Rotation = Rotation.YawFromDegrees(_currentSegmentGroup.DefaultPlayerAngle);
             _playerMover.Initialize();
             _segmentActivationManager.ActivateGroup(_currentSegmentGroup);

@@ -12,7 +12,7 @@ namespace ExploringGame.Entities;
 
 public class Player : ICollidable, ICamera
 {
-    public Vector3 LocalPosition { get; set; } = new Vector3(0, 1.5f, 0);
+    public Vector3 WorldPosition { get; set; } = new Vector3(0, 1.5f, 0);
     public Rotation Rotation { get; set; } = new Rotation(0, 0.1f, 0);
     public int Health { get; set; } = 100;
 
@@ -33,9 +33,9 @@ public class Player : ICollidable, ICamera
     {
         // Camera should be at eye height above the floor
         // Position is at center of physics capsule, so feet are at Position.Y - (PhysicsCapsuleHeight / 2f)
-        var feetPosition = LocalPosition.Y - (PhysicsCapsuleHeight / 2f);
+        var feetPosition = WorldPosition.Y - (PhysicsCapsuleHeight / 2f);
         var cameraY = feetPosition + EyeHeight;
-        var cameraPosition = new Vector3(LocalPosition.X, cameraY, LocalPosition.Z);
+        var cameraPosition = new Vector3(WorldPosition.X, cameraY, WorldPosition.Z);
 
         var lookDir = Vector3.Transform(Vector3.Forward, Rotation.AsMatrix());
         return Matrix.CreateLookAt(cameraPosition, cameraPosition + lookDir, Vector3.Up);

@@ -23,6 +23,6 @@ public class PathfinderTest
 
         var d = Debug.MovingEntityDebugger;
         var player = g.GetService<Player>();       
-        Assert.True(player.LocalPosition.DistanceTo(testEntity.LocalPosition) < 3.0f);
+        Assert.True(player.WorldPosition.DistanceTo(testEntity.LocalPosition) < 3.0f);
     }
 }

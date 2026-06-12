@@ -9,14 +9,14 @@ namespace ExploringGame.GameDebug;
 /// </summary>
 public class DebugFixedCamera : ICamera
 {
-    public Vector3 LocalPosition { get; set; }
+    public Vector3 WorldPosition { get; set; }
     public Rotation Rotation { get; set; }
 
     public Vector3 Size => new Vector3(1, 1, 1);
 
     public DebugFixedCamera(Vector3 position, Rotation rotation)
     {
-        LocalPosition = position;
+        WorldPosition = position;
         Rotation = rotation;
     }
 
@@ -27,7 +27,7 @@ public class DebugFixedCamera : ICamera
     public Matrix CreateViewMatrix()
     {
         var lookDir = Vector3.Transform(Vector3.Forward, Rotation.AsMatrix());
-        return Matrix.CreateLookAt(LocalPosition, LocalPosition + lookDir, Vector3.Up);
+        return Matrix.CreateLookAt(WorldPosition, WorldPosition + lookDir, Vector3.Up);
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public class DebugFixedCamera : ICamera
     /// </summary>
     public void LookAt(Vector3 target)
     {
-        var direction = Vector3.Normalize(target - LocalPosition);
+        var direction = Vector3.Normalize(target - WorldPosition);
         Rotation = new Rotation(
             Yaw: (float)System.Math.Atan2(-direction.X, -direction.Z),
             Pitch: (float)System.Math.Asin(direction.Y),

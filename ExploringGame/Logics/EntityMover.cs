@@ -65,19 +65,19 @@ public class EntityMover : IActiveObject
         else
             _body.Velocity = new JVector(Motion.CurrentMotion.X, Motion.CurrentMotion.Y, Motion.CurrentMotion.Z);
 
-        _entity.LocalPosition = _body.Position.ToVector3();
+        _entity.WorldPosition = _body.Position.ToVector3();
 
         CollisionResponder.Update();
     }
 
     private void SetInitialPosition()
     {
-        _body.Position = _entity.LocalPosition.ToJVector();
+        _body.Position = _entity.WorldPosition.ToJVector();
         _initialPositionSet = true;
     }
 
     public void RefreshPosition()
     {
-        _body.Position = _entity.LocalPosition.ToJVector();
+        _body.Position = _entity.WorldPosition.ToJVector();
     }
 }

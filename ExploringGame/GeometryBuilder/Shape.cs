@@ -137,6 +137,20 @@ public abstract class Shape : IWithPosition, IShape
     {
         get => LocalPosition.Z; set => LocalPosition = new Vector3(LocalPosition.X, LocalPosition.Y, value);
     }
+
+    public float WorldX
+    {
+        get => WorldPosition.X; set => WorldPosition = new Vector3(value, WorldPosition.Y, WorldPosition.Z);
+    }
+    public float WorldY
+    {
+        get => WorldPosition.Y; set => WorldPosition = new Vector3(WorldPosition.X, value, WorldPosition.Z);
+    }
+    public float WorldZ
+    {
+        get => WorldPosition.Z; set => WorldPosition = new Vector3(WorldPosition.X, WorldPosition.Y, value);
+    }
+
     public float Width
     {
         get => Size.X; set => Size = new Vector3(value, Size.Y, Size.Z);
@@ -182,48 +196,6 @@ public abstract class Shape : IWithPosition, IShape
             case Axis.X: LocalX = value; return;
             case Axis.Y: LocalY = value; return;
             case Axis.Z: LocalZ = value; return;
-        }
-    }
-
-    /// <summary>
-    /// Sets the top Y coordinate while preserving height
-    /// </summary>
-    public float TopAnchored
-    {
-        get => LocalPosition.Y + Size.Y / 2f;
-        set
-        {
-            var currentTop = this.TopAnchored;
-            var delta = value - currentTop;
-            LocalY += delta;
-        }
-    }
-
-    /// <summary>
-    /// Sets the bottom Y coordinate while preserving height
-    /// </summary>
-    public float BottomAnchored
-    {
-        get => LocalPosition.Y - Size.Y / 2f;
-        set
-        {
-            var currentBottom = this.BottomAnchored;
-            var delta = value - currentBottom;
-            LocalY += delta;
-        }
-    }
-
-    /// <summary>
-    /// Sets the bottom Y coordinate while leaving the top as is, thereby changing the height
-    /// </summary>
-    public float BottomUnanchored
-    {
-        get => LocalPosition.Y - Size.Y / 2f;
-        set
-        {
-            var originalTop = this.TopAnchored;
-            Height = originalTop - value;
-            TopAnchored = originalTop;
         }
     }
 
@@ -282,6 +254,33 @@ public abstract class Shape : IWithPosition, IShape
         }
     }
 
+    public void SetWorldSide(Side side, float value)
+    {
+        switch(side)
+        {
+            case Side.North:
+                WorldZ = value + Size.Z / 2f;
+                return;
+            case Side.South:
+                WorldZ = value - Size.Z / 2f;
+                return;
+            case Side.West:
+                WorldX = value + Size.X / 2f;
+                return;
+            case Side.East:
+                WorldX = value - Size.X / 2f;
+                return;
+            case Side.Top:
+                WorldY = value - Size.Y / 2f;
+                return;
+            case Side.Bottom:
+                WorldY = value + Size.Y / 2f;
+                return;
+            default:
+                throw new ArgumentException("Only singular sides can be used");
+        }
+    }
+
     /// <summary>
     /// 0.0 = left
     /// 1.0 = right
@@ -333,6 +332,40 @@ public abstract class Shape : IWithPosition, IShape
         SetLocalSide(side, value);
     }
 
+    public void SetWorldSideUnanchored(Side side, float value)
+    {       
+        var currentOpposite = GetWorldSide(side.Opposite());
+        SetWorldSide(side, value);
+
+        var oppDelta = GetWorldSide(side.Opposite()) - currentOpposite;
+
+        switch(side)
+        {
+            case Side.North:
+                Depth -= oppDelta;
+                break;
+            case Side.South:
+                Depth += oppDelta;
+                break;
+            case Side.West:
+                Width -= oppDelta;
+                break;
+            case Side.East:
+                Width += oppDelta;
+                break;
+            case Side.Top:
+                Height += oppDelta;
+                break;
+            case Side.Bottom:
+                Height -= oppDelta;
+                break;
+            default:
+                throw new System.ArgumentException("invalid side");
+        }
+
+        SetWorldSide(side, value);
+    }
+
     public T AddChild<T>(T child) where T:Shape
     {
         if (child.Parent == this)
@@ -358,8 +391,8 @@ public abstract class Shape : IWithPosition, IShape
 
     public bool ContainsPoint(Vector3 point)
     {
-        var min = LocalPosition - Size / 2f;
-        var max = LocalPosition + Size / 2f;
+        var min = WorldPosition - Size / 2f;
+        var max = WorldPosition + Size / 2f;
 
         return point.X >= min.X && point.X <= max.X &&
            point.Y >= min.Y && point.Y <= max.Y &&
@@ -412,9 +445,17 @@ public abstract class Shape : IWithPosition, IShape
         var scaleMatrix = Matrix.Identity; // todo, see about this
         var rotationMatrix = Rotation?.AsMatrix() ?? Matrix.Identity;
 
-        return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(LocalPosition);
+        return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(WorldPosition);
     }
     public virtual RasterizerState RasterizerState { get; } = null;
+
+    public override string ToString()
+    {
+        if (Tag != null)
+            return $"{GetType().Name} ({Tag})";
+        else
+            return GetType().Name;
+    }
 
     #region Build
 

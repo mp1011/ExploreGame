@@ -37,30 +37,36 @@ public static partial class TestMaps
 
         var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
 
-     //   var puppet = segment.AddChild(new Puppet(segment));
+        //   var puppet = segment.AddChild(new Puppet(segment));
 
 
         var box = room.AddChild(new TestPlaceable(room, 1.0f, Color.Purple));
+        box.Tag = "Box1";
         box.Place().OnFloor();
         box.LocalZ += 2;
         box.LocalX += 1;
 
-        // static child, positioned in absolute space = wrong pos
         var boxTop = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Yellow)));
         boxTop.WorldPosition = box.WorldPosition;
-       // boxTop.Y += 1.0f;
         boxTop.Place().OnSideOuter(Side.Top);
 
-        // static child, positioned in relative space = right
-        //var boxTop2 = box.AddChild(new Ellipsoid(0.5f, new Theme(Color.Turquoise)));
-        //boxTop2.Position = new Vector3(0, 1.0f, 0);
-//
-     //   var boxTop3 = box.AddChild(new TestPlaceable(room, 6.0f, Color.Cyan));
-      //  boxTop3.Position = new Vector3(0, 4.0f, 0);
 
-        //var boxTop2 = room.AddChild(new Ellipsoid(0.2f, new Theme(Color.GreenYellow)));
-        //boxTop2.Position = boxTop.Position;
-        //boxTop2.Place().OnSideOuter(Side.Top, boxTop);
+        var box2 = room.AddChild(new TestPlaceable(room, 1.0f, Color.Red));
+        box2.Tag = "Box2";
+        box2.Place().OnFloor();
+        box2.LocalZ += 3;
+        box2.LocalX -= 1;
+        //  box2.OmitSides = Side.All & ~Side.Top;
+
+        var box3 = box2.AddChild(new TestPlaceable(room, 0.5f, Color.Purple));
+        box3.Tag = "Box3";
+        box3.WorldPosition = box2.WorldPosition;
+        box3.Place().OnSideOuter(Side.Top);
+
+        //  var box3Top = box3.AddChild(new Ellipsoid(0.5f, new Theme(Color.Green)));
+        //  box3Top.Tag = "Box3Top";
+        //  box3Top.WorldPosition = box3.WorldPosition;
+        //  box3Top.Place().OnSideOuter(Side.Top);
 
 
         //Tentacle.GenerateTentacleArm(segment, puppet, 50);

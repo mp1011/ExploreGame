@@ -7,6 +7,7 @@ using ExploringGame.Texture;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ExploringGame.Rendering.ShapeBufferCreators;
@@ -22,24 +23,10 @@ class ActiveObjectShapeBufferCreator : ShapeBufferCreator
     {
         var placeableShapes = worldSegment.TraverseAllChildren()
             .OfType<IPlaceableObject>()
-            .Where(p => p.Self.ViewFrom != ViewFrom.None && !IsChildOfPlaceableShape(p))
+            .Where(p => p.Self.ViewFrom != ViewFrom.None)
             .ToArray();
 
         return placeableShapes.SelectMany(p => CreateShapeBuffers(worldSegment, p));
-    }
-
-    private bool IsChildOfPlaceableShape(IPlaceableObject obj)
-    {
-        var parent = obj.Self.Parent;
-        while(parent != null)
-        {
-            if (parent is IPlaceableObject)
-                return true;
-
-            parent = parent.Parent;
-        }
-
-        return false;
     }
 
     private IEnumerable<ShapeBuffer> CreateShapeBuffers(WorldSegment worldSegment, IPlaceableObject activeObject)
@@ -47,9 +34,26 @@ class ActiveObjectShapeBufferCreator : ShapeBufferCreator
         foreach(var textureGroup in activeObject.Self.TraverseAllChildren().GroupBy(p=>p.Theme.TextureSheetKey))
         {
             // Use the Room's LightingGroup if the active object has a room assigned
-            var lightingGroup = activeObject.Room?.LightingGroup;           
-            yield return CreateShapeBuffer(activeObject.Self, activeObject.Children, textureGroup.Key, lightingGroup);
+            var lightingGroup = activeObject.Room?.LightingGroup;
+
+            // exclude placeable children, they'll get rendered on their own
+            var validChildren = activeObject.Children.Where(p => ShouldRenderWithShape(p, activeObject)).ToArray();
+            yield return CreateShapeBuffer(activeObject.Self, validChildren, textureGroup.Key, lightingGroup);
         }
+    }
+
+    private bool ShouldRenderWithShape(Shape shape, IPlaceableObject activeObject)
+    {
+        if (shape == activeObject)
+            return true;
+
+        if (shape.LocalParent != activeObject)
+            return false;
+
+        if (shape is IPlaceableObject)
+            return false;
+
+        return true;
     }
 
     protected ShapeBuffer CreateShapeBuffer(

@@ -126,8 +126,8 @@ public class ShapeAdjuster
 
     public ShapeAdjuster SliceFromTop(float fromTop, float height)
     {
-        _shape.TopAnchored = _shape.TopAnchored - fromTop;
-        _shape.BottomUnanchored = _shape.TopAnchored - height;
+        _shape.SetWorldSide(Side.Top, _shape.GetWorldSide(Side.Top) - fromTop);
+        _shape.SetWorldSideUnanchored(Side.Bottom, _shape.GetWorldSide(Side.Top) - height);
         return this;
     }
 

@@ -18,7 +18,7 @@ public class PlayerMoveTo : PlotPoint
 
     protected override PlotUpdate UpdateActive(Microsoft.Xna.Framework.GameTime gameTime)
     {
-        _player.LocalPosition = _position;
+        _player.WorldPosition = _position;
         _player.Mover.RefreshPosition();
         return PlotUpdate.End;
     }

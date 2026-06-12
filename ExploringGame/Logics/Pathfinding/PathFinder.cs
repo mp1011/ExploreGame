@@ -98,7 +98,7 @@ public class PathFinder
         if (_physics.HasLineOfSight(_entity, PrimaryTarget.Target))
         {
             CurrentTarget = PrimaryTarget;
-            return Vector3.Normalize(PrimaryTarget.Target.LocalPosition - _entity.LocalPosition);
+            return Vector3.Normalize(PrimaryTarget.Target.WorldPosition - _entity.WorldPosition);
         }
 
         // Step 2: Has Entity reached its Current Target?
@@ -110,13 +110,13 @@ public class PathFinder
                 : PickNextTargetAfterCurrent();
 
             CurrentTarget = recomputedTarget;
-            return Vector3.Normalize(CurrentTarget.Target.LocalPosition - _entity.LocalPosition);
+            return Vector3.Normalize(CurrentTarget.Target.WorldPosition - _entity.WorldPosition);
         }
 
         // Step 3: Does Entity have a Line of Sight to its Current Target?
         if (_physics.HasLineOfSight(_entity, CurrentTarget.Target))
         {
-            return Vector3.Normalize(CurrentTarget.Target.LocalPosition - _entity.LocalPosition);
+            return Vector3.Normalize(CurrentTarget.Target.WorldPosition - _entity.WorldPosition);
         }
 
         // Step 3.5: Detect if stuck on obstacle and need to find alternate route
@@ -126,9 +126,9 @@ public class PathFinder
             var obstacleAvoidanceSamplePoint = FindValidSamplePoint();
             if (obstacleAvoidanceSamplePoint.HasValue)
             {
-                _samplePoint.LocalPosition = obstacleAvoidanceSamplePoint.Value;
+                _samplePoint.WorldPosition = obstacleAvoidanceSamplePoint.Value;
                 CurrentTarget = new PathFinderTarget(_samplePoint);
-                return Vector3.Normalize(CurrentTarget.Target.LocalPosition - _entity.LocalPosition);
+                return Vector3.Normalize(CurrentTarget.Target.WorldPosition - _entity.WorldPosition);
             }
         }
 
@@ -147,21 +147,21 @@ public class PathFinder
         if(!path.Contains(CurrentTarget.Target))
         {
             CurrentTarget = new PathFinderTarget(path.First());
-            return Vector3.Normalize(CurrentTarget.Target.LocalPosition - _entity.LocalPosition);
+            return Vector3.Normalize(CurrentTarget.Target.WorldPosition - _entity.WorldPosition);
         }
 
         // Step 6: Pick a valid Random Sample Point
         var samplePoint = FindValidSamplePoint();
         if (samplePoint.HasValue)
         {
-            _samplePoint.LocalPosition = samplePoint.Value;
+            _samplePoint.WorldPosition = samplePoint.Value;
             CurrentTarget = new PathFinderTarget(_samplePoint);
-            return Vector3.Normalize(CurrentTarget.Target.LocalPosition - _entity.LocalPosition);
+            return Vector3.Normalize(CurrentTarget.Target.WorldPosition - _entity.WorldPosition);
         }
 
         // Step 7: Set the Random Walk timer
         _randomWalkDuration = TimeSpan.FromMilliseconds(_random.NextDouble() * 1500 + 500); // 500-2000ms
-        var directionToTarget = Vector3.Normalize(CurrentTarget.Target.LocalPosition - _entity.LocalPosition);
+        var directionToTarget = Vector3.Normalize(CurrentTarget.Target.WorldPosition - _entity.WorldPosition);
         var angle = (float)(_random.NextDouble() * Math.PI / 2 - Math.PI / 4); // +- 45 degrees
         _randomWalk = RotateVector2D(directionToTarget, angle);
 
@@ -170,7 +170,7 @@ public class PathFinder
 
     private bool HasReachedTarget()
     {
-        var directionToTarget = CurrentTarget.Target.LocalPosition - _entity.LocalPosition;
+        var directionToTarget = CurrentTarget.Target.WorldPosition - _entity.WorldPosition;
         var directionToTargetXZ = new Vector3(directionToTarget.X, 0, directionToTarget.Z);
         var currentDistance = directionToTargetXZ.Length();
         var threshold = Measure.Feet(1);
@@ -207,8 +207,8 @@ public class PathFinder
 
     private List<Waypoint> FindPathToTarget()
     {
-        var startWaypoint = _waypointGraph.FindNearestWaypoint(_entity.LocalPosition);
-        var goalWaypoint = _waypointGraph.FindNearestWaypoint(PrimaryTarget.Target.LocalPosition);
+        var startWaypoint = _waypointGraph.FindNearestWaypoint(_entity.WorldPosition);
+        var goalWaypoint = _waypointGraph.FindNearestWaypoint(PrimaryTarget.Target.WorldPosition);
 
         if (startWaypoint == null || goalWaypoint == null)
             return new();
@@ -246,18 +246,18 @@ public class PathFinder
             var angle = (float)(_random.NextDouble() * Math.PI * 2);
             var distance = (float)(_random.NextDouble() * (MaxSampleDistance - MinSampleDistance) + MinSampleDistance);
 
-            var samplePoint = _entity.LocalPosition + new Vector3(
+            var samplePoint = _entity.WorldPosition + new Vector3(
                 (float)Math.Cos(angle) * distance,
                 0,
                 (float)Math.Sin(angle) * distance);
 
             // Check if sample point has line of sight to both Entity and Current Target
-            _samplePoint.LocalPosition = samplePoint;
+            _samplePoint.WorldPosition = samplePoint;
 
             if (_physics.HasLineOfSight(_samplePoint, _entity) && 
                 _physics.HasLineOfSight(_samplePoint, CurrentTarget.Target))
             {
-                var distanceToEntity = Vector3.Distance(_entity.LocalPosition, samplePoint);
+                var distanceToEntity = Vector3.Distance(_entity.WorldPosition, samplePoint);
                 if (distanceToEntity < bestDistance)
                 {
                     bestDistance = distanceToEntity;
@@ -280,11 +280,11 @@ public class PathFinder
             return false;
 
         // Check condition 3: there is no waypoint closer to the target than the one the LS is already at
-        var currentWaypoint = _waypointGraph.FindNearestWaypoint(_entity.LocalPosition);
+        var currentWaypoint = _waypointGraph.FindNearestWaypoint(_entity.WorldPosition);
         if (currentWaypoint == null)
             return false;
 
-        var currentWaypointDistanceToTarget = Vector3.Distance(currentWaypoint.LocalPosition, PrimaryTarget.Target.LocalPosition);
+        var currentWaypointDistanceToTarget = Vector3.Distance(currentWaypoint.LocalPosition, PrimaryTarget.Target.WorldPosition);
 
         // Check all waypoints to see if any are closer to the target
         foreach (var waypoint in _waypointGraph.GetAllWaypoints())
@@ -292,7 +292,7 @@ public class PathFinder
             if (waypoint == currentWaypoint)
                 continue;
 
-            var distanceToTarget = Vector3.Distance(waypoint.LocalPosition, PrimaryTarget.Target.LocalPosition);
+            var distanceToTarget = Vector3.Distance(waypoint.WorldPosition, PrimaryTarget.Target.WorldPosition);
             if (distanceToTarget < currentWaypointDistanceToTarget)
             {
                 // Found a waypoint closer to target, so not stuck
@@ -319,7 +319,7 @@ public class PathFinder
         private Vector3 _position;
         private readonly RigidBody _body;
 
-        public Vector3 LocalPosition 
+        public Vector3 WorldPosition
         { 
             get => _position;
             set

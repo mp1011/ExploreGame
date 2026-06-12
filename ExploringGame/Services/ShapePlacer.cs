@@ -35,13 +35,13 @@ public class ShapePlacer
 
     public ShapePlacer AtParent()
     {
-        _shape.LocalPosition = _shape.Parent.LocalPosition;
+        _shape.WorldPosition = _shape.Parent.WorldPosition;
         return this;
     }
 
     public ShapePlacer At(Shape other)
     {
-        _shape.LocalPosition = other.LocalPosition;
+        _shape.WorldPosition = other.WorldPosition;
         return this;
     }
 
@@ -49,13 +49,14 @@ public class ShapePlacer
 
     public ShapePlacer AtEyeLevel(Shape container, float offset)
     {
-        _shape.LocalY = container.GetLocalSide(Side.Bottom) + Player.EyeHeight + offset;
+        _shape.WorldY = container.GetWorldSide(Side.Bottom) + Player.EyeHeight + offset;
         return this;
     }
 
     public ShapePlacer OnFloor(Shape other = null)
     {
-        _shape.BottomAnchored = (other ?? _shape.Parent).BottomAnchored;
+        var target = other ?? _shape.Parent;
+        _shape.SetWorldSide(Side.Bottom, target.GetWorldSide(Side.Bottom));
         return this;
     }
 
@@ -64,14 +65,14 @@ public class ShapePlacer
         other = other ?? _shape.Parent;
         foreach(var s in side.Decompose())
         {
-            _shape.SetLocalSide(s, other.GetLocalSide(s) + offset);
+            _shape.SetWorldSide(s, other.GetWorldSide(s) + offset);
         }
         return this;
     }
 
     public ShapePlacer AlignSideWith(Side side, Shape other, float offset = 0f)
     {
-        _shape.SetLocalSideUnanchored(side, other.GetLocalSide(side) + offset);
+        _shape.SetWorldSideUnanchored(side, other.GetWorldSide(side) + offset);
         return this;
     }
 
@@ -80,7 +81,7 @@ public class ShapePlacer
         other = other ?? _shape.Parent;
         foreach (var s in side.Decompose())
         {
-            _shape.SetLocalSide(s.Opposite(), other.GetLocalSide(s) + offset);
+            _shape.SetWorldSide(s.Opposite(), other.GetWorldSide(s) + offset);
         }
         return this;
     }
@@ -95,7 +96,7 @@ public class ShapePlacer
         if(side == Side.South || side == Side.East || side == Side.Top)
             amount = -amount;
 
-        _shape.SetLocalSide(side, _shape.Parent.GetLocalSide(side) + amount);
+        _shape.SetWorldSideUnanchored(side, _shape.Parent.GetWorldSide(side) + amount);
         return this;
     }
 }

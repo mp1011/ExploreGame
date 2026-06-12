@@ -37,7 +37,7 @@ public class LieInBed : PlotPoint
 
     protected override PlotUpdate UpdateActive(GameTime gameTime)
     {
-        _player.LocalPosition = _bed.LocalPosition;
+        _player.WorldPosition = _bed.WorldPosition;
 
         _cameraLookAt.Update(gameTime);
 
@@ -51,7 +51,7 @@ public class LieInBed : PlotPoint
     {
         if (State < PlotPointState.Ready)
             OnReady();
-        _player.LocalPosition = _bed.LocalPosition;
+        _player.WorldPosition = _bed.WorldPosition;
         return PlotUpdate.End;
     }
 }
