@@ -22,7 +22,7 @@ public class BgNeighborhood : Room
             .AxisStretch(Axis.X, Measure.Feet(900))
             .AxisStretch(Axis.Z, Measure.Feet(900));
 
-        Ground.Height = 1.0f;       
+        Ground.Height = 1.0f;
     }
 
     public void LoadChildren()

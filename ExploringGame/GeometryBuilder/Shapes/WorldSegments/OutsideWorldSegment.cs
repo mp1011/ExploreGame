@@ -30,7 +30,7 @@ public class OutsideWorldSegment : WorldSegment
         Depth = Measure.Feet(100);
         Width = Measure.Feet(100);
         Height = Measure.Feet(20);
-        SetLocalSide(Side.Bottom, UpstairsWorldSegment.FloorY - Measure.Feet(4));
+        SetWorldSide(Side.Bottom, UpstairsWorldSegment.FloorY - Measure.Feet(4));
 
         _deck = new FrontDeck(this);
         _frontYard = new FrontYard(this, _deck);
@@ -78,7 +78,7 @@ public class OutsideWorldSegment : WorldSegment
         _sideRoad.AdjustShape().AxisStretch(Axis.X, 200.0f);
 
         _sideRoad.Place().OnSideOuter(Side.East, _road).OnFloor(_frontYard);
-        _sideRoad.LocalZ = _frontYard.GetLocalSide(Side.South) + Measure.Feet(110);
+        _sideRoad.LocalZ = _frontYard.GetWorldSide(Side.South) + Measure.Feet(110);
 
         _westRoof.Depth = _frontYard.Depth;
         _eastRoof.Depth = _frontYard.Depth;
@@ -90,7 +90,7 @@ public class OutsideWorldSegment : WorldSegment
                     .OnSideOuter(Side.Top, _frontYard, -Measure.Inches(6))
                     .OnSideInner(Side.North, _frontYard.Deck, -Roof.RoofOverhang);
 
-        _westRoof.SetLocalSideUnanchored(Side.South, garage.GetLocalSide(Side.South) + Roof.RoofOverhang);
+        _westRoof.SetWorldSideUnanchored(Side.South, garage.GetWorldSide(Side.South) + Roof.RoofOverhang);
 
         _eastRoof.Depth = _westRoof.Depth;
         _eastRoof.Place().At(_westRoof).OnSideOuter(Side.East, _westRoof);
@@ -106,7 +106,7 @@ public class OutsideWorldSegment : WorldSegment
 
         _denRoof2.AdjustShape().From(_denRoof1);
         _denRoof2.Place().OnSideInner(Side.South, den, Measure.Feet(2));
-        _denRoof2.SetLocalSideUnanchored(Side.North, _denRoof1.GetLocalSide(Side.South));
+        _denRoof2.SetWorldSideUnanchored(Side.North, _denRoof1.GetWorldSide(Side.South));
 
         _denRoof1.VertexOffsets.Add(new VertexOffset(Side.South | Side.West, new Vector3(-8.5f, 0f, 0f)));
         _denRoof2.VertexOffsets.Add(new VertexOffset(Side.North | Side.West, new Vector3(-8.5f, 0f, 0f)));
@@ -116,8 +116,8 @@ public class OutsideWorldSegment : WorldSegment
         sideSection.Place().OnSideOuter(Side.South, _frontYard.SouthSection)
             .OnSideInner(Side.West, _frontYard.SouthSection);
 
-        sideSection.SetLocalSideUnanchored(Side.South, _sideRoad.GetLocalSide(Side.North));
-        sideSection.SetLocalSideUnanchored(Side.East, _sideRoad.GetLocalSide(Side.East));
+        sideSection.SetWorldSideUnanchored(Side.South, _sideRoad.GetWorldSide(Side.North));
+        sideSection.SetWorldSideUnanchored(Side.East, _sideRoad.GetWorldSide(Side.East));
 
 
         var sideSection2 = sideSection.Copy(inheritLightingGroup: false);
@@ -135,11 +135,11 @@ public class OutsideWorldSegment : WorldSegment
 
         var streetLight = AddChild(new StreetLight(_road));
         streetLight.Place().OnSideInner(Side.East, _road);
-        streetLight.LocalZ = _frontYard.GetLocalSide(Side.North) - Measure.Feet(10);
+        streetLight.LocalZ = _frontYard.GetWorldSide(Side.North) - Measure.Feet(10);
 
         var streetLight2 = AddChild(new StreetLight(_road));
         streetLight2.Place().OnSideInner(Side.East, _road);
-        streetLight2.LocalZ = sideSection.GetLocalSide(Side.South) + Measure.Feet(10);
+        streetLight2.LocalZ = sideSection.GetWorldSide(Side.South) + Measure.Feet(10);
 
         _frontYard.AddConnectingRoom(sideSection, Side.None);
         sideSection.AddConnectingRoom(sideSection2, Side.None);

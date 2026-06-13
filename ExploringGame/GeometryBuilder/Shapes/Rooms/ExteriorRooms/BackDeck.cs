@@ -34,14 +34,14 @@ public class BackDeck : Deck
         floor.LocalPosition = backDeckArea.LocalPosition;
         floor.Size = backDeckArea.Size;
 
-        floor.SetLocalSide(Side.Top, den.GetLocalSide(Side.Bottom));
-        floor.SetLocalSideUnanchored(Side.Bottom, den.GetLocalSide(Side.Bottom) - Measure.Feet(1));
+        floor.SetWorldSide(Side.Top, den.GetWorldSide(Side.Bottom));
+        floor.SetWorldSideUnanchored(Side.Bottom, den.GetWorldSide(Side.Bottom) - Measure.Feet(1));
         floor.AdjustShape().AddToSide(Side.East, SideStepWidth);
 
         LocalPosition = floor.LocalPosition;
         Size = floor.Size;
-        SetLocalSide(Side.Bottom, floor.GetLocalSide(Side.Top));
-        SetLocalSideUnanchored(Side.Top, den.GetLocalSide(Side.Top));
+        SetWorldSide(Side.Bottom, floor.GetWorldSide(Side.Top));
+        SetWorldSideUnanchored(Side.Top, den.GetWorldSide(Side.Top));
 
         var southWestPost = CreatePost(_deckColor).Place()
            .OnSideInner(Side.South, this, -PostInset)
@@ -72,12 +72,12 @@ public class BackDeck : Deck
         CreateRailing(southPost2, southEastPost, Color.Brown);
         CreateRailing(southEastPost, northEastPost, Color.Brown);
 
-        StepWidth = southPost2.GetLocalSide(Side.West) - southPost1.GetLocalSide(Side.East);
+        StepWidth = southPost2.GetWorldSide(Side.West) - southPost1.GetWorldSide(Side.East);
 
         var stairs = AddChild(new BackDeckStairs(backDeckArea, this));
         stairs.Place().OnFloor(backDeckArea)
             .OnSideOuter(Side.South, this);
-        stairs.SetLocalSide(Side.West, southPost1.GetLocalSide(Side.East));
+        stairs.SetWorldSide(Side.West, southPost1.GetWorldSide(Side.East));
 
         var sideStairs = AddChild(new BackDeckSideStairs(backDeckArea, this));
         sideStairs.Place().OnFloor(backDeckArea)
@@ -96,14 +96,14 @@ public class BackDeck : Deck
         lightSwitch.Place().AtParent()
             .AtStandardSwitchHeight()
             .OnSideInner(Side.South);
-        lightSwitch.SetLocalSide(Side.West, den.GetLocalSide(Side.West) + Measure.Feet(1));
+        lightSwitch.SetWorldSide(Side.West, den.GetWorldSide(Side.West) + Measure.Feet(1));
 
 
         var underDeckShadow = AddChild(new ShadowVolume());
         underDeckShadow.AdjustShape().From(this);
 
-        underDeckShadow.SetLocalSide(Side.Bottom, backDeckArea.GetLocalSide(Side.Bottom));
-        underDeckShadow.SetLocalSideUnanchored(Side.Top, floor.GetLocalSide(Side.Bottom));
+        underDeckShadow.SetWorldSide(Side.Bottom, backDeckArea.GetWorldSide(Side.Bottom));
+        underDeckShadow.SetWorldSideUnanchored(Side.Top, floor.GetWorldSide(Side.Bottom));
     }
 }
 

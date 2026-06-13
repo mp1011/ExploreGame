@@ -125,27 +125,27 @@ public class Physics
         {
             case Side.Bottom:
                 body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
-                body.Position = new JVector(shape.LocalX, shape.GetLocalSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.LocalZ); 
+                body.Position = new JVector(shape.LocalX, shape.GetWorldSide(Side.Bottom) - (WallColliderThickness / 2.0f), shape.LocalZ); 
                 break;
             case Side.Top:
                 body.AddShape(new BoxShape(shape.Width, WallColliderThickness, shape.Depth));
-                body.Position = new JVector(shape.LocalX, shape.GetLocalSide(Side.Top) + (WallColliderThickness / 2.0f), shape.LocalZ);
+                body.Position = new JVector(shape.LocalX, shape.GetWorldSide(Side.Top) + (WallColliderThickness / 2.0f), shape.LocalZ);
                 break;
             case Side.North:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
-                body.Position = new JVector(shape.LocalX, shape.LocalY, shape.GetLocalSide(Side.North) - (WallColliderThickness / 2.0f));
+                body.Position = new JVector(shape.LocalX, shape.LocalY, shape.GetWorldSide(Side.North) - (WallColliderThickness / 2.0f));
                 break;
             case Side.South:
                 body.AddShape(new BoxShape(shape.Width, shape.Height, WallColliderThickness));
-                body.Position = new JVector(shape.LocalX, shape.LocalY, shape.GetLocalSide(Side.South) + (WallColliderThickness / 2.0f));
+                body.Position = new JVector(shape.LocalX, shape.LocalY, shape.GetWorldSide(Side.South) + (WallColliderThickness / 2.0f));
                 break;
             case Side.West:
                 body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
-                body.Position = new JVector(shape.GetLocalSide(Side.West) - (WallColliderThickness / 2.0f), shape.LocalY, shape.LocalZ);
+                body.Position = new JVector(shape.GetWorldSide(Side.West) - (WallColliderThickness / 2.0f), shape.LocalY, shape.LocalZ);
                 break;
             case Side.East:
                 body.AddShape(new BoxShape(WallColliderThickness, shape.Height, shape.Depth));
-                body.Position = new JVector(shape.GetLocalSide(Side.East) + (WallColliderThickness / 2.0f), shape.LocalY, shape.LocalZ);
+                body.Position = new JVector(shape.GetWorldSide(Side.East) + (WallColliderThickness / 2.0f), shape.LocalY, shape.LocalZ);
                 break;
         }
 
@@ -156,6 +156,9 @@ public class Physics
 
     public RigidBody CreateStaticBody(ICollidable shape)
     {
+        if (!shape.Size.IsValidPositive())
+            return null;
+
         var body = CreateStaticBody(shape, shape.CollisionGroup, shape.CollidesWithGroups);
         body.Tag = (body.Tag as CollisionInfo) with { Shape = shape };
         return body;
@@ -172,6 +175,9 @@ public class Physics
 
     public RigidBody CreateStaticBody(IWithPosition shape, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
+        if (!shape.Size.IsValidPositive())
+            return null;
+
         if (shape.Size.X == 0 || shape.Size.Y == 0 || shape.Size.Z == 0)
             return null;
 
@@ -197,7 +203,7 @@ public class Physics
     }
 
     public RigidBody CreateDynamicBody(ICollidable entity)
-    {
+    {        
         var body = _world.CreateRigidBody();
         body.AddShape(new BoxShape(entity.Width(), entity.Height(), entity.Depth()));
         body.Position = entity.WorldPosition.ToJVector();

@@ -21,7 +21,7 @@ public class BasementStairs : Stairs, ICutoutShape
             width: Measure.Feet(3), depth: Measure.Feet(9))
     {
 
-        var offset = topFloor.GetLocalSide(Side.Top) - bottomFloor.GetLocalSide(Side.Top);
+        var offset = topFloor.GetWorldSide(Side.Top) - bottomFloor.GetWorldSide(Side.Top);
         VertexOffsets.Add(new VertexOffset(Side.NorthWest, new Vector3(0, -offset, 0)));
         VertexOffsets.Add(new VertexOffset(Side.NorthEast, new Vector3(0, -offset, 0)));
     }

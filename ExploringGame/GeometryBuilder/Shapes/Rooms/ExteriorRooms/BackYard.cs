@@ -67,109 +67,109 @@ public class BackYard : Room
                    .OnSideOuter(Side.East, frontSidewalk)
                    .OnSideInner(Side.North, northYard);
 
-        SetLocalSide(Side.Bottom, northYard.GetLocalSide(Side.Bottom));
-        SetLocalSideUnanchored(Side.South, frontSidewalk.GetLocalSide(Side.South) - 0.1f);
-        SetLocalSideUnanchored(Side.North, northYard.GetLocalSide(Side.North));
-        SetLocalSideUnanchored(Side.East, den.EastPart.GetLocalSide(Side.East) + 1.0f);
+        SetWorldSide(Side.Bottom, northYard.GetWorldSide(Side.Bottom));
+        SetWorldSideUnanchored(Side.South, frontSidewalk.GetWorldSide(Side.South) - 0.1f);
+        SetWorldSideUnanchored(Side.North, northYard.GetWorldSide(Side.North));
+        SetWorldSideUnanchored(Side.East, den.EastPart.GetWorldSide(Side.East) + 1.0f);
 
 
         var backSidewalk = AddChild(new Box(Theme, TextureKey.Concrete));
         backSidewalk.AdjustShape().From(frontSidewalk);
         backSidewalk.Place().OnSideOuter(Side.East, frontSidewalk);
-        backSidewalk.SetLocalSideUnanchored(Side.East, GetLocalSide(Side.East));
+        backSidewalk.SetWorldSideUnanchored(Side.East, GetWorldSide(Side.East));
 
         
         AddChild(new Fence(this, Side.North));
         var northGrass = new GrassSurface(this, TerrainSurface.DefaultLawn);
-        northGrass.SetLocalSideUnanchored(Side.South, backSidewalk.GetLocalSide(Side.North));
-        northGrass.Terrain.SetLocalSideUnanchored(Side.South, backSidewalk.GetLocalSide(Side.North));
+        northGrass.SetWorldSideUnanchored(Side.South, backSidewalk.GetWorldSide(Side.North));
+        northGrass.Terrain.SetWorldSideUnanchored(Side.South, backSidewalk.GetWorldSide(Side.North));
 
         var northWall = new OuterWall(this, Side.South, moulding: Side.East);
-        northWall.SetLocalSideUnanchored(Side.West, frontDeck.GetLocalSide(Side.East));
+        northWall.SetWorldSideUnanchored(Side.West, frontDeck.GetWorldSide(Side.East));
 
         var northWall_West = new OuterWall(this, Side.South, moulding: Side.West);        
         northWall_West.AdjustShape().From(northWall);
-        northWall_West.SetLocalSideUnanchored(Side.East, eastRoof.GetLocalSide(Side.West));
+        northWall_West.SetWorldSideUnanchored(Side.East, eastRoof.GetWorldSide(Side.West));
         northWall_West.VertexOffsets.Add(new VertexOffset(Side.Top | Side.East, new Vector3(0, Roof.RoofHeight, 0)));
 
         var northWall_Mid = new OuterWall(this, Side.South, moulding: Side.None);
         northWall_Mid.AdjustShape().From(northWall);
-        northWall_Mid.SetLocalSideUnanchored(Side.West, eastRoof.GetLocalSide(Side.West));
-        northWall_Mid.SetLocalSideUnanchored(Side.East, eastRoof.GetLocalSide(Side.East));
+        northWall_Mid.SetWorldSideUnanchored(Side.West, eastRoof.GetWorldSide(Side.West));
+        northWall_Mid.SetWorldSideUnanchored(Side.East, eastRoof.GetWorldSide(Side.East));
         northWall_Mid.VertexOffsets.Add(new VertexOffset(Side.Top | Side.West, new Vector3(0, Roof.RoofHeight, 0)));
 
-        northWall.SetLocalSideUnanchored(Side.West, northWall_Mid.GetLocalSide(Side.East));
+        northWall.SetWorldSideUnanchored(Side.West, northWall_Mid.GetWorldSide(Side.East));
 
         _eastSection.Place().At(this)
             .OnSideInner(Side.North, this)
             .OnSideOuter(Side.East, this);
         _eastSection.AdjustShape()
             .SliceFromWest(0, Measure.Feet(10));
-        _eastSection.SetLocalSideUnanchored(Side.South, southFrontYard.GetLocalSide(Side.South));
+        _eastSection.SetWorldSideUnanchored(Side.South, southFrontYard.GetWorldSide(Side.South));
 
         _eastSection.AddChild(new Fence(_eastSection, Side.North));
         _eastSection.AddChild(new Fence(_eastSection, Side.East));
         var eastGrass = new GrassSurface(_eastSection, TerrainSurface.DefaultLawn);
 
         var eastWall = new OuterWall(_eastSection, Side.West, moulding: Side.South);
-        eastWall.SetLocalSideUnanchored(Side.North, GetLocalSide(Side.South));
+        eastWall.SetWorldSideUnanchored(Side.North, GetWorldSide(Side.South));
       
         var eastWall2 = new OuterWall(_eastSection, Side.West, moulding: Side.None);
         eastWall2.AdjustShape().From(eastWall);
-        eastWall2.SetLocalSideUnanchored(Side.South, denRoof.GetLocalSide(Side.South));
+        eastWall2.SetWorldSideUnanchored(Side.South, denRoof.GetWorldSide(Side.South));
         eastWall2.VertexOffsets.Add(new VertexOffset(Side.Top | Side.South, new Vector3(0, Roof.RoofHeight, 0)));
 
-        eastWall.SetLocalSideUnanchored(Side.North, denRoof.GetLocalSide(Side.South));
+        eastWall.SetWorldSideUnanchored(Side.North, denRoof.GetWorldSide(Side.South));
         eastWall.VertexOffsets.Add(new VertexOffset(Side.Top | Side.North, new Vector3(0, Roof.RoofHeight, 0)));
 
         _southSection.Place().At(this);
-        _southSection.SetLocalSideUnanchored(Side.East, _eastSection.GetLocalSide(Side.West));
-        _southSection.SetLocalSideUnanchored(Side.South, _eastSection.GetLocalSide(Side.South));
-        _southSection.SetLocalSideUnanchored(Side.North, bedroom.GetLocalSide(Side.South) + OuterWall.StandardSpacingForGround);
-        _southSection.SetLocalSideUnanchored(Side.West, southFrontYard.GetLocalSide(Side.East));
+        _southSection.SetWorldSideUnanchored(Side.East, _eastSection.GetWorldSide(Side.West));
+        _southSection.SetWorldSideUnanchored(Side.South, _eastSection.GetWorldSide(Side.South));
+        _southSection.SetWorldSideUnanchored(Side.North, bedroom.GetWorldSide(Side.South) + OuterWall.StandardSpacingForGround);
+        _southSection.SetWorldSideUnanchored(Side.West, southFrontYard.GetWorldSide(Side.East));
 
         var southGrass = new GrassSurface(_southSection, TerrainSurface.DefaultLawn);
         
         var southFence = _southSection.AddChild(new Fence(_southSection, Side.South));
-        southFence.SetLocalSideUnanchored(Side.East, _eastSection.GetLocalSide(Side.East));
+        southFence.SetWorldSideUnanchored(Side.East, _eastSection.GetWorldSide(Side.East));
 
         var southFence2 = _southSection.AddChild(new Fence(_southSection, Side.South));
         southFence2.AdjustShape().From(southFence)
             .AddToSide(Side.West, Measure.Feet(30));
 
-        southFence.SetLocalSideUnanchored(Side.East, southFence2.GetLocalSide(Side.West) - Measure.Feet(6));
+        southFence.SetWorldSideUnanchored(Side.East, southFence2.GetWorldSide(Side.West) - Measure.Feet(6));
 
 
         _southSection.AddChild(new Fence(_southSection, Side.West));
 
         _midSection.Place().At(this);
-        _midSection.SetLocalSideUnanchored(Side.East, _eastSection.GetLocalSide(Side.West));
-        _midSection.SetLocalSideUnanchored(Side.South, _southSection.GetLocalSide(Side.North));
-        _midSection.SetLocalSideUnanchored(Side.West, kitchen.GetLocalSide(Side.East) + OuterWall.StandardSpacingForGround);
-        _midSection.SetLocalSideUnanchored(Side.North, kitchen.GetLocalSide(Side.South));
+        _midSection.SetWorldSideUnanchored(Side.East, _eastSection.GetWorldSide(Side.West));
+        _midSection.SetWorldSideUnanchored(Side.South, _southSection.GetWorldSide(Side.North));
+        _midSection.SetWorldSideUnanchored(Side.West, kitchen.GetWorldSide(Side.East) + OuterWall.StandardSpacingForGround);
+        _midSection.SetWorldSideUnanchored(Side.North, kitchen.GetWorldSide(Side.South));
 
         var midGrass = new GrassSurface(_midSection, TerrainSurface.DefaultLawn);
 
         // Position deckArea
         _deckArea.Place().At(this);
-        _deckArea.SetLocalSideUnanchored(Side.West, _midSection.GetLocalSide(Side.West));
-        _deckArea.SetLocalSideUnanchored(Side.East, _eastSection.GetLocalSide(Side.West));
-        _deckArea.SetLocalSideUnanchored(Side.South, _midSection.GetLocalSide(Side.North));
-        _deckArea.SetLocalSideUnanchored(Side.North, den.GetLocalSide(Side.South) + OuterWall.StandardSpacingForGround * 1.5f);
-        eastWall.SetLocalSideUnanchored(Side.South, _deckArea.GetLocalSide(Side.North));
+        _deckArea.SetWorldSideUnanchored(Side.West, _midSection.GetWorldSide(Side.West));
+        _deckArea.SetWorldSideUnanchored(Side.East, _eastSection.GetWorldSide(Side.West));
+        _deckArea.SetWorldSideUnanchored(Side.South, _midSection.GetWorldSide(Side.North));
+        _deckArea.SetWorldSideUnanchored(Side.North, den.GetWorldSide(Side.South) + OuterWall.StandardSpacingForGround * 1.5f);
+        eastWall.SetWorldSideUnanchored(Side.South, _deckArea.GetWorldSide(Side.North));
 
         new OuterWall(_deckArea, Side.West);
 
         var southEastWall = new OuterWall(_midSection, Side.West);
 
         var southWall = new OuterWall(_southSection, Side.North, moulding: Side.West);
-        southWall.SetLocalSideUnanchored(Side.East, southEastWall.GetLocalSide(Side.East));
+        southWall.SetWorldSideUnanchored(Side.East, southEastWall.GetWorldSide(Side.East));
      
         var southWall2 = new OuterWall(_southSection, Side.North, moulding: Side.East);
         southWall2.AdjustShape().From(southWall);
 
-        southWall2.SetLocalSideUnanchored(Side.West, eastRoof.GetLocalSide(Side.West));
-        southWall.SetLocalSideUnanchored(Side.East, eastRoof.GetLocalSide(Side.West));
+        southWall2.SetWorldSideUnanchored(Side.West, eastRoof.GetWorldSide(Side.West));
+        southWall.SetWorldSideUnanchored(Side.East, eastRoof.GetWorldSide(Side.West));
         
         southWall.VertexOffsets.Add(new VertexOffset(Side.Top | Side.East, new Vector3(0, Roof.RoofHeight, 0)));
         southWall2.VertexOffsets.Add(new VertexOffset(Side.Top | Side.West, new Vector3(0, Roof.RoofHeight, 0)));
@@ -199,14 +199,14 @@ public class BackYard : Room
         eastSidewalk.AdjustShape().From(backSidewalk).SetAxis(Axis.X, BackDeck.SideStairs.Depth);
         eastSidewalk.Place().OnSideInner(Side.North, backSidewalk)
             .OnSideOuter(Side.East, backSidewalk);
-        eastSidewalk.SetLocalSideUnanchored(Side.South, BackDeck.SideStairs.GetLocalSide(Side.North));
-        eastGrass.SetLocalSideUnanchored(Side.West, eastSidewalk.GetLocalSide(Side.East));
-        eastGrass.Terrain.SetLocalSideUnanchored(Side.West, eastSidewalk.GetLocalSide(Side.East));
+        eastSidewalk.SetWorldSideUnanchored(Side.South, BackDeck.SideStairs.GetWorldSide(Side.North));
+        eastGrass.SetWorldSideUnanchored(Side.West, eastSidewalk.GetWorldSide(Side.East));
+        eastGrass.Terrain.SetWorldSideUnanchored(Side.West, eastSidewalk.GetWorldSide(Side.East));
 
-        northGrass.SetLocalSideUnanchored(Side.East, eastGrass.GetLocalSide(Side.West));
+        northGrass.SetWorldSideUnanchored(Side.East, eastGrass.GetWorldSide(Side.West));
 
-        midGrass.SetLocalSideUnanchored(Side.East, eastGrass.GetLocalSide(Side.West));
-        southGrass.SetLocalSideUnanchored(Side.East, eastGrass.GetLocalSide(Side.West));
+        midGrass.SetWorldSideUnanchored(Side.East, eastGrass.GetWorldSide(Side.West));
+        southGrass.SetWorldSideUnanchored(Side.East, eastGrass.GetWorldSide(Side.West));
 
 
         var neighborLight = new NeighborLight(this);

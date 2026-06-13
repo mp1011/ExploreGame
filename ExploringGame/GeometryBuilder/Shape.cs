@@ -440,13 +440,14 @@ public abstract class Shape : IWithPosition, IShape
             return Parent.SelfOrDescendantOf(shape);
     }
 
-    public virtual Matrix GetWorldMatrix()
+    public Matrix GetWorldMatrix()
     {
         var scaleMatrix = Matrix.Identity; // todo, see about this
         var rotationMatrix = Rotation?.AsMatrix() ?? Matrix.Identity;
 
         return scaleMatrix * rotationMatrix * Matrix.CreateTranslation(WorldPosition);
     }
+
     public virtual RasterizerState RasterizerState { get; } = null;
 
     public override string ToString()

@@ -1,8 +1,1 @@
-﻿should child object positions be in absolute space, or relative space?
-
-absolute - easier for everything else to deal with
-	otherwise, true position has to be inferred from parent
-
-relative - easier for shapes themselves
-
-triangle buffer for child shape should be drawn assuming parent is at 0,0
+﻿active object positions are rendering incorrectly now

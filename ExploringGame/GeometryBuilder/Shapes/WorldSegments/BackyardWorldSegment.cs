@@ -51,8 +51,8 @@ public class BackyardWorldSegment : WorldSegment
         var slidingDoorJunction = _backyard.DeckArea.AddConnectingRoomWithJunction(new SlidingDoorJunction(_backyard.DeckArea, Side.North, HAlign.Right, StateKey.DeckSlidingDoorOpen),
             den, Side.North, HAlign.Left, 2.0f, adjustPlacement: false);
 
-        slidingDoorJunction.SetLocalSide(Side.Top, den.GetLocalSide(Side.Top) - Measure.Feet(1));
-        slidingDoorJunction.SetLocalSideUnanchored(Side.Bottom, _backyard.BackDeck.GetLocalSide(Side.Bottom));
+        slidingDoorJunction.SetWorldSide(Side.Top, den.GetWorldSide(Side.Top) - Measure.Feet(1));
+        slidingDoorJunction.SetWorldSideUnanchored(Side.Bottom, _backyard.BackDeck.GetWorldSide(Side.Bottom));
 
         _backyard.AddConnectingRoom(FindShape<FrontYard>(loadedSegments), Side.West);
 

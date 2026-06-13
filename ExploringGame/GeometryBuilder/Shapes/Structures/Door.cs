@@ -101,11 +101,11 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 
     public void SetHingePosition(Vector3 newHingePosition)
     {
-        var hingeX = HingePosition == HAlign.Left ? GetLocalSide(Side.West) : GetLocalSide(Side.East);
-        var currentHingePosition = LocalPosition.SetX(hingeX);
+        var hingeX = HingePosition == HAlign.Left ? GetWorldSide(Side.West) : GetWorldSide(Side.East);
+        var currentHingePosition = WorldPosition.SetX(hingeX);
 
         var delta = newHingePosition - currentHingePosition;
-        LocalPosition = LocalPosition + delta;
+        WorldPosition = WorldPosition + delta;
     }
 
     public override string ToString()

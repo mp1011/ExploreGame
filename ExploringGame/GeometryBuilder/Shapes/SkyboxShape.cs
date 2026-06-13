@@ -20,9 +20,4 @@ public abstract class SkyboxShape : Shape, ILightingGroup
         LocalPosition = Vector3.Zero;
         Size = new Vector3(50f, 50f, 50f);
     }
-
-    public override Matrix GetWorldMatrix()
-    {
-        return Matrix.Identity;
-    }
 }

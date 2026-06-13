@@ -32,7 +32,7 @@ public class TentacleController : IActiveObject
     {
         _body = Tentacle.ColliderBodies[0];
         _body.SetMassInertia(0.001f);
-        _physics.CreateHinge(_body, ConnectsTo.ColliderBodies[0], new Vector3(ConnectsTo.LocalPosition.X, ConnectsTo.GetLocalSide(Side.Top), ConnectsTo.LocalPosition.Z));
+        _physics.CreateHinge(_body, ConnectsTo.ColliderBodies[0], new Vector3(ConnectsTo.LocalPosition.X, ConnectsTo.GetWorldSide(Side.Top), ConnectsTo.LocalPosition.Z));
     }
 
     public void Stop()

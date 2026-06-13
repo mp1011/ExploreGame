@@ -27,8 +27,8 @@ public class BasementOffice : Room
         Height = Measure.Feet(7);
         Depth = Measure.Feet(22) - 3.0f;
 
-        SetLocalSide(Side.North, worldSegment.GetLocalSide(Side.North) + 1.9f);
-        SetLocalSide(Side.Bottom, 0f);
+        SetWorldSide(Side.North, worldSegment.GetWorldSide(Side.North) + 1.9f);
+        SetWorldSide(Side.Bottom, 0f);
 
         this.Place().OnSideInner(Side.NorthEast);
     }
@@ -58,8 +58,8 @@ public class BasementOffice : Room
 
         var ceilingBar = AddChild(new Box(TextureKey.Ceiling));
         ceilingBar.AdjustShape().From(this).SliceFromTop(0.1f, 0.4f).SliceFromNorth(4.0f, 0.4f);
-        ceilingBar.SetLocalSideUnanchored(Side.East, eastPart.GetLocalSide(Side.East));
-        ceilingBar.SetLocalSideUnanchored(Side.West, westPart.GetLocalSide(Side.West));
+        ceilingBar.SetWorldSideUnanchored(Side.East, eastPart.GetWorldSide(Side.East));
+        ceilingBar.SetWorldSideUnanchored(Side.West, westPart.GetWorldSide(Side.West));
 
         var oilTankRoom = new OilTankRoom(WorldSegment);
         oilTankRoom.Height = Height;

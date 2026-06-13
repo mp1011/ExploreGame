@@ -22,7 +22,7 @@ public class UpstairsHall : Room
     public UpstairsHall(WorldSegment worldSegment) : base(worldSegment)
     {
         Size = new Vector3(1.92f,  3.36f,  1.92f);
-        LocalPosition = new Vector3(-2.0699997f, 6.4799995f, -0.060000002f);
+        WorldPosition = new Vector3(-2.0699997f, 6.4799995f, -0.060000002f);
 
         LocalZ += 0.7f;
 
@@ -57,6 +57,6 @@ public class UpstairsHall : Room
         hallLightSwitch.Place().OnSideInner(Side.West).AtStandardSwitchHeight();
 
 
-        basementStairsDoor.SetLocalSide(Side.South, GetLocalSide(Side.North));
+        basementStairsDoor.SetWorldSide(Side.South, GetWorldSide(Side.North));
     }
 }

@@ -75,9 +75,4 @@ public class WorldSegment : Shape, ILightingGroup
     {
         return Array.Empty<Triangle>();
     }
-
-    public override Matrix GetWorldMatrix()
-    {
-        return Matrix.CreateTranslation(Vector3.Zero);
-    }
 }

@@ -37,12 +37,12 @@ public class DoorJunction : Room
 
     protected override void BeforeBuild()
     {
-        _door.LocalPosition = LocalPosition;
+        _door.WorldPosition = WorldPosition;
 
         var hingeSide = _door.HingePosition == HAlign.Left ? _wallSide.CounterClockwiseTurn()
                                                            : _wallSide.ClockwiseTurn();
 
-        var hingePosition = LocalPosition.SetAxis(hingeSide.GetAxis(), GetLocalSide(hingeSide));
+        var hingePosition = WorldPosition.SetAxis(hingeSide.GetAxis(), GetWorldSide(hingeSide));
         _door.SetHingePosition(hingePosition);
     }
 

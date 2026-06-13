@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExploringGame.GeometryBuilder;
+using System;
 
 namespace ExploringGame.GameDebug;
 
@@ -6,6 +7,8 @@ public static class Debug
 {
     public static string Watch1 { get; set; }
     public static string Watch2 { get; set; }
+
+    public static Shape WatchShape { get; set; }
 
     public static bool NoPhysics = false;
     public static bool NoNPCPhysics = false;

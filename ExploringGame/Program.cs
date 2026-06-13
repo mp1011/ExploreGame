@@ -7,11 +7,21 @@ using ExploringGame.Testing;
 using System.Diagnostics;
 using System.Linq;
 
-AudioService.Enabled = true;
-ExploringGame.GameDebug.Debug.NoScene = true;
+// character test
+//AudioService.Enabled = true;
+//ExploringGame.GameDebug.Debug.NoScene = true;
+//using var game = new Game1(new SingleSegmentGroup(TestMaps.NpcTest()));
 
-using var game = new Game1(new SingleSegmentGroup(TestMaps.NpcTest()));
-// using var game = new Game1(new HomeWorldSegmentGroup());
+
+//AudioService.Enabled = true;
+//ExploringGame.GameDebug.Debug.NoScene = true;
+//using var game = new Game1(new SingleSegmentGroup(TestMaps.JunctionTest(ExploringGame.GeometryBuilder.HAlign.Left, ExploringGame.GeometryBuilder.DoorDirection.Push)));
+
+
+//scene test
+AudioService.Enabled = true;
+ExploringGame.GameDebug.Debug.NoScene = false;
+using var game = new Game1(new HomeWorldSegmentGroup());
 
 
 //var testMap = TestMaps.CircleCutoutTest();

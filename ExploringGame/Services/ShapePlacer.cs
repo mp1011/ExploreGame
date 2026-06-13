@@ -96,7 +96,7 @@ public class ShapePlacer
         if(side == Side.South || side == Side.East || side == Side.Top)
             amount = -amount;
 
-        _shape.SetWorldSideUnanchored(side, _shape.Parent.GetWorldSide(side) + amount);
+        _shape.SetWorldSide(side, _shape.Parent.GetWorldSide(side) + amount);
         return this;
     }
 }

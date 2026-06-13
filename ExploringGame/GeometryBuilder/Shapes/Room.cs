@@ -47,7 +47,9 @@ public class Room : Shape, ILightingGroup
     public Room(WorldSegment worldSegment, float? width = null, float? depth = null, float? height = null,
         Theme theme = null)
     {
-        LocalPosition = worldSegment.LocalPosition;
+        worldSegment.AddChild(this);
+
+        WorldPosition = worldSegment.WorldPosition;
 
         if(width.HasValue)
             Width = width.Value;
@@ -56,12 +58,12 @@ public class Room : Shape, ILightingGroup
         if (height.HasValue) 
             Height = height.Value;
 
-        SetLocalSide(Side.Bottom, worldSegment.GetLocalSide(Side.Bottom));
+        SetWorldSide(Side.Bottom, worldSegment.GetWorldSide(Side.Bottom));
 
         if (theme != null)
             _theme = theme;
         WorldSegment = worldSegment;
-        worldSegment.AddChild(this);
+        
     }
 
     public override ILightingGroup LightingGroup => this;

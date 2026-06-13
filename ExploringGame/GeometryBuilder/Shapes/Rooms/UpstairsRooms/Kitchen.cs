@@ -25,9 +25,9 @@ public class Kitchen : Room
     public void LoadChildren(Bathroom bathroom)
     {
         _upstairsHall.AddConnectingRoom(new RoomConnection(_upstairsHall, this, Side.East, HAlign.Right));
-        SetLocalSideUnanchored(Side.North, _upstairsHall.NorthHall.GetLocalSide(Side.North));
+        SetWorldSideUnanchored(Side.North, _upstairsHall.NorthHall.GetWorldSide(Side.North));
 
-        this.SetLocalSideUnanchored(Side.South, bathroom.GetLocalSide(Side.North) - Measure.Feet(4.2f));
+        this.SetWorldSideUnanchored(Side.South, bathroom.GetWorldSide(Side.North) - Measure.Feet(4.2f));
 
         var light = new HighHatLight(this, 0f, 0f);
         var lightSwitch = new LightSwitch(this, Side.West, StateKey.KitchenLightOn);

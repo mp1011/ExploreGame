@@ -37,16 +37,16 @@ public class FrontYard : Room
         Width = Measure.Feet(40);
         Height = Deck.Height + Measure.Feet(4);
 
-        SetLocalSide(Side.Bottom, Deck.GetLocalSide(Side.Bottom) - Measure.Feet(4));
-        SetLocalSide(Side.South, Deck.WestPart.GetLocalSide(Side.South));
-        SetLocalSide(Side.East, Deck.GetLocalSide(Side.West));
+        SetWorldSide(Side.Bottom, Deck.GetWorldSide(Side.Bottom) - Measure.Feet(4));
+        SetWorldSide(Side.South, Deck.WestPart.GetWorldSide(Side.South));
+        SetWorldSide(Side.East, Deck.GetWorldSide(Side.West));
 
         AddConnectingRoom(Deck, Side.East);
 
         var deckStairs = Deck.AddChild(new FrontDeckStairs(this, Deck));
-        deckStairs.SetLocalSide(Side.Bottom, GetLocalSide(Side.Bottom));
-        deckStairs.SetLocalSide(Side.North, Deck.WestPart.GetLocalSide(Side.South));
-        deckStairs.SetLocalSide(Side.East, Deck.WestPart.GetLocalSide(Side.East));
+        deckStairs.SetWorldSide(Side.Bottom, GetWorldSide(Side.Bottom));
+        deckStairs.SetWorldSide(Side.North, Deck.WestPart.GetWorldSide(Side.South));
+        deckStairs.SetWorldSide(Side.East, Deck.WestPart.GetWorldSide(Side.East));
 
         var northPart = Copy(width: Width + Deck.Width + Measure.Feet(10), depth: Measure.Feet(6));
         northPart.Tag = "FrontYardNorth";
@@ -60,7 +60,7 @@ public class FrontYard : Room
         sidewalk.Place().OnFloor()
             .OnSideOuter(Side.South, northPart)
             .OnSideOuter(Side.East, this);
-        sidewalk.SetLocalSideUnanchored(Side.East, northPart.GetLocalSide(Side.East));
+        sidewalk.SetWorldSideUnanchored(Side.East, northPart.GetWorldSide(Side.East));
 
 
         var northFence = new Fence(northPart, Side.North);
@@ -72,8 +72,8 @@ public class FrontYard : Room
         AddChild(new GarageDoor(WorldSegment, garage, driveway, HAlign.Right, -1.0f));
 
         var westWall = new OuterWall(driveway, Side.East);
-        westWall.SetLocalSideUnanchored(Side.Top, GetLocalSide(Side.Top));
-        westWall.SetLocalSideUnanchored(Side.North, Deck.GetLocalSide(Side.South));
+        westWall.SetWorldSideUnanchored(Side.Top, GetWorldSide(Side.Top));
+        westWall.SetWorldSideUnanchored(Side.North, Deck.GetWorldSide(Side.South));
 
         FrontWalkway = new FrontWalkway(this);
 
@@ -87,8 +87,8 @@ public class FrontYard : Room
         var westOfWalkway = Copy();
         westOfWalkway.Place().OnSideOuter(Side.West, FrontWalkway)
             .OnSideOuter(Side.South, this);
-        westOfWalkway.SetLocalSideUnanchored(Side.South, driveway.GetLocalSide(Side.North));
-        westOfWalkway.SetLocalSideUnanchored(Side.West, GetLocalSide(Side.West));
+        westOfWalkway.SetWorldSideUnanchored(Side.South, driveway.GetWorldSide(Side.North));
+        westOfWalkway.SetWorldSideUnanchored(Side.West, GetWorldSide(Side.West));
 
 
         var southSection = Copy(inheritLightingGroup: false);

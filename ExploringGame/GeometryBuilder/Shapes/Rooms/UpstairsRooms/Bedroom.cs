@@ -6,6 +6,7 @@ using ExploringGame.Texture;
 using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using Microsoft.Xna.Framework;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
+using System.Linq;
 
 namespace ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 
@@ -24,10 +25,10 @@ public class Bedroom : Room
 
     public void LoadChildren()
     {
-        _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
+       _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push,  StateKey.BedroomDoorOpen), this, Side.South, HAlign.Right, 
                 adjustPlacement: false);
-       
+
         var closet = Copy(width: Measure.Feet(4), depth: Measure.Feet(4));
         closet.Place().OnSideOuter(Side.North, this, -Measure.Inches(6))
             .OnSideInner(Side.West, this, 1.0f);

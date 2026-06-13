@@ -33,7 +33,7 @@ public static partial class TestMaps
     {
         var segment = new WorldSegment();
         var room = new Room(segment, Measure.Feet(20), Measure.Feet(20), Measure.Feet(10), theme: new BasementRoomTheme());       
-        room.SetLocalSide(Side.Bottom, -1f);
+        room.SetWorldSide(Side.Bottom, -1f);
 
         var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
 
@@ -227,13 +227,15 @@ public static partial class TestMaps
         room.AddConnectingRoomWithJunction(new DoorJunction(southRoom, Side.South, doorAlign, doorDirection, StateKey.OfficeDoor1Open), southRoom, Side.South);
         room.AddConnectingRoomWithJunction(new DoorJunction(northRoom, Side.North, doorAlign, doorDirection, StateKey.OfficeDoor1Open), northRoom, Side.North);
 
+        var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
+
         return ws;
     }
 
     private static WorldSegment DoubleDoorJunctionTest(DoorDirection doorDirection)
     {
         var ws = new WorldSegment();
-        ws.SetLocalSide(Side.Bottom, 0f);
+        ws.SetWorldSide(Side.Bottom, 0f);
         var room = new Room(ws, theme: new BasementRoomTheme());
         room.Width = 10;
         room.Height = 3f;
@@ -420,7 +422,7 @@ public static partial class TestMaps
         northRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
         northRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(room, northRoom, Side.North, pos));
-        northRoom.SetLocalSideUnanchored(Side.Bottom, northRoom.GetLocalSide(Side.Bottom) + 0.4f);
+        northRoom.SetWorldSideUnanchored(Side.Bottom, northRoom.GetWorldSide(Side.Bottom) + 0.4f);
 
         var northRoom2 = new Room(world);
         northRoom2.Width = 40f;
@@ -439,7 +441,7 @@ public static partial class TestMaps
         westRoom.Theme.SideTextures[Side.Bottom] = floorTexture;
         westRoom.Theme.MainTexture = new TextureInfo(Color.LightGray, TextureKey.Wall);
         room.AddConnectingRoom(new RoomConnection(room, westRoom, Side.West, pos));
-        westRoom.SetLocalSideUnanchored(Side.Top, northRoom.GetLocalSide(Side.Top) - 0.4f);
+        westRoom.SetWorldSideUnanchored(Side.Top, northRoom.GetWorldSide(Side.Top) - 0.4f);
 
         var eastRoom = new Room(world);
         eastRoom.Width = 10f;

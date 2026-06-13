@@ -37,7 +37,7 @@ public class GrassSurface : Shape
     {
         _terrain = terrain;
         parent.AddChild(this);
-        LocalPosition = parent.LocalPosition;
+        WorldPosition = parent.WorldPosition;
         Size = parent.Size;
         _followTerrain = terrain != null;
     }
@@ -50,11 +50,11 @@ public class GrassSurface : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         // Get the bounds of this grass surface
-        float floorY = GetLocalSide(Side.Bottom);
-        float west   = GetLocalSide(Side.West);
-        float east   = GetLocalSide(Side.East);
-        float north  = GetLocalSide(Side.North);
-        float south  = GetLocalSide(Side.South);
+        float floorY = GetWorldSide(Side.Bottom);
+        float west   = GetWorldSide(Side.West);
+        float east   = GetWorldSide(Side.East);
+        float north  = GetWorldSide(Side.North);
+        float south  = GetWorldSide(Side.South);
 
         var triangles = new List<Triangle>();
         var rng = new Random(42);

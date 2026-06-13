@@ -23,6 +23,7 @@ public class NeighborhoodWorldSegment : WorldSegment
 
     public NeighborhoodWorldSegment()
     {
+        SetLocalSide(Side.Bottom, UpstairsWorldSegment.FloorY - Measure.Feet(4));
         _westNeighborhoodBlock = new BgNeighborhood(this);
         _northNeighborhoodBlock = new BgNeighborhood(this);
         _southNeighborhoodBlock = new BgNeighborhood(this);

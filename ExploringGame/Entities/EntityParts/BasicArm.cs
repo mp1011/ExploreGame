@@ -41,7 +41,7 @@ public class BasicArmPart : EntityPart<Puppet>, IControllable
         Height = length;
 
         LocalPosition = connectsTo.LocalPosition;
-        SetLocalSide(Side.Bottom, connectsTo.GetLocalSide(Side.Top));
+        SetWorldSide(Side.Bottom, connectsTo.GetWorldSide(Side.Top));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
