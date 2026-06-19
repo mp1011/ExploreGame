@@ -142,7 +142,7 @@ public class Room : Shape, ILightingGroup
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        var shape = BuildCuboid(); ;
+        var shape = BuildCuboid();
         shape = new SideRemover().Execute(shape, OmitSides);
        
         foreach(var connection in _roomConnections)
@@ -192,6 +192,7 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
 
     public static Placement2D CalcCutoutPlacement(Triangle[] triangles, Side side, Shape thisShape, Shape other)
     {
+        // triangles are in LOCAL coordinates
         var vertices = triangles.Where(p => p.Side == side).SelectMany(p => p.Vertices).ToArray();
         if (!vertices.Any())
             return new Placement2D(0, 0, 0, 0);
@@ -206,10 +207,10 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         float left, top, right, bottom;
 
         var thisFloor = wallBottom;
-        var otherFloor = other.GetLocalSide(Side.Bottom);
+        var otherFloor = other.GetRelativeLocalSide(Side.Bottom, thisShape.LocalParent);
 
         var thisCeiling = wallTop;
-        var otherCeiling = other.GetLocalSide(Side.Top);
+        var otherCeiling = other.GetRelativeLocalSide(Side.Top, thisShape.LocalParent);
 
         top = thisCeiling - otherCeiling;
         bottom = otherFloor - thisFloor;
@@ -223,21 +224,21 @@ public record RoomConnection(Room Room, Room Other, Side Side, float Position = 
         {
             case Side.South:
                 // South faces opposite direction from North, so left/right are swapped
-                left = wallEast - other.GetLocalSide(Side.East);
-                right = other.GetLocalSide(Side.West) - wallWest;
+                left = wallEast - other.GetRelativeLocalSide(Side.East, thisShape.LocalParent);
+                right = other.GetRelativeLocalSide(Side.West, thisShape.LocalParent) - wallWest;
                 break;
             case Side.North:
-                left = other.GetLocalSide(Side.West) - wallWest;
-                right = wallEast - other.GetLocalSide(Side.East);
+                left = other.GetRelativeLocalSide(Side.West, thisShape.LocalParent) - wallWest;
+                right = wallEast - other.GetRelativeLocalSide(Side.East, thisShape.LocalParent);
                 break;
             case Side.West:
                 // West faces opposite direction from East, so left/right are swapped
-                left = wallSouth - other.GetLocalSide(Side.South);
-                right = other.GetLocalSide(Side.North) - wallNorth;
+                left = wallSouth - other.GetRelativeLocalSide(Side.South, thisShape.LocalParent);
+                right = other.GetRelativeLocalSide(Side.North, thisShape.LocalParent) - wallNorth;
                 break;
             case Side.East:
-                left = other.GetLocalSide(Side.North) - wallNorth;
-                right = wallSouth - other.GetLocalSide(Side.South);
+                left = other.GetRelativeLocalSide(Side.North, thisShape.LocalParent) - wallNorth;
+                right = wallSouth - other.GetRelativeLocalSide(Side.South, thisShape.LocalParent);
                 break;
             default:
                 throw new System.NotImplementedException("fix me");

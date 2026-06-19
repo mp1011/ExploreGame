@@ -83,7 +83,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms
             foreach (var connection in _parentRoom.RoomConnections.Where(c => c.Side == _wallSide))
             {
                 var cutoutShape = connection.GetOtherRoom(_parentRoom);
-                shape = new RemoveSurfaceRegion().SubtractShape(shape, cutoutShape);
+                shape = new RemoveSurfaceRegion().SubtractShape(this, shape, cutoutShape);
             }
 
             return shape;          

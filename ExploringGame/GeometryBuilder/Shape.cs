@@ -164,11 +164,11 @@ public abstract class Shape : IWithPosition, IShape
         get => Size.Z; set => Size = new Vector3(Size.X, Size.Y, value);
     }
 
-    public float GetAxisPosition(Axis axis) => axis switch
+    public float GetWorldAxisPosition(Axis axis) => axis switch
     {
-        Axis.X => LocalPosition.X,
-        Axis.Y => LocalPosition.Y,
-        Axis.Z => LocalPosition.Z,
+        Axis.X => WorldPosition.X,
+        Axis.Y => WorldPosition.Y,
+        Axis.Z => WorldPosition.Z,
         _ => throw new ArgumentException("invalid axis")
     };
 
@@ -197,6 +197,28 @@ public abstract class Shape : IWithPosition, IShape
             case Axis.Y: LocalY = value; return;
             case Axis.Z: LocalZ = value; return;
         }
+    }
+
+    /// <summary>
+    /// Gives a side in terms of relative coordinates from the given shape
+    /// </summary>
+    /// <param name="side"></param>
+    /// <param name="relativeTo"></param>
+    /// <returns></returns>
+    public float GetRelativeLocalSide(Side side, Shape relativeTo)
+    {
+        var relativePosition = WorldPosition - relativeTo.WorldPosition;
+
+        return side switch
+        {
+            Side.North => relativePosition.Z - Size.Z / 2f,
+            Side.South => relativePosition.Z + Size.Z / 2f,
+            Side.West => relativePosition.X - Size.X / 2f,
+            Side.East => relativePosition.X + Size.X / 2f,
+            Side.Top => relativePosition.Y + Size.Y / 2f,
+            Side.Bottom => relativePosition.Y - Size.Y / 2f,
+            _ => throw new ArgumentException("Only singular sides can be used")
+        };
     }
 
     public float GetLocalSide(Side side)
@@ -290,7 +312,7 @@ public abstract class Shape : IWithPosition, IShape
     /// <returns></returns>
     public float RelativeAxisPoint(Axis axis, float value)
     {
-        var center = GetAxisPosition(axis);
+        var center = GetWorldAxisPosition(axis);
         var size = GetAxisSize(axis);
         var left = center - size / 2.0f;
         var right = center + size / 2.0f;

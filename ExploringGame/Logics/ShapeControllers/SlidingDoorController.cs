@@ -10,6 +10,7 @@ using Jitter2.Dynamics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
 
     public float TargetPosition => Open ? _openPosition : _closedPosition;
 
-    public float CurrentAxisPosition => Shape.GetAxisPosition(Shape.OpenAxis);
+    public float CurrentAxisPosition => Shape.GetWorldAxisPosition(Shape.OpenAxis);
 
     ICollidable IPlayerActivated.Shape => Shape;
     public SlidingDoorController(IPlayerInput playerInput, Player player, AudioService audioService, Physics physics,
@@ -53,10 +54,10 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
     public void Initialize()
     {
         _rigidBody = Shape.ColliderBodies.First();
-        _rigidBody.Position = Shape.LocalPosition.ToJVector();
+        _rigidBody.Position = Shape.WorldPosition.ToJVector();
 
-        _closedPosition = Shape.LocalPosition.AxisValue(Shape.OpenAxis);
-        _openPosition = (Shape.LocalPosition + (Shape.OpenSide.AsVector() * 1.0f)).AxisValue(Shape.OpenAxis);
+        _closedPosition = Shape.WorldPosition.AxisValue(Shape.OpenAxis);
+        _openPosition = (Shape.WorldPosition + (Shape.OpenSide.AsVector() * 1.2f)).AxisValue(Shape.OpenAxis);
     }
 
     public void Stop()
@@ -65,7 +66,7 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
 
     public void Update(GameTime gameTime)
     {
-        Shape.LocalPosition = _rigidBody.Position.ToVector3();
+        Shape.WorldPosition = _rigidBody.Position.ToVector3();
 
         if (this.CheckPlayerActivation(_physics))
             Open = !Open;
@@ -73,7 +74,7 @@ public class SlidingDoorController : IShapeController<MovingSlidingDoorPane>, IP
         var distance = (CurrentAxisPosition - TargetPosition).Abs();
         if(distance < 0.01f)
         {
-            _rigidBody.Position = Shape.LocalPosition.SetAxis(Shape.OpenAxis, TargetPosition).ToJVector();
+            _rigidBody.Position = Shape.WorldPosition.SetAxis(Shape.OpenAxis, TargetPosition).ToJVector();
             _rigidBody.Velocity = new Jitter2.LinearMath.JVector(0, 0, 0);
         }
         else

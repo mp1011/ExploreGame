@@ -15,15 +15,20 @@ public class GlassPane : Shape
     public override ShapeBufferType ShapeBufferType => ShapeBufferType.Glass;
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 
-    public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this);
+    public override IColliderMaker ColliderMaker { get; }
 
     private Side _wallSide;
 
     private Theme _theme = new Theme(TextureSheetKey.Upstairs, TextureKey.Plain, new Color(255, 255, 255, 240));
     public override Theme Theme => _theme;
 
-    public GlassPane(Side wallSide)
+    public GlassPane(Side wallSide, bool hasCollision)
     {
+        if (hasCollision)
+            ColliderMaker = ColliderMakers.BoundingBox(this);
+        else
+            ColliderMaker = null;
+
         _wallSide = wallSide;
     }
 

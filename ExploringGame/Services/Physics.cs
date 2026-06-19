@@ -226,7 +226,7 @@ public class Physics
     public RigidBody CreateCapsule(ICollidable entity, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
     {
         var body = _world.CreateRigidBody();
-        body.AddShape(new CapsuleShape(0.4f, 2.0f)); //todo
+        body.AddShape(new CapsuleShape(0.4f, 1.0f)); //todo
         body.Position = entity.WorldPosition.ToJVector();
         body.MotionType = MotionType.Dynamic;
 

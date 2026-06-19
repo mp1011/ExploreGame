@@ -45,26 +45,6 @@ class RemoveSurfaceRegion
 
         return triangles;
     }
-
-    public Triangle[] RemoveCutouts_alt(Shape shape, Triangle[] triangles)
-    {
-        foreach(var cutoutShape in shape.Children.OfType<ICutoutShape>())
-        {
-            var cutoutSurface = cutoutShape.Build().Where(p => p.Side == cutoutShape.ParentCutoutSide.Opposite()).ToArray();
-            if (cutoutSurface.Length == 0)
-                continue;
-
-            var parentSide = triangles.Where(p => p.Side == cutoutShape.ParentCutoutSide).ToArray();
-            var sideCenter = parentSide.SelectMany(p => p.Vertices).Center();
-
-            cutoutSurface = cutoutSurface.Select(p => p.SetSide(cutoutShape.ParentCutoutSide, shape.GetLocalSide(cutoutShape.ParentCutoutSide))).ToArray();
-            var cutout2D = new ConvexHull(cutoutSurface.Select(p => p.As2D(sideCenter, shape.ViewFrom)).ToArray());
-                      
-            triangles = triangles.SelectMany(p => RemoveFace(p, cutoutShape.ParentCutoutSide, cutout2D, sideCenter, shape.ViewFrom)).ToArray();
-        }
-
-        return triangles;
-    }
     
     private IEnumerable<Triangle> RemoveFace(Triangle triangle, Side surface, ConvexHull face, Vector3 sideCenter, ViewFrom viewFrom)
     {
@@ -86,7 +66,7 @@ class RemoveSurfaceRegion
     /// Subtracts the volume of a cutout shape from triangles.
     /// Automatically handles projection based on each triangle's orientation.
     /// </summary>
-    public Triangle[] SubtractShape(Triangle[] triangles, Shape cutoutShape)
+    public Triangle[] SubtractShape(Shape sourceShape, Triangle[] triangles, Shape cutoutShape)
     {
         // Group triangles by side so we can process each surface independently
         var trianglesBySide = triangles.GroupBy(t => t.Side).ToArray();
@@ -105,7 +85,7 @@ class RemoveSurfaceRegion
             var viewFrom = ViewFrom.Outside;
 
             // Get cutout bounds projected onto this surface
-            var cutoutBounds = GetShapeBoundsOn2DSurface(cutoutShape, side, sideCenter, viewFrom);
+            var cutoutBounds = GetShapeBoundsOn2DSurface(cutoutShape, side, sideCenter, viewFrom, sourceShape.LocalParent);
 
             // Check if the cutout actually intersects this surface
             if (!DoesCutoutIntersectSurface(cutoutShape, side))
@@ -154,19 +134,19 @@ class RemoveSurfaceRegion
     /// <summary>
     /// Projects a 3D shape's bounds onto a 2D surface
     /// </summary>
-    private ConvexHull GetShapeBoundsOn2DSurface(Shape shape, Side surface, Vector3 sideCenter, ViewFrom viewFrom)
+    private ConvexHull GetShapeBoundsOn2DSurface(Shape shape, Side surface, Vector3 sideCenter, ViewFrom viewFrom, Shape relativeTo)
     {
         // Get the 3D bounding box of the shape
         var bounds = new[]
         {
-            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.North)),
-            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.South)),
-            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.North)),
-            new Vector3(shape.GetLocalSide(Side.West), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.South)),
-            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.North)),
-            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Bottom), shape.GetLocalSide(Side.South)),
-            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.North)),
-            new Vector3(shape.GetLocalSide(Side.East), shape.GetLocalSide(Side.Top), shape.GetLocalSide(Side.South))
+            new Vector3(shape.GetRelativeLocalSide(Side.West, relativeTo), shape.GetRelativeLocalSide(Side.Bottom, relativeTo), shape.GetRelativeLocalSide(Side.North, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.West, relativeTo), shape.GetRelativeLocalSide(Side.Bottom, relativeTo), shape.GetRelativeLocalSide(Side.South, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.West, relativeTo), shape.GetRelativeLocalSide(Side.Top, relativeTo), shape.GetRelativeLocalSide(Side.North, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.West, relativeTo), shape.GetRelativeLocalSide(Side.Top, relativeTo), shape.GetRelativeLocalSide(Side.South, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.East, relativeTo), shape.GetRelativeLocalSide(Side.Bottom, relativeTo), shape.GetRelativeLocalSide(Side.North, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.East, relativeTo), shape.GetRelativeLocalSide(Side.Bottom, relativeTo), shape.GetRelativeLocalSide(Side.South, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.East, relativeTo), shape.GetRelativeLocalSide(Side.Top, relativeTo), shape.GetRelativeLocalSide(Side.North, relativeTo)),
+            new Vector3(shape.GetRelativeLocalSide(Side.East, relativeTo), shape.GetRelativeLocalSide(Side.Top, relativeTo), shape.GetRelativeLocalSide(Side.South, relativeTo))
         };
 
         // Project the bounds onto 2D surface

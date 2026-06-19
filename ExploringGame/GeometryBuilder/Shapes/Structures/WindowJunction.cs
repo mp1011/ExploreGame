@@ -104,7 +104,7 @@ public class Window : Room
         }
 
         // glass pane - thin transparent glass in the window opening
-        var glassPane = AddChild(new GlassPane(wallSide));
+        var glassPane = AddChild(new GlassPane(wallSide, hasCollision: true));
         glassPane.AdjustShape()
             .SetAxis(_wallSide.GetAxis(), 0.02f) // Very thin glass
             .SetAxis(_wallSide.GetPerpendicularAxis(), width)

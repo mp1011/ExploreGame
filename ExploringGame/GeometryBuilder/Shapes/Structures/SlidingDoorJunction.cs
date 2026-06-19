@@ -21,13 +21,13 @@ public class SlidingDoorJunction : Room
         _wallSide = wallSide;
         if (wallSide.GetAxis() == Axis.Z)
         {
-            Width = Door.StandardWidth * 2;
+            Width = Door.StandardWidth * 2.2f;
             Depth = 0.2f;
             Height = room.Height;
         }
         else
         {
-            Depth = Door.StandardWidth * 2;
+            Depth = Door.StandardWidth * 2.2f;
             Width = 0.2f;
             Height = room.Height;
         }
@@ -63,6 +63,7 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject
     public override CollisionGroup CollisionGroup => CollisionGroup.Doors;
     public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
 
+    public virtual float WidthPercent => 0.6f;
 
     public SlidingDoorPane(SlidingDoorJunction junction, Side wallSide)
     {
@@ -77,7 +78,7 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject
         var sideAxis = _wallSide.ClockwiseTurn().GetAxis();
         var thicknessAxis = _wallSide.GetAxis();
 
-        this.AdjustShape().SetAxis(sideAxis, Parent.GetAxisSize(sideAxis) * 0.6f)
+        this.AdjustShape().SetAxis(sideAxis, Parent.GetAxisSize(sideAxis) * WidthPercent)
             .SetAxis(thicknessAxis, Parent.GetAxisSize(thicknessAxis) * 0.3f)
             .SetAxis(Axis.Y, Parent.Height);
 
@@ -91,7 +92,7 @@ public class SlidingDoorPane : PlaceableShape, IPlaceableObject
 
         var side1 = AddChild(new Box(Theme, TextureKey.Plain));
         var side2 = AddChild(new Box(Theme, TextureKey.Plain));
-        var pane = AddChild(new GlassPane(_wallSide));
+        var pane = AddChild(new GlassPane(_wallSide, hasCollision: false));
 
         pane.AdjustShape().From(this)
             .SetAxis(thicknessAxis, Measure.Inches(2))
@@ -137,6 +138,8 @@ public class MovingSlidingDoorPane : SlidingDoorPane, IPlaceableObject, IControl
     public SlidingDoorController Controller { get; private set; }
 
     public override IColliderMaker ColliderMaker => new SlidingDoorColliderMaker(this);
+
+    public override float WidthPercent => 0.5f;
 
     public MovingSlidingDoorPane(SlidingDoorJunction junction, Side wallSide) : base(junction, wallSide)
     {

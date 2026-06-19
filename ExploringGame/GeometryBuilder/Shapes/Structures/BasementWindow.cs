@@ -26,7 +26,7 @@ public class BasementWindow : Room
         SetLocalSideUnanchored(Side.Top, basementRoom.GetLocalSide(Side.Top));
 
         // glass pane - thin transparent glass in the window opening
-        var glassPane = AddChild(new GlassPane(basementRoomWindowSide));
+        var glassPane = AddChild(new GlassPane(basementRoomWindowSide, hasCollision: true));
         glassPane.AdjustShape()
             .SetAxis(basementRoomWindowSide.GetAxis(), 0.02f) // Very thin glass
             .SetAxis(basementRoomWindowSide.GetPerpendicularAxis(), Width)
