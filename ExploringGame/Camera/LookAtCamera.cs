@@ -33,11 +33,11 @@ public class LookAtCamera : ICamera
         var cameraPosition = currentWorld.Translation;
         WorldPosition = cameraPosition;
 
-        var targetDirection = _lookAt.LocalPosition - cameraPosition;
+        var targetDirection = _lookAt.WorldPosition - cameraPosition;
         if (targetDirection.LengthSquared() <= float.Epsilon)
             return _lastView;
 
-        var targetView = Matrix.CreateLookAt(cameraPosition, _lookAt.LocalPosition, Vector3.Up);
+        var targetView = Matrix.CreateLookAt(cameraPosition, _lookAt.WorldPosition, Vector3.Up);
         var currentRotation = Quaternion.CreateFromRotationMatrix(currentWorld);
         var targetRotation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(targetView));
         var angularDistance = QuaternionAngle(currentRotation, targetRotation);

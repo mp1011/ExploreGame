@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+﻿using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -141,7 +142,7 @@ public class Room : Shape, ILightingGroup
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
-        var shape = BuildCuboid();
+        var shape = BuildCuboid(); ;
         shape = new SideRemover().Execute(shape, OmitSides);
        
         foreach(var connection in _roomConnections)

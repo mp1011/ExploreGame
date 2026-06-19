@@ -94,9 +94,12 @@ public class Physics
         _world.Remove(body);
     }
     
-    public RigidBody CreateMeshShape(Triangle[] triangles)
+    public RigidBody CreateMeshShape(Vector3 worldOrigin, Triangle[] triangles)
     {
-        triangles = triangles.Select(p=>p.Invert()).ToArray();
+        triangles = triangles
+            .Select(p => p.Invert())
+            .InWorldCoordinates(worldOrigin);
+
         var body = _world.CreateRigidBody();
 
         var jTriangles = triangles.Where(p=>!p.IsDegenerate).Select(t => new JTriangle(

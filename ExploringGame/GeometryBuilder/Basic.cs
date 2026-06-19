@@ -121,6 +121,11 @@ public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo,
         }
     }
 
+    public Triangle Offset(Vector3 offset)
+    {
+        return new Triangle(A + offset, B + offset, C + offset, TextureInfo, Side);
+    }
+
     public Vector3 Normal => Vector3.Normalize(Vector3.Cross(C - A, B - A));
 
     public Winding CalcWinding(Vector3 observationPoint)

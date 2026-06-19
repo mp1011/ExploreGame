@@ -37,6 +37,6 @@ public class RoomColliderMaker : IColliderMaker
             Side.Bottom,
         };
 
-        return sides.Select(p => physics.CreateMeshShape(triangles.Where(t => t.Side == p).ToArray()));
+        return sides.Select(p => physics.CreateMeshShape(_room.LocalParent.WorldPosition, triangles.Where(t => t.Side == p).ToArray()));
     }
 }

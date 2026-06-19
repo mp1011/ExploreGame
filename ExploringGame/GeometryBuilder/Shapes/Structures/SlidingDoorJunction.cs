@@ -44,8 +44,8 @@ public class SlidingDoorJunction : Room
         _fixedPane.PlacePane(_wallSide.CounterClockwiseTurn());
         _movingPane.PlacePane(_wallSide.ClockwiseTurn());
 
-        _fixedPane.LocalPosition = _fixedPane.LocalPosition + _wallSide.AsVector() * -0.1f;
-        _movingPane.LocalPosition = _movingPane.LocalPosition + _wallSide.AsVector() * 0.1f;
+        _fixedPane.WorldPosition = _fixedPane.WorldPosition + _wallSide.AsVector() * -0.1f;
+        _movingPane.WorldPosition = _movingPane.WorldPosition + _wallSide.AsVector() * 0.1f;
 
     }
 }
