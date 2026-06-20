@@ -22,7 +22,7 @@ public class SceneManager
         CurrentScene = initialScene;
         CurrentAct = initialScene.Acts.First();
 
-      //   FastForwardToAct<ActTwo>();
+        FastForwardToAct<ActTwo>();
     }
 
     public void Update(GameTime gameTime)

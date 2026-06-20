@@ -32,10 +32,9 @@ public class PuppetController : IActiveObject
         _mover = new EntityMover(Puppet, _physics, ignoreY: false);
         _mover.Initialize();
 
-     //   _mover.Motion.Acceleration = 0.1f;
-      //  _mover.Motion.TargetMotion = new Vector3(-1.0f, 0.0f, 1.0f);
+        Puppet.LeftShoulder.InitializePhysicsObject();
+        Puppet.RightShoulder.InitializePhysicsObject();
 
-        // don't like this
         Puppet.ColliderBodies[0].SetMassInertia(10f);
         Puppet.LeftShoulder.ColliderBodies[0].SetMassInertia(0.01f);
         Puppet.RightShoulder.ColliderBodies[0].SetMassInertia(0.01f);
@@ -63,12 +62,8 @@ public class PuppetController : IActiveObject
 
         Puppet.Rotation = new Rotation(Puppet.ColliderBodies[0].Orientation.ToQuaternion());
 
-        // need to make this better
-        Puppet.LeftShoulder.WorldPosition = Puppet.LeftShoulder.ColliderBodies[0].Position.ToVector3();
-        Puppet.LeftShoulder.Rotation = new Rotation(Puppet.LeftShoulder.ColliderBodies[0].Orientation.ToQuaternion());
-
-        Puppet.RightShoulder.WorldPosition = Puppet.RightShoulder.ColliderBodies[0].Position.ToVector3();
-        Puppet.RightShoulder.Rotation = new Rotation(Puppet.RightShoulder.ColliderBodies[0].Orientation.ToQuaternion());
+        Puppet.LeftShoulder.SyncShapePosition();
+        Puppet.RightShoulder.SyncShapePosition();
 
 
         //t += gameTime.ElapsedGameTime.TotalSeconds;

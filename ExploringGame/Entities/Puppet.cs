@@ -15,7 +15,7 @@ using System.Net.Quic;
 
 namespace ExploringGame.Entities;
 
-public class Puppet : PlaceableShape, IControllable, ICollidable
+public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
 {
     public override CollisionGroup CollisionGroup => CollisionGroup.MovingObjects;
 
@@ -27,8 +27,10 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
 
     public override IColliderMaker ColliderMaker { get; } 
 
-    public Shape LeftShoulder { get; }
-    public Shape RightShoulder { get; }
+    public Shoulder LeftShoulder { get; }
+    public Shoulder RightShoulder { get; }
+    public BasicArm LeftArm { get; }
+    public BasicArm RightArm { get; }   
 
     public Puppet(WorldSegment worldSegment)
     {
@@ -68,8 +70,8 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
         // X = 2f;
         //    Y = 1f;
 
-        worldSegment.AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f, 1.0f, 1.0f));
-        worldSegment.AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f, 1.0f, 1.0f));
+        LeftArm = worldSegment.AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f, 1.0f, 1.0f));
+        RightArm = worldSegment.AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f, 1.0f, 1.0f));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

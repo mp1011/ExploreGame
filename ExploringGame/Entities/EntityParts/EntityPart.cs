@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 namespace ExploringGame.Entities.EntityParts;
 
 
-public abstract class EntityPart<TEntity> : PlaceableShape, ICollidable
+public abstract class EntityPart<TEntity> : PlaceableShape, ICollidable, IPhysicsShape
     where TEntity : PlaceableShape
 {
     public TEntity Entity { get; }
