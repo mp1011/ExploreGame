@@ -29,17 +29,19 @@ public class PuppetController : IActiveObject
 
     public void Initialize()                                      
     {
-        Puppet.LocalX = 2;
-        Puppet.LocalY = 1;
-
         _mover = new EntityMover(Puppet, _physics, ignoreY: false);
         _mover.Initialize();
 
-        _mover.Motion.Acceleration = 0.1f;
-        _mover.Motion.TargetMotion = new Vector3(1.0f, 0.0f, 1.0f);
+     //   _mover.Motion.Acceleration = 0.1f;
+      //  _mover.Motion.TargetMotion = new Vector3(-1.0f, 0.0f, 1.0f);
 
         // don't like this
         Puppet.ColliderBodies[0].SetMassInertia(10f);
+        Puppet.LeftShoulder.ColliderBodies[0].SetMassInertia(0.01f);
+        Puppet.RightShoulder.ColliderBodies[0].SetMassInertia(0.01f);
+
+        _physics.Weld(Puppet.LeftShoulder, Puppet, Puppet.LeftShoulder.WorldPosition);
+        _physics.Weld(Puppet.RightShoulder, Puppet, Puppet.RightShoulder.WorldPosition);
     }
 
     public void Stop()
@@ -49,19 +51,36 @@ public class PuppetController : IActiveObject
     private double t = 0;
     public void Update(GameTime gameTime)
     {
+        // GameDebug.Debug.Watch1 = $"P={Puppet.ColliderBodies[0].Position} S={Puppet.LeftShoulder.ColliderBodies[0].Position}";
+        GameDebug.Debug.Watch1 = $"{Puppet.LeftShoulder.ColliderBodies[0].Position} {Puppet.LeftShoulder.WorldPosition}";
+
         if (GameDebug.Debug.NoNPCPhysics)
             return;
 
         _mover.Update(gameTime);
 
-        t += gameTime.ElapsedGameTime.TotalSeconds;
+        Puppet.ColliderBodies[0].AngularVelocity = new JVector(0.0f, 2.0f, 0.0f);
+
+        Puppet.Rotation = new Rotation(Puppet.ColliderBodies[0].Orientation.ToQuaternion());
+
+        // need to make this better
+        Puppet.LeftShoulder.WorldPosition = Puppet.LeftShoulder.ColliderBodies[0].Position.ToVector3();
+        Puppet.LeftShoulder.Rotation = new Rotation(Puppet.LeftShoulder.ColliderBodies[0].Orientation.ToQuaternion());
+
+        Puppet.RightShoulder.WorldPosition = Puppet.RightShoulder.ColliderBodies[0].Position.ToVector3();
+        Puppet.RightShoulder.Rotation = new Rotation(Puppet.RightShoulder.ColliderBodies[0].Orientation.ToQuaternion());
 
 
-        if (t >= 2.0)
-        {
-            t = 0;
-            _mover.Motion.TargetMotion = new Vector3(10 * ((float)_rng.NextDouble() - 0.5f), 2 * ((float)_rng.NextDouble() - 0.5f), 10 * ((float)_rng.NextDouble() - 0.5f));
-        }
+        //t += gameTime.ElapsedGameTime.TotalSeconds;
+
+
+        //if (t >= 2.0)
+        //{
+        //    t = 0;
+        //    _mover.Motion.TargetMotion = new Vector3(10 * ((float)_rng.NextDouble() - 0.5f), 2 * ((float)_rng.NextDouble() - 0.5f), 10 * ((float)_rng.NextDouble() - 0.5f));
+        //}
+
+
     }
 }
 
@@ -83,7 +102,7 @@ public class PuppetPartController : IActiveObject
     public void Initialize()
     {
         _body = PuppetPart.ColliderBodies[0];
-        _physics.CreateHinge(_body, PuppetPart.Entity.ColliderBodies[0], PuppetPart.Entity.LocalPosition);
+        _physics.CreateHinge(PuppetPart, PuppetPart.Entity, PuppetPart.Entity.LocalPosition);
     }
 
     public void Stop()

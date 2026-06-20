@@ -167,12 +167,41 @@ public class Physics
         return body;
     }
 
-    public void CreateHinge(RigidBody body, RigidBody other, Vector3 hingeWorldPosition)
+    /// <summary>
+    /// Fixes the relative position of two rigid bodies based on their current position
+    /// </summary>
+    /// <param name="body"></param>
+    /// <param name="weldTo"></param>
+    public void Weld(GeometryBuilder.Shape body, GeometryBuilder.Shape weldTo, Vector3 weldPosition)
     {
-        body.AffectedByGravity = true;
+        if (body.LocalParent != weldTo.LocalParent)
+            throw new Exception("Physics joined shapes must belong to the same parent.");
 
+        if (body.ColliderBodies[0].MotionType == MotionType.Static || weldTo.ColliderBodies[0].MotionType == MotionType.Static)
+            throw new Exception("Physics joined shapes cannot be static");
 
-        var ballSocket = _world.CreateConstraint<BallSocket>(body, other);
+        //   var constraint = _world.CreateConstraint<BallSocket>(body.ColliderBodies[0], weldTo.ColliderBodies[0]);
+        //var constraint = _world.CreateConstraint<FixedAngle>(weldTo.ColliderBodies[0], body.ColliderBodies[0]);
+      //  var constraint = _world.CreateConstraint<FixedAngle>(body.ColliderBodies[0], weldTo.ColliderBodies[0]);
+
+     //   constraint.Initialize();
+       // constraint.Initialize(weldPosition.ToJVector());
+
+         var weldJoint = new WeldJoint(_world, body.ColliderBodies[0], weldTo.ColliderBodies[0], weldPosition.ToJVector());
+//         var weldJoint = new WeldJoint(_world,  weldTo.ColliderBodies[0], body.ColliderBodies[0], weldPosition.ToJVector());
+    }
+
+    public void CreateHinge(GeometryBuilder.Shape body, GeometryBuilder.Shape other, Vector3 hingeWorldPosition)
+    {
+        if (body.LocalParent != other.LocalParent)
+            throw new Exception("Physics jointed shapes must belong to the same parent.");
+
+        if (body.ColliderBodies[0].MotionType == MotionType.Static || other.ColliderBodies[0].MotionType == MotionType.Static)
+            throw new Exception("Physics joined shapes cannot be static");
+
+        body.ColliderBodies[0].AffectedByGravity = true;
+
+        var ballSocket = _world.CreateConstraint<BallSocket>(body.ColliderBodies[0], other.ColliderBodies[0]);
         ballSocket.Initialize(hingeWorldPosition.ToJVector());      
     }
 

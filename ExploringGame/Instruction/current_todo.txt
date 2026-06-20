@@ -1,1 +1,3 @@
-﻿
+﻿need to physics join the shoulder to the main body
+
+	

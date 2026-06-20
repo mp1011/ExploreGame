@@ -27,8 +27,12 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
 
     public override IColliderMaker ColliderMaker { get; } 
 
+    public Shape LeftShoulder { get; }
+    public Shape RightShoulder { get; }
+
     public Puppet(WorldSegment worldSegment)
     {
+     
         ColliderMaker = new SphereColliderMaker(this);
         Size = new Vector3(1.0f, 2.0f, 1.0f);
 
@@ -40,20 +44,32 @@ public class Puppet : PlaceableShape, IControllable, ICollidable
         torso.SetWorldSide(Side.Top, GetWorldSide(Side.Top));
 
         var head = AddChild(new Ellipsoid(0.5f));
+        head.Depth = 0.6f;
         head.LocalPosition = LocalPosition;
         head.SetWorldSide(Side.Bottom, GetWorldSide(Side.Top));
 
+        WorldPosition = new Vector3(0f, 2f, 3f);
 
-        var leftShoulder = AddChild(new Ellipsoid(0.2f, (new Theme(Color.GreenYellow))));
-        leftShoulder.LocalPosition = LocalPosition;
-        leftShoulder.Place().OnSideOuter(Side.Top);
-        leftShoulder.LocalX += 0.5f;
+        LeftShoulder = worldSegment.AddChild(new Shoulder(this));
+        LeftShoulder.WorldPosition = WorldPosition;
+        LeftShoulder.Place().OnSideOuter(Side.Top, this);
+        LeftShoulder.LocalX += 0.5f;
+        LeftShoulder.LocalY -= 0.5f;
+        LeftShoulder.Tag = "LeftShoulder";
+
+        RightShoulder = worldSegment.AddChild(new Shoulder(this));
+        RightShoulder.WorldPosition = WorldPosition;
+        RightShoulder.Place().OnSideOuter(Side.Top, this);
+        RightShoulder.LocalX -= 0.5f;
+        RightShoulder.LocalY -= 0.5f;
+        RightShoulder.Tag = "RightShoulder";
 
         // todo, need cleaner way for dependency between moving object and parts
-       // X = 2f;
-    //    Y = 1f;
+        // X = 2f;
+        //    Y = 1f;
 
-        worldSegment.AddChild(new BasicArm(worldSegment, this, leftShoulder, 0.2f, 1.0f, 1.0f));       
+        worldSegment.AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f, 1.0f, 1.0f));
+        worldSegment.AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f, 1.0f, 1.0f));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

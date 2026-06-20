@@ -16,9 +16,9 @@ public abstract class EntityPart<TEntity> : PlaceableShape, ICollidable
 {
     public TEntity Entity { get; }
 
-    public override CollisionGroup CollisionGroup => CollisionGroup.MovingObjects;
+    public override CollisionGroup CollisionGroup => CollisionGroup.None;
 
-    public override CollisionGroup CollidesWithGroups => CollisionGroup.Environment;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.None;
 
     public override ViewFrom ViewFrom => ViewFrom.Outside;
 

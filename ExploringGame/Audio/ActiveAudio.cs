@@ -56,7 +56,7 @@ public class ActiveAudio
             _instance2 = _audioService.CreateInstance(Key);
         }
 
-        GameDebug.Debug.Watch1 = $"{_crossfadeState} {_instance1.Volume.ToString("0.0")}  {_instance2.Volume.ToString("0.0")}";
+      //  GameDebug.Debug.Watch1 = $"{_crossfadeState} {_instance1.Volume.ToString("0.0")}  {_instance2.Volume.ToString("0.0")}";
 
         if (gameTime.TotalGameTime < _nextCrossfadeStart)
             return;
