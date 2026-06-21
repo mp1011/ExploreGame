@@ -39,6 +39,7 @@ public static partial class TestMaps
 
         var puppet = segment.AddChild(new Puppet(segment));
 
+        puppet.WorldY -= 10f;
 
         var box = room.AddChild(new TestPlaceable(room, 1.0f, Color.Purple));
         box.Tag = "Box1";

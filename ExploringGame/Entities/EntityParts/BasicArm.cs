@@ -19,8 +19,8 @@ public class BasicArm : Shape
     {
         puppet.AddChild(this);
 
-        UpperArm = worldSegment.AddChild(new BasicArmPart(puppet, parentAnchor, armRadius, upperArmLength));
-        LowerArm = worldSegment.AddChild(new BasicArmPart(puppet, UpperArm, armRadius, lowerArmLength));
+        UpperArm = AddChild(new BasicArmPart(this, puppet, parentAnchor, armRadius, upperArmLength));
+        LowerArm = AddChild(new BasicArmPart(this, puppet, UpperArm, armRadius, lowerArmLength));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -33,14 +33,15 @@ public class BasicArmPart : EntityPart<Puppet>, IControllable
 {
     private Shape _connectsTo;
 
-    public BasicArmPart(Puppet entity, Shape connectsTo, float radius, float length) : base(entity)
+    public BasicArmPart(BasicArm arm, Puppet entity, Shape connectsTo, float radius, float length) : base(entity)
     {
+        arm.AddChild(this);
         _connectsTo = connectsTo;
         Width = radius * 2;
         Depth = radius * 2;
         Height = length;
 
-        LocalPosition = connectsTo.LocalPosition;
+        WorldPosition = connectsTo.WorldPosition;
         SetWorldSide(Side.Bottom, connectsTo.GetWorldSide(Side.Top));
     }
 

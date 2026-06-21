@@ -174,9 +174,6 @@ public class Physics
     /// <param name="weldTo"></param>
     public void Weld(GeometryBuilder.Shape body, GeometryBuilder.Shape weldTo, Vector3 weldPosition)
     {
-        if (body.LocalParent != weldTo.LocalParent)
-            throw new Exception("Physics joined shapes must belong to the same parent.");
-
         if (body.ColliderBodies[0].MotionType == MotionType.Static || weldTo.ColliderBodies[0].MotionType == MotionType.Static)
             throw new Exception("Physics joined shapes cannot be static");
 
@@ -193,9 +190,6 @@ public class Physics
 
     public void CreateHinge(GeometryBuilder.Shape body, GeometryBuilder.Shape other, Vector3 hingeWorldPosition)
     {
-        if (body.LocalParent != other.LocalParent)
-            throw new Exception("Physics jointed shapes must belong to the same parent.");
-
         if (body.ColliderBodies[0].MotionType == MotionType.Static || other.ColliderBodies[0].MotionType == MotionType.Static)
             throw new Exception("Physics joined shapes cannot be static");
 

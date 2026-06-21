@@ -47,7 +47,6 @@ public class PuppetController : IActiveObject
     {
     }
 
-    private double t = 0;
     public void Update(GameTime gameTime)
     {
         // GameDebug.Debug.Watch1 = $"P={Puppet.ColliderBodies[0].Position} S={Puppet.LeftShoulder.ColliderBodies[0].Position}";
@@ -94,6 +93,6 @@ public class PuppetPartController : IActiveObject
     {
         _body.AngularVelocity = new JVector(0.1f, 0f, 0f);
         PuppetPart.LocalPosition = _body.Position.ToVector3();
-        PuppetPart.Rotation = new Rotation(_body.Orientation.ToQuaternion());
+        PuppetPart.Rotation = new Rotation(_body.Orientation.ToQuaternion());       
     }
 }

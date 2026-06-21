@@ -31,8 +31,8 @@ public class PlaceObject<TShape, TRoom> : PlotPoint
         var shape = _loadedLevelData.ActiveSegments.FindShape<TShape>(_objectTag);
         var room = _loadedLevelData.ActiveSegments.FindShape<TRoom>();
 
-        throw new System.Exception("need to reposition pieces when manually moving puppet shape");
         shape.WorldPosition = room.WorldPosition + _offset;
+        shape.InitializePhysicsObject();
         shape.Active = true;
     }
 

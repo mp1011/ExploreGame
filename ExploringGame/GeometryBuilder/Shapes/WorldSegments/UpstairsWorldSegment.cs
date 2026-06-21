@@ -84,7 +84,7 @@ public class UpstairsWorldSegment : WorldSegment
 
         var childPuppet = AddChild(new Puppet(this));
         childPuppet.Tag = "Child";
-        childPuppet.WorldY = -1000;
+        childPuppet.WorldY = -10;
         childPuppet.Active = false;
     }
 }
