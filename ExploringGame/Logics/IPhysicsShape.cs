@@ -6,6 +6,7 @@ namespace ExploringGame.Logics;
 
 public interface IPhysicsShape : ICollidable
 {
+    bool Active { get; set; }
 }
 
 public static class IPhysicsShapeExtensions
@@ -17,7 +18,14 @@ public static class IPhysicsShapeExtensions
 
     public static void SyncShapePosition(this IPhysicsShape shape)
     {
-        shape.WorldPosition = shape.ColliderBodies[0].Position.ToVector3();
-        shape.Rotation = new Rotation(shape.ColliderBodies[0].Orientation.ToQuaternion());
+        if (!shape.Active)
+        {
+            shape.InitializePhysicsObject();
+        }
+        else
+        {
+            shape.WorldPosition = shape.ColliderBodies[0].Position.ToVector3();
+            shape.Rotation = new Rotation(shape.ColliderBodies[0].Orientation.ToQuaternion());
+        }
     }
 }

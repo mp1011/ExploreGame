@@ -82,6 +82,13 @@ public class PlotPointFactory
         return new RoomNarration<T>(_loadedLevelData, _player, _actor, _dialogueManager, text, null, requiredDone);
     }
 
+    public PlaceObject<TShape, TRoom> PlaceObject<TShape, TRoom>(string objectTag, Vector3 offset, params PlotPoint[] requiredDone)
+        where TRoom:Room
+        where TShape:IPhysicsShape, IShape
+    {
+        return new PlaceObject<TShape,TRoom>(objectTag, offset, _loadedLevelData, requiredDone);
+    }
+
     public Narration RoomNarration(string text, string tag, params PlotPoint[] requiredDone)
     {
         return new RoomNarration<Room>(_loadedLevelData, _player, _actor, _dialogueManager, text, tag, requiredDone);

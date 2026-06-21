@@ -81,5 +81,10 @@ public class UpstairsWorldSegment : WorldSegment
         new BlockerCreator().ExecuteForDoors(this, StateKey.KidsBedroomDoorOpen, StateKey.BathroomDoorOpen, StateKey.DenDoorsOpen, StateKey.SpareRoomDoorOpen, StateKey.LinenClosetDoorOpen);
         new BlockerCreator().ExecuteForSwitches(this, StateKey.HallLightOn, StateKey.KitchenLightOn, StateKey.LivingRoomLightOn, StateKey.RightBedroomLightOn);
 
+
+        var childPuppet = AddChild(new Puppet(this));
+        childPuppet.Tag = "Child";
+        childPuppet.WorldY = -1000;
+        childPuppet.Active = false;
     }
 }

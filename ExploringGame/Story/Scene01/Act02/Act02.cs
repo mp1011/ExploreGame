@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -27,5 +28,7 @@ public class ActTwo : Act
         yield return unfreeze = plotPointFactory.Get<PlayerResume>(fadein);
 
         yield return plotPointFactory.RoomNarration("Where is that even coming from?", UpstairsHall.SouthHallTag, unfreeze);
+
+        yield return plotPointFactory.PlaceObject<Puppet, KidsBedroom>("Child", Vector3.Zero);
     }
 }

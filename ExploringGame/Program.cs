@@ -8,10 +8,10 @@ using System.Diagnostics;
 using System.Linq;
 
 // character test
-//AudioService.Enabled = true;
-//ExploringGame.GameDebug.Debug.NoScene = true;
-//ExploringGame.GameDebug.Debug.UseDebugScene = false;
-//using var game = new Game1(new SingleSegmentGroup(TestMaps.NpcTest()));
+AudioService.Enabled = true;
+ExploringGame.GameDebug.Debug.NoScene = true;
+ExploringGame.GameDebug.Debug.UseDebugScene = false;
+using var game = new Game1(new SingleSegmentGroup(TestMaps.NpcTest()));
 
 
 //AudioService.Enabled = true;
@@ -20,11 +20,10 @@ using System.Linq;
 
 
 //scene test
-AudioService.Enabled = true;
-ExploringGame.GameDebug.Debug.NoScene = false;
-ExploringGame.GameDebug.Debug.UseDebugScene = false;
-
-using var game = new Game1(new HomeWorldSegmentGroup());
+//AudioService.Enabled = true;
+//ExploringGame.GameDebug.Debug.NoScene = false;
+//ExploringGame.GameDebug.Debug.UseDebugScene = false;
+//using var game = new Game1(new HomeWorldSegmentGroup());
 
 
 //var testMap = TestMaps.CircleCutoutTest();

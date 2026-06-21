@@ -26,6 +26,8 @@ public abstract class EntityPart<TEntity> : PlaceableShape, ICollidable, IPhysic
 
     public override IColliderMaker ColliderMaker => ColliderMakers.BoundingBox(this, isStatic: false);
 
+    public bool Active { get; set; } = true;
+
     public EntityPart(TEntity entity)
     {
         Entity = entity;

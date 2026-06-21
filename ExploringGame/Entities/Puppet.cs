@@ -25,7 +25,24 @@ public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
 
     public override Theme Theme { get; } = new Theme(Color.Blue);
 
-    public override IColliderMaker ColliderMaker { get; } 
+    public override IColliderMaker ColliderMaker { get; }
+
+
+    private bool _active = true;
+    public bool Active
+    {
+        get => _active;
+        set
+        {
+            _active = value;
+            LeftShoulder.Active= value;
+            RightShoulder.Active = value;
+            LeftArm.UpperArm.Active = value;
+            LeftArm.LowerArm.Active = value;
+            RightArm.UpperArm.Active = value;
+            RightArm.LowerArm.Active = value;
+        }
+    }
 
     public Shoulder LeftShoulder { get; }
     public Shoulder RightShoulder { get; }
@@ -52,14 +69,14 @@ public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
 
         WorldPosition = new Vector3(0f, 2f, 3f);
 
-        LeftShoulder = worldSegment.AddChild(new Shoulder(this));
+        LeftShoulder = AddChild(new Shoulder(this));
         LeftShoulder.WorldPosition = WorldPosition;
         LeftShoulder.Place().OnSideOuter(Side.Top, this);
         LeftShoulder.LocalX += 0.5f;
         LeftShoulder.LocalY -= 0.5f;
         LeftShoulder.Tag = "LeftShoulder";
 
-        RightShoulder = worldSegment.AddChild(new Shoulder(this));
+        RightShoulder = AddChild(new Shoulder(this));
         RightShoulder.WorldPosition = WorldPosition;
         RightShoulder.Place().OnSideOuter(Side.Top, this);
         RightShoulder.LocalX -= 0.5f;
@@ -70,8 +87,8 @@ public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
         // X = 2f;
         //    Y = 1f;
 
-        LeftArm = worldSegment.AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f, 1.0f, 1.0f));
-        RightArm = worldSegment.AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f, 1.0f, 1.0f));
+        LeftArm = AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f, 1.0f, 1.0f));
+        RightArm = AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f, 1.0f, 1.0f));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

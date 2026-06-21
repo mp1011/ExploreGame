@@ -57,25 +57,11 @@ public class PuppetController : IActiveObject
             return;
 
         _mover.Update(gameTime);
-
         Puppet.ColliderBodies[0].AngularVelocity = new JVector(0.0f, 2.0f, 0.0f);
-
-        Puppet.Rotation = new Rotation(Puppet.ColliderBodies[0].Orientation.ToQuaternion());
+        Puppet.SyncShapePosition();
 
         Puppet.LeftShoulder.SyncShapePosition();
         Puppet.RightShoulder.SyncShapePosition();
-
-
-        //t += gameTime.ElapsedGameTime.TotalSeconds;
-
-
-        //if (t >= 2.0)
-        //{
-        //    t = 0;
-        //    _mover.Motion.TargetMotion = new Vector3(10 * ((float)_rng.NextDouble() - 0.5f), 2 * ((float)_rng.NextDouble() - 0.5f), 10 * ((float)_rng.NextDouble() - 0.5f));
-        //}
-
-
     }
 }
 
