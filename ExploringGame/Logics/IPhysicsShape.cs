@@ -4,7 +4,7 @@ using ExploringGame.Logics.Collision;
 
 namespace ExploringGame.Logics;
 
-public interface IPhysicsShape : ICollidable
+public interface IPhysicsShape : ICollidable, IShape
 {
     bool Active { get; set; }
 }

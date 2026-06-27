@@ -12,6 +12,8 @@ public class KidsBedroom : Room
 {
     private readonly UpstairsHall _upstairsHall;
 
+    public SmallBed Bed { get; private set;  }
+
     public KidsBedroom(WorldSegment worldSegment, UpstairsHall upstairsHall, Bedroom bedroom)
         : base(worldSegment, width: Measure.Feet(12), depth: Measure.Feet(12), height: Measure.Feet(7))
     {
@@ -28,6 +30,14 @@ public class KidsBedroom : Room
         _upstairsHall.SouthHall.AddConnectingRoomWithJunction(
             new DoorJunction(this, Side.South, HAlign.Left, DoorDirection.Push, StateKey.KidsBedroomDoorOpen), this, Side.South, HAlign.Left,
             adjustPlacement: false);
+
+
+        Bed = AddChild(new SmallBed());
+        Bed.Place().AtParent().OnFloor()
+            .OnSideInner(Side.South, offset: -Measure.Inches(2))
+            .OnSideInner(Side.East, offset: -Measure.Inches(2));
+
+
 
         // Add a high hat light to the kids bedroom
         var kidsLight = new HighHatLight(this, 0f, 0f);

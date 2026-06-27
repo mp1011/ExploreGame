@@ -12,7 +12,6 @@ namespace ExploringGame.Logics;
 /// </summary>
 public interface ILightingGroup : IRoom
 {
-    string Tag { get; }
 }
 
 public class DefaultLightingGroup : ILightingGroup
@@ -28,6 +27,12 @@ public class DefaultLightingGroup : ILightingGroup
     public IEnumerable<RoomConnection> RoomConnections => Array.Empty<RoomConnection>();
 
     public WorldSegment WorldSegment => null;
+
+    public Vector3 WorldPosition { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public Vector3 Size => throw new NotImplementedException();
+
+    public Rotation Rotation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public bool ContainsPoint(Vector3 point) => false;
 

@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.Story.PlotPoints;
 using Microsoft.Xna.Framework;
@@ -16,6 +17,8 @@ public class ActTwo : Act
     {
         PlotPoint freeze, nar1, fadein, unfreeze;
 
+        CharacterEntrance<Puppet> puppet;
+
         yield return plotPointFactory.AmbientSound(Audio.SoundEffectKey.CreepyLoop);
 
         yield return freeze = plotPointFactory.Get<PlayerFreeze>();
@@ -29,6 +32,8 @@ public class ActTwo : Act
 
         yield return plotPointFactory.RoomNarration("Where is that even coming from?", UpstairsHall.SouthHallTag, unfreeze);
 
-        yield return plotPointFactory.PlaceObject<Puppet, KidsBedroom>("Child", Vector3.Zero);
+        yield return puppet = plotPointFactory.CharacterEntrance<Puppet>();
+
+        yield return plotPointFactory.PlaceObject<Puppet, SmallBed>("Child", Vector3.Zero);
     }
 }

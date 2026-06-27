@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace ExploringGame.GeometryBuilder;
 
-public interface IShape
+public interface IShape : IWithPosition
 {
     string Tag { get; }
     Shape[] TraverseAllChildren();

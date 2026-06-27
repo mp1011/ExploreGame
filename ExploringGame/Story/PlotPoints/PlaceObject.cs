@@ -9,8 +9,8 @@ namespace ExploringGame.Story.PlotPoints;
 /// <summary>
 /// Moves an object to the specific Room
 /// </summary>
-public class PlaceObject<TShape, TRoom> : PlotPoint
-    where TRoom : Room
+public class PlaceObject<TShape, TDestination> : PlotPoint
+    where TDestination : IShape
     where TShape : IShape, IPhysicsShape
 {
     private string _objectTag;
@@ -29,7 +29,7 @@ public class PlaceObject<TShape, TRoom> : PlotPoint
     protected override void OnActivated()
     {
         var shape = _loadedLevelData.ActiveSegments.FindShape<TShape>(_objectTag);
-        var room = _loadedLevelData.ActiveSegments.FindShape<TRoom>();
+        var room = _loadedLevelData.ActiveSegments.FindShape<TDestination>();
 
         shape.WorldPosition = room.WorldPosition + _offset;
         shape.InitializePhysicsObject();

@@ -32,6 +32,8 @@ public class PuppetController : IActiveObject
         _mover = new EntityMover(Puppet, _physics, ignoreY: false);
         _mover.Initialize();
 
+        Puppet.ColliderBodies[0].AffectedByGravity = true;
+
         Puppet.LeftShoulder.InitializePhysicsObject();
         Puppet.RightShoulder.InitializePhysicsObject();
 
@@ -56,7 +58,7 @@ public class PuppetController : IActiveObject
             return;
 
         _mover.Update(gameTime);
-        Puppet.ColliderBodies[0].AngularVelocity = new JVector(0.0f, 2.0f, 0.0f);
+       // Puppet.ColliderBodies[0].AngularVelocity = new JVector(0.0f, 2.0f, 0.0f);
         Puppet.SyncShapePosition();
 
         Puppet.LeftShoulder.SyncShapePosition();
