@@ -21,8 +21,9 @@ public interface IShape : IWithPosition
     string Tag { get; }
     Shape[] TraverseAllChildren();
     bool ContainsPoint(Vector3 point);
-    Vector3 LocalPosition { get; }
+    Vector3 LocalPosition { get; set; }
     float SideLength(Side side);
+    IShape Parent { get; }
 }
 
 public abstract class Shape : IWithPosition, IShape
@@ -235,19 +236,7 @@ public abstract class Shape : IWithPosition, IShape
         };
     }
 
-    public float GetWorldSide(Side side)
-    {
-        return side switch
-        {
-            Side.North => WorldPosition.Z - Size.Z / 2f,
-            Side.South => WorldPosition.Z + Size.Z / 2f,
-            Side.West => WorldPosition.X - Size.X / 2f,
-            Side.East => WorldPosition.X + Size.X / 2f,
-            Side.Top => WorldPosition.Y + Size.Y / 2f,
-            Side.Bottom => WorldPosition.Y - Size.Y / 2f,
-            _ => throw new ArgumentException("Only singular sides can be used")
-        };
-    }
+
 
     public void SetLocalSide(Side side, float value)
     {
@@ -270,33 +259,6 @@ public abstract class Shape : IWithPosition, IShape
                 return;
             case Side.Bottom:
                 LocalY = value + Size.Y / 2f;
-                return;
-            default:
-                throw new ArgumentException("Only singular sides can be used");
-        }
-    }
-
-    public void SetWorldSide(Side side, float value)
-    {
-        switch(side)
-        {
-            case Side.North:
-                WorldZ = value + Size.Z / 2f;
-                return;
-            case Side.South:
-                WorldZ = value - Size.Z / 2f;
-                return;
-            case Side.West:
-                WorldX = value + Size.X / 2f;
-                return;
-            case Side.East:
-                WorldX = value - Size.X / 2f;
-                return;
-            case Side.Top:
-                WorldY = value - Size.Y / 2f;
-                return;
-            case Side.Bottom:
-                WorldY = value + Size.Y / 2f;
                 return;
             default:
                 throw new ArgumentException("Only singular sides can be used");
@@ -354,39 +316,6 @@ public abstract class Shape : IWithPosition, IShape
         SetLocalSide(side, value);
     }
 
-    public void SetWorldSideUnanchored(Side side, float value)
-    {       
-        var currentOpposite = GetWorldSide(side.Opposite());
-        SetWorldSide(side, value);
-
-        var oppDelta = GetWorldSide(side.Opposite()) - currentOpposite;
-
-        switch(side)
-        {
-            case Side.North:
-                Depth -= oppDelta;
-                break;
-            case Side.South:
-                Depth += oppDelta;
-                break;
-            case Side.West:
-                Width -= oppDelta;
-                break;
-            case Side.East:
-                Width += oppDelta;
-                break;
-            case Side.Top:
-                Height += oppDelta;
-                break;
-            case Side.Bottom:
-                Height -= oppDelta;
-                break;
-            default:
-                throw new System.ArgumentException("invalid side");
-        }
-
-        SetWorldSide(side, value);
-    }
 
     public T AddChild<T>(T child) where T:Shape
     {
@@ -471,6 +400,8 @@ public abstract class Shape : IWithPosition, IShape
     }
 
     public virtual RasterizerState RasterizerState { get; } = null;
+
+    IShape IShape.Parent => Parent;
 
     public override string ToString()
     {

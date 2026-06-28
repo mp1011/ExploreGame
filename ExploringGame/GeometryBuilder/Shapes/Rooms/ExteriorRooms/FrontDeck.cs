@@ -1,4 +1,6 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -35,7 +37,7 @@ public class FrontDeck : Deck
             .OnSideOuter(Side.West, this)
             .OnSideInner(Side.North, this);
 
-        WestPart.SetWorldSide(Side.Top, GetWorldSide(Side.Bottom));
+        WestPart.SetWorldSide(Side.Top, this.GetWorldSide(Side.Bottom));
 
         var northPart = AddChild(new Box(Theme));
         northPart.OmitSides = Side.Top;
@@ -65,7 +67,7 @@ public class FrontDeck : Deck
         var westMiddlePost = CreatePost().Place()
             .OnSideInner(Side.West, WestPart, PostInset)
             .Shape();
-        westMiddlePost.LocalZ = WestPart.LocalZ;
+        westMiddlePost.LocalPosition = westMiddlePost.LocalPosition.SetZ(WestPart.LocalZ);
 
         var northEastPost = CreatePost().Place()
          .OnSideInner(Side.North, WestPart, PostInset)

@@ -30,7 +30,7 @@ public class OutsideWorldSegment : WorldSegment
         Depth = Measure.Feet(100);
         Width = Measure.Feet(100);
         Height = Measure.Feet(20);
-        SetWorldSide(Side.Bottom, UpstairsWorldSegment.FloorY - Measure.Feet(4));
+        this.SetWorldSide(Side.Bottom, UpstairsWorldSegment.FloorY - Measure.Feet(4));
 
         _deck = new FrontDeck(this);
         _frontYard = new FrontYard(this, _deck);

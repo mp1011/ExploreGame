@@ -1,4 +1,5 @@
-﻿using ExploringGame.GameDebug;
+﻿using ExploringGame.Entities;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
@@ -67,16 +68,16 @@ public class BackYard : Room
                    .OnSideOuter(Side.East, frontSidewalk)
                    .OnSideInner(Side.North, northYard);
 
-        SetWorldSide(Side.Bottom, northYard.GetWorldSide(Side.Bottom));
-        SetWorldSideUnanchored(Side.South, frontSidewalk.GetWorldSide(Side.South) - 0.1f);
-        SetWorldSideUnanchored(Side.North, northYard.GetWorldSide(Side.North));
-        SetWorldSideUnanchored(Side.East, den.EastPart.GetWorldSide(Side.East) + 1.0f);
+        this.SetWorldSide(Side.Bottom, northYard.GetWorldSide(Side.Bottom));
+        this.SetWorldSideUnanchored(Side.South, frontSidewalk.GetWorldSide(Side.South) - 0.1f);
+        this.SetWorldSideUnanchored(Side.North, northYard.GetWorldSide(Side.North));
+        this.SetWorldSideUnanchored(Side.East, den.EastPart.GetWorldSide(Side.East) + 1.0f);
 
 
         var backSidewalk = AddChild(new Box(Theme, TextureKey.Concrete));
         backSidewalk.AdjustShape().From(frontSidewalk);
         backSidewalk.Place().OnSideOuter(Side.East, frontSidewalk);
-        backSidewalk.SetWorldSideUnanchored(Side.East, GetWorldSide(Side.East));
+        backSidewalk.SetWorldSideUnanchored(Side.East, this.GetWorldSide(Side.East));
 
         
         AddChild(new Fence(this, Side.North));
@@ -112,7 +113,7 @@ public class BackYard : Room
         var eastGrass = new GrassSurface(_eastSection, TerrainSurface.DefaultLawn);
 
         var eastWall = new OuterWall(_eastSection, Side.West, moulding: Side.South);
-        eastWall.SetWorldSideUnanchored(Side.North, GetWorldSide(Side.South));
+        eastWall.SetWorldSideUnanchored(Side.North, this.GetWorldSide(Side.South));
       
         var eastWall2 = new OuterWall(_eastSection, Side.West, moulding: Side.None);
         eastWall2.AdjustShape().From(eastWall);

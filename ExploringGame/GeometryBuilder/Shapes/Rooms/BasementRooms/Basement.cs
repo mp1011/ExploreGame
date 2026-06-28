@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -28,7 +29,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             Width = Measure.Feet(25);
             Height = Measure.Feet(8);
             Depth = Measure.Feet(28);
-            SetWorldSide(Side.Bottom, 0f);
+            this.SetWorldSide(Side.Bottom, 0f);
 
             // Create BasementStairsDoor in constructor so it's available as a dependency
             BasementStairsDoor = new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Push, StateKey.BasementStairsDoorOpen)
@@ -43,12 +44,12 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
 
         public void LoadChildren()
         {
-            SetWorldSide(Side.East, _office.Exit.GetWorldSide(Side.West));
-            SetWorldSide(Side.North, _office.Exit.GetWorldSide(Side.North) - Measure.Inches(31));
+            this.SetWorldSide(Side.East, _office.Exit.GetWorldSide(Side.West));
+            this.SetWorldSide(Side.North, _office.Exit.GetWorldSide(Side.North) - Measure.Inches(31));
 
             var lightSwitch = new LightSwitch(this, Side.East, StateKey.OfficeLightOn);
             lightSwitch.Place().OnSideInner(Side.East);
-            lightSwitch.SetWorldSide(Side.North, GetWorldSide(Side.North) + Measure.Inches(22));
+            lightSwitch.SetWorldSide(Side.North, this.GetWorldSide(Side.North) + Measure.Inches(22));
             lightSwitch.ControlledObjects.AddRange(_office.Lights);
             lightSwitch.Place().AtStandardSwitchHeight();
 
@@ -88,7 +89,7 @@ namespace ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms
             // Position BasementStairsDoor (already created in constructor)
             BasementStairsDoor.SetWorldSide(Side.Bottom, UpstairsWorldSegment.FloorY);
            
-            BasementStairsDoor.SetWorldSide(Side.North, GetWorldSide(Side.South) + Measure.Feet(1.5f));
+            BasementStairsDoor.SetWorldSide(Side.North, this.GetWorldSide(Side.South) + Measure.Feet(1.5f));
 
             Stairs = AddChild(new BasementStairs(WorldSegment, bottomFloor: this, topFloor: BasementStairsDoor));
             Stairs.Place().OnFloor().OnSideInner(Side.South, this, Measure.Feet(1.5f)).OnSideOuter(Side.West, wall6);

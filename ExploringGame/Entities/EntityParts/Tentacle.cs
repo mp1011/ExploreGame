@@ -18,7 +18,7 @@ public class Tentacle : EntityPart<Puppet>, IControllable
         Height = length;
 
         LocalPosition = connectsTo.LocalPosition;
-        SetWorldSide(Side.Bottom, connectsTo.GetWorldSide(Side.Top));
+        this.SetWorldSide(Side.Bottom, connectsTo.GetWorldSide(Side.Top));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)

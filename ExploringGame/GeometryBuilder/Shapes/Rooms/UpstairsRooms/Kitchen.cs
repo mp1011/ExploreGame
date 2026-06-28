@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -25,7 +26,7 @@ public class Kitchen : Room
     public void LoadChildren(Bathroom bathroom)
     {
         _upstairsHall.AddConnectingRoom(new RoomConnection(_upstairsHall, this, Side.East, HAlign.Right));
-        SetWorldSideUnanchored(Side.North, _upstairsHall.NorthHall.GetWorldSide(Side.North));
+        this.SetWorldSideUnanchored(Side.North, _upstairsHall.NorthHall.GetWorldSide(Side.North));
 
         this.SetWorldSideUnanchored(Side.South, bathroom.GetWorldSide(Side.North) - Measure.Feet(4.2f));
 

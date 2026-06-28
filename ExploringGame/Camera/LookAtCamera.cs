@@ -23,7 +23,7 @@ public class LookAtCamera : ICamera
 
     public Vector3 WorldPosition { get; set; }
 
-    public Vector3 Size => Vector3.One;
+    public Vector3 Size { get; set; } = Vector3.One;
 
     public Rotation Rotation { get; set; }
 

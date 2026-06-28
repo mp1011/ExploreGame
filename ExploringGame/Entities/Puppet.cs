@@ -60,12 +60,12 @@ public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
         torso.Width= 1.0f;
         torso.Depth = 1.0f;
         torso.Height = 1.0f;
-        torso.SetWorldSide(Side.Top, GetWorldSide(Side.Top));
+        torso.SetWorldSide(Side.Top, this.GetWorldSide(Side.Top));
 
         var head = AddChild(new Ellipsoid(0.5f));
         head.Depth = 0.6f;
         head.LocalPosition = LocalPosition;
-        head.SetWorldSide(Side.Bottom, GetWorldSide(Side.Top));
+        head.SetWorldSide(Side.Bottom, this.GetWorldSide(Side.Top));
 
         WorldPosition = new Vector3(0f, 2f, 3f);
 

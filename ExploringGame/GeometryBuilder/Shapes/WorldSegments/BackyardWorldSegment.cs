@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Rooms.BasementRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;

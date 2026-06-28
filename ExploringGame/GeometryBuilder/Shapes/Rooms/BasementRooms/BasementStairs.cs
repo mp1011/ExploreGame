@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Texture;
 using Microsoft.Xna.Framework;
 

@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.ExteriorRooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -38,6 +39,6 @@ public class LivingRoom : Room
         lightSwitch.LocalPosition = LocalPosition;
         lightSwitch.Place().OnSideInner(Side.East).AtStandardSwitchHeight();
 
-        SetWorldSideUnanchored(Side.North, GetWorldSide(Side.North) - Measure.Feet(5));
+        this.SetWorldSideUnanchored(Side.North, this.GetWorldSide(Side.North) - Measure.Feet(5));
     }
 }

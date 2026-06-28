@@ -37,14 +37,14 @@ public class FrontYard : Room
         Width = Measure.Feet(40);
         Height = Deck.Height + Measure.Feet(4);
 
-        SetWorldSide(Side.Bottom, Deck.GetWorldSide(Side.Bottom) - Measure.Feet(4));
-        SetWorldSide(Side.South, Deck.WestPart.GetWorldSide(Side.South));
-        SetWorldSide(Side.East, Deck.GetWorldSide(Side.West));
+        this.SetWorldSide(Side.Bottom, Deck.GetWorldSide(Side.Bottom) - Measure.Feet(4));
+        this.SetWorldSide(Side.South, Deck.WestPart.GetWorldSide(Side.South));
+        this.SetWorldSide(Side.East, Deck.GetWorldSide(Side.West));
 
         AddConnectingRoom(Deck, Side.East);
 
         var deckStairs = Deck.AddChild(new FrontDeckStairs(this, Deck));
-        deckStairs.SetWorldSide(Side.Bottom, GetWorldSide(Side.Bottom));
+        deckStairs.SetWorldSide(Side.Bottom, this.GetWorldSide(Side.Bottom));
         deckStairs.SetWorldSide(Side.North, Deck.WestPart.GetWorldSide(Side.South));
         deckStairs.SetWorldSide(Side.East, Deck.WestPart.GetWorldSide(Side.East));
 
@@ -72,7 +72,7 @@ public class FrontYard : Room
         AddChild(new GarageDoor(WorldSegment, garage, driveway, HAlign.Right, -1.0f));
 
         var westWall = new OuterWall(driveway, Side.East);
-        westWall.SetWorldSideUnanchored(Side.Top, GetWorldSide(Side.Top));
+        westWall.SetWorldSideUnanchored(Side.Top, this.GetWorldSide(Side.Top));
         westWall.SetWorldSideUnanchored(Side.North, Deck.GetWorldSide(Side.South));
 
         FrontWalkway = new FrontWalkway(this);
@@ -88,7 +88,7 @@ public class FrontYard : Room
         westOfWalkway.Place().OnSideOuter(Side.West, FrontWalkway)
             .OnSideOuter(Side.South, this);
         westOfWalkway.SetWorldSideUnanchored(Side.South, driveway.GetWorldSide(Side.North));
-        westOfWalkway.SetWorldSideUnanchored(Side.West, GetWorldSide(Side.West));
+        westOfWalkway.SetWorldSideUnanchored(Side.West, this.GetWorldSide(Side.West));
 
 
         var southSection = Copy(inheritLightingGroup: false);

@@ -330,7 +330,7 @@ public class PathFinder
             }
         }
 
-        public Vector3 Size => new Vector3(0.2f, 0.2f, 0.2f);
+        public Vector3 Size { get; set; } = new Vector3(0.2f, 0.2f, 0.2f);
         public Rotation Rotation { get; set; }
         public CollisionGroup CollisionGroup => CollisionGroup.LineOfSightTest;
         public CollisionGroup CollidesWithGroups => CollisionGroup.None;

@@ -16,7 +16,7 @@ public class Player : ICollidable, ICamera
     public Rotation Rotation { get; set; } = new Rotation(0, 0.1f, 0);
     public int Health { get; set; } = 100;
 
-    public Vector3 Size => new Vector3(0.5f, 1.8f, 0.5f);
+    public Vector3 Size { get; set; } = new Vector3(0.5f, 1.8f, 0.5f);
 
     private float PhysicsCapsuleHeight => 2.8f; // Capsule length (2.0) + 2 * radius (0.4) from Physics.CreateCapsule
     public static readonly float EyeHeight = Measure.Feet(5.5f);

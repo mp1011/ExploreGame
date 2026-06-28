@@ -10,7 +10,7 @@ public class DebugBirdsEyeCamera : ICamera
     public Vector3 WorldPosition { get; set; }
     public Rotation Rotation { get; set; }
 
-    public Vector3 Size => new Vector3(1, 1, 1);
+    public Vector3 Size { get; set; } = new Vector3(1, 1, 1);
 
     private Player _player;
 

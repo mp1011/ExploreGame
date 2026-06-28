@@ -1,4 +1,5 @@
-﻿using ExploringGame.Entities.EntityParts;
+﻿using ExploringGame.Entities;
+using ExploringGame.Entities.EntityParts;
 using ExploringGame.GeometryBuilder;
 using ExploringGame.Services;
 using Jitter2.Dynamics;

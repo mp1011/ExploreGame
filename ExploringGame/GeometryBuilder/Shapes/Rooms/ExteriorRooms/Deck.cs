@@ -33,9 +33,9 @@ public abstract class Deck : Room
         return post;
     }
 
-    protected Shape CreateRailing(Shape postFrom, Shape postTo) => CreateRailing(postFrom, postTo, Color.White);
+    protected Shape CreateRailing(IShape postFrom, IShape postTo) => CreateRailing(postFrom, postTo, Color.White);
 
-    protected Shape CreateRailing(Shape postFrom, Shape postTo, Color color)
+    protected Shape CreateRailing(IShape postFrom, IShape postTo, Color color)
     {
         var topRailing = AddChild(new Box(new Theme(Theme.TextureSheetKey, TextureKey.Plain, color)));
         var bottomRailing = AddChild(new Box(new Theme(Theme.TextureSheetKey, TextureKey.Plain, color)));

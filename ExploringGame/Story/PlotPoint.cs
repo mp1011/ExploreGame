@@ -82,17 +82,10 @@ public class PlotPointFactory
         return new RoomNarration<T>(_loadedLevelData, _player, _actor, _dialogueManager, text, null, requiredDone);
     }
 
-    public PlaceObject<TShape, TDestination> PlaceObject<TShape, TDestination>(string objectTag, Vector3 offset, params PlotPoint[] requiredDone)
-        where TDestination : IShape
-        where TShape:IPhysicsShape, IShape
-    {
-        return new PlaceObject<TShape, TDestination>(objectTag, offset, _loadedLevelData, requiredDone);
-    }
-
-    public CharacterEntrance<TEntity> CharacterEntrance<TEntity>(params PlotPoint[] requiredDone)
+    public CharacterEntrance<TEntity> CharacterEntrance<TEntity>(string tag, params PlotPoint[] requiredDone)
         where TEntity : IPhysicsShape
     {
-        return new CharacterEntrance<TEntity>(_loadedLevelData, requiredDone);
+        return new CharacterEntrance<TEntity>(tag, _loadedLevelData, requiredDone);
     }
         
     public Narration RoomNarration(string text, string tag, params PlotPoint[] requiredDone)
@@ -132,6 +125,16 @@ public class PlotPointFactory
     }
 
     public AmbientSound AmbientSound(SoundEffectKey key, params PlotPoint[] requiredDone) => new AmbientSound(_audioService, key, requiredDone);
+
+
+    public TPlotPoint CharacterAction<TShape, TPlotPoint>(CharacterEntrance<TShape> characterEntrance, params PlotPoint[] requiredDone)
+        where TShape : IPhysicsShape
+        where TPlotPoint : CharacterAction<TShape>
+    {
+        return _serviceContainer.Get<TPlotPoint>(new Ninject.Parameters.ConstructorArgument("otherRequiredDone", requiredDone),
+            new Ninject.Parameters.ConstructorArgument("characterEntrance", characterEntrance),
+            new Ninject.Parameters.ConstructorArgument("loadedLevelData", _loadedLevelData));
+    }
 
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {

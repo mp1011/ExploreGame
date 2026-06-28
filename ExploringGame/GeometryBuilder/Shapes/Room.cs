@@ -1,4 +1,5 @@
-﻿using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Rooms;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -59,7 +60,7 @@ public class Room : Shape, ILightingGroup
         if (height.HasValue) 
             Height = height.Value;
 
-        SetWorldSide(Side.Bottom, worldSegment.GetWorldSide(Side.Bottom));
+        this.SetWorldSide(Side.Bottom, worldSegment.GetWorldSide(Side.Bottom));
 
         if (theme != null)
             _theme = theme;

@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder;
 
 namespace ExploringGame.Services;
 

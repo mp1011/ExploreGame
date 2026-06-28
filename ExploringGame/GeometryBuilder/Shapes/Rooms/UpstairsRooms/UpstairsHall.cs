@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
@@ -57,6 +58,6 @@ public class UpstairsHall : Room
         hallLightSwitch.Place().OnSideInner(Side.West).AtStandardSwitchHeight();
 
 
-        basementStairsDoor.SetWorldSide(Side.South, GetWorldSide(Side.North));
+        basementStairsDoor.SetWorldSide(Side.South, this.GetWorldSide(Side.North));
     }
 }

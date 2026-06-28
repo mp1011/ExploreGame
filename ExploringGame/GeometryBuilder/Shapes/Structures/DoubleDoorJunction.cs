@@ -1,4 +1,5 @@
-﻿using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
 using ExploringGame.Texture;
@@ -53,7 +54,7 @@ public class DoubleDoorJunction : Room
         var hingeSide = door.HingePosition == HAlign.Left ? _wallSide.CounterClockwiseTurn()
                                                            : _wallSide.ClockwiseTurn();
 
-        var hingePosition = WorldPosition.SetAxis(hingeSide.GetAxis(), GetWorldSide(hingeSide));
+        var hingePosition = WorldPosition.SetAxis(hingeSide.GetAxis(), this.GetWorldSide(hingeSide));
         door.SetHingePosition(hingePosition);
     }
 }

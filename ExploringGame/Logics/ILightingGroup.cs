@@ -22,7 +22,9 @@ public class DefaultLightingGroup : ILightingGroup
 
     public ILightingGroup LightingGroup => this;
 
-    public Vector3 LocalPosition => Vector3.Zero;
+    public IShape Parent => null;
+
+    public Vector3 LocalPosition { get; set; } = Vector3.Zero;
 
     public IEnumerable<RoomConnection> RoomConnections => Array.Empty<RoomConnection>();
 
@@ -30,7 +32,7 @@ public class DefaultLightingGroup : ILightingGroup
 
     public Vector3 WorldPosition { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public Vector3 Size => throw new NotImplementedException();
+    public Vector3 Size { get; set; }
 
     public Rotation Rotation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

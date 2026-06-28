@@ -1,9 +1,10 @@
-using Microsoft.Xna.Framework;
+using ExploringGame.Entities;
+using ExploringGame.Rendering;
 using ExploringGame.Texture;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExploringGame.Rendering;
 
 namespace ExploringGame.GeometryBuilder.Shapes;
 
@@ -50,11 +51,11 @@ public class GrassSurface : Shape
     protected override Triangle[] BuildInternal(QualityLevel quality)
     {
         // Get the bounds of this grass surface
-        float floorY = GetWorldSide(Side.Bottom);
-        float west   = GetWorldSide(Side.West);
-        float east   = GetWorldSide(Side.East);
-        float north  = GetWorldSide(Side.North);
-        float south  = GetWorldSide(Side.South);
+        float floorY = this.GetWorldSide(Side.Bottom);
+        float west   = this.GetWorldSide(Side.West);
+        float east   = this.GetWorldSide(Side.East);
+        float north  = this.GetWorldSide(Side.North);
+        float south  = this.GetWorldSide(Side.South);
 
         var triangles = new List<Triangle>();
         var rng = new Random(42);

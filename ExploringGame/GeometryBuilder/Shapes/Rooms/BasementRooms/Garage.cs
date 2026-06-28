@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Furniture;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Furniture;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.LevelControl;
@@ -21,7 +22,7 @@ public class Garage : Room
     {
         _basement = basement;
         Height = basement.Height;
-        SetWorldSide(Side.Bottom, 0f);
+        this.SetWorldSide(Side.Bottom, 0f);
 
         Width = 10f;
         Depth = 10f;
@@ -32,8 +33,8 @@ public class Garage : Room
         _basement.AddConnectingRoomWithJunction(new DoorJunction(this, Side.South, HAlign.Right, DoorDirection.Pull, StateKey.GarageInnerDoorOpen),
             this, Side.South, HAlign.Right, offset: -0.5f);
 
-        SetWorldSideUnanchored(Side.West, WorldSegment.GetWorldSide(Side.West));
-        SetWorldSideUnanchored(Side.South, WorldSegment.GetWorldSide(Side.South));
+        this.SetWorldSideUnanchored(Side.West, WorldSegment.GetWorldSide(Side.West));
+        this.SetWorldSideUnanchored(Side.South, WorldSegment.GetWorldSide(Side.South));
 
         this.Place().AlignSideWith(Side.East, _basement);
     }

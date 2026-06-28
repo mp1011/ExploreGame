@@ -1,4 +1,5 @@
-﻿using ExploringGame.Extensions;
+﻿using ExploringGame.Entities;
+using ExploringGame.Extensions;
 using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Logics.Collision.ColliderMakers;
@@ -101,7 +102,7 @@ public class Door : PlaceableShape, IPlaceableObject, IControllable<DoorControll
 
     public void SetHingePosition(Vector3 newHingePosition)
     {
-        var hingeX = HingePosition == HAlign.Left ? GetWorldSide(Side.West) : GetWorldSide(Side.East);
+        var hingeX = HingePosition == HAlign.Left ? this.GetWorldSide(Side.West) : this.GetWorldSide(Side.East);
         var currentHingePosition = WorldPosition.SetX(hingeX);
 
         var delta = newHingePosition - currentHingePosition;

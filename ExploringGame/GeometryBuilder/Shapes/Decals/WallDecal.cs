@@ -1,3 +1,4 @@
+using ExploringGame.Entities;
 using ExploringGame.Services;
 using Microsoft.Xna.Framework;
 using System;

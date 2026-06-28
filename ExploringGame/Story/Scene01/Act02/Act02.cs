@@ -32,8 +32,8 @@ public class ActTwo : Act
 
         yield return plotPointFactory.RoomNarration("Where is that even coming from?", UpstairsHall.SouthHallTag, unfreeze);
 
-        yield return puppet = plotPointFactory.CharacterEntrance<Puppet>();
+        yield return puppet = plotPointFactory.CharacterEntrance<Puppet>("Child");
 
-        yield return plotPointFactory.PlaceObject<Puppet, SmallBed>("Child", Vector3.Zero);
+        yield return plotPointFactory.CharacterAction<Puppet, PlacePuppetOnBed>(puppet);
     }
 }

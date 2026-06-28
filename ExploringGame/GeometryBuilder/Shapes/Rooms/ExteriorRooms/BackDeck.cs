@@ -1,4 +1,5 @@
-﻿using ExploringGame.GeometryBuilder.Shapes.Appliances;
+﻿using ExploringGame.Entities;
+using ExploringGame.GeometryBuilder.Shapes.Appliances;
 using ExploringGame.GeometryBuilder.Shapes.Rooms.UpstairsRooms;
 using ExploringGame.GeometryBuilder.Shapes.SimpleShapes;
 using ExploringGame.GeometryBuilder.Shapes.Structures;
@@ -40,8 +41,8 @@ public class BackDeck : Deck
 
         LocalPosition = floor.LocalPosition;
         Size = floor.Size;
-        SetWorldSide(Side.Bottom, floor.GetWorldSide(Side.Top));
-        SetWorldSideUnanchored(Side.Top, den.GetWorldSide(Side.Top));
+        this.SetWorldSide(Side.Bottom, floor.GetWorldSide(Side.Top));
+        this.SetWorldSideUnanchored(Side.Top, den.GetWorldSide(Side.Top));
 
         var southWestPost = CreatePost(_deckColor).Place()
            .OnSideInner(Side.South, this, -PostInset)

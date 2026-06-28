@@ -11,7 +11,7 @@ namespace ExploringGame.Services;
 
 public static partial class ShapeExtensions
 {
-    public static ShapePlacer Place(this Shape shape)
+    public static ShapePlacer Place(this IShape shape)
     {
         return new ShapePlacer(shape);
     }
@@ -22,16 +22,16 @@ public static partial class ShapeExtensions
     }
 }
 
-public class ShapePlacer
-{
-    protected Shape _shape;
-
-    public Shape Shape() => _shape;
-    
-    public ShapePlacer(Shape shape)
+    public class ShapePlacer
     {
-        _shape = shape;
-    }
+        protected IShape _shape;
+
+        public IShape Shape() => _shape;
+        
+        public ShapePlacer(IShape shape)
+        {
+            _shape = shape;
+        }
 
     public ShapePlacer AtParent()
     {
@@ -47,20 +47,20 @@ public class ShapePlacer
 
     public ShapePlacer AtStandardSwitchHeight() => AtEyeLevel(_shape.Parent, offset: -Measure.Feet(1));
 
-    public ShapePlacer AtEyeLevel(Shape container, float offset)
+    public ShapePlacer AtEyeLevel(IShape container, float offset)
     {
-        _shape.WorldY = container.GetWorldSide(Side.Bottom) + Player.EyeHeight + offset;
+        _shape.WorldPosition = _shape.WorldPosition.SetY(container.GetWorldSide(Side.Bottom) + Player.EyeHeight + offset);
         return this;
     }
 
-    public ShapePlacer OnFloor(Shape other = null)
+    public ShapePlacer OnFloor(IShape other = null)
     {
         var target = other ?? _shape.Parent;
         _shape.SetWorldSide(Side.Bottom, target.GetWorldSide(Side.Bottom));
         return this;
     }
 
-    public ShapePlacer OnSideInner(Side side, Shape other = null, float offset = 0f)
+    public ShapePlacer OnSideInner(Side side, IShape other = null, float offset = 0f)
     {
         other = other ?? _shape.Parent;
         foreach(var s in side.Decompose())
@@ -70,13 +70,13 @@ public class ShapePlacer
         return this;
     }
 
-    public ShapePlacer AlignSideWith(Side side, Shape other, float offset = 0f)
+    public ShapePlacer AlignSideWith(Side side, IShape other, float offset = 0f)
     {
         _shape.SetWorldSideUnanchored(side, other.GetWorldSide(side) + offset);
         return this;
     }
 
-    public ShapePlacer OnSideOuter(Side side, Shape other = null, float offset = 0f)
+    public ShapePlacer OnSideOuter(Side side, IShape other = null, float offset = 0f)
     {
         other = other ?? _shape.Parent;
         foreach (var s in side.Decompose())
