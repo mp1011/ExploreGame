@@ -1,4 +1,5 @@
 ﻿using ExploringGame.GeometryBuilder;
+using ExploringGame.Story;
 using System;
 
 namespace ExploringGame.GameDebug;
@@ -24,6 +25,8 @@ public static class Debug
     public static bool NoScene = false;
 
     public static MovingEntityDebugger MovingEntityDebugger;
+
+    public static Action<SceneManager> SceneManagerDebugInit = null;
 
     public static void Message(bool condition, string message)
     {

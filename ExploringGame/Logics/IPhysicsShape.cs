@@ -14,6 +14,8 @@ public static class IPhysicsShapeExtensions
     public static void InitializePhysicsObject(this IPhysicsShape shape)
     {
         shape.ColliderBodies[0].Position = shape.WorldPosition.ToJVector();
+        if(shape.Rotation != null)
+            shape.ColliderBodies[0].Orientation = shape.Rotation.Quaternion.ToJQuaternion();
     }
 
     public static void SyncShapePosition(this IPhysicsShape shape)

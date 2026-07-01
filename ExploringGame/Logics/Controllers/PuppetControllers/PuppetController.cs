@@ -58,7 +58,6 @@ public class PuppetController : IActiveObject
             return;
 
         _mover.Update(gameTime);
-       // Puppet.ColliderBodies[0].AngularVelocity = new JVector(0.0f, 2.0f, 0.0f);
         Puppet.SyncShapePosition();
 
         Puppet.LeftShoulder.SyncShapePosition();

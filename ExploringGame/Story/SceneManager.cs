@@ -21,8 +21,9 @@ public class SceneManager
     {
         CurrentScene = initialScene;
         CurrentAct = initialScene.Acts.First();
-        
-        FastForwardToAct<ActTwo>();
+
+        if(GameDebug.Debug.SceneManagerDebugInit != null)
+            GameDebug.Debug.SceneManagerDebugInit(this);
     }
 
     public void Update(GameTime gameTime)

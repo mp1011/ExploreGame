@@ -10,7 +10,7 @@ public class SmallBed : PlaceableShape
 {
     public override CollisionGroup CollisionGroup => CollisionGroup.Environment;
 
-    public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects;
+    public override CollisionGroup CollidesWithGroups => CollisionGroup.MovingObjects | CollisionGroup.Appendages; //todo, don't like this
 
     public override IColliderMaker ColliderMaker =>  ColliderMakers.BoundingBox(this);
 

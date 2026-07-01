@@ -15,7 +15,7 @@ using System.Net.Quic;
 
 namespace ExploringGame.Entities;
 
-public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
+public class Puppet : PlaceableShape, IControllable<PuppetController>, ICollidable, IPhysicsShape
 {
     public override CollisionGroup CollisionGroup => CollisionGroup.MovingObjects;
 
@@ -47,48 +47,48 @@ public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
     public Shoulder LeftShoulder { get; }
     public Shoulder RightShoulder { get; }
     public BasicArm LeftArm { get; }
-    public BasicArm RightArm { get; }   
+    public BasicArm RightArm { get; }
 
-    public Puppet(WorldSegment worldSegment)
+    public PuppetController Controller { get; private set; }
+
+    public Puppet(WorldSegment worldSegment, float sizeScale)
     {
      
         ColliderMaker = new SphereColliderMaker(this);
-        Size = new Vector3(1.0f, 2.0f, 1.0f);
+        Size = new Vector3(1.0f, 2.0f, 1.0f) * sizeScale;
 
         var torso = AddChild(new Cylinder(new Theme(Color.Blue)));
         torso.Axis = Axis.Y;
         torso.Width= 1.0f;
         torso.Depth = 1.0f;
         torso.Height = 1.0f;
+        torso.Size *= sizeScale;
         torso.SetWorldSide(Side.Top, this.GetWorldSide(Side.Top));
 
         var head = AddChild(new Ellipsoid(0.5f));
         head.Depth = 0.6f;
+        head.Size *= sizeScale;
         head.LocalPosition = LocalPosition;
         head.SetWorldSide(Side.Bottom, this.GetWorldSide(Side.Top));
 
         WorldPosition = new Vector3(0f, 2f, 3f);
 
-        LeftShoulder = AddChild(new Shoulder(this));
+        LeftShoulder = AddChild(new Shoulder(this, sizeScale));
         LeftShoulder.WorldPosition = WorldPosition;
         LeftShoulder.Place().OnSideOuter(Side.Top, this);
-        LeftShoulder.LocalX += 0.5f;
-        LeftShoulder.LocalY -= 0.5f;
+        LeftShoulder.LocalX += 0.5f * sizeScale;
+        LeftShoulder.LocalY -= 0.5f * sizeScale;
         LeftShoulder.Tag = "LeftShoulder";
 
-        RightShoulder = AddChild(new Shoulder(this));
+        RightShoulder = AddChild(new Shoulder(this, sizeScale));
         RightShoulder.WorldPosition = WorldPosition;
         RightShoulder.Place().OnSideOuter(Side.Top, this);
-        RightShoulder.LocalX -= 0.5f;
-        RightShoulder.LocalY -= 0.5f;
+        RightShoulder.LocalX -= 0.5f * sizeScale;
+        RightShoulder.LocalY -= 0.5f * sizeScale;
         RightShoulder.Tag = "RightShoulder";
 
-        // todo, need cleaner way for dependency between moving object and parts
-        // X = 2f;
-        //    Y = 1f;
-
-        LeftArm = AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f, 1.0f, 1.0f));
-        RightArm = AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f, 1.0f, 1.0f));
+        LeftArm = AddChild(new BasicArm(worldSegment, this, LeftShoulder, 0.2f * sizeScale, 1.0f * sizeScale, 1.0f * sizeScale));
+        RightArm = AddChild(new BasicArm(worldSegment, this, RightShoulder, 0.2f * sizeScale, 1.0f * sizeScale, 1.0f * sizeScale));
     }
 
     protected override Triangle[] BuildInternal(QualityLevel quality)
@@ -98,9 +98,9 @@ public class Puppet : PlaceableShape, IControllable, ICollidable, IPhysicsShape
 
     public IActiveObject CreateController(ServiceContainer serviceContainer)
     {
-        var controller = serviceContainer.Get<PuppetController>();
-        controller.Puppet = this;
-        return controller;
+        Controller = serviceContainer.Get<PuppetController>();
+        Controller.Puppet = this;
+        return Controller;
         
     }
 }

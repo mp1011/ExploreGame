@@ -14,11 +14,13 @@ public abstract class CharacterAction<TShape> : PlotPoint
         _characterEntrance = characterEntrance;
     }
 
-    protected override bool CheckActivation(GameTime gameTime) => true;
+    protected sealed override bool CheckActivation(GameTime gameTime) => CheckActivation(gameTime, _characterEntrance.LoadedEntity);
+
+    protected virtual bool CheckActivation(GameTime gameTime, TShape shape) => true;
 
     protected override void OnActivated() => OnActivated(_characterEntrance.LoadedEntity);
 
-    protected override PlotUpdate UpdateActive(GameTime gameTime) => UpdateActive(_characterEntrance.LoadedEntity);
+    protected sealed override PlotUpdate UpdateActive(GameTime gameTime) => UpdateActive(_characterEntrance.LoadedEntity);
 
     protected virtual void OnActivated(TShape shape)
     {

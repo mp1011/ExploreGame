@@ -13,9 +13,9 @@ namespace ExploringGame.Entities.EntityParts;
 public class Shoulder : EntityPart<Puppet>
 {
 
-    public Shoulder(Puppet puppet) : base(puppet)
+    public Shoulder(Puppet puppet, float sizeScale) : base(puppet)
     {
-        var shape = AddChild(new Ellipsoid(0.2f, (new Theme(Color.GreenYellow))));
+        var shape = AddChild(new Ellipsoid(0.2f * sizeScale, (new Theme(Color.GreenYellow))));
         Size = shape.Size;
     }
 

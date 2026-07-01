@@ -82,7 +82,7 @@ public class UpstairsWorldSegment : WorldSegment
         new BlockerCreator().ExecuteForSwitches(this, StateKey.HallLightOn, StateKey.KitchenLightOn, StateKey.LivingRoomLightOn, StateKey.RightBedroomLightOn);
 
 
-        var childPuppet = AddChild(new Puppet(this));
+        var childPuppet = AddChild(new Puppet(this, 0.5f));
         childPuppet.Tag = "Child";
         childPuppet.WorldY = -10;
         childPuppet.Active = false;

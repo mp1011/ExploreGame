@@ -5,6 +5,7 @@ using ExploringGame.LevelControl;
 using ExploringGame.Logics;
 using ExploringGame.Services;
 using ExploringGame.Story.PlotPoints;
+using System;
 
 namespace ExploringGame.Story.Scene01.Act02;
 
@@ -22,7 +23,19 @@ public class PlacePuppetOnBed : CharacterAction<Puppet>
         var room = _loadedLevelData.ActiveSegments.FindShape<KidsBedroom>();
         var bed = room.FindChild<SmallBed>();
 
+        shape.Active = true;
         shape.Place().At(bed).OnFloor();
+        shape.LocalY += 0.5f;
+        shape.Rotation = new GeometryBuilder.Rotation(0, (float)Math.PI / 2f, 0f);
         shape.InitializePhysicsObject();
+
+        shape.LeftShoulder.InitializePhysicsObject();
+        shape.RightShoulder.InitializePhysicsObject();
+        shape.LeftArm.UpperArm.InitializePhysicsObject();
+        shape.LeftArm.LowerArm.InitializePhysicsObject();
+        shape.RightArm.UpperArm.InitializePhysicsObject();
+        shape.RightArm.LowerArm.InitializePhysicsObject();
+
+
     }
 }

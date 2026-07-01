@@ -32,6 +32,7 @@ public enum CollisionGroup
     Steps = 8,
     SolidEntity = 16,
     LineOfSightTest = 32,
+    Appendages = 64,
     MovingObjects = Player | SolidEntity,
     All = Player | Environment | Doors | Steps | SolidEntity
 }

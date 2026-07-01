@@ -1,9 +1,13 @@
 ﻿using ExploringGame;
 using ExploringGame.Audio;
+using ExploringGame.GameDebug;
 using ExploringGame.GeometryBuilder.Shapes;
 using ExploringGame.GeometryBuilder.Shapes.WorldSegments;
 using ExploringGame.Logics;
+using ExploringGame.Story;
+using ExploringGame.Story.Scene01.Act02;
 using ExploringGame.Testing;
+using System;
 using System.Diagnostics;
 using System.Linq;
 
@@ -23,6 +27,7 @@ using System.Linq;
 AudioService.Enabled = true;
 ExploringGame.GameDebug.Debug.NoScene = false;
 ExploringGame.GameDebug.Debug.UseDebugScene = false;
+ExploringGame.GameDebug.Debug.SceneManagerDebugInit = new Action<SceneManager>(p => p.FastForwardToAct<ActTwo>());
 using var game = new Game1(new HomeWorldSegmentGroup());
 
 
