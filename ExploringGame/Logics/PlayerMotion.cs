@@ -36,8 +36,8 @@ public class PlayerMotion
             return;
 
         var cameraPosition = _player.WorldPosition;
-        var yaw = _player.Rotation.Yaw;
-        var pitch = _player.Rotation.Pitch;
+        var yaw = _player.Rotation.Yaw.Radians;
+        var pitch = _player.Rotation.Pitch.Radians;
 
         _playerMotion.Motion.TargetMotion = GetMotionTarget(yaw);
         _playerMotion.Motion.TargetY = Gravity;
@@ -69,6 +69,7 @@ public class PlayerMotion
         yaw -= mouseDelta.X * 0.01f;
         pitch -= mouseDelta.Y * 0.01f;
         pitch = MathHelper.Clamp(pitch, -MathHelper.PiOver2 + 0.1f, MathHelper.PiOver2 - 0.1f);
+
         _playerInput.CenterMouse(window);
 
         _player.Rotation = new Rotation(yaw, pitch, 0f);

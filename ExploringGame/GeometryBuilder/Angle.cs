@@ -1,4 +1,5 @@
 ﻿using ExploringGame.Extensions;
+using Microsoft.Xna.Framework;
 using System;
 using System.Diagnostics.Metrics;
 
@@ -8,19 +9,33 @@ public record Angle
 {
     public float Degrees { get; } 
 
-    public Angle(float degrees)
+    public float Radians { get; }
+
+    private Angle(float value, bool isDegrees)
     {
-        Degrees = degrees.NMod(360.0f);
+        if (isDegrees)
+        {
+            Degrees = value;
+            Radians = MathHelper.ToRadians(value);
+        }
+        else
+        {
+            Radians = value;
+            Degrees = MathHelper.ToDegrees(value);
+        }
     }
+
+    public static Angle FromRad(float radians) => new Angle(radians, isDegrees: false);
+    public static Angle FromDeg(float degrees) => new Angle(degrees, isDegrees: true);
 
     public Angle RotateTowards(float target, float amount)
     {
         float delta = MathF.IEEERemainder(target - Degrees, 360f);
 
         if (MathF.Abs(delta) <= amount)
-            return new Angle(target);
+            return Angle.FromDeg(target);
 
-        return new Angle(Degrees + MathF.Sign(delta) * amount);
+        return Angle.FromDeg(Degrees + MathF.Sign(delta) * amount);
     }
 
     public float Delta(Angle other)
@@ -35,8 +50,21 @@ public record Angle
         return diff;
     }
 
-    public Angle RotateCounterClockwise(float degrees) => new Angle(Degrees + degrees);
-    public Angle RotateClockwise(float degrees) => new Angle(Degrees - degrees);
+    public float ShortestRotation(float absDelta, Angle target)
+    {
+        // Shortest signed difference (-180, 180]
+        float delta = ((target.Degrees - Degrees + 540f) % 360f) - 180f;
+
+        // If we're already within absDelta, just return the remaining distance.
+        if (MathF.Abs(delta) <= absDelta)
+            return delta;
+
+        // Otherwise move by exactly absDelta in the correct direction.
+        return MathF.Sign(delta) * absDelta;
+    }
+
+    public Angle RotateCounterClockwise(float degrees) => Angle.FromDeg(Degrees + degrees);
+    public Angle RotateClockwise(float degrees) => Angle.FromDeg(Degrees - degrees);
 
     public Angle(Side side) : this(side switch
     {
@@ -49,10 +77,10 @@ public record Angle
         Side.SouthWest => 180 - 45.0f,
         Side.NorthWest => 45.0f,
         _ => throw new ArgumentException("invalid side")
-    })
+    }, isDegrees: true)
     { }
 
-    public Side ToSide() => Degrees switch
+    public Side ToSide() => Degrees.NMod(360) switch
     {
         0.0f => Side.North,
         270.0f => Side.East,

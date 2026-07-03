@@ -4,6 +4,7 @@ using ExploringGame.GeometryBuilder;
 using ExploringGame.Logics.Collision;
 using ExploringGame.Motion;
 using ExploringGame.Services;
+using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Jitter2.LinearMath;
 using Microsoft.Xna.Framework;
@@ -15,6 +16,9 @@ public class EntityMover : IActiveObject
 {
     private readonly Physics _physics;
     private readonly bool _ignoreY;
+
+    public Rotation TargetRotation { get; set; }
+    public Vector3 AbsoluteAngularVelocity { get; set; }
 
     public AcceleratedMotion Motion { get; }
     private ICollidable _entity;
@@ -67,7 +71,29 @@ public class EntityMover : IActiveObject
 
         _entity.WorldPosition = _body.Position.ToVector3();
 
+        if (TargetRotation != null)
+            UpdateRotation();
+
         CollisionResponder.Update();
+    }
+
+    private void UpdateRotation()
+    {
+        
+        var currentRotation = new Rotation(_body.Orientation.ToQuaternion());
+
+        float dy = 0;
+
+        var p1 = currentRotation.Pitch;
+        var p2 = TargetRotation.Pitch;
+        var dp = p1.ShortestRotation(AbsoluteAngularVelocity.X, p2);
+
+        float dr = 0;
+
+        //X updates pitch
+        //Y updates yaw
+        //Z updates roll
+        _body.AngularVelocity = new Jitter2.LinearMath.JVector(dp, dy, dr);
     }
 
     private void SetInitialPosition()

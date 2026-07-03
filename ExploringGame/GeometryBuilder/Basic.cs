@@ -65,20 +65,20 @@ public record Rotation(Quaternion Quaternion)
         Yaw: (YawDegrees * MathHelper.Pi) / 180.0f, 
         Pitch: 0, Roll: 0);
 
-    public float Yaw
+    public Angle Yaw
     {
         get
         {
             var q = Quaternion.Normalize(Quaternion);
 
-            return MathF.Atan2(
+            return Angle.FromRad(MathF.Atan2(
                 2f * (q.W * q.Y + q.X * q.Z),
                 1f - 2f * (q.Y * q.Y + q.X * q.X)
-            );
+            ));
         }
     }
 
-    public float Pitch
+    public Angle Pitch
     {
         get
         {
@@ -89,22 +89,32 @@ public record Rotation(Quaternion Quaternion)
             if (MathF.Abs(sinp) >= 1f)
             {
                 // Clamp at 90 degrees if out of range
-                return MathF.CopySign(MathF.PI / 2f, sinp);
+                return Angle.FromRad(MathF.CopySign(MathF.PI / 2f, sinp));
             }
 
-            return MathF.Asin(sinp);
+            return Angle.FromRad(MathF.Asin(sinp));
         }
     }
 
-    //public float Pitch { get; }
-    //public float Roll { get; }
+    public Angle Roll
+    {
+        get
+        {
+            var q = Quaternion.Normalize(Quaternion);
 
-    public float YawDegrees => (Yaw * 180.0f / MathHelper.Pi).NMod(360f);
+            return Angle.FromRad(MathF.Atan2(
+                2f * (q.W * q.Z + q.X * q.Y),
+                1f - 2f * (q.Z * q.Z + q.X * q.X)
+            ));
+        }
+    }
 
     public Matrix AsMatrix() => Matrix.CreateFromQuaternion(Quaternion);
-    
-    //public static Rotation YawFromDegrees(float degrees, float pitch = 0f, float roll = 0f) => 
-    //    new Rotation(Yaw: (degrees * MathHelper.Pi) / 180.0f, Pitch: pitch, Roll: roll);
+
+    public override string ToString()
+    {
+        return $"Yaw: {Yaw.Degrees.ToString("0.000")} Pitch: {Pitch.Degrees.ToString("0.000")} Roll: {Roll.Degrees.ToString("0.000")}";
+    }
 }
 
 public record Triangle(Vector3 A, Vector3 B, Vector3 C, TextureInfo TextureInfo, Side Side)

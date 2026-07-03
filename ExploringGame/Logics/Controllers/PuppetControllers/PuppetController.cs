@@ -18,6 +18,9 @@ public class PuppetController : IActiveObject
     private readonly Random _rng;
 
     private EntityMover _mover;
+
+
+    public EntityMover Mover => _mover;
     
     public PuppetController(Physics physics, Random random)
     {
@@ -51,9 +54,6 @@ public class PuppetController : IActiveObject
 
     public void Update(GameTime gameTime)
     {
-        // GameDebug.Debug.Watch1 = $"P={Puppet.ColliderBodies[0].Position} S={Puppet.LeftShoulder.ColliderBodies[0].Position}";
-        GameDebug.Debug.Watch1 = $"{Puppet.LeftShoulder.ColliderBodies[0].Position} {Puppet.LeftShoulder.WorldPosition}";
-
         if (GameDebug.Debug.NoNPCPhysics)
             return;
 

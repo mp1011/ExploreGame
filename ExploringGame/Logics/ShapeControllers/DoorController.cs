@@ -74,7 +74,7 @@ public class DoorController : IShapeController<Door>, IPlayerActivated
             targetDegrees = targetDegrees.RotateClockwise(90);
 
 
-        var delta = new Angle(Shape.Rotation.YawDegrees).Delta(targetDegrees);
+        var delta = Shape.Rotation.Yaw.Delta(targetDegrees);
 
         if (delta.IsAlmost(0f, tolerance: 2.0f) && !Shape.Open && !_closeSoundPlayed)
         {

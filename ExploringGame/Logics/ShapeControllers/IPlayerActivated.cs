@@ -29,7 +29,7 @@ public static class IPlayerActivatedExtensions
             return false;
 
         // Angular check: ensure player is looking roughly at the shape
-        var forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(playerActivated.Player.Rotation.Yaw, 0f, 0f));
+        var forward = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(playerActivated.Player.Rotation.Yaw.Radians, 0f, 0f));
         var toTarget = playerActivated.Shape.WorldPosition - playerActivated.Player.WorldPosition;
         forward.Normalize();
         toTarget.Normalize();
