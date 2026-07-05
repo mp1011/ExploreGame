@@ -71,6 +71,7 @@ public class DialogueRenderPass : IRenderPass
         _spriteBatch.End();
     }
 
+
     private Vector2 DrawWord(Word word, Vector2 cursor, int maxLetters = int.MaxValue)
     {
         //can this word fit?

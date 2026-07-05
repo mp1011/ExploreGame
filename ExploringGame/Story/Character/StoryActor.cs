@@ -7,6 +7,4 @@ public abstract class StoryActor
 {
     public abstract string Name { get; }
     public abstract Color TextColor { get;  }
-
-    public abstract HAlign TextAlign { get;}
 }

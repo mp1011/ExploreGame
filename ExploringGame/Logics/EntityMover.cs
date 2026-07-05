@@ -29,7 +29,7 @@ public class EntityMover : IActiveObject
 
     public bool Active { get; set; }
 
-    public EntityMover(ICollidable entity, Physics physics, bool ignoreY = true)
+    public EntityMover(ICollidable entity, Physics physics, bool ignoreY)
     {
         Active = true;
         Motion = new AcceleratedMotion();
@@ -67,7 +67,7 @@ public class EntityMover : IActiveObject
         if (_ignoreY)
             _body.Velocity = new JVector(Motion.CurrentMotion.X, -Motion.CurrentY, Motion.CurrentMotion.Z);
         else
-            _body.Velocity = new JVector(Motion.CurrentMotion.X, Motion.CurrentMotion.Y, Motion.CurrentMotion.Z);
+            _body.Velocity = new JVector(Motion.CurrentMotion.X, _body.Velocity.Y, Motion.CurrentMotion.Z);
 
         _entity.WorldPosition = _body.Position.ToVector3();
 
@@ -78,17 +78,21 @@ public class EntityMover : IActiveObject
     }
 
     private void UpdateRotation()
-    {
-        
+    {        
         var currentRotation = new Rotation(_body.Orientation.ToQuaternion());
 
-        float dy = 0;
+        var y1 = currentRotation.Yaw;
+        var y2 = TargetRotation.Yaw;
+        var dy = y1.ShortestRotation(AbsoluteAngularVelocity.Y, y2);
+
 
         var p1 = currentRotation.Pitch;
         var p2 = TargetRotation.Pitch;
         var dp = p1.ShortestRotation(AbsoluteAngularVelocity.X, p2);
 
-        float dr = 0;
+        var r1 = currentRotation.Roll;
+        var r2 = TargetRotation.Roll;
+        var dr = r1.ShortestRotation(AbsoluteAngularVelocity.Z, r2);
 
         //X updates pitch
         //Y updates yaw

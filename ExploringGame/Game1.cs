@@ -99,7 +99,7 @@ public class Game1 : Game
         _serviceContainer.Bind(_playerInput);
         _player = _serviceContainer.Get<Player>();
 
-        _playerMover = new EntityMover(_player, _physics);
+        _playerMover = new EntityMover(_player, _physics, ignoreY: true);
         _player.Mover = _playerMover;
         _playerMover.CollisionResponder.AddResponse(new DetectFloorCollision(_playerMover));
 

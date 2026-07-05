@@ -43,7 +43,7 @@ public class Player : ICollidable, ICamera
 
     public Player(Physics physics)
     {
-        ColliderBodies = new CapsuleColliderMaker(this).CreateColliders(physics).ToArray();
+        ColliderBodies = new CapsuleColliderMaker(this, keepUpright: true).CreateColliders(physics).ToArray();
     }
 
     public override string ToString() => "Player";

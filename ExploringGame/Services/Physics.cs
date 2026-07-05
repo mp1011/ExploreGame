@@ -242,22 +242,23 @@ public class Physics
         return body;
     }
 
-    public RigidBody CreateCapsule(ICollidable entity)
-    {
-        return CreateCapsule(entity, CollisionGroup.Player, CollisionGroup.Environment | CollisionGroup.Doors | CollisionGroup.Steps | CollisionGroup.SolidEntity);
-    }
-
-    public RigidBody CreateCapsule(ICollidable entity, CollisionGroup myGroup, CollisionGroup collidesWithGroups)
+    public RigidBody CreateCapsule(ICollidable entity, CollisionGroup myGroup, CollisionGroup collidesWithGroups, bool keepUpright)
     {
         var body = _world.CreateRigidBody();
-        body.AddShape(new CapsuleShape(0.4f, 1.0f)); //todo
+        // body.AddShape(new CapsuleShape(0.4f, 1.0f)); //todo
+        body.AddShape(new CapsuleShape(entity.Width() / 2f, entity.Height())); 
+
+
         body.Position = entity.WorldPosition.ToJVector();
         body.MotionType = MotionType.Dynamic;
 
         InitPhysics(body);
 
-        var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
-        upright.Initialize(JVector.UnitY, AngularLimit.Full);
+        if (keepUpright)
+        {
+            var upright = _world.CreateConstraint<HingeAngle>(body, _world.NullBody);
+            upright.Initialize(JVector.UnitY, AngularLimit.Full);
+        }
 
         body.Tag = new CollisionInfo(myGroup, collidesWithGroups, entity);
         return body;

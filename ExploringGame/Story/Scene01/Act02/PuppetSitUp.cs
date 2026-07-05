@@ -30,7 +30,7 @@ public class PuppetSitUp : CharacterAction<Puppet>
     protected override void OnActivated(Puppet shape)
     {
         shape.Controller.Mover.TargetRotation = new Rotation(0f, 0f, 0f);
-        shape.Controller.Mover.AbsoluteAngularVelocity = new Vector3(2.0f, 0f, 0f);
+        shape.Controller.Mover.AbsoluteAngularVelocity = new Vector3(6.0f, 6.0f, 6.0f);
     }
 
     protected override PlotUpdate UpdateActive(Puppet shape)

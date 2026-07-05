@@ -38,7 +38,7 @@ public static partial class TestMaps
         var light = room.AddChild(new HighHatLight(room, 0f, 0f, initialState: true));
 
         var puppet = segment.AddChild(new Puppet(segment, 0.4f));
-
+        puppet.Tag = "TestNPC";
 
         var box = room.AddChild(new TestPlaceable(room, 1.0f, Color.Purple));
         box.Tag = "Box1";

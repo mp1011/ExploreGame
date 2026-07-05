@@ -53,10 +53,9 @@ public class Puppet : PlaceableShape, IControllable<PuppetController>, ICollidab
 
     public Puppet(WorldSegment worldSegment, float sizeScale)
     {
-     
-        ColliderMaker = new SphereColliderMaker(this);
         Size = new Vector3(1.0f, 2.0f, 1.0f) * sizeScale;
-
+        ColliderMaker = new CapsuleColliderMaker(this, keepUpright: false);
+      
         var torso = AddChild(new Cylinder(new Theme(Color.Blue)));
         torso.Axis = Axis.Y;
         torso.Width= 1.0f;

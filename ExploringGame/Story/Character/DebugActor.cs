@@ -8,6 +8,4 @@ public class DebugActor : StoryActor
     public override string Name => "Debug";
 
     public override Color TextColor => Color.Red;
-
-    public override HAlign TextAlign => HAlign.Right;
 }
