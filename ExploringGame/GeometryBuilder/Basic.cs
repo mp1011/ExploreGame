@@ -111,6 +111,27 @@ public record Rotation(Quaternion Quaternion)
 
     public Matrix AsMatrix() => Matrix.CreateFromQuaternion(Quaternion);
 
+    public bool IsCloseTo(Rotation other, float toleranceDegrees = 5f)
+    {
+        // Ensure both are normalized (important for stability)
+        var a = Quaternion.Normalize(this.Quaternion);
+        var b = Quaternion.Normalize(other.Quaternion);
+
+        float dot = Quaternion.Dot(a, b);
+
+        // Account for double-cover: q and -q represent same rotation
+        dot = MathF.Abs(dot);
+
+        // Clamp for safety against floating point drift
+        dot = MathF.Min(1.0f, MathF.Max(-1.0f, dot));
+
+        // Angle between rotations
+        float angleRadians = 2.0f * MathF.Acos(dot);
+        float angleDegrees = angleRadians * (180.0f / MathF.PI);
+
+        return angleDegrees <= toleranceDegrees;
+    }
+
     public override string ToString()
     {
         return $"Yaw: {Yaw.Degrees.ToString("0.000")} Pitch: {Pitch.Degrees.ToString("0.000")} Roll: {Roll.Degrees.ToString("0.000")}";

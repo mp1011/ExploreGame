@@ -15,7 +15,7 @@ public class ActTwo : Act
 
     protected override IEnumerable<PlotPoint> CreatePlotPoints(PlotPointFactory plotPointFactory)
     {
-        PlotPoint freeze, nar1, fadein, unfreeze, placePuppetInBed;
+        PlotPoint freeze, nar1, fadein, unfreeze, placePuppetInBed, puppetSitUp, playerAndChildPuppet;
 
         CharacterEntrance<Puppet> puppet;
 
@@ -36,6 +36,16 @@ public class ActTwo : Act
 
         yield return placePuppetInBed = plotPointFactory.CharacterAction<Puppet, PlacePuppetOnBed>(puppet);
 
-        yield return plotPointFactory.CharacterAction<Puppet, PuppetSitUp>(puppet, placePuppetInBed);
+        yield return puppetSitUp = plotPointFactory.CharacterAction<Puppet, PuppetSitUp>(puppet, placePuppetInBed);
+
+        yield return plotPointFactory.Get<PlayerFreeze>(puppetSitUp);
+
+        yield return plotPointFactory.LookAt<Puppet>("Child", puppetSitUp);
+
+        yield return playerAndChildPuppet = plotPointFactory.Get<PlayerAndChildPuppet>(puppetSitUp);
+
+        yield return plotPointFactory.Get<PlayerResume>(playerAndChildPuppet);
+
+
     }
 }

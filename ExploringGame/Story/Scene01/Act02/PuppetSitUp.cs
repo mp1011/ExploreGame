@@ -30,17 +30,11 @@ public class PuppetSitUp : CharacterAction<Puppet>
     protected override void OnActivated(Puppet shape)
     {
         shape.Controller.Mover.TargetRotation = new Rotation(0f, 0f, 0f);
-        shape.Controller.Mover.AbsoluteAngularVelocity = new Vector3(6.0f, 0f, 0f);
+        shape.Controller.Mover.AbsoluteAngularVelocity = new Vector3(2.0f, 0f, 0f);
     }
 
     protected override PlotUpdate UpdateActive(Puppet shape)
     {
-        var r = new Rotation(shape.ColliderBodies[0].Orientation.ToQuaternion());
-        var r2 = shape.Controller.Mover.TargetRotation;
-
-        GameDebug.Debug.Watch1 = $"Rotation: {r}";
-        GameDebug.Debug.Watch2 = $"Target: {r2}";
-
-        return PlotUpdate.Continue;
+        return PlotUpdate.End;
     }
 }

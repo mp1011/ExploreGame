@@ -138,7 +138,9 @@ public class PlotPointFactory
 
     public T Get<T>(params PlotPoint[] requiredDone) where T:PlotPoint
     {
-        return _serviceContainer.Get<T>(new Ninject.Parameters.ConstructorArgument("requiredDone", requiredDone));
+        return _serviceContainer.Get<T>(new Ninject.Parameters.ConstructorArgument("requiredDone", requiredDone),
+            new Ninject.Parameters.ConstructorArgument("loadedLevelData", _loadedLevelData),
+            new Ninject.Parameters.ConstructorArgument("dialogueManager", _dialogueManager));
     }
 }
 
