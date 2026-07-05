@@ -86,5 +86,11 @@ public class UpstairsWorldSegment : WorldSegment
         childPuppet.Tag = "Child";
         childPuppet.WorldY = -10;
         childPuppet.Active = false;
+
+        var wifePuppet = AddChild(new Puppet(this, 0.8f));
+        wifePuppet.Tag = "Wife";
+        wifePuppet.WorldY = -10;
+        wifePuppet.WorldX += 2;
+        wifePuppet.Active = false;
     }
 }

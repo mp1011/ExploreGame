@@ -12,11 +12,11 @@ using System;
 
 namespace ExploringGame.Story.Scene01.Act02;
 
-public class PuppetSitUp : CharacterAction<Puppet>
+public class PuppetFacePlayer : CharacterAction<Puppet>
 {
     private Player _player;
 
-    public PuppetSitUp(Player player, CharacterEntrance<Puppet> characterEntrance, params PlotPoint[] otherRequiredDone) : base(characterEntrance, otherRequiredDone)
+    public PuppetFacePlayer(Player player, CharacterEntrance<Puppet> characterEntrance, params PlotPoint[] otherRequiredDone) : base(characterEntrance, otherRequiredDone)
     {
         _player = player;
     }
@@ -30,6 +30,7 @@ public class PuppetSitUp : CharacterAction<Puppet>
     protected override void OnActivated(Puppet shape)
     {
         shape.Controller.Mover.TargetRotation = new Rotation(0f, 0f, 0f);
+        // todo, rotate to face player
         shape.Controller.Mover.AbsoluteAngularVelocity = new Vector3(4.0f, 4.0f, 4.0f);
     }
 

@@ -81,6 +81,7 @@ public class BasementOffice : Room
         desk2.LocalX += 0.9f;
         desk2.LocalZ += 0.65f;
         desk2.Rotation = Rotation.YawFromDegrees(90);
+        desk2.Tag = "WifeDesk";
 
         var fireplace = new ElectricFireplace(this);
         fireplace.Place().OnFloor().OnSideInner(Side.North);

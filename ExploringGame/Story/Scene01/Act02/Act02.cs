@@ -15,13 +15,15 @@ public class ActTwo : Act
 
     protected override IEnumerable<PlotPoint> CreatePlotPoints(PlotPointFactory plotPointFactory)
     {
-        PlotPoint freeze, nar1, fadein, unfreeze, placePuppetInBed, puppetSitUp, playerAndChildPuppet;
+        PlotPoint freeze, nar1, fadein, unfreeze, placePuppetInBed, puppetSitUp, playerAndChildPuppet, puppetCollapse, placePuppetAtDesk, playerAndWifePuppet, puppetFacePlayer;
 
-        CharacterEntrance<Puppet> puppet;
+        CharacterEntrance<Puppet> childPuppet, wifePuppet;
 
+        #region Player Wakes Up
         yield return plotPointFactory.AmbientSound(Audio.SoundEffectKey.CreepyLoop);
 
         yield return freeze = plotPointFactory.Get<PlayerFreeze>();
+        
         yield return plotPointFactory.PlayerMoveTo(new Vector3(-10.49f, 6.20f, 11.98f));
 
         yield return nar1 = plotPointFactory.Narration("What is that sound?", freeze);
@@ -31,12 +33,15 @@ public class ActTwo : Act
         yield return unfreeze = plotPointFactory.Get<PlayerResume>(fadein);
 
         yield return plotPointFactory.RoomNarration("Where is that even coming from?", UpstairsHall.SouthHallTag, unfreeze);
+        #endregion
 
-        yield return puppet = plotPointFactory.CharacterEntrance<Puppet>("Child");
+        #region Child Puppet
 
-        yield return placePuppetInBed = plotPointFactory.CharacterAction<Puppet, PlacePuppetOnBed>(puppet);
+        yield return childPuppet = plotPointFactory.CharacterEntrance<Puppet>("Child");
 
-        yield return puppetSitUp = plotPointFactory.CharacterAction<Puppet, PuppetSitUp>(puppet, placePuppetInBed);
+        yield return placePuppetInBed = plotPointFactory.CharacterAction<Puppet, PlacePuppetOnBed>(childPuppet);
+
+        yield return puppetSitUp = plotPointFactory.CharacterAction<Puppet, PuppetSitUp>(childPuppet, placePuppetInBed);
 
         yield return plotPointFactory.Get<PlayerFreeze>(puppetSitUp);
 
@@ -46,6 +51,28 @@ public class ActTwo : Act
 
         yield return plotPointFactory.Get<PlayerResume>(playerAndChildPuppet);
 
+        yield return puppetCollapse = plotPointFactory.CharacterAction<Puppet, PuppetCollapse>(childPuppet, playerAndChildPuppet);
 
+        yield return plotPointFactory.Narration("This has to be a dream...", puppetCollapse);
+
+        #endregion
+
+        #region Wife Puppet
+
+        yield return wifePuppet = plotPointFactory.CharacterEntrance<Puppet>("Wife");
+        yield return placePuppetAtDesk = plotPointFactory.CharacterAction<Puppet, PlacePuppetAtDesk>(wifePuppet);
+
+        yield return puppetFacePlayer = plotPointFactory.CharacterAction<Puppet, PuppetFacePlayer>(wifePuppet, placePuppetAtDesk);
+
+        yield return plotPointFactory.Get<PlayerFreeze>(puppetFacePlayer);
+        yield return plotPointFactory.LookAt<Puppet>("Wife", puppetFacePlayer);
+
+        yield return playerAndWifePuppet = plotPointFactory.Get<PlayerAndWifePuppet>(puppetFacePlayer);
+        
+        yield return plotPointFactory.Get<PlayerResume>(playerAndWifePuppet);
+
+        yield return plotPointFactory.CharacterAction<Puppet, PuppetCollapse>(wifePuppet, playerAndWifePuppet);
+
+        #endregion
     }
 }
